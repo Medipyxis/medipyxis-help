@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security settings and HIPAA compliance — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="active">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Configure billing defaults and clearinghouse credentials</a><a class="sidebar-item" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item active" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
+      <h1>Security settings and HIPAA compliance</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">concept</span> <span class="meta-pill">⏱ 6 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <p>Medipyxis is built to the HIPAA Security Rule. This page explains how session controls, audit logging, MFA enforcement, and Business Associate Agreements (BAAs) work, and where admins configure each.</p>
+<h2 id="hipaa-session-settings">HIPAA session settings</h2>
+<p>HIPAA requires covered entities to implement automatic logoff for electronic PHI systems. Medipyxis enforces this at the platform level; admins can tune the timeout window.</p>
+<p><strong>Session timeout</strong> is configurable per organization:
+- Navigate to <strong>HR &amp; Compliance → Facility Users → Organization Security Settings</strong>.
+- Set <strong>Idle Session Timeout</strong> in minutes (minimum 5, maximum 60, default 20).
+- Sessions that exceed the idle threshold display a 60-second warning modal; if the user does not confirm activity, they are signed out and must re-authenticate.
+- The <strong>On Duty</strong> pill in the header turns gray when the session is within two minutes of timeout.</p>
+<p><Compliance>
+The HIPAA Security Rule (45 CFR §164.312(a)(2)(iii)) requires automatic logoff procedures. The Medipyxis session timeout satisfies this requirement; do not set the timeout above 60 minutes.
+</Compliance></p>
+<h2 id="multi-factor-authentication-mfa">Multi-factor authentication (MFA)</h2>
+<p>MFA adds a second verification step at login. Medipyxis supports TOTP authenticator apps (Google Authenticator, Authy, 1Password).</p>
+<ul>
+<li>To <strong>enforce MFA for all users in your organization</strong>: Navigate to <strong>HR &amp; Compliance → Organization Security Settings</strong> and toggle <strong>Require MFA</strong> to on.</li>
+<li>When enforcement is on, any user who has not yet enrolled an authenticator is prompted to do so at their next login before they can reach the Dashboard.</li>
+<li>Individual users can enroll or rotate their authenticator via <strong>Profile → Security</strong>.</li>
+</ul>
+<p><Warning>
+Enabling MFA enforcement will lock out any user without an enrolled authenticator until they complete enrollment. Notify staff before enabling this setting.
+</Warning></p>
+<h2 id="audit-logs">Audit logs</h2>
+<p>Every action a user takes in Medipyxis — viewing a patient record, editing a claim, toggling a role permission — is written to an immutable audit log.</p>
+<p><strong>To access audit logs:</strong>
+1. Navigate to <strong>HR &amp; Compliance → Activity Logs</strong>.
+2. Filter by <strong>User</strong>, <strong>Date Range</strong>, <strong>Module</strong>, or <strong>Action Type</strong>.
+3. Each row shows: timestamp (UTC), user, facility, module, action, and the record affected (patient ID or entity UUID).
+4. Click any row to expand the full event payload, including before/after field values for edits.</p>
+<p><strong>Log retention:</strong> Logs are retained for a minimum of six years per HIPAA standards. Logs cannot be deleted by any application user, including <code>super_admin</code>.</p>
+<p><strong>Export:</strong> Click <strong>Export CSV</strong> to download a filtered log set for audit or legal review.</p>
+<p><Compliance>
+HIPAA requires an audit trail for access to PHI (45 CFR §164.312(b)). Medipyxis's Activity Logs satisfy this requirement. Your BAA with Medipyxis covers the log data as protected health information.
+</Compliance></p>
+<h2 id="business-associate-agreements-baas">Business Associate Agreements (BAAs)</h2>
+<p>Medipyxis operates as a Business Associate (BA) under HIPAA. A BAA between your organization and Medipyxis is required before processing any real patient data.</p>
+<ul>
+<li>Your BAA is executed during the contracting phase with Medipyxis sales.</li>
+<li>A copy is stored in your organization's <strong>HR &amp; Compliance → Documents</strong> section.</li>
+<li>If you onboard a new facility under an existing organization, confirm with your Medipyxis account manager whether the existing BAA covers the new facility or whether an addendum is needed.</li>
+</ul>
+<h2 id="phi-redaction-in-support-contexts">PHI redaction in support contexts</h2>
+<p>If you open a support ticket or share a screen with Medipyxis support, PHI is automatically redacted in any log exports made from within the support flow. Direct screenshots are not automatically redacted — use placeholder patient names (<em>Jane Doe</em>, <em>John Smith</em>) in support communications.</p>
+<h2 id="security-summary">Security summary</h2>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Location</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Idle session timeout</td>
+<td>HR &amp; Compliance → Organization Security Settings</td>
+<td>20 minutes</td>
+</tr>
+<tr>
+<td>MFA enforcement</td>
+<td>HR &amp; Compliance → Organization Security Settings</td>
+<td>Off</td>
+</tr>
+<tr>
+<td>Audit logs</td>
+<td>HR &amp; Compliance → Activity Logs</td>
+<td>Always on, 6-year retention</td>
+</tr>
+<tr>
+<td>BAA</td>
+<td>HR &amp; Compliance → Documents</td>
+<td>Executed at contracting</td>
+</tr>
+<tr>
+<td>Role-based access</td>
+<td><code>/administrator</code> → Organization Role Config</td>
+<td>Seeded defaults</td>
+</tr>
+</tbody>
+</table>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/admin/">Administrator Guide</a></li><li><a href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a></li><li><a href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#hipaa-session-settings">HIPAA session settings</a></li><li><a class="" href="#multi-factor-authentication-mfa">Multi-factor authentication (MFA)</a></li><li><a class="" href="#audit-logs">Audit logs</a></li><li><a class="" href="#business-associate-agreements-baas">Business Associate Agreements (BAAs)</a></li><li><a class="" href="#phi-redaction-in-support-contexts">PHI redaction in support contexts</a></li><li><a class="" href="#security-summary">Security summary</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/admin/security-and-compliance.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/admin/security-and-compliance.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>

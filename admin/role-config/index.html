@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configure organization roles and permissions — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="active">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Configure billing defaults and clearinghouse credentials</a><a class="sidebar-item active" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
+      <h1>Configure organization roles and permissions</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <p>The <strong>Organization Role Config</strong> screen at <code>/administrator</code> is the single source of truth for what every role can see and do across your entire Medipyxis organization.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>Only <code>super_admin</code> and <code>practice_admin</code> accounts can access <code>/administrator</code>.</li>
+<li>Changes are organization-wide and immediate — they affect all facilities simultaneously.</li>
+<li>Plan permission changes during off-peak hours when staff are least likely to be mid-workflow.</li>
+</ul>
+<h2 id="the-role-config-screen">The Role Config screen</h2>
+<p><img alt="Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of module permissions with toggle switches." src="/medipyxis-help/assets/admin/role-config.png" />
+<em>The </em><em>Organization Role Config</em><em> matrix at <code>/administrator</code>. Rows are roles; columns are modules. Filled toggles indicate the role has access.</em></p>
+<p>Navigate to <code>/administrator</code> (the link appears in the sidebar for admin roles, outside the facility-scoped navigation).</p>
+<h2 id="seeded-roles">Seeded roles</h2>
+<p>Medipyxis ships ten built-in roles. They cover the most common job functions and cannot be deleted, but their permissions can be adjusted.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Primary function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin</code></td>
+<td>Full organization access; manages all facilities and users</td>
+</tr>
+<tr>
+<td><code>clinical_manager</code></td>
+<td>Oversees clinical staff; access to Fleet Calendar, Visit Wizard, Oversight Cockpit</td>
+</tr>
+<tr>
+<td><code>medical_director</code></td>
+<td>Clinical sign-off; access to LCD Navigator™ audit queue and reporting</td>
+</tr>
+<tr>
+<td><code>clinician</code></td>
+<td>Visit documentation; access to Visit Wizard, patient records, orders</td>
+</tr>
+<tr>
+<td><code>referral_coordinator</code></td>
+<td>Manages Referral Intake kanban and Fax Review Queue</td>
+</tr>
+<tr>
+<td><code>bd_rep</code></td>
+<td>Business Development; CRM, BD Dashboard, limited patient view</td>
+</tr>
+<tr>
+<td><code>bd_manager</code></td>
+<td>BD rep management; CRM, BD Dashboard, Oversight Cockpit BD metrics</td>
+</tr>
+<tr>
+<td><code>finance_ap</code></td>
+<td>Accounts Payable; Billing (read), Inventory Accounts Payable</td>
+</tr>
+<tr>
+<td><code>vendor_coordinator</code></td>
+<td>Vendor-facing inventory management; Product Catalog, IVR Tracking</td>
+</tr>
+<tr>
+<td><code>biller</code></td>
+<td>Full Billing access; Claims, Denials, Payments, Superbill Config</td>
+</tr>
+</tbody>
+</table>
+<h2 id="module-permission-matrix">Module permission matrix</h2>
+<p>The matrix uses toggle switches at the intersection of each role and module. A filled toggle means the role can access that module in the sidebar.</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Typical roles with access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dashboard</td>
+<td>All roles</td>
+</tr>
+<tr>
+<td>Referral Intake</td>
+<td><code>referral_coordinator</code>, <code>clinician</code>, <code>clinical_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Patient Management</td>
+<td><code>clinician</code>, <code>clinical_manager</code>, <code>medical_director</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Visit Wizard / EHR</td>
+<td><code>clinician</code>, <code>np</code>, <code>md</code>, <code>clinical_manager</code></td>
+</tr>
+<tr>
+<td>Fleet Calendar</td>
+<td><code>clinician</code>, <code>clinical_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Inventory</td>
+<td><code>vendor_coordinator</code>, <code>finance_ap</code>, <code>clinical_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Orders &amp; DME</td>
+<td><code>clinician</code>, <code>clinical_manager</code></td>
+</tr>
+<tr>
+<td>Billing</td>
+<td><code>biller</code>, <code>finance_ap</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>CRM</td>
+<td><code>bd_rep</code>, <code>bd_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Business Development</td>
+<td><code>bd_rep</code>, <code>bd_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>Oversight Cockpit</td>
+<td><code>clinical_manager</code>, <code>medical_director</code>, <code>bd_manager</code>, <code>admin</code></td>
+</tr>
+<tr>
+<td>HR &amp; Compliance</td>
+<td><code>practice_admin</code>, <code>super_admin</code></td>
+</tr>
+<tr>
+<td>Administrator</td>
+<td><code>super_admin</code>, <code>practice_admin</code></td>
+</tr>
+<tr>
+<td>Team Chat</td>
+<td>All roles</td>
+</tr>
+</tbody>
+</table>
+<p><Note>
+This matrix shows defaults. Your organization may have already customized these — always verify the live toggles in <code>/administrator</code> rather than relying on the table above.
+</Note></p>
+<h2 id="toggle-a-permission">Toggle a permission</h2>
+<ol>
+<li>Navigate to <code>/administrator</code>.</li>
+<li>Locate the role row and module column you want to change.</li>
+<li>Click the toggle. It flips state immediately — there is no separate Save button.</li>
+<li>Verify by opening a browser tab in an incognito window logged in as a user with that role. The sidebar change is visible on their next page load.</li>
+</ol>
+<h2 id="clone-a-role-to-create-a-custom-variant">Clone a role to create a custom variant</h2>
+<p>When a seeded role is close but not quite right, clone it rather than modifying the seeded role itself. This preserves the original as a baseline.</p>
+<ol>
+<li>In the Role Config matrix, hover over the role row you want to copy.</li>
+<li>Click <strong>Clone Role</strong> (appears on hover at the right end of the row).</li>
+<li>Enter a name for the new role (e.g., <code>senior_bd_rep</code>).</li>
+<li>The clone inherits all permissions from the source role. Adjust toggles as needed.</li>
+<li>The new role is immediately available in <strong>HR &amp; Compliance → Facility Users</strong> role dropdowns.</li>
+</ol>
+<h2 id="understanding-blast-radius">Understanding blast radius</h2>
+<p>Before changing a permission, assess how many users are affected:</p>
+<ol>
+<li>In the Role Config matrix, click the role name to open a side panel.</li>
+<li>The panel shows <strong>Users with this role</strong> — a count and a list by facility.</li>
+<li>If the count is high, consider creating a cloned sub-role for the subset of users who need the new permission, rather than changing the shared role.</li>
+</ol>
+<p><Warning>
+Removing a module permission from a role will immediately hide that sidebar link for every user with that role. Any unsaved work they have open in that module will be lost when the page refreshes.
+</Warning></p>
+<h2 id="how-to-walk-through-a-permission-change-end-to-end">How to walk through a permission change end-to-end</h2>
+<p>Scenario: You want to give <code>referral_coordinator</code> read access to <strong>Billing</strong> so coordinators can see claim status without creating or editing claims.</p>
+<ol>
+<li>Navigate to <code>/administrator</code>.</li>
+<li>Find the <code>referral_coordinator</code> row and the <strong>Billing</strong> column.</li>
+<li>Click the toggle to enable it.</li>
+<li>In the Billing module's own settings (visible once access is on), confirm the role has read-only mode enforced — contact Medipyxis support if granular sub-module permissions are needed.</li>
+<li>Notify affected users that the Billing link is now visible in their sidebar.</li>
+</ol>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/admin/">Administrator Guide</a></li><li><a href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a></li><li><a href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-role-config-screen">The Role Config screen</a></li><li><a class="" href="#seeded-roles">Seeded roles</a></li><li><a class="" href="#module-permission-matrix">Module permission matrix</a></li><li><a class="" href="#toggle-a-permission">Toggle a permission</a></li><li><a class="" href="#clone-a-role-to-create-a-custom-variant">Clone a role to create a custom variant</a></li><li><a class="" href="#understanding-blast-radius">Understanding blast radius</a></li><li><a class="" href="#how-to-walk-through-a-permission-change-end-to-end">How to walk through a permission change end-to-end</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/admin/role-config.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/admin/role-config.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>

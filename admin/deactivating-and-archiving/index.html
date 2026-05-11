@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deactivate a facility, archive a patient, and disable a user — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="active">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Configure billing defaults and clearinghouse credentials</a><a class="sidebar-item" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item active" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
+      <h1>Deactivate a facility, archive a patient, and disable a user</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <p>Medipyxis distinguishes between deactivation (temporarily stopping operations) and archiving (long-term record retention). This page covers all three offboarding workflows and the correct order of operations for each.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You need <code>practice_admin</code> or <code>super_admin</code> role.</li>
+<li>Archiving a patient is irreversible from the UI; only Medipyxis support can unarchive.</li>
+<li>Never delete a patient record — archive instead (per platform policy MED-1692).</li>
+<li>Before deactivating a facility or disabling a user, reassign all open work first.</li>
+</ul>
+<h2 id="archive-a-patient-not-delete">Archive a patient (not delete)</h2>
+<p>Per MED-1692, patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.</p>
+<ol>
+<li>Navigate to <strong>Patient Management</strong> and open the patient's record.</li>
+<li>Click the <strong>Actions</strong> menu (three-dot icon at top-right of the patient card).</li>
+<li>Select <strong>Archive Patient</strong>.</li>
+<li>Enter the reason for archiving (required field — choose from the dropdown: <code>Deceased</code>, <code>No Longer a Patient</code>, <code>Duplicate Record</code>, <code>Other</code>).</li>
+<li>Click <strong>Confirm Archive</strong>.</li>
+</ol>
+<p><strong>Effect of archiving:</strong>
+- The patient record moves to an <strong>Archived</strong> filter state; they no longer appear in active patient lists or search results.
+- All historical visits, claims, and documents are retained and accessible to <code>super_admin</code> and <code>practice_admin</code> via the Archived filter.
+- Open referrals and pending claims associated with the patient are flagged for manual resolution before archiving completes. The system will not archive a patient with an unresolved claim in <code>Pending</code> or <code>Needs Info</code> status.</p>
+<p><Warning>
+Do not use <strong>Archive</strong> as a substitute for merging duplicate records. Use the <strong>Merge Patients</strong> workflow instead (Patient Management → Actions → Merge). Archiving a duplicate leaves two records; merging consolidates them.
+</Warning></p>
+<h2 id="deactivate-a-facility">Deactivate a facility</h2>
+<p>Deactivating a facility removes it from active scheduling, referral routing, and billing workflows. It does not delete any data.</p>
+<p><strong>Before deactivating:</strong>
+1. Reassign all open referrals to an active facility (<strong>Referral Intake</strong> → filter by facility → bulk reassign).
+2. Resolve or transfer all open claims (<strong>Billing → Claims</strong> → filter by facility).
+3. Notify all users assigned to this facility that they will lose access to facility-scoped screens.</p>
+<p><strong>Deactivation steps:</strong>
+1. Navigate to <strong>Facilities</strong> in the sidebar.
+2. Locate the facility row and confirm it shows <strong>Active</strong> in the STATUS column.
+3. Click <strong>Actions → Deactivate</strong>.
+4. Read the confirmation modal — it lists the count of open referrals and pending claims associated with the facility.
+5. If the counts are zero (or you have confirmed resolution), click <strong>Confirm Deactivate</strong>.</p>
+<p><img alt="Facilities list showing FACILITY, CONTACT, STATS, STATUS, and ACTIONS columns. Inactive facilities display a gray badge in the STATUS column." src="/medipyxis-help/assets/facilities/list.png" />
+<em>After deactivation, the facility's STATUS badge changes from Active (green) to Inactive (gray). The facility remains visible in the list for historical reference.</em></p>
+<p><strong>Reactivating:</strong> Click <strong>Actions → Activate</strong> at any time to restore the facility to active status. Users previously assigned to it regain access.</p>
+<h2 id="disable-a-user">Disable a user</h2>
+<p>Disabling a user prevents them from logging in without deleting their account or their activity history.</p>
+<p><strong>Before disabling:</strong>
+1. Reassign any open referrals or claims the user owns:
+   - <strong>Referral Intake</strong> → filter <strong>Assigned To</strong> by the departing user → bulk reassign.
+   - <strong>Billing → Work Queue</strong> → filter <strong>Assignee</strong> → reassign.
+2. Remove the user from any active Fleet Calendar routes scheduled in the future.</p>
+<p><strong>Disable steps:</strong>
+1. Navigate to <strong>HR &amp; Compliance → Facility Users</strong>.
+2. Find the user by name or email.
+3. Click <strong>Edit</strong> → toggle <strong>Account Status</strong> to <strong>Inactive</strong> → click <strong>Save</strong>.
+4. The user's active session is terminated within 60 seconds.</p>
+<p><strong>Effect:</strong>
+- The user cannot log in.
+- Their historical audit log entries, visit notes, and claim signatures are preserved unchanged.
+- Their name remains in the Assigned Clinician dropdowns so that historical records remain accurate; they appear as <code>(Inactive)</code> to indicate they cannot accept new work.</p>
+<p><Note>
+Disabling is preferable to deleting for departing employees. Deleted accounts remove the link between the user's identity and their historical actions, which breaks audit trail continuity.
+</Note></p>
+<h2 id="summary-of-offboarding-actions">Summary of offboarding actions</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Correct action</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Patient deceased or no longer active</td>
+<td>Archive (not delete)</td>
+<td>Patient Management → Actions</td>
+</tr>
+<tr>
+<td>Facility closing permanently</td>
+<td>Deactivate</td>
+<td>Facilities → Actions</td>
+</tr>
+<tr>
+<td>Employee leaving organization</td>
+<td>Disable (set Inactive)</td>
+<td>HR &amp; Compliance → Facility Users</td>
+</tr>
+<tr>
+<td>Duplicate patient record</td>
+<td>Merge, then archive the source</td>
+<td>Patient Management → Actions → Merge</td>
+</tr>
+</tbody>
+</table>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/admin/">Administrator Guide</a></li><li><a href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a></li><li><a href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#archive-a-patient-not-delete">Archive a patient (not delete)</a></li><li><a class="" href="#deactivate-a-facility">Deactivate a facility</a></li><li><a class="" href="#disable-a-user">Disable a user</a></li><li><a class="" href="#summary-of-offboarding-actions">Summary of offboarding actions</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/admin/deactivating-and-archiving.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/admin/deactivating-and-archiving.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>
