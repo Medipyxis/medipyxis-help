@@ -19,6 +19,14 @@ tags: [patients, records]
 
 Patient Management is your single-pane roster for every active and archived patient at the current facility. Patients land here once a referral graduates from **Assigned** in Referral Intake.
 
+<div class="video-embed">
+  <iframe src="https://www.youtube-nocookie.com/embed/4ogjS8RBJtQ"
+          title="Create Patients & Document Wound Encounters — Mobile Wound Care EMR Demo"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+</div>
+<span class="video-caption">Walkthrough: creating a patient and documenting a wound encounter end to end.</span>
+
 ## Two routes
 
 - **Patient Management** — the working list a clinician uses daily. Filtered to patients you have a visit or follow-up with.

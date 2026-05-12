@@ -22,6 +22,14 @@ tags: [inventory, IVR, insurance, prior authorization, biologics, graft, payer]
 
 Submit and monitor Insurance Verification Requests (IVRs) for high-cost graft products to ensure payer authorization is in place before a product is applied.
 
+<div class="video-embed">
+  <iframe src="https://www.youtube-nocookie.com/embed/E59K-nJgc-Q"
+          title="IVRs for Skin Substitutes: Submit & Track Insurance Verifications Without Spreadsheets"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+</div>
+<span class="video-caption">Submit and track IVRs for skin substitutes — no more spreadsheets.</span>
+
 ## Before you start
 
 - The product being ordered must already exist in the **Product Catalog** with a valid HCPCS code.

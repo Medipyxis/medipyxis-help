@@ -17,6 +17,14 @@ tags: [onboarding, dashboard]
 
 Your dashboard is the launchpad for everything you do in Medipyxis. It's personalized by role — a clinician sees different widgets than a practice admin.
 
+<div class="video-embed">
+  <iframe src="https://www.youtube-nocookie.com/embed/fgnhQH1QFi4"
+          title="Mobile Wound Care EMR Walkthrough: Platform Overview & Navigation"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+</div>
+<span class="video-caption">Platform overview and navigation tour — orient yourself to where things live in Medipyxis before diving in.</span>
+
 ## Anatomy of the dashboard
 
 ![Medipyxis dashboard](../assets/dashboard/home.png)

@@ -22,6 +22,14 @@ tags: [inventory, UIN, PAR, graft, biologics, IVR]
 
 Understand the eight functional areas of the Inventory Management module and the key terms that apply across all of them.
 
+<div class="video-embed">
+  <iframe src="https://www.youtube-nocookie.com/embed/dMsV07CNZjY"
+          title="Graft & Skin Substitute Inventory for Mobile Wound Care: Catalog + Receiving"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+</div>
+<span class="video-caption">Graft and skin substitute inventory tour: Product Catalog and Receiving workflow.</span>
+
 ![The Inventory Management hub showing eight tiles: Product Catalog, Amniotic / Advance Treatment, Biologics / Matrix, Conservative Care Products, IVR Tracking, Clinician Inventory View, Accounts Payable, and Main Inventory.](../../assets/inventory/inventory_hub.png)
 
 *Inventory Management hub. Each tile opens its dedicated workspace.*

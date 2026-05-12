@@ -19,6 +19,14 @@ tags: [CRM, practices, contacts, referrals]
 
 The CRM module is the central directory of referring practices and contacts. It tracks relationships, organizes outreach history, and feeds data to the Business Development dashboard.
 
+<div class="video-embed">
+  <iframe src="https://www.youtube-nocookie.com/embed/8bJ02pgQcZE"
+          title="Built-In CRM for Wound Care Practices: Manage Vendors, Reps & Referral Sources"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+</div>
+<span class="video-caption">Built-in CRM tour: managing vendors, reps, and referral sources without external tools.</span>
+
 ![CRM practices list showing tabs and practice cards](../../assets/crm/practices.png)
 
 *CRM practices list. Tabs across the top filter by relationship type or assignment.*
