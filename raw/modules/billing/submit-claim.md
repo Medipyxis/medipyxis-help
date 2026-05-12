@@ -20,7 +20,7 @@ tags: [billing, CMS-1500, claims, submission, 837P]
 
 # Submit a claim
 
-Walk through the **New Claim** form to create and submit a CMS-1500-based claim to the payer via the claim.md clearinghouse.
+Walk through the **New Claim** form to create and submit a CMS-1500-based claim to the payer via the Stedi clearinghouse (837P JSON).
 
 ## Before you start
 
@@ -117,7 +117,7 @@ The rendering provider NPI in §24J must match the NPI on file with the payer. S
 
 ## Result
 
-A new claim record appears in the **Claims** tab with status **Pending** (if you clicked **Save Draft**) or **Approved** (if you clicked **Save & Approve**). Approved claims are included in the next scheduled 837P export to claim.md and advance to **Exported**, then **Submitted** once the clearinghouse confirms transmission.
+A new claim record appears in the **Claims** tab with status **Pending** (if you clicked **Save Draft**) or **Approved** (if you clicked **Save & Approve**). Approved claims pass through the pre-submit audit gate and are submitted to Stedi as 837P JSON; they advance to **Exported** on submission and to **Submitted** when the Stedi `file.delivered` webhook arrives.
 
 <Note>
 Claims generated automatically from a completed visit appear in the Work Queue at **Pending** status. You do not need to create them manually — the New Claim form is for claims that need to be entered outside the normal visit workflow (e.g., corrected claims, late charges).
@@ -130,7 +130,7 @@ Claims generated automatically from a completed visit appear in the Work Queue a
 | **Save & Approve** button disabled | One or more required fields missing or invalid | Scroll through the form — required fields are outlined in red |
 | Payer rejects claim for NPI mismatch | Group NPI used in §24J instead of individual NPI | Update the rendering provider's NPI in HR & Compliance, then resubmit |
 | §28 Total Charge calculates as zero | No service lines added, or charge amounts left blank | Add at least one §24 line with a non-zero charge |
-| Claim stuck at **Exported** | claim.md credentials not configured or clearinghouse outage | Contact your administrator to verify claim.md credentials under **Superbill Config** |
+| Claim stuck at **Exported** | Stedi credentials missing, webhook not wired, or payer not enrolled | Have your administrator verify the Stedi setup in [Billing Setup](../../admin/billing-setup.md) and confirm payer enrollment is **Active** |
 
 ## Related
 

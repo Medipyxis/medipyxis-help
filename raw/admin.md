@@ -43,7 +43,7 @@ Medipyxis draws a deliberate line between **organization-level** settings and **
 - User invitations and assignments — **HR & Compliance → Facility Users**
 - Credential tracking, activity logs, bulk employee upload — **HR & Compliance**
 - Inventory PAR levels, product catalog, vendor relationships — **Inventory**
-- Superbill templates, fee schedules, Claim.MD credentials — **Billing**
+- Superbill templates, fee schedules, Stedi clearinghouse credentials and enrollment — **Billing**
 - Business hours, fax numbers, intake SLAs — **Facilities**
 
 This separation means a `super_admin` configures roles once for the whole organization, while a `practice_admin` handles the day-to-day settings within their assigned facility.
@@ -55,7 +55,7 @@ This separation means a `super_admin` configures roles once for the whole organi
 | [Facility Setup](./facility-setup.md) | How-to | First-week tasks: UUID, fax, business hours, intake SLAs, superbill defaults |
 | [User Management](./user-management.md) | How-to | Invite users, assign roles, bulk upload for 20+ employees |
 | [Role Config](./role-config.md) | Reference + How-to | Permission matrix, toggle permissions, clone roles |
-| [Billing Setup](./billing-setup.md) | How-to | Code Library, Fee Schedule, Claim.MD, ERA auto-post |
+| [Billing Setup](./billing-setup.md) | How-to | Code Library, Fee Schedule, Stedi credentials + enrollment, webhooks, ERA auto-post |
 | [Security & Compliance](./security-and-compliance.md) | Concept | HIPAA session settings, audit logs, MFA, BAAs |
 | [Data Import & Export](./data-import-export.md) | How-to | Bulk upload, ZusHealth sync, export referrals/claims, API keys |
 | [Deactivating & Archiving](./deactivating-and-archiving.md) | How-to | Deactivate a facility, archive a patient, reassign work |

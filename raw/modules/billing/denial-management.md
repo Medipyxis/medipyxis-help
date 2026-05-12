@@ -124,7 +124,7 @@ The **Denial Reasons** report in the Reports Center aggregates denial reasons by
 |---|---|---|
 | Denial not visible in Denials tab | ERA has not been posted yet | Check the **Payments (ERA)** tab; post the ERA first |
 | **Appeal Status** dropdown is read-only | Your role does not have edit access | Ask your practice administrator to verify your role permissions |
-| Denial shows **Fully Overturned** but no ERA payment received | Payer reprocessing is pending | Wait for the next ERA cycle; check claim.md for a pending 835 |
+| Denial shows **Fully Overturned** but no ERA payment received | Payer reprocessing is pending | Wait for the next ERA cycle; check the Stedi dashboard for a pending 835 |
 
 ## Related
 

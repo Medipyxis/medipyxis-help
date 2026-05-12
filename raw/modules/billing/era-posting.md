@@ -1,6 +1,6 @@
 ---
 id: billing-era-posting
-title: Post and reconcile ERAs from claim.md
+title: Post and reconcile ERAs from Stedi
 module: billing
 audience: [billing]
 roles: [biller, practice_admin, super_admin]
@@ -13,17 +13,17 @@ related:
   - billing-denial-management
   - billing-ar-aging
   - billing-submit-claim
-tags: [billing, ERA, payments, reconciliation, claim.md, 835]
+tags: [billing, ERA, payments, reconciliation, Stedi, 835]
 ---
 
-# Post and reconcile ERAs from claim.md
+# Post and reconcile ERAs from Stedi
 
-Review inbound Electronic Remittance Advice (ERA) files received from claim.md, confirm auto-posting results, and reconcile unmatched payments to their corresponding claims.
+Review inbound Electronic Remittance Advice (ERA / 835) files retrieved from Stedi, confirm auto-posting results, and reconcile unmatched payments to their corresponding claims.
 
 ## Before you start
 
-- Claims have been submitted through claim.md (status **Submitted**).
-- Your facility's claim.md credentials are configured under **Superbill Config**.
+- Claims have been submitted through Stedi (status **Submitted**).
+- Stedi credentials and the inbound webhook are configured — see [Billing Setup](../../admin/billing-setup.md).
 - You have the `biller`, `practice_admin`, or `super_admin` role.
 
 ## How ERA auto-posting works

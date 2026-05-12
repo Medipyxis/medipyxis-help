@@ -14,7 +14,7 @@ related:
   - billing-denial-management
   - billing-era-posting
   - billing-ar-aging
-tags: [billing, claims, ERA, CMS-1500, claim.md]
+tags: [billing, claims, ERA, CMS-1500, Stedi]
 ---
 
 # Billing Operations overview
@@ -37,10 +37,10 @@ Navigate to `/facility/{facility_uuid}/billing`. The module opens on four tabs:
 
 ## Clearinghouse integration
 
-Medipyxis connects to **claim.md** as the clearinghouse for both outbound 837P electronic claim submission and inbound ERA (835) auto-posting. Claims that have reached **Exported** status are transmitted to claim.md automatically; responses flow back into the **Payments (ERA)** tab without manual intervention.
+Medipyxis connects to **Stedi** as the clearinghouse for outbound 837P claim submission, 270/271 eligibility, 276/277 claim status, and inbound 835 ERA. Claims that have reached **Exported** status are transmitted to Stedi via the `submit-to-stedi` edge function; status updates flow back as **webhook events** (no polling) and post into the Work Queue and the **Payments (ERA)** tab without manual intervention. Stedi replaced ClaimMD in May 2026; historical ClaimMD claims remain queryable but no new submissions go to ClaimMD.
 
 <Note>
-Your organization must have claim.md credentials configured under **Superbill Config** before claims can be submitted electronically. Contact your practice administrator if claims are not advancing past **Exported**.
+Your organization must have Stedi credentials configured at the Supabase edge function level and payer enrollment in **Active** state before claims can be submitted electronically. See [Configure billing defaults and Stedi clearinghouse](../../admin/billing-setup.md). Contact your practice administrator if claims are not advancing past **Exported**.
 </Note>
 
 ## Claim status lifecycle
@@ -52,8 +52,8 @@ Every claim moves through a defined sequence of statuses. Understanding this lif
 | **Pending** | Claim has been created from a completed visit but has not yet been reviewed or approved. |
 | **Needs Info** | A required field is missing or a validation error must be resolved before the claim can advance. |
 | **Approved** | A biller or supervisor has reviewed the claim and marked it ready for submission. |
-| **Exported** | The claim file has been generated and transmitted to claim.md. |
-| **Submitted** | claim.md has confirmed receipt and forwarded the claim to the payer. |
+| **Exported** | The claim has been generated as a Stedi 837P JSON payload and submitted to Stedi. |
+| **Submitted** | Stedi has confirmed file delivery to the payer (`file.delivered` webhook). |
 | **Paid** | The payer has adjudicated the claim and an ERA has been received and posted. |
 
 <Compliance>
