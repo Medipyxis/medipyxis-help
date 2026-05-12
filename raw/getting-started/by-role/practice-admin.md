@@ -78,7 +78,7 @@ Full guide: [Referral Intake: Setup](../../modules/referral-intake/setup.md)
 ## Step 6 — Wire billing (10 min)
 
 1. Open **Billing Operations → Clearinghouse Config** (gear icon, top-right).
-2. Confirm your Stedi clearinghouse setup (credentials are stored as Supabase edge function secrets; see [Billing Setup](../../admin/billing-setup.md)) and verify the webhook is delivering events. Stedi replaced ClaimMD in May 2026.
+2. Medipyxis uses **Stedi** as the clearinghouse (replaced ClaimMD in May 2026) and handles the connection for you. Your job is to **enroll your providers with each payer** under **Billing → Enrollment** — see [Set up billing and the Stedi clearinghouse](../../admin/billing-setup.md).
 3. Upload your fee schedule: **Client Fee Schedule** tab. Use the CSV template for bulk.
 
 Full guide: [Billing: Clearinghouse & fee schedule](../../admin/billing-setup.md)

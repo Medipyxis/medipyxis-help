@@ -82,9 +82,9 @@
 <p><img alt="Billing Operations landing page showing the four tabs and KPI summary" src="/medipyxis-help/assets/billing/billing_01_landing.png" />
 <em>The Billing Operations landing page. The </em><em>Overview</em><em> tab is active by default.</em></p>
 <h2 id="clearinghouse-integration">Clearinghouse integration</h2>
-<p>Medipyxis connects to <strong>Stedi</strong> as the clearinghouse for outbound 837P claim submission, 270/271 eligibility, 276/277 claim status, and inbound 835 ERA. Claims that have reached <strong>Exported</strong> status are transmitted to Stedi via the <code>submit-to-stedi</code> edge function; status updates flow back as <strong>webhook events</strong> (no polling) and post into the Work Queue and the <strong>Payments (ERA)</strong> tab without manual intervention. Stedi replaced ClaimMD in May 2026; historical ClaimMD claims remain queryable but no new submissions go to ClaimMD.</p>
+<p>Medipyxis connects to <strong>Stedi</strong> as the clearinghouse for electronic claim submission (837P), eligibility checks (270/271), claim status (276/277), and remittance advice (835). Claims that reach <strong>Exported</strong> status are sent to Stedi automatically; status updates flow back into the Work Queue and the <strong>Payments (ERA)</strong> tab in real time, without polling. Stedi replaced ClaimMD in May 2026 — historical ClaimMD claims remain visible for reference, but all new submissions go through Stedi.</p>
 <p><Note>
-Your organization must have Stedi credentials configured at the Supabase edge function level and payer enrollment in <strong>Active</strong> state before claims can be submitted electronically. See <a href="/medipyxis-help/admin/billing-setup/">Configure billing defaults and Stedi clearinghouse</a>. Contact your practice administrator if claims are not advancing past <strong>Exported</strong>.
+Your providers must be enrolled with each payer through Stedi before claims can flow. See <a href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a>. Contact your practice administrator if claims are not advancing past <strong>Exported</strong>.
 </Note></p>
 <h2 id="claim-status-lifecycle">Claim status lifecycle</h2>
 <p>Every claim moves through a defined sequence of statuses. Understanding this lifecycle helps you prioritize work and identify bottlenecks.</p>
@@ -110,11 +110,11 @@ Your organization must have Stedi credentials configured at the Supabase edge fu
 </tr>
 <tr>
 <td><strong>Exported</strong></td>
-<td>The claim has been generated as a Stedi 837P JSON payload and submitted to Stedi.</td>
+<td>The claim has been sent to Stedi.</td>
 </tr>
 <tr>
 <td><strong>Submitted</strong></td>
-<td>Stedi has confirmed file delivery to the payer (<code>file.delivered</code> webhook).</td>
+<td>Stedi has confirmed delivery to the payer.</td>
 </tr>
 <tr>
 <td><strong>Paid</strong></td>

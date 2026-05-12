@@ -117,7 +117,7 @@ The rendering provider NPI in §24J must match the NPI on file with the payer. S
 
 ## Result
 
-A new claim record appears in the **Claims** tab with status **Pending** (if you clicked **Save Draft**) or **Approved** (if you clicked **Save & Approve**). Approved claims pass through the pre-submit audit gate and are submitted to Stedi as 837P JSON; they advance to **Exported** on submission and to **Submitted** when the Stedi `file.delivered` webhook arrives.
+A new claim record appears in the **Claims** tab with status **Pending** (if you clicked **Save Draft**) or **Approved** (if you clicked **Save & Approve**). Approved claims pass through the pre-submit audit gate and are sent to Stedi automatically; they advance to **Exported** on submission, and to **Submitted** once Stedi confirms delivery to the payer.
 
 <Note>
 Claims generated automatically from a completed visit appear in the Work Queue at **Pending** status. You do not need to create them manually — the New Claim form is for claims that need to be entered outside the normal visit workflow (e.g., corrected claims, late charges).

@@ -42,7 +42,7 @@ Fleet Calendar uses **specialty routing**: clicking **Start Visit** sends wound 
 
 V4 replaces the prior 17-step flow with **14 Medicare-LCD-blocking sections** that mirror the structure auditors expect. Notable changes:
 
-- **3-minute autosave** plus per-section save through an edge function — drafts survive browser crashes and network drops.
+- **3-minute autosave** plus per-section save — drafts survive browser crashes and network drops.
 - **Clinical history carry-forward** — comorbidities, allergies, prior treatments, and historic measurements pre-populate from the prior visit.
 - **LCD Navigator V2 ambient badge** — real-time Medicare compliance status, always visible at the top of the wizard. See [LCD Navigator](./lcd-navigator.md).
 - **Procedure & Supplies unified** — a single source of truth replaces the older procedure-and-supplies split.
@@ -82,7 +82,7 @@ Section numbering reflects the new V4 structure. Some training material may stil
 
 ## Autosave and section drafts
 
-The Visit Wizard auto-saves your work every **3 minutes**, and **each section saves independently through an edge function** as you advance. A timestamp confirms when the last save occurred. Draft visits appear on the **Fleet Calendar** with the status `Draft Saved`.
+The Visit Wizard auto-saves your work every **3 minutes**, and **each section saves independently** as you advance. A timestamp confirms when the last save occurred. Draft visits appear on the **Fleet Calendar** with the status `Draft Saved`.
 
 <Warning>
 Closing the browser tab without saving may lose changes made since the last 3-minute autosave cycle. If you are about to navigate away mid-section, click **Save Draft** in the top toolbar first.

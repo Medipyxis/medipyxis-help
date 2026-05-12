@@ -123,7 +123,7 @@ IVR auto-populate uses wound, comorbidity, and protocol data. Always review the 
 The cockpit's primary CTA is **Start Visit** (or **Continue Visit** if a draft exists for today).
 
 - **Start Visit** opens the Visit Wizard V4 with this wound pre-selected in section 7.
-- **Continue Visit** opens the wizard at the last unsaved section. Drafts auto-save every 3 minutes and per-section through an edge function — see [Visit Wizard V4 overview](./overview.md).
+- **Continue Visit** opens the wizard at the last unsaved section. Drafts auto-save every 3 minutes and per-section — see [Visit Wizard V4 overview](./overview.md).
 
 For initial evaluations, the wizard automatically picks the **Initial** visit type and prompts for full clinical history; for follow-ups, the **Follow-up** type is preselected and clinical history carries forward.
 
