@@ -57,7 +57,7 @@ When a referral card moves into the **Assigned** column in Referral Intake, it b
 
 Clicking **Start Visit** on an appointment routes by the patient's care specialty (selected during intake):
 
-- **Wound care** patients land in the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), then the [Visit Wizard V4](../visit-wizard-ehr/overview.md).
+- **Wound care** patients land in the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), then the [Visit Wizard](../visit-wizard-ehr/overview.md).
 - **Primary care** patients land in the PCP Cockpit, then the PCP Visit Wizard.
 
 Provider filters and the **Same-day** scheduling action also live in the Fleet Calendar; same-day appointments respect the dynamic scheduling horizon configured by your practice admin.

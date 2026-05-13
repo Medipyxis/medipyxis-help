@@ -1,6 +1,6 @@
 ---
 id: visit-wizard-ehr-start-a-visit
-title: Walk through a visit in the Visit Wizard V4
+title: Walk through a visit in the Visit Wizard
 module: visit-wizard-ehr
 audience: [clinician]
 roles: [nurse, np, md]
@@ -17,12 +17,12 @@ related:
   - visit-wizard-ehr-sign-off
 prerequisites:
   - visit-wizard-ehr-overview
-tags: [visit-wizard, V4, autosave, ABI, AI-drafting, procedure-supplies]
+tags: [visit-wizard, autosave, ABI, AI-drafting, procedure-supplies]
 ---
 
-# Walk through a visit in the Visit Wizard V4
+# Walk through a visit in the Visit Wizard
 
-Open the Visit Wizard V4 from the Fleet Calendar or the Wound Cockpit, confirm the patient context, and work the 14 Medicare-LCD-blocking sections end-to-end. This guide covers the full happy path, plus the new V4 behaviors: 3-minute autosave, clinical history carry-forward, the LCD ambient badge, the ABI gate, unified Procedure & Supplies, AI-assisted drafting, and Medical Necessity Statement.
+Open the Visit Wizard from the Fleet Calendar or the Wound Cockpit, confirm the patient context, and work the 14 Medicare-LCD-blocking sections end-to-end. This guide covers the full happy path, plus the wizard's core behaviors: 3-minute autosave, clinical history carry-forward, the LCD ambient badge, the ABI gate, unified Procedure & Supplies, AI-assisted drafting, and Medical Necessity Statement.
 
 ## Before you start
 
@@ -194,7 +194,7 @@ On save, a **tissue log** entry is written and inventory is deducted automatical
 
    ![LCD Audit & Review screen](../../assets/visit-wizard/09_lcd_audit_review.png)
 
-   *Step 14 opens the LCD Navigator V2 final review. Items requiring action are highlighted in amber.*
+   *Step 14 opens the LCD Navigator final review. Items requiring action are highlighted in amber.*
 
 2. Resolve any remaining amber items by jumping to the linked section, fixing the data, and returning.
 3. Once all items are green, complete **Provider Attestation**: read the attestation sentence, sign on the signature pad, and click **Attest & Sign**.

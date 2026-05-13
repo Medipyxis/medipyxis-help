@@ -18,7 +18,7 @@ tags: [wound-cockpit, where-this-wound-is-at, case-manager-readiness, wound-time
 
 # Wound Cockpit overview
 
-The Wound Cockpit is the per-wound hub for everything that happens between visits. It sits in front of the Visit Wizard V4: when a clinician taps **Start Visit** for a wound care patient, Fleet Calendar's specialty routing lands them here first, not directly in the wizard.
+The Wound Cockpit is the per-wound hub for everything that happens between visits. It sits in front of the Visit Wizard: when a clinician taps **Start Visit** for a wound care patient, Fleet Calendar's specialty routing lands them here first, not directly in the wizard.
 
 The cockpit answers four questions at a glance:
 
@@ -31,7 +31,7 @@ The cockpit answers four questions at a glance:
 
 - You are working from the patient chart of a wound care patient.
 - The wound record exists. New wounds are created during intake or via the **Add wound** flow in the mobile app.
-- For follow-up visits, the prior visit's data carries forward into the next encounter — see [Visit Wizard V4 overview](./overview.md).
+- For follow-up visits, the prior visit's data carries forward into the next encounter — see [Visit Wizard overview](./overview.md).
 
 ---
 
@@ -122,8 +122,8 @@ IVR auto-populate uses wound, comorbidity, and protocol data. Always review the 
 
 The cockpit's primary CTA is **Start Visit** (or **Continue Visit** if a draft exists for today).
 
-- **Start Visit** opens the Visit Wizard V4 with this wound pre-selected in section 7.
-- **Continue Visit** opens the wizard at the last unsaved section. Drafts auto-save every 3 minutes and per-section — see [Visit Wizard V4 overview](./overview.md).
+- **Start Visit** opens the Visit Wizard with this wound pre-selected in section 7.
+- **Continue Visit** opens the wizard at the last unsaved section. Drafts auto-save every 3 minutes and per-section — see [Visit Wizard overview](./overview.md).
 
 For initial evaluations, the wizard automatically picks the **Initial** visit type and prompts for full clinical history; for follow-ups, the **Follow-up** type is preselected and clinical history carries forward.
 

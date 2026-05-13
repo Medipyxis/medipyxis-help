@@ -87,11 +87,11 @@ The wizard captures every field Medicare LCD policy needs to make the visit bill
 | 16 | **LCD Audit** | Medicare LCD compliance check for the visit. Any failed criterion blocks sign-off — fix it before continuing. |
 | 17 | **Provider Attestation & Signature** | Final review of the generated narrative and your electronic signature. |
 
-Detailed wizard walkthrough: [Visit Wizard V4 — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md).
+Detailed wizard walkthrough: [Visit Wizard — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md).
 Wound assessment specifics: [Wound assessment](../../modules/visit-wizard-ehr/wound-assessment.md).
 
 <Compliance>
-The **LCD Navigator V2** check runs in real time across every wound-care visit. If a required CMS criterion for the selected treatment isn't met, the badge turns red, the wizard blocks sign-off, and the LCD Dojo tile tells you exactly which field to fix. This is the difference between a billable note and a denied claim.
+The **LCD Navigator** check runs in real time across every wound-care visit. If a required CMS criterion for the selected treatment isn't met, the badge turns red, the wizard blocks sign-off, and the LCD Dojo tile tells you exactly which field to fix. This is the difference between a billable note and a denied claim.
 </Compliance>
 
 ## Step 4 — Send the note and finalize (10 min)
@@ -114,7 +114,7 @@ After Step 17 is complete, three save-state actions appear at the bottom of the 
 
 ## Next up
 
-- [Visit Wizard V4 — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md)
-- [LCD Navigator V2 — compliance guide](../../modules/visit-wizard-ehr/lcd-navigator.md)
+- [Visit Wizard — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md)
+- [LCD Navigator — compliance guide](../../modules/visit-wizard-ehr/lcd-navigator.md)
 - [Work offline](../../modules/visit-wizard-ehr/work-offline.md)
 - [Add a photo later (addendum)](../../modules/visit-wizard-ehr/sign-off.md)

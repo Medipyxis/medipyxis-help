@@ -1,6 +1,6 @@
 ---
 id: visit-wizard-ehr-lcd-navigator
-title: Use the LCD Navigator V2 (ambient badge, Dojo tiles, copy bank)
+title: Use the LCD Navigator (ambient badge, Dojo tiles, copy bank)
 module: visit-wizard-ehr
 audience: [clinician]
 roles: [nurse, np, md, medical_director]
@@ -16,16 +16,16 @@ related:
 prerequisites:
   - visit-wizard-ehr-start-a-visit
   - visit-wizard-ehr-wound-assessment
-tags: [LCD, V2, Medicare, compliance, ambient-badge, Dojo, copy-bank, NPWT, compression, offloading]
+tags: [LCD, Medicare, compliance, ambient-badge, Dojo, copy-bank, NPWT, compression, offloading]
 ---
 
-# Use the LCD Navigator V2
+# Use the LCD Navigator
 
-The LCD Navigator V2 is Medipyxis's embedded Medicare Local Coverage Determination guardrail. Unlike V1, which ran only at the final audit step, V2 is **ambient**: a real-time badge sits at the top of the Visit Wizard, refreshes on every save, and gives clinicians actionable guidance throughout the encounter — not just at sign-off.
+The LCD Navigator is Medipyxis's embedded Medicare Local Coverage Determination guardrail. It is **ambient**: a real-time badge sits at the top of the Visit Wizard, refreshes on every save, and gives clinicians actionable guidance throughout the encounter — not only at sign-off.
 
 ## Before you start
 
-- You are inside the Visit Wizard V4 for an active encounter.
+- You are inside the Visit Wizard for an active encounter.
 - You understand the LCD Navigator cross-references documentation in real time against Medicare LCD requirements. It does not replace clinical judgment or your medical director's compliance review.
 
 <Compliance>
@@ -46,7 +46,7 @@ The LCD ambient badge appears at the top of every section in the Visit Wizard. I
 
 ![LCD ambient badge with auto-populated checklist items](../../assets/visit-wizard/09_lcd_audit_review.png)
 
-*The LCD Navigator V2 panel — items auto-populated from prior sections are pre-checked; items requiring action are highlighted in amber.*
+*The LCD Navigator panel — items auto-populated from prior sections are pre-checked; items requiring action are highlighted in amber.*
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 id: referral-intake-intake-wizard
-title: Intake Wizard V3 Walkthrough
+title: Intake Wizard Walkthrough
 module: referral-intake
 audience: [office_staff, admin]
 roles: [office_staff, practice_admin, super_admin]
@@ -18,9 +18,9 @@ prerequisites:
 tags: [intake, referral, patient-onboarding, eligibility, stedi]
 ---
 
-# Intake Wizard V3 Walkthrough
+# Intake Wizard Walkthrough
 
-Convert a referral card into a complete patient record ready for scheduling using Intake Wizard V3.
+Convert a referral card into a complete patient record ready for scheduling using the Intake Wizard.
 
 ## Before you start
 
@@ -113,7 +113,7 @@ Confirm the free-text reason for referral pulled from the referral card. Edit if
 
 Select the care specialty that will drive scheduling and visit type:
 
-- **Wound Care** — routes to the **Wound Cockpit** and **Visit Wizard V4** at first visit.
+- **Wound Care** — routes to the **Wound Cockpit** and **Visit Wizard** at first visit.
 - **Primary Care** — routes to the **PCP Cockpit** and **PCP Visit Wizard** at first visit.
 
 <Note>Patients can carry both specialties. If this patient will see both a wound provider and a PCP, select the primary specialty here and add the secondary specialty after intake from the patient record.</Note>

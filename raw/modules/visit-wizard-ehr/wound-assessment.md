@@ -20,10 +20,10 @@ tags: [wound-assessment, EHR, measurements, tissue, exudate, LCD, Medicare, phot
 
 # Complete the Wound Assessment (section 7)
 
-Document all active wounds in section 7 of the Visit Wizard V4, capturing anatomy, measurements, **tissue percentages by wound**, **precise anatomical location**, exudate, pain, and photos needed for Medicare LCD compliance and longitudinal wound tracking.
+Document all active wounds in section 7 of the Visit Wizard, capturing anatomy, measurements, **tissue percentages by wound**, **precise anatomical location**, exudate, pain, and photos needed for Medicare LCD compliance and longitudinal wound tracking.
 
 <Note>
-In V4 the merged section 8 (Historic Measurements + Previous Treatments) is where the **ABI gate** triggers — if you intend to order compression, ABI must be on file before you can advance. See [Visit Wizard V4 overview](./overview.md).
+The merged section 8 (Historic Measurements + Previous Treatments) is where the **ABI gate** triggers — if you intend to order compression, ABI must be on file before you can advance. See [Visit Wizard overview](./overview.md).
 </Note>
 
 ## Before you start
@@ -51,7 +51,7 @@ In V4 the merged section 8 (Historic Measurements + Previous Treatments) is wher
    | Field | Details |
    |---|---|
    | **Wound #** | Auto-assigned; read-only for existing wounds |
-   | **Anatomic Location** | Editable, precise anatomic site (for example, `Right lateral malleolus`). The location field is now editable per-wound in V4. |
+   | **Anatomic Location** | Editable, precise anatomic site (for example, `Right lateral malleolus`). The location field is editable per-wound. |
    | **Laterality** | `L` (Left) · `R` (Right) · `B` (Bilateral) |
    | **Onset Date** | Calendar picker |
    | **Duration (weeks)** | Auto-calculated from Onset Date; editable |

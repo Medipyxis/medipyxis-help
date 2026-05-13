@@ -1,6 +1,6 @@
 ---
 id: visit-wizard-ehr-overview
-title: Visit Wizard V4 overview
+title: Visit Wizard overview
 module: visit-wizard-ehr
 audience: [clinician]
 roles: [nurse, np, md, medical_director]
@@ -15,16 +15,16 @@ related:
   - visit-wizard-ehr-wound-cockpit
   - visit-wizard-ehr-work-offline
   - visit-wizard-ehr-sign-off
-tags: [visit-wizard, V4, EHR, LCD, Medicare, autosave, AI-drafting, ABI]
+tags: [visit-wizard, EHR, LCD, Medicare, autosave, AI-drafting, ABI]
 ---
 
-# Visit Wizard V4 overview
+# Visit Wizard overview
 
-The Visit Wizard V4 is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **14 Medicare-LCD-blocking sections** — from consent to provider attestation — enforcing documentation completeness, real-time LCD compliance, and clean billing-code generation before a note can be signed.
+The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **14 Medicare-LCD-blocking sections** — from consent to provider attestation — enforcing documentation completeness, real-time LCD compliance, and clean billing-code generation before a note can be signed.
 
-![Visit Wizard V4 section navigator and patient header](../../assets/visit-wizard/03_visit_wizard_overview.png)
+![Visit Wizard section navigator and patient header](../../assets/visit-wizard/03_visit_wizard_overview.png)
 
-*The Visit Wizard V4 section navigator. Each section must be completed in order; completed sections display a checkmark, and the active section is highlighted.*
+*The Visit Wizard section navigator. Each section must be completed in order; completed sections display a checkmark, and the active section is highlighted.*
 
 ---
 
@@ -38,13 +38,13 @@ Fleet Calendar uses **specialty routing**: clicking **Start Visit** sends wound 
 
 ---
 
-## What changed in V4
+## How the Visit Wizard is structured
 
-V4 replaces the prior 17-step flow with **14 Medicare-LCD-blocking sections** that mirror the structure auditors expect. Notable changes:
+The Visit Wizard uses **14 Medicare-LCD-blocking sections** that mirror the structure auditors expect. Notable behaviors:
 
 - **3-minute autosave** plus per-section save — drafts survive browser crashes and network drops.
 - **Clinical history carry-forward** — comorbidities, allergies, prior treatments, and historic measurements pre-populate from the prior visit.
-- **LCD Navigator V2 ambient badge** — real-time Medicare compliance status, always visible at the top of the wizard. See [LCD Navigator](./lcd-navigator.md).
+- **LCD Navigator ambient badge** — real-time Medicare compliance status, always visible at the top of the wizard. See [LCD Navigator](./lcd-navigator.md).
 - **Procedure & Supplies unified** — a single source of truth replaces the older procedure-and-supplies split.
 - **ABI gate for compression** — compression therapy cannot be selected until an ankle-brachial index value is documented.
 - **AI-assisted drafting** — generate section text from structured data, with guardrails and a one-time AI Disclaimer acknowledgment.
@@ -72,10 +72,10 @@ V4 replaces the prior 17-step flow with **14 Medicare-LCD-blocking sections** th
 | 11 | **Orders, DME & Patient Education** | Scripts, DME, handout selection, teach-back (`Y/N`). |
 | 12 | **Procedure & Supplies** *(unified)* | Graft SKU + UIN scanner, wastage calculation, **Generate Procedure Note**, auto-mapped to billing codes. |
 | 13 | **Billing & Documentation** | Deterministic CPT autocode with AI fallback, E/M level, modifiers (`25`, `59`, `KX`, `JW`, `JZ`), POS code, **Medical Necessity Statement**, **BillingLine provenance** (deterministic vs. AI). |
-| 14 | **LCD Audit & Provider Attestation** | LCD Navigator V2 final review — see [LCD Navigator](./lcd-navigator.md) — followed by ESIGN/UETA/CMS/HIPAA attestation. See [Sign Off](./sign-off.md). |
+| 14 | **LCD Audit & Provider Attestation** | LCD Navigator final review — see [LCD Navigator](./lcd-navigator.md) — followed by ESIGN/UETA/CMS/HIPAA attestation. See [Sign Off](./sign-off.md). |
 
 <Note>
-Section numbering reflects the new V4 structure. Some training material may still reference the older 17-step flow — the section content is equivalent, but the grouping is tighter and the LCD audit is now ambient throughout, not only at the end.
+Some older training material may still reference a 17-step flow — the section content is equivalent, but the grouping is tighter and the LCD audit runs ambient throughout, not only at the end.
 </Note>
 
 ---
@@ -92,7 +92,7 @@ Closing the browser tab without saving may lose changes made since the last 3-mi
 
 ## Clinical history carry-forward
 
-When you open a follow-up visit, V4 pre-populates the following from the prior visit:
+When you open a follow-up visit, the wizard pre-populates the following from the prior visit:
 
 - Review of Systems answers
 - Comorbidities
@@ -105,7 +105,7 @@ Always review pre-populated values — carry-forward is a starting point, not a 
 
 ---
 
-## LCD Navigator V2 (ambient)
+## LCD Navigator (ambient)
 
 The LCD ambient badge is visible at the top of every section. It refreshes on every save and tells you, in real time, whether the current encounter is on track to pass Medicare LCD review.
 
@@ -184,7 +184,7 @@ The final section captures the rendering provider's electronic signature under t
 ## Related modules
 
 - [Wound Cockpit](./wound-cockpit.md) — the pre-visit and between-visit hub for each wound.
-- [LCD Navigator V2](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
+- [LCD Navigator](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
 - [Work Offline](./work-offline.md) — offline document and sync behavior.
 

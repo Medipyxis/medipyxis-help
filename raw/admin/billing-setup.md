@@ -45,10 +45,10 @@ The **Code Library** is your master list of CPT, HCPCS, and ICD-10 codes.
 3. Enter the code, description, default units, and whether a modifier is required (`25`, `59`, `KX`, `JW`, `JZ`).
 4. Click **Save**.
 
-Codes you add here appear in the CPT picker inside Visit Wizard V4 (section 13 — Billing & Documentation) and on the New Claim form.
+Codes you add here appear in the CPT picker inside Visit Wizard (section 13 — Billing & Documentation) and on the New Claim form.
 
 <Compliance>
-HCPCS codes for skin substitutes must match the product's HCPCS in the Inventory Product Catalog. Mismatches are flagged by the [LCD Navigator V2](../modules/visit-wizard-ehr/lcd-navigator.md).
+HCPCS codes for skin substitutes must match the product's HCPCS in the Inventory Product Catalog. Mismatches are flagged by the [LCD Navigator](../modules/visit-wizard-ehr/lcd-navigator.md).
 </Compliance>
 
 ---

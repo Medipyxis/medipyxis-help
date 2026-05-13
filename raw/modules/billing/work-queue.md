@@ -25,7 +25,7 @@ The Billing Work Queue is the biller's daily home. It receives clean claims thro
 
 - You have the `biller` role, or `practice_admin` / `super_admin`.
 - Visits have been attested by the rendering provider; only attested visits flow into the queue.
-- You are familiar with the Visit Wizard V4's CPT autocode and provenance behavior — see [Visit Wizard V4 overview](../visit-wizard-ehr/overview.md).
+- You are familiar with the Visit Wizard's CPT autocode and provenance behavior — see [Visit Wizard overview](../visit-wizard-ehr/overview.md).
 
 ---
 
@@ -139,7 +139,7 @@ Approved claims do not go straight to the clearinghouse. They first pass through
 
 | Check | What it does |
 |---|---|
-| **LCD compliance snapshot** | Confirms the LCD Navigator V2 final state at attestation was green. |
+| **LCD compliance snapshot** | Confirms the LCD Navigator final state at attestation was green. |
 | **Coverage on date of service** | Re-verifies primary coverage was active on the visit date. |
 | **Filing deadlines** | Calculates remaining days against the payer's timely-filing limit and warns if under 30 days. |
 | **Duplicate detection** | Flags claims that overlap with another claim already in flight for the same encounter. |
@@ -198,11 +198,11 @@ Claims in the 120+ aging bucket may have passed payer timely-filing limits. Befo
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Claim not appearing in queue | Failed the New Claims gate, or assigned to another biller | Open the source visit in Visit Wizard V4 and inspect the gate result; or clear the **Assignee** filter. |
+| Claim not appearing in queue | Failed the New Claims gate, or assigned to another biller | Open the source visit in Visit Wizard and inspect the gate result; or clear the **Assignee** filter. |
 | **Approve** button disabled | One or more required fields still missing | Scroll through the claim detail — red fields indicate what remains. |
 | Provenance chip shows `Contains AI` for a routine debridement | Deterministic engine returned zero rows; AI fallback engaged | Cross-check the line; if the deterministic rule should have matched, file a bug. |
 | Drift badge present | Tissue log quantities don't match billing units | Open the linked tissue log entries; reconcile or document wastage on the line. |
-| Pre-submit audit gate flags LCD non-compliant | LCD Navigator V2 was not green at attestation | Send the encounter back to the provider for an addendum that resolves the LCD item. |
+| Pre-submit audit gate flags LCD non-compliant | LCD Navigator was not green at attestation | Send the encounter back to the provider for an addendum that resolves the LCD item. |
 | Stedi rejection on submitted claim | Payer-specific edit not covered by NCCI/MUE | Open the rejection detail, correct, resubmit. |
 | Denial Reason column is blank for a denied claim | Denial not yet entered in the Denials tab | Navigate to **Denials** and triage the denial first. |
 
