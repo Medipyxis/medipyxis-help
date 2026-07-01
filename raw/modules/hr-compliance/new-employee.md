@@ -3,10 +3,10 @@ id: hr-compliance-new-employee
 title: Add a new employee
 module: hr-compliance
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin, clinical_manager]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/hr
 related:
   - hr-compliance-overview
@@ -16,61 +16,55 @@ tags: [HR, onboarding, employee, access]
 
 # Add a new employee
 
-Use the New Employee Onboarding wizard to create an account, set role permissions, and assign required training for a new hire.
+Create a user account and set up access from a single New Employee form. Provider-specific fields appear automatically when you assign a clinical role.
 
 ## Before you start
 
-- You have the employee's legal name, email address, and phone number.
-- You know which facility they will be assigned to and which role they will hold.
-- You have reviewed your organization's credentialing requirements for the role.
+- You have the employee's legal name, email, and phone number.
+- You know which role they will hold and which facility (or facilities) they will work at.
+- For providers, you have their credentialing details (NPI, license, DEA, taxonomy) on hand.
 
 ## Steps
 
-The wizard has three sequential steps. You must complete each step before advancing.
-
-### Step 1 — Personal Info
-
 1. **Open HR & Compliance.** Click **HR & Compliance** in the sidebar.
-2. **Click New Employee Onboarding.**
-3. **Click + New Employee.**
+2. **Click New Employee Onboarding**, then start a new employee. The form opens as a single page — there is no multi-step wizard.
 
-   ![New Employee Onboarding form — Personal Info step](../../assets/hr/new-employee.png)
+   ![New Employee form — basic information](../../assets/hr/new-employee.png)
 
-   *Step 1 of the New Employee wizard — Personal Info.*
+   *The New Employee form. Provider fields appear when a clinical role is selected.*
 
-4. **Enter personal details:** First Name, Last Name, Date of Birth, Phone, Email, and Home Address.
-5. **Upload a photo** (optional). Appears on the employee's profile card and provider lists.
-6. **Click Next** to advance to Step 2.
-
-### Step 2 — Role & Assignment
-
-7. **Select the Role.** Choose from the seeded role list: `clinician`, `intake_coordinator`, `biller`, `bd_rep`, `bd_manager`, `medical_director`, or others configured by your organization.
-8. **Assign Facility.** Select the facility (or multiple facilities) this employee will work at. Access is scoped to assigned facilities only.
-9. **Set Start Date.** This determines when the account becomes active.
-10. **Click Next.**
-
-### Step 3 — Onboarding & Training
-
-11. **Assign Education Bundles.** Select one or more training bundles from the list. Required bundles for the selected role may be pre-checked based on your org's configuration.
-12. **Set Training Due Date.** Enter the deadline by which all assigned bundles must be completed.
-13. **Add Credential Requirements** (optional). If the role requires license or cert tracking, add the credential types now — they appear immediately in the Credential Tracker.
-14. **Click Save & Send Invite.** Medipyxis sends the employee a welcome email with a link to set their password and access their assigned training.
+3. **Fill in Basic Info:**
+   - **First Name**, **Last Name**, **Email**, **Phone**
+   - **Job Title**, **Role**, **Manager**
+   - **Status**, **Date of Birth**, **Onboarding Date**
+   - **Preferred Language**, **Timezone**
+   - **NPI** (for providers)
+4. **Assign facilities.** Select one or more facilities under **Facility** — the employee's access is scoped to the facilities you assign, and you can assign several at once.
+5. **Choose the Role.** Pick from the real role set: `admin`, `clinical_manager`, `medical_director`, `clinician`, `referral_coordinator`, `bd_rep`, `bd_manager`, `finance_ap`, or `vendor_coordinator`.
+6. **Complete Provider Details (providers/clinicians only).** When the role is a clinical one, additional fields appear:
+   - **Profession Title** (NP, PA, MD, DO, DPM, RN, LPN, LVN), **Print Name**, **Initials**
+   - Mailing **Address**, **Primary Service Location**, **Specialty** and **Specialty Code**
+   - **Group NPI**, **UPIN**, **State License**, **DEA Number** with active/termination dates
+   - **Tax ID** and type, **Taxonomy Code**, **Organization Type**, **Billing Facility Name**, **Network Affiliation**
+   - **Is Resident** / **Is Care Manager** toggles, and a **Signature** upload
+7. **Mark onboarding items.** Toggle **Welcome Call Completed** once the initial onboarding call has been made.
+8. **Save.** The account is created (via the admin user-creation service) with a `user_facility_role` for each facility you assigned.
 
 ## Result
 
-The new employee record appears in **Facility Users** with **Pending Activation** status until they complete sign-up. Their education bundle assignments appear in **Education Bundle Management** and their credentials in **Credential Tracker**.
+The new employee appears in **Facility Users** for each assigned facility, with the role you selected. Assign any required license/certification tracking separately in the [Credential Tracker](./credential-tracker.md), and assign training in **Education Bundle Management**.
 
-<Warning>
-Do not share the welcome email link. It contains a single-use token. If the link expires (72 hours), resend it from the employee's record in Facility Users.
-</Warning>
+<Note>
+Education bundles are assigned in **Education Bundle Management**, not on the new-employee form. There is no automated pre-start welcome email — use the **Welcome Call Completed** toggle to record onboarding contact.
+</Note>
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Email already in use | Employee has an account at another facility | Use **Facility Users** → **Assign to Facility** instead of creating a new employee |
-| Next button disabled | Required field missing | Review red-highlighted fields on the current step |
-| Invite not received | Spam filter | Ask employee to check their junk/spam folder; resend from Facility Users |
+| Email already in use | The person already has an account at another facility | Use **Facility Users** to add the existing user to this facility instead of creating a new record |
+| Save fails | A required field is empty or invalid | Review highlighted fields — provider roles require the additional credentialing fields |
+| Provider fields don't appear | A non-clinical role is selected | Provider Details show only for clinical roles (clinician / medical_director) |
 
 ## Related
 

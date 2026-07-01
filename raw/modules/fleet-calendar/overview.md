@@ -3,10 +3,10 @@ id: fleet-calendar-overview
 title: Fleet Calendar overview
 module: fleet-calendar
 audience: [clinician, admin]
-roles: [practice_admin, super_admin, np, md, nurse]
+roles: [admin, clinical_manager, clinician]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/ops/fleet-calendar
 related:
   - fleet-calendar-create-appointment
@@ -35,7 +35,7 @@ Switch views using the **Day / Week / Month** toggle in the top-right of the cal
 
 ## Appointment status colors
 
-Every appointment card carries one of nine status colors, which update as the visit progresses.
+Each appointment card carries a color-coded status that updates as the visit progresses. The status set is **data-driven** — colors and labels come from your organization's `appointment_status` configuration — so the exact list can vary. The common statuses are:
 
 | Status | Meaning |
 |---|---|
@@ -44,6 +44,7 @@ Every appointment card carries one of nine status colors, which update as the vi
 | **Progress Note In Progress** | Clinician has started the Visit Wizard. |
 | **Seen** | Visit documentation is underway. |
 | **Visit Completed** | Visit Wizard signed and locked. |
+| **Under Review** | Awaiting documentation / review after the visit. |
 | **Rescheduled** | Original slot replaced; a new appointment exists. |
 | **Canceled** | Appointment voided — no replacement created. |
 | **No Show** | Patient did not answer or was unavailable at the door. |
@@ -58,9 +59,9 @@ When a referral card moves into the **Assigned** column in Referral Intake, it b
 Clicking **Start Visit** on an appointment routes by the patient's care specialty (selected during intake):
 
 - **Wound care** patients land in the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), then the [Visit Wizard](../visit-wizard-ehr/overview.md).
-- **Primary care** patients land in the PCP Cockpit, then the PCP Visit Wizard.
+- **Primary care** patients land in the **Primary Care Cockpit**.
 
-Provider filters and the **Same-day** scheduling action also live in the Fleet Calendar; same-day appointments respect the dynamic scheduling horizon configured by your practice admin.
+Provider filters live in the Fleet Calendar toolbar, and a **View Map** action opens the facility route map for the selected day.
 
 ## Month view
 

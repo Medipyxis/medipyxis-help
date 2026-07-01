@@ -3,56 +3,72 @@ id: fleet-calendar-route-optimization
 title: Optimize and send a provider route
 module: fleet-calendar
 audience: [admin, clinician]
-roles: [practice_admin, super_admin, np, md, nurse]
+roles: [admin, clinical_manager, clinician]
 type: how-to
 estimated_minutes: 5
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/ops/fleet-calendar
 related:
   - fleet-calendar-overview
   - fleet-calendar-create-appointment
   - fleet-calendar-my-day
-tags: [routing, fleet, scheduling, map]
+tags: [routing, fleet, scheduling, map, reports]
 ---
 
-# Optimize and send a provider route
+# Review provider routes and export reports
 
-Arrange a provider's stops into the most efficient order for a given day, preview the route on a map, and push the final sequence to the clinician's device.
+<Note>
+This page is titled "Optimize and send a provider route," but Medipyxis does not auto-optimize stop order or push routes to devices. What it provides is described below: a read-only route review, a map, and CSV reports.
+</Note>
+
+See each provider's stops for a day laid out on a map, review drive distance and utilization, and export scheduling reports as CSV. Medipyxis presents route information for review — it does not auto-sequence stops or push routes to devices.
 
 ## Before you start
 
-- At least two appointments must be scheduled for the provider on the target date.
-- All appointments must have a patient address on record — the system cannot route stops without a geocodable address.
+- Appointments are scheduled for the target date.
+- For map and distance figures, appointments need a geocodable patient address on record.
 
-## Steps
+## Review a provider's route
 
 1. **Open the Fleet Calendar** in **Day** view and navigate to the target date.
-2. **Select a provider's swim lane.** Click the provider's name on the left rail to focus that lane, or leave all lanes visible to manage multiple providers.
-3. **Open the Route panel.** Click **Route** (top-right panel toggle). A ranked stop list appears, one row per appointment, ordered by current scheduled time.
-4. **Reorder stops.** Drag and drop stop rows within the Route panel to adjust the sequence. The estimated total drive time recalculates automatically after each move.
-5. **View on map.** Click **View Map** to open the full-screen map overlay showing the route polyline, stop pins numbered in sequence, and estimated segment durations.
-6. **Confirm the route.** Close the map overlay and verify the stop list is in the intended order.
-7. **Send route to driver/clinician.** Click **Send Route** at the bottom of the Route panel. The clinician receives a push notification with the ordered stop list and turn-by-turn navigation link.
+2. **Open the Routes panel.** Click **Routes** (top-right panel toggle). For each provider with visits that day, the panel shows:
+
+   | Field | What it shows |
+   |---|---|
+   | **Provider** | The clinician the route belongs to. |
+   | **Visits** | Number of stops scheduled that day. |
+   | **Distance** | Total driving distance across the stops, in miles. |
+   | **Est. drive time** | Estimated driving time for the route. |
+   | **Utilization** | Percentage of the working day used, shown as a bar. |
+
+   Stops are listed in **scheduled-time order**. The panel is read-only — reorder a day by changing individual appointment times on the calendar.
+
+## View the route on a map
+
+3. **Click View Map.** The **Fleet Map** opens, showing each provider's stops as numbered pins in scheduled order with the connecting route drawn between them.
+4. **Review the geography.** Use the map to sanity-check the day's sequence and spot backtracking. To change the order, adjust the appointment times back on the calendar.
+
+## Export a report
+
+5. **Open the Reports panel** from the Fleet Calendar.
+6. **Choose a report preset** — for example, by provider per month or by date of service.
+7. **Export to CSV.** Click the export action to download the report for scheduling review, payroll, or utilization analysis.
 
 ## Result
 
-The Route panel displays a **Sent** indicator with a timestamp. The clinician's **My Day** view updates to reflect the confirmed sequence.
+You have reviewed each provider's stops, distance, and utilization for the day on the map, and exported the scheduling data you need as CSV.
 
 <Note>
-The Route panel performs distance-based ordering, not turn-by-turn optimization. For complex multi-city routes, review the map before sending to confirm the order makes geographic sense.
+The Routes panel and Fleet Map are for review and reporting. Medipyxis does not currently re-optimize stop order automatically or send a route to a clinician's device — clinicians see their assigned visits on their own calendar. See [Manage your day as a clinician](./my-day.md).
 </Note>
-
-<Warning>
-Reordering stops does not change appointment times on the calendar. If you need to adjust scheduled times, update each appointment individually after finalizing the route order.
-</Warning>
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Stop missing from Route panel | Appointment address not geocoded | Open the appointment, verify the patient address, and save |
-| Send Route button is greyed out | No stops in Route panel | Confirm at least two appointments exist for this provider and date |
-| Map does not load | Browser pop-up blocker | Allow pop-ups from your Medipyxis domain |
+| Stop missing from the map | Appointment address not geocoded | Open the appointment, verify the patient address, and save |
+| Distance / drive time blank | One or more stops lack a geocodable address | Add complete addresses to the affected appointments |
+| Map does not load | Browser pop-up or content blocker | Allow content from your Medipyxis domain |
 
 ## Related
 

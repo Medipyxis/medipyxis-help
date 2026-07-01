@@ -3,10 +3,10 @@ id: hr-compliance-credential-tracker
 title: Monitor credentials and license expiry
 module: hr-compliance
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin, clinical_manager]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/hr
 related:
   - hr-compliance-overview
@@ -16,53 +16,57 @@ tags: [HR, compliance, credentials, license, expiry]
 
 # Monitor credentials and license expiry
 
-The Credential Tracker surfaces upcoming license and certification expirations across your clinical staff so you can act before a credential lapses.
+The Credential Tracker surfaces license and certification status across your clinical staff so you can act before a credential lapses.
 
 ## Before you start
 
-- Credentials must first be added to an employee's profile — either during **New Employee Onboarding** (Step 3) or manually in the Credential Tracker.
+- Credentials are added by uploading them in the Credential Tracker (see below).
 
 ## View the credential dashboard
 
 1. **Open HR & Compliance** and click **Credential Tracker.**
-2. The tracker lists every active employee with tracked credentials. Each row shows:
+2. The tracker lists employees with their tracked credentials. Each row shows:
 
 | Column | Description |
 |---|---|
 | **Employee** | Name and role. |
-| **Credential Type** | License category (RN, NP, MD, PT, etc.) or certification name (BLS, ACLS, wound care cert, etc.). |
-| **Credential #** | License or certificate number. |
-| **Issuing Authority** | State board or certifying body. |
-| **Expiry Date** | Date the credential expires. |
-| **Status** | **Current**, **Expiring Soon** (within 60 days), or **Expired**. |
+| **Credential Type** | The credential category (see the list below). |
+| **Expiration Date** | Date the credential expires. |
+| **Status** | **Valid**, **Expiring**, **Expired**, or **Missing**. |
 
-## Add a credential manually
+Credential status is derived automatically from the expiration date:
 
-3. **Click the employee's name** to open their record.
-4. **Click + Add Credential.**
-5. Fill in **Credential Type**, **Credential #**, **Issuing Authority**, **Issue Date**, and **Expiry Date**.
-6. Upload a copy of the credential document (PDF or image) using the file picker.
-7. **Click Save.** The credential appears in the tracker with the correct status.
+| Status | Meaning |
+|---|---|
+| **Valid** | More than 5 days until expiration. |
+| **Expiring** | Expires within the next 5 days. |
+| **Expired** | Past its expiration date. |
+| **Missing** | Required credential not yet on file. |
 
-## Update or renew a credential
+## Upload a credential
 
-8. **Find the expired or expiring credential** in the list. Rows with **Expiring Soon** status appear in amber; **Expired** rows appear in red.
-9. **Click Edit** on the credential row.
-10. Update the **Expiry Date** and credential number to reflect the renewal. Upload the renewed document.
-11. **Click Save.** The status updates to **Current** immediately.
+3. **Click Upload Credential.**
+4. Select the **Employee** and the **Credential Type**. Available types include RN License, NP License, CPR Certification, WOCN Certification, NPI, DEA License, State Controlled Substance License, BLS Certification, and Other.
+5. Enter the **Expiration Date** (required).
+6. Attach the **Document** (PDF or image) and add **Notes** if needed. (Territory is set to National.)
+7. **Save.** The credential appears in the tracker with the status derived from its expiration date.
 
-## Set up expiry alerts
+## Renew a credential
 
-12. **Click Settings** (gear icon, top-right of the Credential Tracker).
-13. Set the **Alert Window** — the number of days before expiry that email notifications go to the employee and their assigned admin. Default is 60 days.
-14. **Click Save Settings.**
+8. **Find the expiring or expired credential** in the list.
+9. **Upload the renewed credential** for the same employee and credential type — uploading over an existing credential updates it (the dialog reads **Update Credential**).
+10. Set the new **Expiration Date** and attach the renewed document. On save, the status recalculates immediately.
 
 ## Result
 
-Credentials flagged as **Expiring Soon** or **Expired** surface in the admin's dashboard action-items tiles so they do not require manual review of the full tracker.
+Each employee's credentials show a live **Valid / Expiring / Expired / Missing** status, so you can see at a glance who needs a renewal within the next 5 days.
+
+<Note>
+A **Send Reminder** action appears on credential rows, but it does not currently send email — it is not yet wired to notifications. Follow up with staff directly for renewals.
+</Note>
 
 <Compliance>
-Allowing a clinician with an expired license to document and bill for visits creates significant CMS audit risk. Suspend the employee's Medipyxis access immediately if a license lapses — use Facility Users to deactivate the account.
+Allowing a clinician with an expired license to document and bill for visits creates significant CMS audit risk. If a license lapses, deactivate the employee's Medipyxis access immediately from **Facility Users**.
 </Compliance>
 
 ## Related

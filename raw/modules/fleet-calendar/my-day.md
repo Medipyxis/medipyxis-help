@@ -3,55 +3,46 @@ id: fleet-calendar-my-day
 title: Manage your day as a clinician
 module: fleet-calendar
 audience: [clinician]
-roles: [np, md, nurse]
+roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/ops/fleet-calendar
+last_reviewed: 2026-07-01
+app_route: /facility/{facility_uuid}/my-calendar
 related:
   - fleet-calendar-overview
   - fleet-calendar-route-optimization
-tags: [fleet, clinician, routing, scheduling]
+tags: [fleet, clinician, scheduling]
 ---
 
 # Manage your day as a clinician
 
-View only your assigned stops for the day, navigate to your next patient, and log delays without leaving the Medipyxis mobile or desktop app.
+See the visits assigned to you for the day and launch each one from your calendar.
 
 ## Before you start
 
-- Your administrator has sent you a route for today. (If no route appears, contact your scheduler.)
-- You are logged in as yourself — My Day filters to your assignments only.
+- You are logged in as yourself.
+- Appointments have been scheduled for you on the Fleet Calendar. If nothing appears for today, contact your scheduler.
 
 ## Steps
 
-### View your stops
+### See your visits
 
-1. **Open the Fleet Calendar.** The view defaults to **Day** and automatically filters to your provider lane when you log in as a clinician.
-2. **Check the stop list.** Your appointments appear in sequenced order in the Route panel on the right. Each stop card shows the patient name, address, scheduled time, appointment type, and any **Route Notes** left by the scheduler.
+1. **Open My Calendar.** Click **My Calendar** in the sidebar to see the appointments assigned to you, or open the **Fleet Calendar** and use the provider filter to focus your own lane.
+2. **Review the day.** Each appointment card shows the patient, scheduled time, visit type, and status. Any **Notes / Purpose** or **Route Notes** the scheduler added appear on the appointment's detail view.
 
-### Navigate to your next stop
+### Start a visit
 
-3. **Tap the stop card** for the upcoming appointment. The stop card expands to show the full patient address and any access notes.
-4. **Tap Drive To.** This opens the address in your device's default navigation app (Google Maps, Apple Maps, or Waze depending on OS settings).
-
-### Log a delay
-
-5. **If you are running late**, tap **Log Delay** on the active stop card.
-6. **Enter the estimated delay** in minutes and an optional reason (traffic, extended visit, etc.).
-7. **Tap Submit.** The scheduler sees a delay flag on the appointment card in their Calendar view and can communicate with subsequent patients as needed.
+3. **Click the appointment** to open its details.
+4. **Click Start Visit.** Fleet Calendar uses **specialty routing**: wound-care patients open in the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), then the [Visit Wizard](../visit-wizard-ehr/overview.md); primary-care patients open in the **Primary Care Cockpit**. The patient and appointment data pre-populate, so you do not have to search.
+5. **Document and sign.** Work the visit end to end and finish with **Sign & Lock** — see [Sign Off](../visit-wizard-ehr/sign-off.md).
 
 ## Result
 
-Your stop cards update in real time as you mark visits started, completed, or delayed. Completed visits show the **Visit Completed** status badge so the scheduler can confirm progress throughout the day.
+As you work, each appointment's status updates on the calendar — **Progress Note In Progress** while you document, then **Visit Completed** once you Sign & Lock — so your scheduler can follow progress throughout the day.
 
 <Tip>
-Launch the Visit Wizard directly from a stop card by tapping **Start Visit**. Fleet Calendar uses **specialty routing**: wound care patients land in the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md) first, primary care patients land in the PCP Cockpit. The patient and appointment data pre-populate so you do not have to search.
+Resuming a draft? Click the same appointment and choose **Continue Visit** to return to where you left off — the wizard autosaves continuously.
 </Tip>
-
-<Warning>
-Do not mark a visit **Seen** until you are physically on site. The system logs a GPS timestamp at status change for compliance records.
-</Warning>
 
 ## Related
 
