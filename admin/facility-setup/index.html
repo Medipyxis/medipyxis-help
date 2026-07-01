@@ -49,13 +49,12 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item active" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
       <h1>Set up a facility in your first week</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
       <p>Complete these tasks during the first week after a new facility goes live so that referrals, billing, and scheduling work correctly from day one.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need the <code>practice_admin</code> or <code>super_admin</code> role.</li>
-<li>Locate your Supabase tenant credentials (sent by your Medipyxis implementation contact).</li>
-<li>Have the facility's main fax number, business hours, and NPI ready.</li>
+<li>You need the <code>admin</code> or <code>superadmin</code> role.</li>
+<li>Have the facility's main fax number, business hours, NPI, and Tax ID ready.</li>
 </ul>
 <h2 id="steps">Steps</h2>
 <h3 id="1-confirm-the-facility-uuid">1. Confirm the facility UUID</h3>
@@ -76,11 +75,12 @@
 <p><Note>
 The fax number entered here is the outbound caller ID shown to referring practices. Inbound faxes are routed via the More (Fax) module; this field does not change inbound routing.
 </Note></p>
-<h3 id="3-verify-your-supabase-tenant">3. Verify your Supabase tenant</h3>
+<h3 id="3-enter-the-facility-npi-tax-id-and-legal-name">3. Enter the facility NPI, Tax ID, and legal name</h3>
 <ol>
-<li>From the same facility edit panel, locate the <strong>Supabase Tenant ID</strong> field.</li>
-<li>Paste the tenant identifier from your implementation credentials.</li>
-<li>Click <strong>Verify</strong> — a green checkmark confirms the connection. A red error means the tenant string is malformed or the credentials have expired; contact support.</li>
+<li>In the facility edit panel, enter the facility <strong>NPI</strong> and <strong>Tax ID</strong>. Both are format-validated as you type.</li>
+<li>When you enter a valid 10-digit NPI, Medipyxis performs an <strong>NPPES lookup</strong> and offers to auto-fill the facility's <strong>legal name</strong>, address, and taxonomy from the CMS registry. Accept or decline the suggested values.</li>
+<li>If NPPES cannot confirm the NPI, a <strong>Save anyway?</strong> prompt appears — you can still save, but double-check the number.</li>
+<li>Click <strong>Save</strong>. The facility <strong>legal name</strong> is what appears on payer-facing claim output.</li>
 </ol>
 <h3 id="4-set-business-hours">4. Set business hours</h3>
 <ol>
@@ -95,15 +95,15 @@ The fax number entered here is the outbound caller ID shown to referring practic
 <li>Set the <strong>New Referral SLA</strong> (hours from fax receipt to first touch) and the <strong>Financial Clearance SLA</strong> (hours from financial column entry to clearance decision).</li>
 <li>These thresholds drive the red SLA Breach Timer shown on each referral card.</li>
 </ol>
-<h3 id="6-set-superbill-defaults">6. Set superbill defaults</h3>
+<h3 id="6-set-billing-defaults">6. Set billing defaults</h3>
 <ol>
-<li>Navigate to <strong>Billing → Superbill Config</strong>.</li>
-<li>Under the <strong>Templates</strong> tab, select or create the default template for this facility.</li>
-<li>Confirm the <strong>Default Rendering Provider</strong> dropdown is set to the correct NPI for this facility. This NPI populates CMS-1500 §24J automatically on every new claim.</li>
-<li>See <a href="/medipyxis-help/admin/billing-setup/">Billing Setup</a> for full Code Library and Fee Schedule configuration.</li>
+<li>Navigate to <strong>Billing → Charge Master</strong>.</li>
+<li>Confirm the facility's charge rates and, under the <strong>Templates</strong> tab, the default superbill template for this facility.</li>
+<li>Confirm the correct <strong>Default Rendering Provider</strong> NPI for this facility so it populates CMS-1500 §24J automatically on every new claim.</li>
+<li>See <a href="/medipyxis-help/admin/billing-setup/">Billing Setup</a> for full Charge Master and clearinghouse configuration.</li>
 </ol>
 <h2 id="result">Result</h2>
-<p>Your facility is Active, has a verified fax number and Supabase tenant, enforces business-hour SLAs on Referral Intake, and auto-populates a default rendering provider on new claims. Users can now be invited (see <a href="/medipyxis-help/admin/user-management/">User Management</a>).</p>
+<p>Your facility is Active, has a fax number, a validated NPI/Tax ID and legal name, enforces business-hour SLAs on Referral Intake, and auto-populates a default rendering provider on new claims. Users can now be invited (see <a href="/medipyxis-help/admin/user-management/">User Management</a>).</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
 <thead>
@@ -120,9 +120,9 @@ The fax number entered here is the outbound caller ID shown to referring practic
 <td>Contact your implementation contact</td>
 </tr>
 <tr>
-<td>Supabase <strong>Verify</strong> returns an error</td>
-<td>Expired or incorrect tenant string</td>
-<td>Re-copy from the credentials email; avoid trailing spaces</td>
+<td>NPPES cannot confirm the NPI</td>
+<td>Number mistyped, or NPPES registry lag</td>
+<td>Re-check the 10-digit NPI; you can still <strong>Save anyway</strong> if it is correct</td>
 </tr>
 <tr>
 <td>SLA timer never turns red</td>
@@ -131,7 +131,7 @@ The fax number entered here is the outbound caller ID shown to referring practic
 </tr>
 <tr>
 <td>Default rendering provider blank on new claims</td>
-<td>Field not set in Superbill Config</td>
+<td>Field not set in Charge Master / facility config</td>
 <td>Complete Step 6</td>
 </tr>
 </tbody>
@@ -143,7 +143,7 @@ The fax number entered here is the outbound caller ID shown to referring practic
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="indent-3" href="#1-confirm-the-facility-uuid">1. Confirm the facility UUID</a></li><li><a class="indent-3" href="#2-set-the-fax-number">2. Set the fax number</a></li><li><a class="indent-3" href="#3-verify-your-supabase-tenant">3. Verify your Supabase tenant</a></li><li><a class="indent-3" href="#4-set-business-hours">4. Set business hours</a></li><li><a class="indent-3" href="#5-set-intake-slas">5. Set intake SLAs</a></li><li><a class="indent-3" href="#6-set-superbill-defaults">6. Set superbill defaults</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="indent-3" href="#1-confirm-the-facility-uuid">1. Confirm the facility UUID</a></li><li><a class="indent-3" href="#2-set-the-fax-number">2. Set the fax number</a></li><li><a class="indent-3" href="#3-enter-the-facility-npi-tax-id-and-legal-name">3. Enter the facility NPI, Tax ID, and legal name</a></li><li><a class="indent-3" href="#4-set-business-hours">4. Set business hours</a></li><li><a class="indent-3" href="#5-set-intake-slas">5. Set intake SLAs</a></li><li><a class="indent-3" href="#6-set-billing-defaults">6. Set billing defaults</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/facility-setup.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/admin/facility-setup.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

@@ -49,20 +49,19 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item active" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
       <h1>Import and export data</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>Bring staff records in via bulk CSV, sync patient data from ZusHealth, export referral and claim records, and issue API keys for partner integrations.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
+      <p>Bring staff and patient records in via bulk upload and the Practice Onboarding pipeline, review ZusHealth patient data in the chart, and export referral and claim records.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need <code>practice_admin</code> or <code>super_admin</code> role.</li>
-<li>For ZusHealth sync, your ZusHealth organization ID is required (provided in the ZusHealth admin console).</li>
-<li>For API key issuance, confirm the partner's technical contact and intended use case before generating a key.</li>
+<li>You need the <code>admin</code> or <code>superadmin</code> role.</li>
+<li>For a full practice migration (patients, insurance, medications, wounds, visit history), use the <strong>Practice Onboarding</strong> pipeline described below.</li>
 </ul>
 <h2 id="bulk-employee-upload">Bulk Employee Upload</h2>
-<p>Use this workflow when onboarding 20 or more employees, or when migrating users from another system.</p>
+<p>Use this workflow when onboarding many employees at once, or when migrating users from another system.</p>
 <ol>
 <li>Navigate to <strong>HR &amp; Compliance → Bulk Employee Upload</strong>.</li>
 <li>Click <strong>Download CSV Template</strong> to get the current schema.</li>
-<li>Populate the template. Required columns:</li>
+<li>Populate the template. Recognized columns include:</li>
 </ol>
 <table>
 <thead>
@@ -74,12 +73,12 @@
 </thead>
 <tbody>
 <tr>
-<td><code>first_name</code></td>
+<td><code>first name</code></td>
 <td>Yes</td>
 <td></td>
 </tr>
 <tr>
-<td><code>last_name</code></td>
+<td><code>last name</code></td>
 <td>Yes</td>
 <td></td>
 </tr>
@@ -91,12 +90,7 @@
 <tr>
 <td><code>role</code></td>
 <td>Yes</td>
-<td>Must match a role name in Organization Role Config exactly</td>
-</tr>
-<tr>
-<td><code>assigned_clinician_id</code></td>
-<td>No</td>
-<td>Required if role is <code>bd_rep</code></td>
+<td>Must match a role in Organization Role Config</td>
 </tr>
 <tr>
 <td><code>phone</code></td>
@@ -104,63 +98,59 @@
 <td>10-digit, no formatting</td>
 </tr>
 <tr>
-<td><code>facility_uuid</code></td>
+<td><code>facility assignment</code></td>
 <td>No</td>
-<td>If blank, user is assigned to the uploading facility</td>
+<td>Facility ID; if blank, user is assigned to the uploading facility</td>
+</tr>
+<tr>
+<td><code>provider_first_name</code>, <code>provider_last_name</code>, <code>provider_print_name</code>, <code>provider_initials</code></td>
+<td>No</td>
+<td>Provider identity fields, used for clinical roles</td>
 </tr>
 </tbody>
 </table>
 <ol start="4">
-<li>Upload the completed CSV. The system runs a validation pass and displays errors (duplicate email, unknown role name, malformed UUID) in a preview table.</li>
-<li>Fix any flagged rows, re-upload, and click <strong>Confirm Upload</strong>.</li>
-<li>Users receive invite emails within five minutes.</li>
+<li>Upload the completed CSV. The system runs a validation pass and displays errors (duplicate email, unknown role, malformed value) in a preview.</li>
+<li>Fix any flagged rows, re-upload, and confirm.</li>
 </ol>
 <p><Note>
 Rows that pass validation are imported even if others fail. You can upload a corrected partial file for the failed rows after fixing them.
 </Note></p>
-<h2 id="zushealth-patient-data-sync">ZusHealth patient data sync</h2>
-<p>Medipyxis integrates with ZusHealth to pull longitudinal patient health records (medication history, prior diagnoses, prior facility encounters) into the patient chart.</p>
-<p>This integration was implemented per tickets MED-720 and MED-818.</p>
+<h2 id="practice-onboarding-patient-chart-import">Practice Onboarding (patient &amp; chart import)</h2>
+<p>To migrate an entire practice's patients and clinical history, use the <strong>Practice Onboarding</strong> admin hub.</p>
 <ol>
-<li>Navigate to <strong>HR &amp; Compliance → Organization Security Settings → Integrations</strong>.</li>
-<li>Locate the <strong>ZusHealth</strong> tile and click <strong>Configure</strong>.</li>
-<li>Enter your <strong>ZusHealth Organization ID</strong>.</li>
-<li>Toggle <strong>Auto-Sync on Patient Create</strong> to on if you want ZusHealth data pulled automatically when a new patient record is created via Referral Intake.</li>
-<li>Click <strong>Save</strong>.</li>
+<li>Navigate to <strong><code>/administrator</code> → Practice Onboarding</strong>.</li>
+<li>Work through the guided, step-dependent import pipeline: <strong>Patients</strong> first, then <strong>Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Documents, and Wounds</strong>, and finally <strong>Visit History</strong>.</li>
+<li>Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully.</li>
 </ol>
-<p>Manual sync: Open any patient record → <strong>Documents</strong> tab → <strong>Sync ZusHealth</strong> button. The sync pulls the latest records from ZusHealth's FHIR endpoint.</p>
 <p><Note>
-ZusHealth sync is subject to the data sharing agreement between your organization and ZusHealth. Medipyxis does not modify or delete records sourced from ZusHealth; they appear as read-only in the patient chart.
+Practice Onboarding is the supported path for bulk patient/chart migration (including from other EMRs). Imported patients are flagged so their first visit shows a migration-context banner in the Visit Wizard.
+</Note></p>
+<h2 id="zushealth-patient-data">ZusHealth patient data</h2>
+<p>Medipyxis integrates with ZusHealth to bring longitudinal patient records (medications, allergies, labs, prior surgeries, vaccinations, conditions) into the patient chart, and to contribute finalized visits back to the patient's external record (TEFCA).</p>
+<ul>
+<li><strong>Pulling data in:</strong> ZusHealth data is retrieved from the <strong>patient chart / pre-charting</strong> using the <strong>Pull</strong> button — not from an admin settings page. Imported items show a <strong>last-sync pill</strong> and per-row <strong>provenance badges</strong> indicating their source and date, and appear read-only in the chart.</li>
+<li><strong>Contributing data out:</strong> when a visit is finalized, Medipyxis automatically contributes it back to the patient's external health record via ZusHealth/TEFCA — no extra step for the clinician.</li>
+</ul>
+<p><Note>
+ZusHealth sync is subject to the data-sharing agreement between your organization and ZusHealth. Medipyxis does not modify or delete records sourced from ZusHealth.
 </Note></p>
 <h2 id="export-referrals">Export referrals</h2>
 <ol>
 <li>Navigate to <strong>Referral Intake</strong>.</li>
-<li>Click the <strong>Export</strong> button (top-right of the kanban or list view).</li>
-<li>Select date range, status filter, and format (<code>CSV</code> or <code>XLSX</code>).</li>
-<li>Click <strong>Download</strong>. The file contains all non-PHI referral metadata (referral ID, status, payer, dates). PHI columns are included only if your role has patient-level access.</li>
+<li>Click the <strong>Export</strong> button.</li>
+<li>Select date range, status filter, and format.</li>
+<li>Download the file. PHI columns are included only if your role has patient-level access.</li>
 </ol>
-<h2 id="export-claims">Export claims</h2>
+<h2 id="export-claims-and-payments">Export claims and payments</h2>
 <ol>
-<li>Navigate to <strong>Billing → Claims</strong>.</li>
-<li>Apply any filters (date range, payer, status).</li>
-<li>Click <strong>Export CSV</strong>.</li>
-<li>The export includes claim ID, DOS, CPT codes, charges, payments, and current status. ERA remittance detail is not included — use the Payments tab for ERA exports.</li>
+<li>Navigate to <strong>Billing</strong>.</li>
+<li>Apply any filters (date range, payer, status) in the Claims or Work Queue view.</li>
+<li>Use the <strong>Export CSV</strong> action to download the filtered set.</li>
+<li>For remittance detail, export from the <strong>Payments (ERA)</strong> tab.</li>
 </ol>
-<h2 id="api-keys-for-partner-integrations">API keys for partner integrations</h2>
-<p>Medipyxis exposes a REST API for EMR bridges, analytics platforms, and referral management tools.</p>
-<ol>
-<li>Navigate to <strong>HR &amp; Compliance → Organization Security Settings → API Keys</strong>.</li>
-<li>Click <strong>Generate New Key</strong>.</li>
-<li>Name the key with the partner and use case (e.g., <code>athenahealth-referral-bridge</code>).</li>
-<li>Set an <strong>Expiry</strong> (maximum 365 days; keys must be manually rotated).</li>
-<li>Click <strong>Generate</strong>. Copy the key immediately — it is shown only once.</li>
-<li>Share the key with the partner's technical contact via a secure channel (not Team Chat or email).</li>
-</ol>
-<p><Warning>
-API keys grant access at the permission level of the role assigned to them. Use the most restrictive role that satisfies the integration's needs. Revoke keys immediately if a partner relationship ends.
-</Warning></p>
 <h2 id="result">Result</h2>
-<p>Your staff are imported, ZusHealth sync is active, and your billing and referral teams can self-serve CSV exports. Partner integrations have scoped API keys with defined expiry dates.</p>
+<p>Your staff and patients are imported, ZusHealth data flows into the chart with visits contributed back automatically, and your billing and referral teams can self-serve CSV exports.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/admin/">Administrator Guide</a></li><li><a href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a></li><li><a href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -168,7 +158,7 @@ API keys grant access at the permission level of the role assigned to them. Use 
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#bulk-employee-upload">Bulk Employee Upload</a></li><li><a class="" href="#zushealth-patient-data-sync">ZusHealth patient data sync</a></li><li><a class="" href="#export-referrals">Export referrals</a></li><li><a class="" href="#export-claims">Export claims</a></li><li><a class="" href="#api-keys-for-partner-integrations">API keys for partner integrations</a></li><li><a class="" href="#result">Result</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#bulk-employee-upload">Bulk Employee Upload</a></li><li><a class="" href="#practice-onboarding-patient-chart-import">Practice Onboarding (patient &amp; chart import)</a></li><li><a class="" href="#zushealth-patient-data">ZusHealth patient data</a></li><li><a class="" href="#export-referrals">Export referrals</a></li><li><a class="" href="#export-claims-and-payments">Export claims and payments</a></li><li><a class="" href="#result">Result</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/data-import-export.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/admin/data-import-export.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

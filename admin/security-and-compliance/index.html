@@ -49,83 +49,62 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item active" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
       <h1>Security settings and HIPAA compliance</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">concept</span> <span class="meta-pill">⏱ 6 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>Medipyxis is built to the HIPAA Security Rule. This page explains how session controls, audit logging, MFA enforcement, and Business Associate Agreements (BAAs) work, and where admins configure each.</p>
-<h2 id="hipaa-session-settings">HIPAA session settings</h2>
-<p>HIPAA requires covered entities to implement automatic logoff for electronic PHI systems. Medipyxis enforces this at the platform level; admins can tune the timeout window.</p>
-<p><strong>Session timeout</strong> is configurable per organization:
-- Navigate to <strong>HR &amp; Compliance → Facility Users → Organization Security Settings</strong>.
-- Set <strong>Idle Session Timeout</strong> in minutes (minimum 5, maximum 60, default 20).
-- Sessions that exceed the idle threshold display a 60-second warning modal; if the user does not confirm activity, they are signed out and must re-authenticate.
-- The <strong>On Duty</strong> pill in the header turns gray when the session is within two minutes of timeout.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">concept</span> <span class="meta-pill">⏱ 6 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
+      <p>Medipyxis is built to the HIPAA Security Rule. This page explains how session controls, audit logging, access control, and Business Associate Agreements (BAAs) work.</p>
+<h2 id="automatic-logoff-session-timeout">Automatic logoff (session timeout)</h2>
+<p>HIPAA requires covered entities to implement automatic logoff for electronic PHI systems. Medipyxis enforces automatic logoff at the platform level: after a period of inactivity (approximately 30 minutes for clinical roles), the session ends and the user must sign in again. This behavior is enforced by the platform and is not a per-user setting.</p>
 <p><Compliance>
-The HIPAA Security Rule (45 CFR §164.312(a)(2)(iii)) requires automatic logoff procedures. The Medipyxis session timeout satisfies this requirement; do not set the timeout above 60 minutes.
+The HIPAA Security Rule (45 CFR §164.312(a)(2)(iii)) requires automatic logoff procedures. Medipyxis's platform-enforced idle logoff satisfies this requirement. If your organization needs a specific timeout value or additional session controls, raise it with your Medipyxis implementation contact.
 </Compliance></p>
-<h2 id="multi-factor-authentication-mfa">Multi-factor authentication (MFA)</h2>
-<p>MFA adds a second verification step at login. Medipyxis supports TOTP authenticator apps (Google Authenticator, Authy, 1Password).</p>
-<ul>
-<li>To <strong>enforce MFA for all users in your organization</strong>: Navigate to <strong>HR &amp; Compliance → Organization Security Settings</strong> and toggle <strong>Require MFA</strong> to on.</li>
-<li>When enforcement is on, any user who has not yet enrolled an authenticator is prompted to do so at their next login before they can reach the Dashboard.</li>
-<li>Individual users can enroll or rotate their authenticator via <strong>Profile → Security</strong>.</li>
-</ul>
-<p><Warning>
-Enabling MFA enforcement will lock out any user without an enrolled authenticator until they complete enrollment. Notify staff before enabling this setting.
-</Warning></p>
+<h2 id="authentication">Authentication</h2>
+<p>User authentication is managed centrally by Medipyxis. If your organization requires multi-factor authentication (MFA) or single sign-on (SSO), coordinate the setup with your Medipyxis implementation contact — these are configured at the account level rather than through a self-service toggle in the app.</p>
 <h2 id="audit-logs">Audit logs</h2>
-<p>Every action a user takes in Medipyxis — viewing a patient record, editing a claim, toggling a role permission — is written to an immutable audit log.</p>
-<p><strong>To access audit logs:</strong>
+<p>User activity in Medipyxis is recorded to an activity log for accountability and HIPAA audit purposes.</p>
+<p><strong>To access activity logs:</strong>
 1. Navigate to <strong>HR &amp; Compliance → Activity Logs</strong>.
-2. Filter by <strong>User</strong>, <strong>Date Range</strong>, <strong>Module</strong>, or <strong>Action Type</strong>.
-3. Each row shows: timestamp (UTC), user, facility, module, action, and the record affected (patient ID or entity UUID).
-4. Click any row to expand the full event payload, including before/after field values for edits.</p>
-<p><strong>Log retention:</strong> Logs are retained for a minimum of six years per HIPAA standards. Logs cannot be deleted by any application user, including <code>super_admin</code>.</p>
-<p><strong>Export:</strong> Click <strong>Export CSV</strong> to download a filtered log set for audit or legal review.</p>
+2. Filter the log by user, date range, and activity type.
+3. Each entry records who did what, when, and against which record.</p>
 <p><Compliance>
-HIPAA requires an audit trail for access to PHI (45 CFR §164.312(b)). Medipyxis's Activity Logs satisfy this requirement. Your BAA with Medipyxis covers the log data as protected health information.
+HIPAA requires an audit trail for access to PHI (45 CFR §164.312(b)). Medipyxis's Activity Logs support this requirement. Log data is covered as protected health information under your BAA with Medipyxis, and is retained per HIPAA record-retention requirements.
 </Compliance></p>
 <h2 id="business-associate-agreements-baas">Business Associate Agreements (BAAs)</h2>
 <p>Medipyxis operates as a Business Associate (BA) under HIPAA. A BAA between your organization and Medipyxis is required before processing any real patient data.</p>
 <ul>
-<li>Your BAA is executed during the contracting phase with Medipyxis sales.</li>
-<li>A copy is stored in your organization's <strong>HR &amp; Compliance → Documents</strong> section.</li>
+<li>Your BAA is executed during the contracting phase with Medipyxis.</li>
 <li>If you onboard a new facility under an existing organization, confirm with your Medipyxis account manager whether the existing BAA covers the new facility or whether an addendum is needed.</li>
 </ul>
-<h2 id="phi-redaction-in-support-contexts">PHI redaction in support contexts</h2>
-<p>If you open a support ticket or share a screen with Medipyxis support, PHI is automatically redacted in any log exports made from within the support flow. Direct screenshots are not automatically redacted — use placeholder patient names (<em>Jane Doe</em>, <em>John Smith</em>) in support communications.</p>
+<h2 id="phi-in-support-contexts">PHI in support contexts</h2>
+<p>If you open a support ticket or share a screen with Medipyxis support, avoid exposing PHI. Use placeholder patient names (<em>Jane Doe</em>, <em>John Smith</em>) in screenshots and support communications, and share record identifiers rather than patient details where possible.</p>
+<h2 id="access-control">Access control</h2>
+<p>Role-based access is configured per organization at <strong><code>/administrator</code> → Organization Role Config</strong> (see <a href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a>). Assign each user the least-privileged role that lets them do their job.</p>
 <h2 id="security-summary">Security summary</h2>
 <table>
 <thead>
 <tr>
 <th>Control</th>
-<th>Location</th>
-<th>Default</th>
+<th>How it works</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Idle session timeout</td>
-<td>HR &amp; Compliance → Organization Security Settings</td>
-<td>20 minutes</td>
+<td>Automatic logoff</td>
+<td>Platform-enforced idle timeout (~30 min for clinical roles)</td>
 </tr>
 <tr>
-<td>MFA enforcement</td>
-<td>HR &amp; Compliance → Organization Security Settings</td>
-<td>Off</td>
+<td>Authentication (MFA/SSO)</td>
+<td>Configured at the account level with your Medipyxis contact</td>
 </tr>
 <tr>
-<td>Audit logs</td>
-<td>HR &amp; Compliance → Activity Logs</td>
-<td>Always on, 6-year retention</td>
+<td>Activity logs</td>
+<td>HR &amp; Compliance → Activity Logs; retained per HIPAA</td>
 </tr>
 <tr>
 <td>BAA</td>
-<td>HR &amp; Compliance → Documents</td>
-<td>Executed at contracting</td>
+<td>Executed at contracting with Medipyxis</td>
 </tr>
 <tr>
 <td>Role-based access</td>
 <td><code>/administrator</code> → Organization Role Config</td>
-<td>Seeded defaults</td>
 </tr>
 </tbody>
 </table>
@@ -136,7 +115,7 @@ HIPAA requires an audit trail for access to PHI (45 CFR §164.312(b)). Medipyxis
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#hipaa-session-settings">HIPAA session settings</a></li><li><a class="" href="#multi-factor-authentication-mfa">Multi-factor authentication (MFA)</a></li><li><a class="" href="#audit-logs">Audit logs</a></li><li><a class="" href="#business-associate-agreements-baas">Business Associate Agreements (BAAs)</a></li><li><a class="" href="#phi-redaction-in-support-contexts">PHI redaction in support contexts</a></li><li><a class="" href="#security-summary">Security summary</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#automatic-logoff-session-timeout">Automatic logoff (session timeout)</a></li><li><a class="" href="#authentication">Authentication</a></li><li><a class="" href="#audit-logs">Audit logs</a></li><li><a class="" href="#business-associate-agreements-baas">Business Associate Agreements (BAAs)</a></li><li><a class="" href="#phi-in-support-contexts">PHI in support contexts</a></li><li><a class="" href="#access-control">Access control</a></li><li><a class="" href="#security-summary">Security summary</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/security-and-compliance.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/admin/security-and-compliance.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
