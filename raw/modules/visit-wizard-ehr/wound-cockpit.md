@@ -2,11 +2,11 @@
 id: visit-wizard-ehr-wound-cockpit
 title: Wound Cockpit overview
 module: visit-wizard-ehr
-audience: [clinician, case_manager]
-roles: [nurse, np, md, medical_director, case_manager]
+audience: [clinician, clinical_manager]
+roles: [clinician, medical_director, clinical_manager]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-05-10
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
@@ -45,9 +45,10 @@ The header panel summarizes the wound in one view:
 | **Anatomic location** | Precise editable location, e.g. `Right lateral malleolus`. |
 | **Latest measurements** | Length, Width, Depth from the most recent visit. |
 | **% area change** | Computed against the prior measurement. Color-coded: improving, static, worsening. |
-| **Tissue composition** | Granulation / Slough / Eschar / Epithelial, summing to 100%. |
+| **Tissue composition** | Granulation / Slough / Necrotic / Epithelial / Eschar, summing to 100%. |
 | **Days in care** | Days since the wound was opened in Medipyxis. |
 | **Last visit** | Date and provider of the most recent encounter. |
+| **Treating / Monitoring** | Each wound carries a **Treating** or **Monitoring** status. A wound set to Monitoring shows a yellow pill and stays Monitoring across visits until a clinician flips it back to Treating. |
 | **Status flags** | Compression in place · NPWT in place · Offloading in place · Awaiting IVR · etc. |
 
 Use this panel as your pre-visit briefing — it is the same data that carries forward into the wizard.
@@ -123,7 +124,7 @@ IVR auto-populate uses wound, comorbidity, and protocol data. Always review the 
 The cockpit's primary CTA is **Start Visit** (or **Continue Visit** if a draft exists for today).
 
 - **Start Visit** opens the Visit Wizard with this wound pre-selected in section 7.
-- **Continue Visit** opens the wizard at the last unsaved section. Drafts auto-save every 3 minutes and per-section — see [Visit Wizard overview](./overview.md).
+- **Continue Visit** opens the wizard where you left off. Drafts autosave continuously — each field is saved as you complete it — see [Visit Wizard overview](./overview.md).
 
 For initial evaluations, the wizard automatically picks the **Initial** visit type and prompts for full clinical history; for follow-ups, the **Follow-up** type is preselected and clinical history carries forward.
 
@@ -133,10 +134,10 @@ For initial evaluations, the wizard automatically picks the **Initial** visit ty
 
 | Role | What they can do in the cockpit |
 |---|---|
-| `nurse` · `np` · `md` | Read everything; start visits; run Case-Manager Readiness; submit IVR. |
-| `case_manager` | Read everything; mark wounds reviewed; cannot start visits. |
+| `clinician` | Read everything; start visits; run Case-Manager Readiness; submit IVR. |
+| `clinical_manager` | Read everything; mark wounds reviewed for case-management handoff. |
 | `medical_director` | Read everything; review attested notes; cannot edit signed encounters. |
-| `practice_admin` | Read everything in their facility. |
+| `admin` | Read everything in their facility. |
 
 ---
 
@@ -148,7 +149,7 @@ For initial evaluations, the wizard automatically picks the **Initial** visit ty
 | Case-Manager Readiness stays red after fixes | Most recent visit was not saved | Confirm the section navigator in the wizard shows checkmarks; complete any pending sections. |
 | Protocol timeline is missing | Wound is not enrolled in a protocol | Enroll the wound in the appropriate protocol via the Protocol Engine admin tools. |
 | IVR modal auto-populated the wrong payer | Patient has multiple coverages on file | Open the patient's Insurance card and confirm primary coverage; re-open the IVR modal. |
-| Wound Timeline missing a recent event | Event is still syncing from offline outbox | See [Work Offline](./work-offline.md); pending sync items show in the top banner. |
+| Wound Timeline missing a recent event | The most recent visit was not saved | Reopen the visit and confirm the section navigator shows checkmarks; the timeline updates once the encounter saves. |
 
 ## Related
 

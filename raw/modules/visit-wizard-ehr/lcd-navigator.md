@@ -3,10 +3,10 @@ id: visit-wizard-ehr-lcd-navigator
 title: Use the LCD Navigator (ambient badge, Dojo tiles, copy bank)
 module: visit-wizard-ehr
 audience: [clinician]
-roles: [nurse, np, md, medical_director]
+roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-05-10
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -42,7 +42,7 @@ The LCD ambient badge appears at the top of every section in the Visit Wizard. I
 |---|---|---|
 | **Green** | All Navigator checks pass. | Continue documenting. |
 | **Amber** | One or more items need clinician action; the encounter can still be edited. | Click the badge to open the Dojo. |
-| **Red** | A blocking item is missing or invalid. The encounter cannot be attested until resolved. | Click the badge, follow the link back to the offending section, fix it. |
+| **Red** | A flagged item is missing or invalid. Resolve it before **Sign & Lock**. | Click the badge, follow the link back to the offending section, fix it. |
 
 ![LCD ambient badge with auto-populated checklist items](../../assets/visit-wizard/09_lcd_audit_review.png)
 
@@ -96,18 +96,18 @@ The Navigator evaluates documentation against the following items. Most are sati
 
 | # | Checklist Item | How it is satisfied |
 |---|---|---|
-| 1 | **Medical Necessity Statement** | Auto-generated in section 13 (Billing & Documentation) from comorbidities, etiology, and procedure. |
-| 2 | **4-week conservative care documented** | Documented in section 8 (Historic Measurements + Previous Treatments). |
+| 1 | **Medical Necessity Statement** | Auto-generated in section 14 (Billing) from comorbidities, etiology, and procedure. |
+| 2 | **4-week conservative care documented** | Documented in section 8 (Previous Treatment). |
 | 3 | **Dimensions measured today** | Length, Width, Depth entered in section 7 (Wound Assessment). |
-| 4 | **Failed prior therapies listed** | Documented in section 8. |
-| 5 | **Appropriate HCPCS/CPT** | CPT codes generated in section 13. |
+| 4 | **Failed prior therapies listed** | Documented in section 8 (Previous Treatment). |
+| 5 | **Appropriate HCPCS/CPT** | CPT codes generated in section 14 (Billing). |
 | 6 | **NCCI PTP + MUE edits pass** | Auto-checked against CMS edit tables for the selected CPT/modifier set. |
-| 7 | **Modifier validity** | Modifiers (`25`, `59`, `KX`, `JW`, `JZ`) validated against CPT in section 13. |
-| 8 | **POS match** | Place of Service in section 13 matches the facility type on record. |
+| 7 | **Modifier validity** | Modifiers (`25`, `59`, `KX`, `JW`, `JZ`) validated against CPT in section 14 (Billing). |
+| 8 | **POS match** | Place of Service in section 14 (Billing) matches the facility type on record. |
 | 9 | **Signature present** | Confirmed when Provider Attestation completes. Shows pending until then. |
-| 10 | **Plan-of-care dates** | Next-visit interval and goal dates entered in section 10. |
-| 11 | **ABI documented (compression cases)** | ABI entered in section 8 — the ABI gate enforces this before compression is selectable. |
-| 12 | **Tissue percentages sum to 100** | Granulation / Slough / Eschar / Epithelial entered in section 7. |
+| 10 | **Plan-of-care dates** | Next-visit interval and goal dates entered in section 10 (Care Plan). |
+| 11 | **ABI documented (compression cases)** | ABI entered in section 8 (Previous Treatment). If compression is documented without an ABI, the wizard raises a soft warning rather than blocking. |
+| 12 | **Tissue percentages sum to 100** | Granulation / Slough / Necrotic / Epithelial / Eschar entered in section 7. |
 | 13 | **Precise anatomical location** | Editable location field set in section 7. |
 | 14 | **AI Disclaimer acknowledged (if AI used)** | Acknowledged on first AI draft per encounter. |
 
@@ -120,13 +120,13 @@ The Navigator evaluates documentation against the following items. Most are sati
 3. **Click Go to section** on the relevant tile. The wizard jumps to the exact field.
 4. **Enter the missing data.** Save the section.
 5. **Watch the badge refresh.** The item flips from amber to green; the Dojo updates.
-6. **Continue documenting** — or, if all items are now green, proceed to section 14 (LCD Audit & Provider Attestation).
+6. **Continue documenting** — or, if all items are now green, proceed to section 16 (LCD Audit & Review) and then Provider Attestation.
 
 ---
 
 ## Result
 
-The LCD ambient badge is green, the Dojo shows no outstanding items, and the encounter is ready for **Provider Attestation** in section 14. The Navigator result — including which items were auto-satisfied, which required manual confirmation, and which used copy bank insertions — is recorded in the encounter audit log and is available to medical directors and billers for review.
+The LCD ambient badge is green, the Dojo shows no outstanding items, and the encounter is ready for **Provider Attestation** in section 17. The Navigator result — including which items were auto-satisfied, which required manual confirmation, and which used copy bank insertions — is recorded in the encounter audit log and is available to medical directors and billers for review.
 
 ---
 
@@ -134,13 +134,13 @@ The LCD ambient badge is green, the Dojo shows no outstanding items, and the enc
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Badge stays amber after saving the offending section | Section did not save (offline outbox pending, or validation failed) | Confirm the section navigator shows a checkmark; if offline, sync via [Work Offline](./work-offline.md). |
+| Badge stays amber after saving the offending section | Section did not save (validation failed) | Confirm the section navigator shows a checkmark for that section. |
 | Item 3 (**Dimensions measured today**) not pre-checked | Measurements were not saved in section 7 | Return to section 7, enter Length, Width, Depth, save. |
-| Item 6 (**NCCI/MUE**) flagged red | A CPT/modifier combination triggers a CMS edit | Adjust the CPT or modifier in section 13 per your biller's guidance. |
-| Item 8 (**POS match**) flagged | Place of Service does not match the patient's service location type | Correct the POS code in section 13 or contact your billing team. |
-| Item 11 (**ABI documented**) flagged red | Compression is documented without an ABI on file | Enter ABI in section 8 — the ABI gate also blocks the compression order itself. |
+| Item 6 (**NCCI/MUE**) flagged red | A CPT/modifier combination triggers a CMS edit | Adjust the CPT or modifier in section 14 (Billing) per your biller's guidance. |
+| Item 8 (**POS match**) flagged | Place of Service does not match the patient's service location type | Correct the POS code in section 14 (Billing) or contact your billing team. |
+| Item 11 (**ABI documented**) flagged | Compression is documented without an ABI on file | Enter the ABI in section 8 (Previous Treatment). The wizard warns rather than blocks — resolve it before Sign & Lock. |
 | Copy bank inserted but item stays amber | The copy was inserted but the section was not saved | Save the section that received the inserted text. |
-| **Attest & Sign** disabled with all items green | Item 9 (**Signature present**) is always pending pre-attestation | Sign on the attestation pad — item 9 resolves automatically as the signature lands. |
+| Item 9 (**Signature present**) stays pending with all else green | Item 9 is always pending until you attest | Sign on the attestation pad in section 17 — item 9 resolves as the signature lands. |
 
 ## Related
 

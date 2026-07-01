@@ -3,33 +3,31 @@ id: visit-wizard-ehr-start-a-visit
 title: Walk through a visit in the Visit Wizard
 module: visit-wizard-ehr
 audience: [clinician]
-roles: [nurse, np, md]
+roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-05-10
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
   - visit-wizard-ehr-wound-cockpit
   - visit-wizard-ehr-wound-assessment
   - visit-wizard-ehr-lcd-navigator
-  - visit-wizard-ehr-work-offline
   - visit-wizard-ehr-sign-off
 prerequisites:
   - visit-wizard-ehr-overview
-tags: [visit-wizard, autosave, ABI, AI-drafting, procedure-supplies]
+tags: [visit-wizard, autosave, pull-from-history, DoseSpot, procedures-supplies, sign-and-lock]
 ---
 
 # Walk through a visit in the Visit Wizard
 
-Open the Visit Wizard from the Fleet Calendar or the Wound Cockpit, confirm the patient context, and work the 14 Medicare-LCD-blocking sections end-to-end. This guide covers the full happy path, plus the wizard's core behaviors: 3-minute autosave, clinical history carry-forward, the LCD ambient badge, the ABI gate, unified Procedure & Supplies, AI-assisted drafting, and Medical Necessity Statement.
+Open the Visit Wizard from the Fleet Calendar or the Wound Cockpit, confirm the patient context, and work the **17 sections** end-to-end. This guide covers the full happy path plus the wizard's core behaviors: continuous autosave, the top-of-wizard data-pull toolbar, clinical history carry-forward, the LCD ambient badge, warn-and-proceed validation, DoseSpot e-prescribing, unified Procedures & Supplies, AI-assisted drafting, and **Sign & Lock**.
 
 ## Before you start
 
-- Your appointment is in `Scheduled` status on the **Fleet Calendar**, or you opened the wound from the **Wound Cockpit**.
+- Your appointment is on the **Fleet Calendar**, or you opened the wound from the **Wound Cockpit**.
 - Your device has location services enabled (required for the GPS geofence on in-person visits).
 - For follow-up visits, review the Wound Cockpit "Where this wound is at" panel so you know what carries forward — see [Wound Cockpit](./wound-cockpit.md).
-- If you may lose connectivity, review [Work Offline](./work-offline.md) before opening the wizard.
 
 ---
 
@@ -45,12 +43,12 @@ Open the Visit Wizard from the Fleet Calendar or the Wound Cockpit, confirm the 
 
 2. **Tap the appointment tile.** A detail popover appears with the patient name, appointment type, date, and time.
 
-3. **Click Start Visit.** Specialty routing sends wound care patients to the **Wound Cockpit** and primary care patients to the **PCP Cockpit**.
+3. **Click Start Visit.** Specialty routing sends wound-care patients to the **Wound Cockpit** and primary-care patients to the **Primary Care Cockpit**.
 
 ### From the Wound Cockpit
 
 1. From the patient chart, open the **Wound Cockpit** for the wound you intend to treat.
-2. Click **Start Visit** (or **Continue Visit** if a draft exists). The Visit Wizard opens to section 1 — or to the last unsaved section if you are resuming a draft.
+2. Click **Start Visit** (or **Continue Visit** if a draft exists). The Visit Wizard opens to section 1 — or to the last section you worked if you are resuming a draft.
 
 The **Visit Timer** starts automatically and appears in the top toolbar, alongside the **LCD ambient badge**.
 
@@ -60,7 +58,23 @@ The **Visit Timer** starts automatically and appears in the top toolbar, alongsi
 
 ---
 
-## 2. Section 1 — Consent & Attestation
+## 2. Pull in prior data (top-of-wizard toolbar)
+
+The toolbar at the top of the wizard lets you bring documented data forward before you start typing. For a transferred patient, a **migration context banner** also appears.
+
+| Action | What it does |
+|---|---|
+| **Pull from History** | Brings forward documented sections from the patient's prior visit (Review of Systems, Comorbidities, Allergies, Previous Treatment, historic measurements, care plan). A preview shows what will be applied before you confirm. |
+| **Smart Import** | Pulls structured clinical data the system has already extracted for this patient and maps it into the matching wizard fields. |
+| **Pull Migration Data** | For patients migrated from a prior EMR, pulls the imported chart data (visit history, wounds) into the visit. |
+
+<Tip>
+Carry-forward is a starting point, not a substitute for re-assessment — always review pulled values against the patient in front of you before signing.
+</Tip>
+
+---
+
+## 3. Section 1 — Consent & Attestation
 
 1. **Present the HIPAA notice to the patient.** The full HIPAA privacy notice is displayed on screen.
 2. **Toggle Telehealth Consent** if the visit is being conducted via telehealth.
@@ -69,12 +83,13 @@ The **Visit Timer** starts automatically and appears in the top toolbar, alongsi
 
 ---
 
-## 3. Section 2 — Patient Context
+## 4. Section 2 — Patient Context / Demographics
 
 1. **Select the Visit Type.** Choose `Initial`, `Follow-up`, `Post-op`, or `Re-eval`.
 2. **Enter the Reason for Visit.** Type a brief clinical summary (for example, "Evaluation and treatment of right heel diabetic foot ulcer").
 3. **Review the Allergies card.** Allergies pre-populate from prior visits and sync with DoseSpot. Add or update if anything changed since the last visit.
-4. Click **Next**.
+4. **Review insurance.** Coverage is shown here for reference. The **secondary payer is read-only** — edit insurance on the **Insurance** tab, not in the wizard.
+5. Click **Next**.
 
    ![Visit Wizard section list — top half](../../assets/visit-wizard/05_visit_wizard_steps_top.png)
 
@@ -82,63 +97,63 @@ The **Visit Timer** starts automatically and appears in the top toolbar, alongsi
 
 ---
 
-## 4. Sections 3–6 — Clinical baseline
+## 5. Sections 3–6 — Clinical baseline
 
 | Section | What to enter |
 |---|---|
-| **3. Review of Systems** | 14-system checklist. Pre-populated from the prior visit; review each system and update as needed. |
+| **3. Review of Systems** | Body-system checklist. Pre-populated from the prior visit; review each system and update as needed. |
 | **4. Objective Assessment** | Vitals: BP, HR, Temp, SpO₂, Respirations, Weight, Height, BMI. |
-| **5. Functional Status & ADLs** | Ambulation, ADL independence, fall risk. |
-| **6. Comorbidities** | DM, PAD, CVI, CHF, lymphedema, smoking status. These feed the billing AI and the stage-aware ICD-10 resolver. |
+| **5. Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. These feed the billing engine and the stage-aware ICD-10 resolver. |
+| **6. Functional Status & ADLs** | Ambulation, ADL independence, fall risk. |
 
-Each section saves to the server when you click **Next**. The autosave timestamp updates and the LCD ambient badge refreshes.
+Each section saves as you complete it. The LCD ambient badge refreshes on every save.
 
 ---
 
-## 5. Section 7 — Wound Assessment
+## 6. Section 7 — Wound Assessment
 
 1. **Confirm wound etiology and staging.** Stage drives the ICD-10 selection downstream.
-2. **Measure today.** Enter **Length (cm)**, **Width (cm)**, and **Depth (cm)**. Photo upload is required if your facility policy mandates it.
-3. **Set tissue percentages by wound.** Granulation / Slough / Eschar / Epithelial percentages must sum to 100%.
-4. **Confirm the precise anatomical location.** The location field is editable — pick from the dropdown or type the specific area (for example, `Right lateral malleolus`).
-5. Document exudate, pain, and infection signs.
-6. Click **Next**.
+2. **Set the wound's Treating / Monitoring status.** A wound marked **Monitoring** carries a yellow pill and relaxes some required fields for that visit; flip it back to **Treating** at any time.
+3. **Measure today.** Enter **Length (cm)**, **Width (cm)**, and **Depth (cm)**. Photo upload is required if your facility policy mandates it.
+4. **Set tissue percentages by wound.** Granulation / Slough / Necrotic / Epithelial / Eschar must sum to 100%.
+5. **Confirm the precise anatomical location.** The location field is editable — pick from the dropdown or type the specific area (for example, `Right lateral malleolus`).
+6. Document exudate, pain, and infection signs.
+7. Click **Next**.
 
    See [Wound Assessment](./wound-assessment.md) for the full reference.
 
 ---
 
-## 6. Section 8 — Historic Measurements + Previous Treatments
+## 7. Section 8 — Previous Treatment
 
-This merged view replaces the prior two separate sections. It shows the prior measurements alongside prior interventions so you can decide on the next step in one screen.
+Document prior interventions so the plan and LCD checklist have the history they need.
 
-1. Review historic measurements; % area change is computed automatically against today's measurement.
-2. Add or update prior treatments — offloading, compression, debridement history, prior grafts (use **Scan UIN** for the last graft applied).
-3. **ABI gate.** If you intend to order compression at any stage of this visit, the wizard requires an **ankle-brachial index** value before compression can be selected. Enter the most recent ABI, or order one before proceeding.
+1. Add or update prior treatments — offloading, compression, debridement history, prior grafts.
+2. **ABI for compression.** If you intend to order compression, document the most recent **ankle-brachial index**. If compression is documented without an ABI on file, the wizard raises a **soft warning** and records a review flag — it no longer hard-blocks you from proceeding.
 
    <Warning>
-   Compression therapy without a documented ABI is a top LCD denial reason. The ABI gate blocks the order, not just the documentation — you cannot advance to a compression intervention until the value is on file.
+   Compression therapy without a documented ABI is a top LCD denial reason. The wizard now warns instead of blocking, so it is your responsibility to enter the ABI (or order one) before the note is signed.
    </Warning>
 
-4. Click **Next**.
+3. Click **Next**.
 
 ---
 
-## 7. Section 9 — Interventions & Treatments
+## 8. Section 9 — Treatment / Intervention
 
 1. **Select debridement type** if performed: `sharp`, `mechanical`, `enzymatic`, or `autolytic`.
-2. **Choose dressing(s)** from the catalog.
+2. **Choose dressing(s)** from the catalog. Record ultrasonic therapy (MIST / Arobella) if used.
 3. **AI-assisted draft.** Click **AI draft** to generate a narrative from the structured data you just entered. Edit the text — anything left in the draft becomes part of your signed note.
 
    <Note>
-   The first time you use AI drafting in a visit, you will be asked to acknowledge the **AI Disclaimer**. The disclaimer documents that the AI output is a draft only and that the rendering provider is responsible for the final content.
+   The first time you use AI drafting in a visit, you will be asked to acknowledge the **AI Disclaimer**. It documents that the AI output is a draft only and that the rendering provider is responsible for the final content.
    </Note>
 
 4. Click **Next**.
 
 ---
 
-## 8. Section 10 — Care Planning
+## 9. Section 10 — Care Plan
 
 1. Enter goals, visit frequency, and the **next-visit interval**.
 2. Set plan-of-care dates — these satisfy LCD checklist item **Plan-of-care dates**.
@@ -146,16 +161,7 @@ This merged view replaces the prior two separate sections. It shows the prior me
 
 ---
 
-## 9. Section 11 — Orders, DME & Patient Education
-
-1. Add scripts and DME orders. eRx scripts route through DoseSpot — see the eRx module.
-2. Select patient education handouts.
-3. Toggle **Teach-back documented** (`Y` / `N`).
-4. Click **Next**.
-
----
-
-## 10. Section 12 — Procedure & Supplies (unified)
+## 10. Section 11 — Procedures & Supplies
 
 This is the single source of truth for procedures and supplies.
 
@@ -174,50 +180,75 @@ On save, a **tissue log** entry is written and inventory is deducted automatical
 
 ---
 
-## 11. Section 13 — Billing & Documentation
+## 11. Section 12 — Orders & DME
 
-1. Review the **Medical Necessity Statement**. It is auto-generated from sections 2, 6, 7, 8, and 12. Edit anything that doesn't match what you did.
-2. Review the **CPT autocode** output. The deterministic engine runs first; if it returns zero rows, the **AI fallback** engages and the BillingLine provenance shows `AI` for the relevant lines.
-3. Verify E/M level, modifiers (`25`, `59`, `KX`, `JW`, `JZ`), and **POS code**.
+1. Add clinical orders and DME. **DME is a vendor-fulfilled order** — there is no product picker here; you order the item and it is fulfilled downstream.
+2. Click **Next**.
+
+---
+
+## 12. Section 13 — Medication Management
+
+1. Manage the patient's medications and prescribe through **DoseSpot**. Pharmacy selection and the prescription itself are handled in the DoseSpot modal.
+2. Click **Next**.
+
+---
+
+## 13. Section 14 — Billing
+
+1. Review the **Medical Necessity Statement**. It is auto-generated from the clinical sections. Edit anything that doesn't match what you did.
+2. Review the **CPT autocode** output. The deterministic engine runs first; if it returns zero rows, the **AI fallback** engages and the BillingLine provenance shows `AI` for the relevant lines. **Pull Codes** can auto-populate codes from your documentation.
+3. Verify E/M level, modifiers (`25`, `59`, `KX`, `JW`, `JZ`), and **POS code**. Billing lines can be dragged to reorder.
 4. **Read the BillingLine provenance panel.** Each line shows `Deterministic` or `AI`. Spot-check AI-sourced lines before continuing.
 5. Click **Next**.
 
    <Compliance>
-   AI fallback fires when no deterministic rule matched. Billers will see the same provenance in the Work Queue and may request corrections — verify any `AI` line is supported by your documentation before attestation.
+   AI fallback fires when no deterministic rule matched. Billers see the same provenance in the Work Queue and may request corrections — verify any `AI` line is supported by your documentation before attestation.
    </Compliance>
 
 ---
 
-## 12. Section 14 — LCD Audit & Provider Attestation
+## 14. Section 15 — Patient Education
 
-1. The **LCD ambient badge** must be **green** at this point. If amber or red items remain, the Navigator shows links back to the section where the missing data must be entered. See [LCD Navigator](./lcd-navigator.md).
+1. Select patient education handouts.
+2. Toggle **Teach-back documented** (`Y` / `N`).
+3. Click **Next**.
+
+---
+
+## 15. Section 16 — LCD Audit & Review
+
+1. The **LCD ambient badge** should be **green** at this point. If amber or red items remain, the Navigator shows links back to the section where the missing data must be entered. See [LCD Navigator](./lcd-navigator.md).
 
    ![LCD Audit & Review screen](../../assets/visit-wizard/09_lcd_audit_review.png)
 
-   *Step 14 opens the LCD Navigator final review. Items requiring action are highlighted in amber.*
+   *Section 16 opens the LCD Navigator final review. Items requiring action are highlighted in amber.*
 
 2. Resolve any remaining amber items by jumping to the linked section, fixing the data, and returning.
-3. Once all items are green, complete **Provider Attestation**: read the attestation sentence, sign on the signature pad, and click **Attest & Sign**.
+3. Click **Next** to move to Provider Attestation.
 
-The note is now locked. PDF generation runs in the background with retry + Sentry error capture — see [Sign Off](./sign-off.md) for what to do if PDF fails.
+---
+
+## 16. Section 17 — Provider Attestation
+
+1. Read the attestation sentence covering the ESIGN Act, UETA, CMS, and HIPAA disclosure standards.
+2. Sign on the signature pad.
+3. Click **Sign & Lock**. If the service date does not match the appointment date, a soft-block prompt asks for a reason before locking.
+
+Once locked, a **Go to Billing** prompt appears. The note is now locked and any later change requires an **Addendum** with a documented reason. PDF generation runs in the background — see [Sign Off](./sign-off.md) for what to do if PDF fails.
 
 ---
 
 ## Saving and resuming
 
-- **Autosave** runs every 3 minutes. The top-bar timestamp confirms the last save.
-- **Save Draft** (top toolbar) writes the current section immediately and closes the wizard. The appointment moves to `Draft Saved` on the Fleet Calendar.
-- **Resume** by tapping the same appointment tile (or opening the Wound Cockpit and clicking **Continue Visit**). You land on the last unsaved section.
-
-<Tip>
-If you switch to offline mode mid-visit, autosave continues to the local outbox. Once you regain connectivity the outbox sync engine pushes pending sections in order — see [Work Offline](./work-offline.md).
-</Tip>
+- **Continuous autosave** — each field is saved as you complete it (per-field debounced save plus a safety-net heartbeat), so drafts survive network drops and device switches. The web wizard is online-only; there is no separate offline mode.
+- **Resume** by tapping the same appointment tile on the Fleet Calendar (or opening the Wound Cockpit and clicking **Continue Visit**). You land back where you left off, on any device.
 
 ---
 
 ## Result
 
-You completed all 14 sections, the LCD ambient badge is green, the Medical Necessity Statement and billing codes are reviewed, and the rendering provider has attested. The encounter is locked, the PDF is generated, the tissue log and inventory are updated, and the claim is queued for the Billing Work Queue's **New Claims gate**.
+You completed all 17 sections, the LCD ambient badge is green, the Medical Necessity Statement and billing codes are reviewed, and the rendering provider has attested with **Sign & Lock**. The encounter is locked, the PDF is generated, the tissue log and inventory are updated, and a **Go to Billing** prompt hands the encounter off to the Billing Work Queue.
 
 ---
 
@@ -225,13 +256,13 @@ You completed all 14 sections, the LCD ambient badge is green, the Medical Neces
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **Start Visit** button is grayed out | Appointment is in `Canceled` or `No Show` status | Update the appointment status to `Scheduled` before starting. |
+| **Start Visit** button is grayed out | Appointment is in `Canceled` or `No Show` status | Update the appointment status before starting. |
 | Visit Timer shows "GPS unavailable" | Location services are disabled on the device | Enable location permissions for the browser or the Medipyxis app in device settings. |
-| Wizard opens but shows the wrong patient | Tapped the wrong appointment tile | Click **Save Draft** if prompted, then reopen from the correct tile. |
-| Compression option is disabled in section 9 | **ABI gate** — no ABI value on file | Enter ABI in section 8 (Historic Measurements + Previous Treatments) or order one. |
+| Wizard opens but shows the wrong patient | Tapped the wrong appointment tile | Close the wizard, then reopen from the correct tile. |
+| Compression order shows a warning in section 8 | No ABI value on file | Enter the ABI in section 8 (Previous Treatment) or order one — the warning does not block you, but resolve it before Sign & Lock. |
 | LCD ambient badge stays amber after a save | One or more checklist items still need data | Click the badge to open the Navigator; follow the jump-back link to the offending section. |
-| BillingLine shows `AI` for unexpected lines | Deterministic engine returned zero rows for that scenario | Verify the line is supported by your documentation; correct in section 12 or 13. |
-| PDF generation fails after attestation | Transient downstream error | The system retries automatically; if still failing, the Sentry event ID is shown — share it with support. See [Sign Off](./sign-off.md). |
+| BillingLine shows `AI` for unexpected lines | Deterministic engine returned zero rows for that scenario | Verify the line is supported by your documentation; correct in section 11 or 14. |
+| PDF generation fails after Sign & Lock | Transient downstream error | The system retries automatically; if still failing, the Sentry event ID is shown — share it with support. See [Sign Off](./sign-off.md). |
 
 ## Related
 

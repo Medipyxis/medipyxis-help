@@ -3,10 +3,10 @@ id: visit-wizard-ehr-wound-assessment
 title: Complete the Wound Assessment (section 7)
 module: visit-wizard-ehr
 audience: [clinician]
-roles: [nurse, np, md]
+roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -23,7 +23,7 @@ tags: [wound-assessment, EHR, measurements, tissue, exudate, LCD, Medicare, phot
 Document all active wounds in section 7 of the Visit Wizard, capturing anatomy, measurements, **tissue percentages by wound**, **precise anatomical location**, exudate, pain, and photos needed for Medicare LCD compliance and longitudinal wound tracking.
 
 <Note>
-The merged section 8 (Historic Measurements + Previous Treatments) is where the **ABI gate** triggers — if you intend to order compression, ABI must be on file before you can advance. See [Visit Wizard overview](./overview.md).
+Section 8 (Previous Treatment) is where **ABI** is documented — if you intend to order compression, enter the ankle-brachial index there. Missing ABI on a compression order now raises a soft warning rather than blocking you. See [Visit Wizard overview](./overview.md).
 </Note>
 
 ## Before you start
@@ -43,6 +43,10 @@ The merged section 8 (Historic Measurements + Previous Treatments) is where the 
    *Step 7 opens with a list of wounds carried forward from the patient's chart. Click a wound to assess it or click **Add Wound** to document a new one.*
 
 2. **Select the wound or add a new one.** Click an existing wound to open its assessment form, or click **Add Wound** if this is a new wound.
+
+<Note>
+Each wound carries a **Treating / Monitoring** status. Set a wound to **Monitoring** when you are watching it rather than actively treating it — it shows a yellow pill, relaxes some required fields for the visit, and stays Monitoring on the next visit's reload until you flip it back to **Treating**.
+</Note>
 
 ### Complete the wound assessment form
 
