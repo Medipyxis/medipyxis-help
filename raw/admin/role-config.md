@@ -3,11 +3,11 @@ id: admin-role-config
 title: Configure organization roles and permissions
 module: admin
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin, superadmin]
 type: reference
 estimated_minutes: 8
-last_reviewed: 2026-04-24
-app_route: /administrator
+last_reviewed: 2026-06-29
+app_route: /administrator/org-role-config
 related:
   - admin-index
   - admin-user-management
@@ -19,20 +19,20 @@ prerequisites:
 
 # Configure organization roles and permissions
 
-The **Organization Role Config** screen at `/administrator` is the single source of truth for what every role can see and do across your entire Medipyxis organization.
+The **Organization Role Config** screen is where you control what each role can see and do across your Medipyxis organization.
 
 ## Before you start
 
-- Only `super_admin` and `practice_admin` accounts can access `/administrator`.
-- Changes are organization-wide and immediate — they affect all facilities simultaneously.
-- Plan permission changes during off-peak hours when staff are least likely to be mid-workflow.
+- Access requires the `superadmin` role, or a facility-admin role (`admin`, `clinical_manager`, or `bd_manager`) for at least one facility.
+- Configuration is **per organization** — you select the organization at the top of the screen.
+- Changes take effect on an affected user's next page load (the configuration is cached).
 
-## The Role Config screen
+## Open the screen
 
-![Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of module permissions with toggle switches.](../assets/admin/role-config.png)
-*The **Organization Role Config** matrix at `/administrator`. Rows are roles; columns are modules. Filled toggles indicate the role has access.*
+Navigate to **`/administrator` → Organization Role Config** (`/administrator/org-role-config`). The `/administrator` cockpit link appears in the sidebar for admin roles, outside the facility-scoped navigation.
 
-Navigate to `/administrator` (the link appears in the sidebar for admin roles, outside the facility-scoped navigation).
+![Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of feature permissions with checkboxes.](../assets/admin/role-config.png)
+*The **Organization Role Config** matrix. Rows are roles; columns are features. A checked box means the role has access to that feature.*
 
 ## Seeded roles
 
@@ -42,25 +42,29 @@ Medipyxis ships ten built-in roles. They cover the most common job functions and
 |---|---|
 | `admin` | Full organization access; manages all facilities and users |
 | `clinical_manager` | Oversees clinical staff; access to Fleet Calendar, Visit Wizard, Oversight Cockpit |
-| `medical_director` | Clinical sign-off; access to LCD Navigator™ audit queue and reporting |
+| `medical_director` | Clinical sign-off; access to LCD Navigator™ audit and reporting |
 | `clinician` | Visit documentation; access to Visit Wizard, patient records, orders |
 | `referral_coordinator` | Manages Referral Intake kanban and Fax Review Queue |
 | `bd_rep` | Business Development; CRM, BD Dashboard, limited patient view |
 | `bd_manager` | BD rep management; CRM, BD Dashboard, Oversight Cockpit BD metrics |
 | `finance_ap` | Accounts Payable; Billing (read), Inventory Accounts Payable |
-| `vendor_coordinator` | Vendor-facing inventory management; Product Catalog, IVR Tracking |
-| `biller` | Full Billing access; Claims, Denials, Payments, Superbill Config |
+| `vendor_coordinator` | Vendor-facing inventory management; Product Catalog and inventory |
+| `biller` | Billing access; Claims, Denials, Payments, and the facility Charge Master |
 
-## Module permission matrix
+<Note>
+Platform-level roles `superadmin` and `customersupport` (Medipyxis-internal) sit above these organization roles and are not configured here.
+</Note>
 
-The matrix uses toggle switches at the intersection of each role and module. A filled toggle means the role can access that module in the sidebar.
+## Feature permission matrix
 
-| Module | Typical roles with access |
+The matrix uses checkboxes at the intersection of each role and feature. A checked box means the role can access that feature.
+
+| Feature | Typical roles with access |
 |---|---|
 | Dashboard | All roles |
 | Referral Intake | `referral_coordinator`, `clinician`, `clinical_manager`, `admin` |
 | Patient Management | `clinician`, `clinical_manager`, `medical_director`, `admin` |
-| Visit Wizard / EHR | `clinician`, `np`, `md`, `clinical_manager` |
+| Visit Wizard / EHR | `clinician`, `clinical_manager`, `medical_director` |
 | Fleet Calendar | `clinician`, `clinical_manager`, `admin` |
 | Inventory | `vendor_coordinator`, `finance_ap`, `clinical_manager`, `admin` |
 | Orders & DME | `clinician`, `clinical_manager` |
@@ -68,49 +72,34 @@ The matrix uses toggle switches at the intersection of each role and module. A f
 | CRM | `bd_rep`, `bd_manager`, `admin` |
 | Business Development | `bd_rep`, `bd_manager`, `admin` |
 | Oversight Cockpit | `clinical_manager`, `medical_director`, `bd_manager`, `admin` |
-| HR & Compliance | `practice_admin`, `super_admin` |
-| Administrator | `super_admin`, `practice_admin` |
+| HR & Compliance | `admin`, `clinical_manager` |
+| Administrator | `superadmin`, `admin` |
 | Team Chat | All roles |
 
 <Note>
-This matrix shows defaults. Your organization may have already customized these — always verify the live toggles in `/administrator` rather than relying on the table above.
+This matrix shows typical defaults. Your organization may have customized these — always verify the live checkboxes in Organization Role Config rather than relying on the table above.
 </Note>
 
-## Toggle a permission
+## Set a permission
 
-1. Navigate to `/administrator`.
-2. Locate the role row and module column you want to change.
-3. Click the toggle. It flips state immediately — there is no separate Save button.
-4. Verify by opening a browser tab in an incognito window logged in as a user with that role. The sidebar change is visible on their next page load.
-
-## Clone a role to create a custom variant
-
-When a seeded role is close but not quite right, clone it rather than modifying the seeded role itself. This preserves the original as a baseline.
-
-1. In the Role Config matrix, hover over the role row you want to copy.
-2. Click **Clone Role** (appears on hover at the right end of the row).
-3. Enter a name for the new role (e.g., `senior_bd_rep`).
-4. The clone inherits all permissions from the source role. Adjust toggles as needed.
-5. The new role is immediately available in **HR & Compliance → Facility Users** role dropdowns.
-
-## Understanding blast radius
-
-Before changing a permission, assess how many users are affected:
-
-1. In the Role Config matrix, click the role name to open a side panel.
-2. The panel shows **Users with this role** — a count and a list by facility.
-3. If the count is high, consider creating a cloned sub-role for the subset of users who need the new permission, rather than changing the shared role.
+1. Open **Organization Role Config** and select the **organization** from the dropdown at the top.
+2. Find the role row and feature column you want to change.
+3. **Check or uncheck** the box.
+4. Click **Save**. A confirmation toast appears; the change applies to affected users on their next page load.
 
 <Warning>
-Removing a module permission from a role will immediately hide that sidebar link for every user with that role. Any unsaved work they have open in that module will be lost when the page refreshes.
+Removing a feature from a role hides that sidebar link for every user with that role on their next load. Communicate permission changes to affected staff in advance.
 </Warning>
 
-## How to walk through a permission change end-to-end
+## Billing roles are facility-scoped
 
-Scenario: You want to give `referral_coordinator` read access to **Billing** so coordinators can see claim status without creating or editing claims.
+Billing roles (`biller` and related) are scoped to a specific facility — they cannot hold a global (all-facility) wildcard. Assign the billing role at the facility where the user works. The `biller` role can view and edit that facility's **Charge Master**; creating and editing claim codes and claim status remains governed by the same role configuration.
 
-1. Navigate to `/administrator`.
-2. Find the `referral_coordinator` row and the **Billing** column.
-3. Click the toggle to enable it.
-4. In the Billing module's own settings (visible once access is on), confirm the role has read-only mode enforced — contact Medipyxis support if granular sub-module permissions are needed.
-5. Notify affected users that the Billing link is now visible in their sidebar.
+## Worked example
+
+Scenario: give `referral_coordinator` visibility into **Billing** so coordinators can see claim status without creating or editing claims.
+
+1. Open Organization Role Config and select the organization.
+2. Find the `referral_coordinator` row and the **Billing** column and check the box.
+3. Click **Save**.
+4. Notify affected users that the Billing link is now visible in their sidebar. If you need finer-grained (read-only) billing access than the feature toggle provides, contact Medipyxis support.

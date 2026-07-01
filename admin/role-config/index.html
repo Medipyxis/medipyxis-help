@@ -49,18 +49,18 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/admin/">Administrator Guide</a><a class="sidebar-item active" href="/medipyxis-help/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/medipyxis-help/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/medipyxis-help/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/medipyxis-help/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/admin/">Admin & billing</a></p>
       <h1>Configure organization roles and permissions</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>The <strong>Organization Role Config</strong> screen at <code>/administrator</code> is the single source of truth for what every role can see and do across your entire Medipyxis organization.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
+      <p>The <strong>Organization Role Config</strong> screen is where you control what each role can see and do across your Medipyxis organization.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>Only <code>super_admin</code> and <code>practice_admin</code> accounts can access <code>/administrator</code>.</li>
-<li>Changes are organization-wide and immediate — they affect all facilities simultaneously.</li>
-<li>Plan permission changes during off-peak hours when staff are least likely to be mid-workflow.</li>
+<li>Access requires the <code>superadmin</code> role, or a facility-admin role (<code>admin</code>, <code>clinical_manager</code>, or <code>bd_manager</code>) for at least one facility.</li>
+<li>Configuration is <strong>per organization</strong> — you select the organization at the top of the screen.</li>
+<li>Changes take effect on an affected user's next page load (the configuration is cached).</li>
 </ul>
-<h2 id="the-role-config-screen">The Role Config screen</h2>
-<p><img alt="Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of module permissions with toggle switches." src="/medipyxis-help/assets/admin/role-config.png" />
-<em>The </em><em>Organization Role Config</em><em> matrix at <code>/administrator</code>. Rows are roles; columns are modules. Filled toggles indicate the role has access.</em></p>
-<p>Navigate to <code>/administrator</code> (the link appears in the sidebar for admin roles, outside the facility-scoped navigation).</p>
+<h2 id="open-the-screen">Open the screen</h2>
+<p>Navigate to <strong><code>/administrator</code> → Organization Role Config</strong> (<code>/administrator/org-role-config</code>). The <code>/administrator</code> cockpit link appears in the sidebar for admin roles, outside the facility-scoped navigation.</p>
+<p><img alt="Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of feature permissions with checkboxes." src="/medipyxis-help/assets/admin/role-config.png" />
+<em>The </em><em>Organization Role Config</em><em> matrix. Rows are roles; columns are features. A checked box means the role has access to that feature.</em></p>
 <h2 id="seeded-roles">Seeded roles</h2>
 <p>Medipyxis ships ten built-in roles. They cover the most common job functions and cannot be deleted, but their permissions can be adjusted.</p>
 <table>
@@ -81,7 +81,7 @@
 </tr>
 <tr>
 <td><code>medical_director</code></td>
-<td>Clinical sign-off; access to LCD Navigator™ audit queue and reporting</td>
+<td>Clinical sign-off; access to LCD Navigator™ audit and reporting</td>
 </tr>
 <tr>
 <td><code>clinician</code></td>
@@ -105,20 +105,23 @@
 </tr>
 <tr>
 <td><code>vendor_coordinator</code></td>
-<td>Vendor-facing inventory management; Product Catalog, IVR Tracking</td>
+<td>Vendor-facing inventory management; Product Catalog and inventory</td>
 </tr>
 <tr>
 <td><code>biller</code></td>
-<td>Full Billing access; Claims, Denials, Payments, Superbill Config</td>
+<td>Billing access; Claims, Denials, Payments, and the facility Charge Master</td>
 </tr>
 </tbody>
 </table>
-<h2 id="module-permission-matrix">Module permission matrix</h2>
-<p>The matrix uses toggle switches at the intersection of each role and module. A filled toggle means the role can access that module in the sidebar.</p>
+<p><Note>
+Platform-level roles <code>superadmin</code> and <code>customersupport</code> (Medipyxis-internal) sit above these organization roles and are not configured here.
+</Note></p>
+<h2 id="feature-permission-matrix">Feature permission matrix</h2>
+<p>The matrix uses checkboxes at the intersection of each role and feature. A checked box means the role can access that feature.</p>
 <table>
 <thead>
 <tr>
-<th>Module</th>
+<th>Feature</th>
 <th>Typical roles with access</th>
 </tr>
 </thead>
@@ -137,7 +140,7 @@
 </tr>
 <tr>
 <td>Visit Wizard / EHR</td>
-<td><code>clinician</code>, <code>np</code>, <code>md</code>, <code>clinical_manager</code></td>
+<td><code>clinician</code>, <code>clinical_manager</code>, <code>medical_director</code></td>
 </tr>
 <tr>
 <td>Fleet Calendar</td>
@@ -169,11 +172,11 @@
 </tr>
 <tr>
 <td>HR &amp; Compliance</td>
-<td><code>practice_admin</code>, <code>super_admin</code></td>
+<td><code>admin</code>, <code>clinical_manager</code></td>
 </tr>
 <tr>
 <td>Administrator</td>
-<td><code>super_admin</code>, <code>practice_admin</code></td>
+<td><code>superadmin</code>, <code>admin</code></td>
 </tr>
 <tr>
 <td>Team Chat</td>
@@ -182,42 +185,27 @@
 </tbody>
 </table>
 <p><Note>
-This matrix shows defaults. Your organization may have already customized these — always verify the live toggles in <code>/administrator</code> rather than relying on the table above.
+This matrix shows typical defaults. Your organization may have customized these — always verify the live checkboxes in Organization Role Config rather than relying on the table above.
 </Note></p>
-<h2 id="toggle-a-permission">Toggle a permission</h2>
+<h2 id="set-a-permission">Set a permission</h2>
 <ol>
-<li>Navigate to <code>/administrator</code>.</li>
-<li>Locate the role row and module column you want to change.</li>
-<li>Click the toggle. It flips state immediately — there is no separate Save button.</li>
-<li>Verify by opening a browser tab in an incognito window logged in as a user with that role. The sidebar change is visible on their next page load.</li>
-</ol>
-<h2 id="clone-a-role-to-create-a-custom-variant">Clone a role to create a custom variant</h2>
-<p>When a seeded role is close but not quite right, clone it rather than modifying the seeded role itself. This preserves the original as a baseline.</p>
-<ol>
-<li>In the Role Config matrix, hover over the role row you want to copy.</li>
-<li>Click <strong>Clone Role</strong> (appears on hover at the right end of the row).</li>
-<li>Enter a name for the new role (e.g., <code>senior_bd_rep</code>).</li>
-<li>The clone inherits all permissions from the source role. Adjust toggles as needed.</li>
-<li>The new role is immediately available in <strong>HR &amp; Compliance → Facility Users</strong> role dropdowns.</li>
-</ol>
-<h2 id="understanding-blast-radius">Understanding blast radius</h2>
-<p>Before changing a permission, assess how many users are affected:</p>
-<ol>
-<li>In the Role Config matrix, click the role name to open a side panel.</li>
-<li>The panel shows <strong>Users with this role</strong> — a count and a list by facility.</li>
-<li>If the count is high, consider creating a cloned sub-role for the subset of users who need the new permission, rather than changing the shared role.</li>
+<li>Open <strong>Organization Role Config</strong> and select the <strong>organization</strong> from the dropdown at the top.</li>
+<li>Find the role row and feature column you want to change.</li>
+<li><strong>Check or uncheck</strong> the box.</li>
+<li>Click <strong>Save</strong>. A confirmation toast appears; the change applies to affected users on their next page load.</li>
 </ol>
 <p><Warning>
-Removing a module permission from a role will immediately hide that sidebar link for every user with that role. Any unsaved work they have open in that module will be lost when the page refreshes.
+Removing a feature from a role hides that sidebar link for every user with that role on their next load. Communicate permission changes to affected staff in advance.
 </Warning></p>
-<h2 id="how-to-walk-through-a-permission-change-end-to-end">How to walk through a permission change end-to-end</h2>
-<p>Scenario: You want to give <code>referral_coordinator</code> read access to <strong>Billing</strong> so coordinators can see claim status without creating or editing claims.</p>
+<h2 id="billing-roles-are-facility-scoped">Billing roles are facility-scoped</h2>
+<p>Billing roles (<code>biller</code> and related) are scoped to a specific facility — they cannot hold a global (all-facility) wildcard. Assign the billing role at the facility where the user works. The <code>biller</code> role can view and edit that facility's <strong>Charge Master</strong>; creating and editing claim codes and claim status remains governed by the same role configuration.</p>
+<h2 id="worked-example">Worked example</h2>
+<p>Scenario: give <code>referral_coordinator</code> visibility into <strong>Billing</strong> so coordinators can see claim status without creating or editing claims.</p>
 <ol>
-<li>Navigate to <code>/administrator</code>.</li>
-<li>Find the <code>referral_coordinator</code> row and the <strong>Billing</strong> column.</li>
-<li>Click the toggle to enable it.</li>
-<li>In the Billing module's own settings (visible once access is on), confirm the role has read-only mode enforced — contact Medipyxis support if granular sub-module permissions are needed.</li>
-<li>Notify affected users that the Billing link is now visible in their sidebar.</li>
+<li>Open Organization Role Config and select the organization.</li>
+<li>Find the <code>referral_coordinator</code> row and the <strong>Billing</strong> column and check the box.</li>
+<li>Click <strong>Save</strong>.</li>
+<li>Notify affected users that the Billing link is now visible in their sidebar. If you need finer-grained (read-only) billing access than the feature toggle provides, contact Medipyxis support.</li>
 </ol>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/admin/">Administrator Guide</a></li><li><a href="/medipyxis-help/admin/user-management/">Invite users and manage facility access</a></li><li><a href="/medipyxis-help/admin/security-and-compliance/">Security settings and HIPAA compliance</a></li></ul></div>
       <div class="feedback">
@@ -226,7 +214,7 @@ Removing a module permission from a role will immediately hide that sidebar link
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-role-config-screen">The Role Config screen</a></li><li><a class="" href="#seeded-roles">Seeded roles</a></li><li><a class="" href="#module-permission-matrix">Module permission matrix</a></li><li><a class="" href="#toggle-a-permission">Toggle a permission</a></li><li><a class="" href="#clone-a-role-to-create-a-custom-variant">Clone a role to create a custom variant</a></li><li><a class="" href="#understanding-blast-radius">Understanding blast radius</a></li><li><a class="" href="#how-to-walk-through-a-permission-change-end-to-end">How to walk through a permission change end-to-end</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#open-the-screen">Open the screen</a></li><li><a class="" href="#seeded-roles">Seeded roles</a></li><li><a class="" href="#feature-permission-matrix">Feature permission matrix</a></li><li><a class="" href="#set-a-permission">Set a permission</a></li><li><a class="" href="#billing-roles-are-facility-scoped">Billing roles are facility-scoped</a></li><li><a class="" href="#worked-example">Worked example</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/role-config.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/admin/role-config.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
