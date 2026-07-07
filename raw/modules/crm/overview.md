@@ -3,10 +3,10 @@ id: crm-overview
 title: CRM overview
 module: crm
 audience: [bd, admin]
-roles: [bd_rep, bd_manager, practice_admin, super_admin]
+roles: [bd_rep, bd_manager, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/crm
 related:
   - crm-practice-detail
@@ -18,6 +18,8 @@ tags: [CRM, practices, contacts, referrals]
 # CRM overview
 
 The CRM module is the central directory of referring practices and contacts. It tracks relationships, organizes outreach history, and feeds data to the Business Development dashboard.
+
+A **Practices / Vendors** toggle switches the directory between referring **practices** and the **vendors** hub. On the Vendors side, **+ Add Vendor** registers a vendor and you can enable it at specific clinics; practices and vendors are managed as separate lists.
 
 <div class="video-embed">
   <iframe src="https://www.youtube-nocookie.com/embed/8bJ02pgQcZE"
@@ -49,7 +51,7 @@ Use the tabs across the top of the CRM to segment your practice list:
 
 Every call, visit, and spend entry logged from the BD dashboard writes back to the practice's activity record in the CRM. The CRM is the system of record; the BD dashboard is the action layer.
 
-When a practice's referral volume or engagement metrics change, the **Next Best Action** and **AI Route Suggestions** widgets on the BD dashboard reflect the update starting the following morning.
+When a practice's referral volume or engagement metrics change, the **Next Best Action** and **AI Route Suggestions** widgets on the BD dashboard pick up the change on their next refresh — both recompute on demand (with a short cache), not on an overnight batch.
 
 ## Adding practices
 

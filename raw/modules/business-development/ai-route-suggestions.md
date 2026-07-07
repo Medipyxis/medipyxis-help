@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - business-development-overview
@@ -17,35 +17,38 @@ tags: [business-development, AI, routing, suggestions]
 
 # AI Route Suggestions
 
-The **AI Route Suggestions** widget proposes a daily visit sequence for each BD rep, prioritizing practices most likely to yield new referrals given current engagement patterns.
+The **AI Route Suggestions** widget proposes a set of practices worth visiting, prioritizing accounts most likely to yield referrals given current engagement patterns.
 
 ## How suggestions are generated
 
-The model runs nightly and considers three primary signals:
+Suggestions are generated **on demand** in the app (not overnight) and cached for about 5 minutes, so a refresh reflects your latest logged activity almost immediately. The algorithm looks only at practices **assigned to you** and selects a fixed mix of seven:
 
-| Signal | What it measures |
-|---|---|
-| **Last-contact recency** | Days since the last logged call or in-person visit to each practice. Practices that have not been contacted recently receive higher priority. |
-| **Referral pipeline volume** | Number of referrals attributed to the practice over the trailing 90 days. High-volume practices with a recent drop in referrals are flagged. |
-| **Spend and engagement trend** | Whether BD spend associated with the practice correlates with referral conversion. Practices where spend is rising but conversions are flat are prioritized for a relationship check. |
+| Count | Category | Badge | How it's chosen |
+|---|---|---|---|
+| 3 | **Declining referrals** | *Declining referrals* | Practices whose referral count this month is lower than last month (worst decline first). |
+| 2 | **New practices** | *New practice* | Practices with no logged activity yet. |
+| 2 | **High ROI** | *High ROI* | Practices with the highest 30-day ROI (relationship maintenance). |
 
-The model then applies geographic clustering — grouping high-priority practices by proximity — to produce a route sequence that maximizes coverage within a standard working day.
+If a category doesn't have enough practices to fill its slots, the remaining stops are filled by proximity (or by ROI when location isn't available), badged **Proximity-based**.
+
+### Location
+
+If you allow the browser's location permission, stops are ordered by a nearest-neighbor route from your current position and each shows a distance. If you deny location, suggestions still work — they're ordered by ROI instead and no distance is shown.
 
 ## Using the suggestion
 
-1. The **AI Route Suggestions** widget on the BD dashboard displays the proposed stop list each morning.
-2. Review each stop. Tap any row to see the reasoning summary (e.g., "Last visited 21 days ago — referral count down 30%").
-3. Tap **Accept Route** to copy the sequence to **Today's Route**, or edit individual stops before accepting.
-4. Once accepted, **Today's Route** locks in for tracking purposes.
+1. The **AI Route Suggestions** widget on the BD dashboard shows the proposed practices, each with its reason badge.
+2. Review each one — the badge and referral/ROI figures explain why it surfaced.
+3. **Add a practice to Today's Route** to keep it on your list for the day. There is no single "accept the whole route" or lock step — you add the stops you want.
 
 ## Limitations
 
-- Suggestions are based on logged activity only. If calls or visits are not recorded in Medipyxis, the model has incomplete data and may surface lower-priority stops.
-- The model does not account for real-time traffic. Use your navigation app for turn-by-turn directions.
-- New practices added to the CRM today appear in suggestions starting the following morning.
+- Suggestions are based on **assigned practices** and **logged activity** only. If practices aren't assigned to you, or calls/visits aren't recorded in Medipyxis, the mix will be incomplete.
+- The route uses straight-line/nearest-neighbor ordering, not real-time traffic. Use your navigation app for turn-by-turn directions.
+- With location denied, the "closest first" ordering isn't available and stops fall back to ROI order.
 
 <Note>
-If a high-priority practice consistently appears in suggestions but never converts referrals, flag the account for your BD manager review using the **Next Best Action** escalation option.
+Because suggestions are recomputed on demand (with a short cache), logging a call or visit and refreshing updates the mix right away — you don't have to wait for an overnight run.
 </Note>
 
 ## Related

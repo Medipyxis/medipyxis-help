@@ -3,10 +3,10 @@ id: crm-practice-detail
 title: Work with a practice detail record
 module: crm
 audience: [bd, admin]
-roles: [bd_rep, bd_manager, practice_admin, super_admin]
+roles: [bd_rep, bd_manager, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/crm
 related:
   - crm-overview
@@ -42,10 +42,11 @@ The practice detail panel has three tabs:
 
 ### Log activity from the practice record
 
-4. **Use the quick-action buttons** at the top of the detail panel:
-   - **Call** — opens the call log form with the practice pre-filled.
-   - **Visit** — opens the in-person visit form with the practice pre-filled.
-   - **Note** — opens a free-text note field for internal observations that do not fit a call or visit entry.
+4. **Use the quick-add actions** at the top of the detail panel to log an interaction with the practice pre-filled:
+   - **Log Call** — practice, contact, outcome, and next steps.
+   - **New Visit** — visit date, contacts met, and notes.
+   - **Add Spend** — a marketing/entertainment spend entry tied to the practice.
+   - **Voice recording** — capture a call or visit by voice instead of typing; the recording is attached to the activity.
 5. **Complete the form** and click **Save**. The entry appears immediately in the **Activity** tab.
 
 ### Manage contacts
@@ -59,7 +60,7 @@ The practice detail panel has three tabs:
 
 ## Result
 
-Changes to the practice record are reflected immediately in the CRM list and in the BD dashboard's **Next Best Action** and **AI Route Suggestions** widgets the following morning.
+Changes to the practice record are reflected immediately in the CRM list, and the BD dashboard's **Next Best Action** and **AI Route Suggestions** widgets pick them up on their next refresh (both recompute on demand, not overnight).
 
 <Warning>
 Archiving a practice does not delete its activity history or associated contacts. You can unarchive a practice at any time from the **Archived** tab.
