@@ -3,10 +3,10 @@ id: billing-overview
 title: Billing Operations overview
 module: billing
 audience: [billing]
-roles: [biller, practice_admin, super_admin]
+roles: [biller, admin]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-01
 app_route: /facility/{facility_uuid}/billing
 related:
   - billing-submit-claim
@@ -49,18 +49,26 @@ Every claim moves through a defined sequence of statuses. Understanding this lif
 
 | Status | Meaning |
 |---|---|
-| **Pending** | Claim has been created from a completed visit but has not yet been reviewed or approved. |
+| **Draft** | Claim started but not yet complete. |
+| **Pending** | Auto-created from a completed visit, awaiting biller review. |
 | **Needs Info** | A required field is missing or a validation error must be resolved before the claim can advance. |
-| **Approved** | A biller or supervisor has reviewed the claim and marked it ready for submission. |
-| **Exported** | The claim has been sent to Stedi. |
-| **Submitted** | Stedi has confirmed delivery to the payer. |
-| **Paid** | The payer has adjudicated the claim and an ERA has been received and posted. |
+| **Approved** | A biller reviewed the claim and marked it ready for export. |
+| **Exported** | The claim has been exported / sent to Stedi. |
+| **Submitted** | Marked as submitted to the clearinghouse. |
+| **Paid** | The payer adjudicated the claim and an ERA has been received and posted. |
+| **Denied** | The payer denied the claim — it enters the Denials workflow. |
+| **Appealed** | An appeal has been filed on a denied claim. |
+| **Cancelled** | Claim voided / cancelled. |
+
+<Note>
+Separately from this system lifecycle, billers set a **Claim Status** on each claim in the [Work Queue](./work-queue.md) (Ready, Hold, Billed, Paid, Denied, Appealed, Write-Off, and more). That manual status is the biller's working state and is what most of the queue's filters and bulk actions operate on.
+</Note>
 
 <Compliance>
 CMS requires that claims for Medicare beneficiaries be submitted within one year of the date of service. Claims that remain in **Pending** or **Needs Info** beyond your organization's internal filing deadline will be flagged in the AR Aging report.
 </Compliance>
 
-A claim can also enter the **Denials** workflow at any point after **Submitted** if the payer returns a denial code. The original claim status remains **Submitted** while the denial appeal tracks separately.
+A claim can enter the **Denials** workflow at any point after submission if the payer returns a denial. The claim moves to **Denied** (and to **Appealed** if you file an appeal), while the denial's own appeal status tracks separately — see [Denial Management](./denial-management.md).
 
 ## Related
 

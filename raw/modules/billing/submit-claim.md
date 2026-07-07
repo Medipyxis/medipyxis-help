@@ -3,11 +3,11 @@ id: billing-submit-claim
 title: Submit a claim
 module: billing
 audience: [billing]
-roles: [biller, practice_admin, super_admin]
+roles: [biller, admin]
 type: how-to
 estimated_minutes: 10
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/billing
+last_reviewed: 2026-07-01
+app_route: /facility/{facility_uuid}/billing/new
 related:
   - billing-overview
   - billing-work-queue
@@ -27,7 +27,7 @@ Walk through the **New Claim** form to create and submit a CMS-1500-based claim 
 - The patient visit has been completed and signed by the rendering provider.
 - You have the patient's insurance information (payer, member ID, group number).
 - Diagnosis (ICD-10) and procedure (CPT/HCPCS) codes are confirmed.
-- You have the `biller`, `practice_admin`, or `super_admin` role.
+- You have the `biller` role, or `admin`.
 
 ## CMS-1500 sections in the New Claim form
 
@@ -43,6 +43,7 @@ The **New Claim** form maps directly to the CMS-1500 paper claim form sections. 
 | **§7 Insured Address** | `insured_address`, `insured_city`, `insured_state`, `insured_zip`, `insured_phone` |
 | **§8 Reserved** | Reserved field (read-only; populated per payer requirements) |
 | **§10 Condition Related To** | Checkboxes: Employment (current or previous) · Auto Accident (with state) · Other Accident |
+| **§17 Referring Provider** | `referring_provider_name`, `referring_provider_npi` — auto-filled from the patient's referring physician on record |
 | **§21 Diagnosis Codes** | ICD-10 codes A through L (up to 12 diagnosis pointers) |
 | **§24A Date of Service** | `date_of_service_from`, `date_of_service_to` |
 | **§24B Place of Service (POS)** | POS code selector (e.g., 11 Office · 12 Home · 31 SNF) |
@@ -65,23 +66,23 @@ The **New Claim** form maps directly to the CMS-1500 paper claim form sections. 
 
 ## Steps
 
-1. **Open the Claims tab.** Navigate to `/facility/{facility_uuid}/billing` and click the **Claims** tab.
-
-2. **Click + New Claim.** The **New Claim** form opens as a full-page panel.
+1. **Open the claim form.** Navigate to `/facility/{facility_uuid}/billing/new` — the **New Claim** form opens as a full page. (Billers also reach it by clicking **Edit** on a claim in the [Work Queue](./work-queue.md).)
 
    ![New Claim form — top of form showing §1 through §5](../../assets/billing/billing_05_new_claim_form_top.png)
    *The top of the New Claim form. §1 Insurance Type and §2 Patient Name are the first fields.*
 
-3. **Complete §1 — Insurance Type.** Select the appropriate insurance type from the dropdown. This drives payer-specific validation rules downstream.
+2. **Complete §1 — Insurance Type.** Select the appropriate insurance type from the dropdown. This drives payer-specific validation rules downstream.
 
-4. **Complete §2 — Patient Name.** Search for the patient by last name or date of birth. Selecting an existing patient auto-fills §4 Insured Name, §5 Patient Address, §26 Patient Account Number, and §29 Amount Paid from the patient record.
+3. **Complete §2 — Patient Name.** Search for the patient by last name or date of birth. Selecting an existing patient auto-fills §4 Insured Name, §5 Patient Address, §17 Referring Provider, §26 Patient Account Number, and §29 Amount Paid from the patient record.
 
-5. **Verify §4 through §8.** Confirm the insured name and address match the insurance card. Correct any discrepancies before proceeding — payer rejections for demographic mismatches are common.
+4. **Verify §4 through §8.** Confirm the insured name and address match the insurance card. Correct any discrepancies before proceeding — payer rejections for demographic mismatches are common.
 
    ![Claim form showing §6 Patient Relationship, §10 Condition Related To, and §21 Diagnosis Codes](../../assets/billing/billing_06_claim_sections_6_10_21.png)
    *§6, §10, and §21 appear in the middle of the form. Diagnosis codes A–L are entered in the §21 grid.*
 
-6. **Set §6 — Patient Relationship.** If the patient is the subscriber, select **Self**. For dependents, select **Spouse**, **Child**, or **Other** and enter the insured's name in §4.
+5. **Set §6 — Patient Relationship.** If the patient is the subscriber, select **Self**. For dependents, select **Spouse**, **Child**, or **Other** and enter the insured's name in §4.
+
+6. **Confirm §17 — Referring Provider.** The referring provider name and NPI auto-fill from the patient's referring physician on record. Correct them if the referral is different for this claim.
 
 7. **Complete §10 — Condition Related To.** Check the applicable box if the condition is related to employment, an auto accident (include the state), or another accident. Leave all boxes unchecked for standard illness/injury.
 
@@ -89,13 +90,15 @@ The **New Claim** form maps directly to the CMS-1500 paper claim form sections. 
 
 9. **Add service lines — §24A through §24J.** Click **+ Add Line** for each procedure:
    - **§24A**: Enter the date of service range (`date_of_service_from` and `date_of_service_to`).
-   - **§24B**: Select the **POS** code.
+   - **§24B**: The **POS** code is auto-derived from the visit's service location; override it if needed.
    - **§24D**: Enter the CPT/HCPCS code and up to four modifiers.
    - **§24E**: Select the diagnosis pointer(s) from the codes entered in §21.
    - **§24F**: Enter the charge amount.
    - **§24G**: Enter units.
    - **§24H**: Check **EPSDT** if applicable.
    - **§24I / §24J**: Confirm the ID qualifier and rendering provider NPI (auto-populated from the visit record).
+
+   Service lines can be **dragged to reorder**; the CMS-1500 Box 24 line numbering re-asserts automatically after a move.
 
    ![Claim form showing §24 through §33 fields](../../assets/billing/billing_07_claim_sections_24_33.png)
    *The lower portion of the New Claim form covering §24 service lines through §33 Billing Provider.*
@@ -109,7 +112,7 @@ The **New Claim** form maps directly to the CMS-1500 paper claim form sections. 
     - **§28** Total Charge and **§30** Balance Due are read-only calculated fields.
     - **§32** Service Facility and **§33** Billing Provider — confirm addresses and NPIs match your payer enrollment.
 
-11. **Save the claim.** Click **Save Draft** to save without submitting, or **Save & Approve** if the claim is ready for the next export cycle.
+11. **Save or submit the claim.** Click **Save Draft** to save without submitting, or **Submit Claim** to send it to the payer through Stedi. (A confirmation prompt appears before either action completes.)
 
 <Compliance>
 The rendering provider NPI in §24J must match the NPI on file with the payer. Submitting with a group NPI in §24J instead of the individual NPI is a common rejection cause for Medicare claims.
@@ -117,17 +120,17 @@ The rendering provider NPI in §24J must match the NPI on file with the payer. S
 
 ## Result
 
-A new claim record appears in the **Claims** tab with status **Pending** (if you clicked **Save Draft**) or **Approved** (if you clicked **Save & Approve**). Approved claims pass through the pre-submit audit gate and are sent to Stedi automatically; they advance to **Exported** on submission, and to **Submitted** once Stedi confirms delivery to the payer.
+A **Save Draft** keeps the claim as a draft; **Submit Claim** sends it to Stedi and advances it toward **Submitted**. The claim appears in the [Work Queue](./work-queue.md) tied to its encounter, where you can track and set its Claim Status.
 
 <Note>
-Claims generated automatically from a completed visit appear in the Work Queue at **Pending** status. You do not need to create them manually — the New Claim form is for claims that need to be entered outside the normal visit workflow (e.g., corrected claims, late charges).
+Claims are generated automatically from a completed visit and appear in the Work Queue — you do not need to create them manually. Use the claim form for claims that need to be entered or corrected outside the normal visit workflow (e.g., corrected claims, late charges), reached via **Edit** in the Work Queue or `/billing/new`.
 </Note>
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **Save & Approve** button disabled | One or more required fields missing or invalid | Scroll through the form — required fields are outlined in red |
+| **Submit Claim** disabled or errors | One or more required fields missing or invalid | Scroll through the form — required fields are outlined in red |
 | Payer rejects claim for NPI mismatch | Group NPI used in §24J instead of individual NPI | Update the rendering provider's NPI in HR & Compliance, then resubmit |
 | §28 Total Charge calculates as zero | No service lines added, or charge amounts left blank | Add at least one §24 line with a non-zero charge |
 | Claim stuck at **Exported** | Stedi credentials missing, webhook not wired, or payer not enrolled | Have your administrator verify the Stedi setup in [Billing Setup](../../admin/billing-setup.md) and confirm payer enrollment is **Active** |
