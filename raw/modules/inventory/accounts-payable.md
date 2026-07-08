@@ -1,6 +1,6 @@
 ---
 id: inventory-accounts-payable
-title: Receive shipments and reconcile invoices in Accounts Payable
+title: Reconcile vendor invoices in Accounts Payable
 module: inventory
 audience: [admin]
 roles: [finance_ap, admin]

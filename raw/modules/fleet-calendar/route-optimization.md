@@ -1,12 +1,12 @@
 ---
 id: fleet-calendar-route-optimization
-title: Optimize and send a provider route
+title: Review provider routes and export reports
 module: fleet-calendar
 audience: [admin, clinician]
 roles: [admin, clinical_manager, clinician]
 type: how-to
 estimated_minutes: 5
-last_reviewed: 2026-07-01
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/ops/fleet-calendar
 related:
   - fleet-calendar-overview
@@ -16,10 +16,6 @@ tags: [routing, fleet, scheduling, map, reports]
 ---
 
 # Review provider routes and export reports
-
-<Note>
-This page is titled "Optimize and send a provider route," but Medipyxis does not auto-optimize stop order or push routes to devices. What it provides is described below: a read-only route review, a map, and CSV reports.
-</Note>
 
 See each provider's stops for a day laid out on a map, review drive distance and utilization, and export scheduling reports as CSV. Medipyxis presents route information for review — it does not auto-sequence stops or push routes to devices.
 
