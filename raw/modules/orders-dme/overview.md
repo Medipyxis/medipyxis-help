@@ -3,43 +3,44 @@ id: orders-dme-overview
 title: Orders & DME overview
 module: orders-dme
 audience: [clinician, admin]
-roles: [np, md, nurse, practice_admin, super_admin]
+roles: [clinician, medical_director, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/orders-and-dme
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/patients/{patient_uuid}/orders-dme
 related:
   - orders-dme-create-dme-order
-tags: [orders, DME, laboratory, imaging, specialists, home-health]
+tags: [orders, DME, laboratory, imaging, referrals, home-health]
 ---
 
 # Orders & DME overview
 
-The Orders & DME module is the hub for generating and tracking all clinical orders that flow out of a patient visit — from durable medical equipment to specialist referrals.
+Orders & DME is the per-patient hub for generating and tracking clinical orders that flow out of a visit — from durable medical equipment to outbound referrals. It opens from a patient's chart (`/patients/{patient_uuid}/orders-dme`).
 
-![Orders & DME hub showing six section tiles](../../assets/orders-dme/hub.png)
+![Orders & DME page showing the order-type tabs](../../assets/orders-dme/hub.png)
 
-*Orders & DME hub — six sections tile the main canvas. Click any tile to enter that order type.*
+*Orders & DME — order types run as tabs across the top.*
 
-## Six sections
+## Order types (tabs)
 
-| Section | Purpose |
+| Tab | Purpose |
 |---|---|
-| **DME Orders** | Create and track prescriptions for durable medical equipment: wound-care supplies, compression devices, walkers, wheelchairs, and similar items. |
-| **Laboratory** | Generate lab requisitions and track specimen collection status. |
-| **Imaging** | Order X-ray, MRI, ultrasound, and other imaging studies. |
-| **Specialists** | Send referral orders to wound care specialists, vascular surgery, podiatry, or other consulting services. |
-| **Home Health** | Initiate and track home health agency referrals and certifications. |
-| **Vendor Network** | Browse and contact approved vendors for DME and supply procurement. |
+| **DME** | Prescriptions for durable medical equipment: wound-care supplies, compression devices, mobility aids, and similar items. |
+| **Labs** | Lab requisitions and specimen tracking. |
+| **Imaging** | X-ray, MRI, ultrasound, and other imaging studies. |
+| **Referrals** | Outbound referral orders to specialists (vascular, podiatry, wound care, etc.). |
+| **Home Health** | Home health agency referrals and certifications. |
+
+## How an order is placed and routed
+
+For each order you pick a **vendor** from the enabled-vendor list for that order type (vendors are scoped per clinic), optionally choose the vendor's custom form, then **send it by fax or email** to the vendor. Orders can be saved as a **Draft** first.
+
+Each order carries a status: **Draft**, **Submitted**, **Received**, **Provisioned**, **Rejected**, **Canceled**, or **Needs Info**. When results come back, use **Upload Results** on the order.
 
 ## How orders connect to visits
 
-Orders can be initiated two ways:
-
-- **During a visit** — Step 11 (Orders & DME) of the Visit Wizard links directly to this module. Orders created in that context are automatically associated with the visit record.
-- **Standalone** — Navigate to Orders & DME directly from the sidebar to place or track orders outside of a visit workflow.
-
-All orders created either way appear in the relevant section list with status tracking.
+- **During a visit** — the **Orders & DME** section (section 12) of the Visit Wizard opens this surface with the patient context attached.
+- **Standalone** — open a patient's chart and go to Orders & DME to place or track orders outside a visit.
 
 ## Related
 

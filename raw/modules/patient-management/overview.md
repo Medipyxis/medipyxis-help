@@ -3,10 +3,10 @@ id: patient-management-overview
 title: Patient Management — overview
 module: patient-management
 audience: [clinician, intake, admin]
-roles: [nurse, np, md, intake_coordinator, practice_admin]
+roles: [clinician, medical_director, referral_coordinator, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/all-patients
 related:
   - referral-intake-overview
@@ -48,7 +48,7 @@ Patient Management is your single-pane roster for every active and archived pati
 
 Clicking a patient opens the chart with tabs:
 
-- **Summary** — demographics, active wounds, allergies, active medications, care team.
+- **Summary** — demographics, clinical (diagnoses, allergies, active medications), insurance, referral, and care-team sections. External-EHR records pulled from **ZusHealth** appear here with provenance indicators.
 - **Wounds** — the wound cockpit. One card per active wound with the last measurement trend line. Entry point for the Visit Wizard.
 - **Visits** — historical visit notes, sortable by date and provider.
 - **Documents** — uploaded PDFs, consent forms, prior records.

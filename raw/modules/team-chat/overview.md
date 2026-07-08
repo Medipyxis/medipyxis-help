@@ -3,10 +3,10 @@ id: team-chat-overview
 title: Team Chat overview
 module: team-chat
 audience: [clinician, intake, admin, billing, bd]
-roles: [np, md, nurse, intake_coordinator, practice_admin, super_admin, biller, bd_rep, bd_manager]
+roles: [clinician, medical_director, clinical_manager, referral_coordinator, admin, biller, bd_rep, bd_manager]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/team-chat
 related:
   - referral-intake-overview
@@ -25,10 +25,10 @@ Team Chat is Medipyxis's internal messaging surface for real-time communication 
 
 | Tab | Purpose |
 |---|---|
-| **Conversations** | Direct and group message threads with individuals or custom groups. Use for focused, ad-hoc conversations. |
-| **Team** | Pre-built channels organized by role or department (e.g., #clinical, #billing, #intake). Messages here are visible to all members of the channel. |
+| **Conversations** | Your direct and group message threads. Use for focused, ad-hoc conversations. |
+| **Users** | The facility roster — pick one or more people to start a direct or group conversation. Online presence is shown here. |
 
-Click a conversation or channel in the left rail to open the thread view on the right.
+Click a conversation in the left rail to open the thread view on the right. Recognition messages appear as **Kudos** threads.
 
 ## Sending a message
 

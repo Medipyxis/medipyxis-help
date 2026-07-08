@@ -3,11 +3,11 @@ id: more-fax-send-fax
 title: Compose and send an outbound fax
 module: more-fax
 audience: [intake, admin]
-roles: [intake_coordinator, practice_admin, super_admin]
+roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/more
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/fax-logs
 related:
   - more-fax-overview
   - referral-intake-overview
@@ -25,8 +25,8 @@ Send a fax directly from Medipyxis and track its delivery status from the Send F
 
 ## Steps
 
-1. **Open More (Fax).** Click **More** in the sidebar — the Fax section loads by default.
-2. **Click + New Fax** (top-right of the Send Fax Logs section).
+1. **Open the Fax Center** (`/fax-logs`).
+2. **Click New Fax** (top-right).
 3. **Enter the recipient fax number.** Type or paste the 10-digit number. Include area code; do not use dashes or parentheses.
 4. **Select or upload the document.**
    - **From Medipyxis:** Click **Browse Documents** to search documents attached to referrals or patient records. Select the file from the results list.
@@ -41,17 +41,18 @@ Send a fax directly from Medipyxis and track its delivery status from the Send F
 
 ## Result
 
-The fax appears in **Send Fax Logs** with **Pending** status. Medipyxis polls for delivery confirmation and updates the status to:
+The fax appears in the **Fax Center** with **pending** status. The fax service updates the status as it progresses:
 
 | Status | Meaning |
 |---|---|
-| **Sent** | Fax delivered successfully and confirmed by the receiving machine. |
-| **Failed** | Delivery failed after retry attempts. The log entry shows the failure reason (busy, no answer, invalid number). |
-| **Pending** | Fax is queued or in transmission. |
+| **pending** / **sending** | Queued or in transmission. |
+| **sent** / **delivered** | Transmitted and confirmed by the fax service. |
+| **failed** | Delivery failed after retry attempts; the log shows the failure reason. |
+| **cancelled** | You cancelled the fax before it sent. |
 
 ## Track delivery
 
-8. **Open Send Fax Logs** and locate your fax row.
+8. **Open the Fax Center** and locate your fax row.
 9. **Click the row** to see the detailed status: timestamp of each transmission attempt, error codes (if any), and the recipient number dialed.
 10. **If status is Failed:** Click **Retry** to resend, or **Edit** to correct the fax number before retrying.
 

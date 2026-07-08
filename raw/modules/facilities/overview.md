@@ -3,10 +3,10 @@ id: facilities-overview
 title: Facilities reference
 module: facilities
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin]
 type: reference
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/facilities
 related:
   - hr-compliance-overview

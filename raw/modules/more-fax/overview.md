@@ -3,11 +3,11 @@ id: more-fax-overview
 title: More (Fax) overview
 module: more-fax
 audience: [intake, admin]
-roles: [intake_coordinator, practice_admin, super_admin]
+roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/more
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/fax-logs
 related:
   - more-fax-send-fax
   - referral-intake-fax-queue-review
@@ -16,7 +16,7 @@ tags: [fax, outbound, inbound, review-queue]
 
 # More (Fax) overview
 
-The **More** section provides a dedicated interface for managing all outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake.
+The **Fax Center** (`/fax-logs`) is the dedicated interface for managing outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake. Faxing runs through a fax service (edge function) and is available to all roles.
 
 ![Fax Review Queue with incoming fax rows](../../assets/more-fax/review-queue.png)
 
@@ -42,15 +42,12 @@ Faxes appear in the Fax Review Queue when OCR confidence is below the auto-routi
    - **Dismiss** — marks the fax as reviewed and non-actionable; it moves to Received Fax Logs.
 
 <Note>
-The Fax Review Queue in More (Fax) and the **Fax Queue** column in Referral Intake serve different purposes. The Referral Intake Fax Queue column shows auto-created referral cards awaiting coordinator review; the More (Fax) Fax Review Queue shows raw inbound faxes that could not be automatically processed. See [Fax Queue Review](../referral-intake/fax-queue-review.md) for the Referral Intake workflow.
+Inbound fax review and referral auto-creation are handled by the Fax Review Queue in Referral Intake, a separate page from the Fax Center. See [Fax Queue Review](../referral-intake/fax-queue-review.md) for that workflow.
 </Note>
 
 ## Searching logs
 
-Both Send and Received Fax Logs support filtering by:
-- **Date range** (date picker)
-- **Fax number** (sender or recipient)
-- **Status** (for outbound: Sent, Failed, Pending; for inbound: Processed, Queued)
+The Fax Center supports filtering by date range and fax number, and exporting to CSV. Outbound fax statuses include **draft**, **pending**, **sending**, **sent**, **delivered**, **failed**, and **cancelled**. Failed faxes can be **retried** (up to 3 attempts) or **cancelled**, and each fax has an audit log.
 
 ## Related
 

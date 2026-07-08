@@ -5,7 +5,7 @@ module: dashboard
 audience: [clinician, intake, admin, billing, bd]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/dashboard
 related:
   - getting-started-your-dashboard
@@ -24,7 +24,7 @@ Your Dashboard is the first screen you see after login. It summarizes the work w
 
 - **Welcome Back banner.** Shows your name, current facility, and an **On Duty** pill. The **HIPAA** badge next to your profile confirms your session is audit-logged.
 - **Action tiles** — dynamic cards for referrals needing review, visits scheduled today, denials needing appeal, and credentials expiring.
-- **Sidebar** (left) — 16 module links. Your visible items depend on your role; a biller will not see Fleet Calendar, a BD rep will not see Billing Operations.
+- **Sidebar** (left) — module links. Your visible items depend on your role; a biller will not see Fleet Calendar, a BD rep will not see Billing Operations.
 - **Top bar** — Organization Selector, Quick Jump (⌘K), Notifications bell, Profile menu.
 
 ## How tiles are prioritized

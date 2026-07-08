@@ -3,64 +3,44 @@ id: oversight-cockpit-financial-performance
 title: Financial Performance section reference
 module: oversight-cockpit
 audience: [admin, billing]
-roles: [practice_admin, super_admin, biller]
+roles: [admin, medical_director, biller]
 type: reference
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/analytics
 related:
   - oversight-cockpit-overview
-tags: [analytics, financial, revenue, collections, billing, KPI]
+tags: [analytics, financial, revenue, geography, heat-map]
 ---
 
 # Financial Performance section reference
 
-The **Financial Performance** section of the Oversight Cockpit provides period-over-period revenue and collections analytics without requiring a separate billing export.
+Financial performance in the Oversight Cockpit is shown as **Revenue by Zip** — a geographic view of insurance payments received, so you can see where your revenue is concentrated. Select **Revenue by Zip** in the heat map's metric selector.
 
-![Financial Performance section showing charts and metric cards](../../assets/oversight/financial.png)
+![Revenue by Zip heat map](../../assets/oversight/financial.png)
 
-*Financial Performance section. Metric cards run across the top; trend charts below.*
+*Revenue by Zip. Each ZIP code is drawn as a bubble; size and color scale with dollars received.*
 
-## Metric cards
+## What the map shows
 
-| Metric | Description |
+Each bubble represents one ZIP code, sized and colored (green → red) by the insurance payments received there over the selected period. Hover a bubble to see its detail.
+
+The status strip reports, for the selected window:
+
+| Metric | Meaning |
 |---|---|
-| **Gross Charges** | Sum of billed charges for the selected period before any payer adjustments. |
-| **Net Collections** | Dollars actually received (payments posted via ERA) in the period. |
-| **Collection Rate** | Net Collections ÷ Adjusted Charges × 100. Measures how effectively claims are paid after contractual write-offs. |
-| **Denial Rate** | Percentage of submitted claims returned with a denial status. Includes both initial denials and denied appeals. |
-| **Avg Days in AR** | Average number of days from date of service to date of payment across all paid claims in the period. |
-| **Write-offs** | Total dollar amount written off (contractual adjustments + bad debt) in the period. |
+| **Dollars received** | Total insurance payments posted for the period. |
+| **Patients** | Number of patients contributing to that revenue. |
+| **Claims** | Number of paid claims represented. |
+| **Pending claims** | Claims not yet paid (excluded from the received total). |
+| **Ungeocoded** | Claims that couldn't be mapped because their address didn't resolve. |
 
-## Filters and date ranges
+## Date range
 
-Use the filter bar at the top of the section to segment data:
-
-| Filter | Options |
-|---|---|
-| **Period** | This Month · Last Month · Quarter to Date · Year to Date · Custom Range. |
-| **Facility** | Single facility or All Facilities (org-level roll-up). |
-| **Payer** | All Payers or a specific payer from your contract list. |
-| **Provider** | All Providers or a specific rendering provider. |
-
-Filters are cumulative — apply multiple filters to narrow the view.
-
-## Trend chart
-
-The trend chart plots **Gross Charges** and **Net Collections** as dual time-series lines across the selected period. Hover over any data point to see the exact value and the corresponding date range.
-
-A dashed **Benchmark** line, where configured by your billing administrator, shows the expected collection target for comparison.
-
-## Payer mix breakdown
-
-Below the trend chart, the **Payer Mix** table shows the split of charges by payer category (Medicare, Medicaid, Commercial, Self-Pay) for the selected period. This view complements the full Payer Mix report in the Billing Operations module.
-
-## Exporting data
-
-Click **Export** (top-right of the section) to download the current view as a CSV. The export respects all active filters and includes row-level detail (one row per claim) rather than summary totals.
+Use the date-range selector to scope the view: **Last 30 days**, **90 days**, **180 days**, **this year**, or **year-to-date**. The map and the status strip both update to the selected window.
 
 <Note>
-Financial Performance data in the Oversight Cockpit reflects ERA-posted payments. Payments entered manually in Billing Operations may have a 15-minute delay before appearing here.
+Revenue by Zip reflects **insurance payments received** (ERA-posted). Pending claims and payments that haven't posted yet are not counted in the received total; they appear in the pending tally. For claim-level revenue-cycle reporting (charges, collections, AR), use the **Reports Center** in Billing — see [AR Aging and Reports Center](../billing/ar-aging.md).
 </Note>
 
 ## Related
