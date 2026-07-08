@@ -3,12 +3,12 @@ id: qr-nurse-daily
 title: Nurse daily cheat sheet
 module: getting-started
 audience: [clinician]
-roles: [nurse, np, ma]
+roles: [clinician, medical_director]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/pm-clinician-dashboard
-tags: [quick-reference, daily, offline]
+tags: [quick-reference, daily, clinician]
 ---
 
 # Nurse daily cheat sheet
@@ -32,15 +32,13 @@ One page. Print it or keep it pinned. Everything you do in a typical day.
 | Jump between wizard steps | Left wizard rail | `←` / `→` |
 | Add wound photo | Wound Assessment step → camera icon | — |
 | Scan graft UIN | Procedures & Supplies → **Scan** | — |
-| Save draft | Wizard auto-saves every 15s; manual: top-right | `⌘S` / `Ctrl+S` |
-| Sign & complete | Final step → **Sign & Complete** | — |
+| Save draft | Wizard autosaves each field continuously; manual save: top-right | `⌘S` / `Ctrl+S` |
+| Sign & lock | Final step → **Sign & Lock** (then **Go to Billing**) | — |
 
-## Offline
+## Saving your work
 
-- Yellow **Offline** banner = you're fine. Keep charting.
-- Photos save locally, upload when online.
-- Syncing status lives in the header next to your name.
-- Never force-quit during a sync — it's fast but it's a real sync.
+- The wizard **autosaves continuously** as you complete each field — a dropped connection or a device switch won't lose your work.
+- The web app is online-only; there is no separate offline mode or manual sync.
 
 ## Shortcuts that save real time
 

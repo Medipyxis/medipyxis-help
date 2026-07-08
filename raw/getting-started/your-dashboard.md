@@ -5,7 +5,7 @@ module: getting-started
 audience: [clinician, intake, admin, billing, bd]
 type: quickstart
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/dashboard
 related:
   - getting-started-welcome

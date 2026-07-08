@@ -3,10 +3,10 @@ id: qr-practice-admin
 title: Practice admin cheat sheet
 module: getting-started
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin]
 type: quickstart
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/dashboard
 tags: [quick-reference, admin, daily, onboarding]
 related:
@@ -57,38 +57,36 @@ Use `⌘K` / `Ctrl+K` (Quick Jump) to navigate to any patient, visit, page, or f
 |---|---|---|
 | Fax queue age | Zero faxes > 24 h | **More (Fax)** → **Fax Review Queue** → **SLA Breach Timer** column |
 | Referral-to-schedule time | < 24 h from referral created | **Referral Intake** → kanban → **Ready for Assignment** |
-| Unbilled claims | Cleared within 72 h of visit signature | **Billing** → **Claims** → filter **Status: Unbilled** |
-| ERA posting | Posted within 24 h of receipt | **Billing** → **Payments (ERA)** |
+| Unbilled encounters | Cleared within 72 h of visit signature | **Billing** → **Work Queue** → **Ready** preset |
+| ERA posting | Auto-posted; reconcile unmatched within 24 h | **Billing** → **ERA / Payments** (`/era-eob`) |
 | Credential expiry notices | Actioned same day | **HR & Compliance** → **Credential Tracker** |
 
 ## Weekly tasks
 
 | Task | Where |
 |---|---|
-| Run the **Denial Reasons** report | **Billing** → **Reports Center** → **Denial Reasons** |
-| Run the **AR Aging** report; flag 61–90+ buckets | **Billing** → **Reports Center** → **AR Aging** |
-| Check **Referral Network Health** for drop-offs | **Oversight Cockpit** → **Referral Network Health** |
-| Review **Clinician Workload Balancer** for overload | **Oversight Cockpit** → **Clinician Workload Balancer** |
-| Audit inactive practices (no activity > 30 d) | **CRM** → **Practices** → filter **No activity 30d** |
+| Run the **Claims** report | **Billing** → **Reports Center** → **Claims Reports** |
+| Run the **Account Receivable** report; flag aged balances | **Billing** → **Reports Center** → **Account Receivable Reports** |
+| Scan the operational **Heat Map** (patients vs. clinicians) | **Oversight Cockpit** → **Heat Map** |
+| Audit inactive practices | **CRM** → **Practices** → filter by activity |
 | Verify inventory PAR levels are current | **Inventory Management** → **Main Inventory** |
 
 ## Monthly tasks
 
 | Task | Where |
 |---|---|
-| Review **Financial Performance** KPIs vs. target | **Oversight Cockpit** → **Financial Performance** |
-| Export **Productivity** and **Payer Mix** reports | **Billing** → **Reports Center** |
-| Check **Documentation & Compliance** score | **Oversight Cockpit** → **Documentation & Compliance** |
+| Review revenue geography (**Revenue by Zip**) | **Oversight Cockpit** → **Heat Map** → **Revenue by Zip** |
+| Export billing reports (Claims, Insurance Payment, Charges) | **Billing** → **Reports Center** |
 | Archive or close non-admit referrals | **Referral Intake** → **Non-Admit** column → **Archive** |
 | Validate facility user roster is current | **HR & Compliance** → **Facility Users** |
 
 ## Inviting and onboarding new users
 
 1. Go to **HR & Compliance** → **New Employee Onboarding**.
-2. Complete the three-step stepper: **Personal Info** → **Role & Assignment** → **Onboarding & Training**.
-3. Assign one or more facilities in **Role & Assignment** (multi-facility selection is supported).
-4. The employee receives an invitation email with a one-time setup link.
-5. After setup, verify their permissions in **Administrator** → **Organization Role Config**.
+2. Complete the single New Employee form (Basic Info; Provider Details appear for clinical roles). There is no multi-step wizard.
+3. Assign one or more facilities (multi-facility selection is supported).
+4. Save to create the account.
+5. Verify their permissions in **Administrator** → **Organization Role Config**.
 
 <Warning>
 The **Administrator → Organization Role Config** matrix controls what each role can see and do across all modules. Test a new role in the demo environment before applying it to production users.

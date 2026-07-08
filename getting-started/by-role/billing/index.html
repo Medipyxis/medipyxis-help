@@ -49,7 +49,7 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><p class="sidebar-group-label">Welcome</p><a class="sidebar-item" href="/medipyxis-help/getting-started/">Welcome to Medipyxis</a><a class="sidebar-item" href="/medipyxis-help/getting-started/login-and-setup/">Log in and set your working facility</a><a class="sidebar-item" href="/medipyxis-help/getting-started/your-dashboard/">Tour of your dashboard</a></div><div class="sidebar-group"><p class="sidebar-group-label">By role</p><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/bd-crm/">BD / CRM first hour</a><a class="sidebar-item active" href="/medipyxis-help/getting-started/by-role/billing/">Billing / RCM first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/clinician/">Clinician first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/graft-vendor/">Graft vendor first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/practice-admin/">Practice admin first hour</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/getting-started/">Get started</a></p>
       <h1>Billing / RCM first hour</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">quickstart</span> <span class="meta-pill">⏱ 45 min read</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">quickstart</span> <span class="meta-pill">⏱ 45 min read</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-07-08</span></div>
       <p>By the end of this hour you will understand the billing work queue, submit your first claim, post an ERA payment, and know where denials live. Medipyxis does the coding prep; you audit and submit.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
@@ -70,33 +70,29 @@ Payer response (paid / denied / partial)
     ↓
 ERA posting  →  denials routed to Denial Management
 </code></pre>
-<h2 id="step-1-tour-the-billing-workspace-5-min">Step 1 — Tour the Billing workspace (5 min)</h2>
+<h2 id="step-1-tour-the-work-queue-5-min">Step 1 — Tour the Work Queue (5 min)</h2>
 <ol>
-<li>Click <strong>Billing Operations</strong> in the sidebar.</li>
-<li>You see work queues: <strong>Unbilled</strong>, <strong>Ready to Submit</strong>, <strong>In Clearinghouse</strong>, <strong>Denied</strong>, <strong>Paid</strong>. The count chip on each is live.</li>
-<li>The right-side panel shows <strong>Activity</strong> (recent status changes across claims you have open).</li>
+<li>Click <strong>Billing → Work Queue</strong> in the sidebar.</li>
+<li>The Work Queue is a calendar-synced readiness board — one row per encounter — showing Visit Status, Note Status, Billing Readiness, and (once a claim exists) a <strong>Claim Status</strong>. Use the <strong>Ready</strong> / <strong>Pending Doc</strong> / <strong>Pending Sig</strong> presets and the filters to focus your day. See <a href="/medipyxis-help/modules/billing/work-queue/">Work the Billing Work Queue</a>.</li>
 </ol>
-<h2 id="step-2-audit-an-unbilled-claim-15-min">Step 2 — Audit an unbilled claim (15 min)</h2>
+<h2 id="step-2-review-and-submit-a-claim-15-min">Step 2 — Review and submit a claim (15 min)</h2>
 <ol>
-<li>Click <strong>Unbilled</strong>. Every row is a signed visit waiting for claim review.</li>
-<li>Open any row. You see a CMS-1500 preview with:
+<li>Find an encounter that's <strong>Ready for Billing</strong>. Click <strong>Edit</strong> to open the claim form (<code>/billing/new</code>), or <strong>Review</strong> for the coding drawer.</li>
+<li>On the claim form you see a CMS-1500 layout with:
    - <strong>Patient</strong> (from the patient record)
-   - <strong>Payer</strong> (from insurance verification)
-   - <strong>Diagnosis codes</strong> (ICD-10, suggested by the visit note)
-   - <strong>Procedure lines</strong> (CPT/HCPCS, auto-derived from procedures documented)
-   - <strong>Modifiers</strong> (LT/RT, 25, 59 — auto-applied where appropriate)</li>
-<li>Your job: <strong>audit</strong>, not rebuild. The green checkmarks mean coding passed the Billing &amp; Compliance Brain rule engine. Red flags mean a rule failed — click to see which one.</li>
-<li>Click <strong>Submit to clearinghouse</strong> when clean.</li>
+   - <strong>Payer</strong> (from insurance)
+   - <strong>Diagnosis codes</strong> (ICD-10, from the visit note)
+   - <strong>Procedure lines</strong> (CPT/HCPCS, auto-derived from documented procedures; drag to reorder)
+   - <strong>Modifiers</strong> (25, 59, KX, etc. where appropriate)</li>
+<li>Your job is to <strong>audit</strong>, not rebuild. Correct anything flagged.</li>
+<li>Click <strong>Submit Claim</strong> when clean — it goes to the payer through Stedi.</li>
 </ol>
 <p>Detail: <a href="/medipyxis-help/modules/billing/submit-claim/">Submit a claim</a></p>
-<p><Compliance>
-Every rule that passes or fails is logged in <code>policy_evaluations</code> with the exact rule id, predicate, and result. You can pull that audit trail for any claim under the <strong>Audit Trail</strong> tab — invaluable for denial appeals.
-</Compliance></p>
-<h2 id="step-3-post-an-era-10-min">Step 3 — Post an ERA (10 min)</h2>
+<h2 id="step-3-review-posted-eras-10-min">Step 3 — Review posted ERAs (10 min)</h2>
 <ol>
-<li>Open <strong>Billing Operations → ERA Posting</strong>.</li>
-<li>Upload or auto-receive an 835 ERA file. Medipyxis parses it and shows payment amount, adjustment codes, and claim-level match.</li>
-<li>Click <strong>Post</strong> on matched rows. Unmatched rows (the payer couldn't find the claim) stay until you reconcile.</li>
+<li>Open the <strong>ERA / Payments</strong> view (<code>/era-eob</code>).</li>
+<li>ERAs (835) arrive automatically from Stedi over a webhook — there is no file to upload and no sync button. Matched lines auto-post and advance claims to <strong>Paid</strong>.</li>
+<li>Reconcile any <strong>Unmatched</strong> lines by matching them to the correct claim. See <a href="/medipyxis-help/modules/billing/era-posting/">ERA posting</a>.</li>
 </ol>
 <h2 id="step-4-work-denials-10-min">Step 4 — Work denials (10 min)</h2>
 <ol>
@@ -118,7 +114,7 @@ Every rule that passes or fails is logged in <code>policy_evaluations</code> wit
 <h2 id="next-up">Next up</h2>
 <ul>
 <li><a href="/medipyxis-help/modules/billing/denial-management/">Billing: Denial Management deep dive</a></li>
-<li><a href="/medipyxis-help/modules/billing/work-queue/">Billing: Authorization requests</a></li>
+<li><a href="/medipyxis-help/modules/billing/work-queue/">Work the Billing Work Queue</a></li>
 <li><a href="/medipyxis-help/quick-reference/biller/">Quick reference: biller daily</a></li>
 </ul>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/modules/billing/work-queue/">Work the Billing Work Queue and submit claims</a></li><li><a href="/medipyxis-help/modules/billing/submit-claim/">Submit a claim</a></li><li><a href="/medipyxis-help/modules/billing/denial-management/">Manage claim denials and appeals</a></li><li><a href="/medipyxis-help/modules/billing/era-posting/">Post and reconcile ERAs from Stedi</a></li></ul></div>
@@ -128,7 +124,7 @@ Every rule that passes or fails is logged in <code>policy_evaluations</code> wit
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-billing-loop-in-medipyxis">The billing loop in Medipyxis</a></li><li><a class="" href="#step-1-tour-the-billing-workspace-5-min">Step 1 — Tour the Billing workspace (5 min)</a></li><li><a class="" href="#step-2-audit-an-unbilled-claim-15-min">Step 2 — Audit an unbilled claim (15 min)</a></li><li><a class="" href="#step-3-post-an-era-10-min">Step 3 — Post an ERA (10 min)</a></li><li><a class="" href="#step-4-work-denials-10-min">Step 4 — Work denials (10 min)</a></li><li><a class="" href="#step-5-find-a-claim-fast-5-min">Step 5 — Find a claim fast (5 min)</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#next-up">Next up</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-billing-loop-in-medipyxis">The billing loop in Medipyxis</a></li><li><a class="" href="#step-1-tour-the-work-queue-5-min">Step 1 — Tour the Work Queue (5 min)</a></li><li><a class="" href="#step-2-review-and-submit-a-claim-15-min">Step 2 — Review and submit a claim (15 min)</a></li><li><a class="" href="#step-3-review-posted-eras-10-min">Step 3 — Review posted ERAs (10 min)</a></li><li><a class="" href="#step-4-work-denials-10-min">Step 4 — Work denials (10 min)</a></li><li><a class="" href="#step-5-find-a-claim-fast-5-min">Step 5 — Find a claim fast (5 min)</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#next-up">Next up</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/getting-started/by-role/billing.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/getting-started/by-role/billing.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

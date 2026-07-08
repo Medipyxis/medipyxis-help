@@ -3,10 +3,10 @@ id: qr-vendor-rep
 title: Vendor rep cheat sheet
 module: getting-started
 audience: [vendor]
-roles: [vendor_rep, vendor_coordinator]
+roles: [vendor_coordinator]
 type: quickstart
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/inventory-management
 tags: [quick-reference, vendor, inventory, ivr, catalog]
 related:
@@ -25,8 +25,8 @@ Your daily loop: check the IVR queue, keep the product catalog current, respond 
 |---|---|
 | Check open IVR requests | **Inventory Management** → **IVR Tracking** |
 | Review restock requests from facilities | **Inventory Management** → **Main Inventory** → filter by your brand |
-| Verify no A/P invoices are past due | **Inventory Management** → **Accounts Payable** |
-| Confirm custom forms are scoped to the correct facility | **Vendor Portal** → custom forms list |
+| Verify no A/P invoices are past due | **Inventory Management** → **Accounts Payable** → **Inbox** / **Disputes** |
+| Confirm vendor order forms are scoped to the correct facility | **Orders / DME** → vendor form selection |
 
 <Tip>
 `⌘K` / `Ctrl+K` opens Quick Jump — type a SKU, UIN, or facility name to navigate without the sidebar.
@@ -36,7 +36,7 @@ Your daily loop: check the IVR queue, keep the product catalog current, respond 
 
 | Status | Meaning | Your action |
 |---|---|---|
-| **Submitted** | Facility initiated an Insurance Verification Request | Confirm product and lot details are correct |
+| **Submitted** | Facility initiated an IVR | Confirm product and lot details are correct |
 | **Pending** | Awaiting payer or facility confirmation | Wait; follow up if > 24 h |
 | **Approved** | IVR cleared | Prepare shipment or confirm allocation |
 | **Declined** | Payer or facility rejected the request | Contact facility contact to resolve; log reason |
@@ -68,16 +68,9 @@ If a receiving upload stays stuck in **Sent** and does not move to Active Invent
 
 ## A/P status reference
 
-| Status | Meaning |
-|---|---|
-| **Pending** | Invoice submitted, awaiting facility review |
-| **Approved** | Facility approved; payment in process |
-| **Paid** | Payment confirmed |
-| **Disputed** | Facility flagged a discrepancy — contact your account manager |
+Accounts Payable is a tabbed workspace: **Inbox** (new invoices) → **Matching** (reconcile lines) → **Payments** (full or partial) → **Disputes**, plus **Activity** and **Reports**. Invoices move through states like **matched**, **approved**, **partially paid**, **paid**, and **disputed**.
 
-Columns on the **Accounts Payable** screen: **VENDOR · INVOICE # · DATE · DUE · TOTAL · STATUS · ACTIONS**.
-
-Target: zero invoices past the **DUE** date. Filter by **STATUS: Pending** daily to catch aging invoices before they breach terms.
+Target: no aging unpaid invoices. Watch the **Disputes** tab for anything a facility has flagged, and follow up with your account manager. See [Accounts Payable](../modules/inventory/accounts-payable.md).
 
 ## Facility-scoped forms
 

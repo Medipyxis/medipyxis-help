@@ -5,7 +5,7 @@ module: getting-started
 audience: [clinician, intake, admin, billing, bd]
 type: quickstart
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /login
 related:
   - getting-started-welcome

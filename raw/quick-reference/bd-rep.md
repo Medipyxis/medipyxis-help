@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/bd-dashboard
 tags: [quick-reference, bd, roi]
 ---
@@ -19,17 +19,16 @@ Your loop: cover your practices, log every touch, let Medipyxis attribute ROI ba
 
 - **Referrals received** from every practice you own.
 - **Visits completed** and **revenue** tied to those referrals.
-- **Your activities** (visits, calls, emails, CME).
+- **Your activities** (calls, visits, spend) logged from the quick-add strip.
 - **Cost to serve** (activity time × your loaded cost).
 
 ## What you must do manually
 
 | Task | Cadence | Where |
 |---|---|---|
-| Log every practice touch | Same day | **CRM → practice → Activity → Log** |
+| Log every practice touch | Same day | **CRM → practice → Log Call / New Visit / Add Spend** (or voice) |
 | Update practice contact info | As needed | **CRM → practice → Overview → Edit** |
-| Record new contacts | When met | **CRM → practice → Contacts → + Add** |
-| Flag at-risk practices | Weekly | Activity → pick type **At risk** |
+| Record new contacts | When met | **CRM → practice → + Add Contact** |
 
 ## KPIs to watch
 

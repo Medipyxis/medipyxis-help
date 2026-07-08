@@ -3,10 +3,10 @@ id: qr-intake-coordinator
 title: Intake coordinator cheat sheet
 module: getting-started
 audience: [intake]
-roles: [intake_coordinator]
+roles: [referral_coordinator]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/referrals
 tags: [quick-reference, intake, fax, ocr]
 ---
@@ -20,7 +20,7 @@ Your daily loop: process faxes → verify insurance → hand off to scheduling. 
 | Status chip | What it means | What you do |
 |---|---|---|
 | **New** | OCR extracted, awaiting your review | Open it |
-| **Needs correction** | OCR confidence < 80% on one field | Fix the flagged field |
+| **Needs correction** | OCR confidence below the auto-approve threshold on one or more fields | Fix the flagged field |
 | **Ready for insurance** | You approved fields | Click **Run eligibility** |
 | **Insurance pending** | Waiting on payer | Wait — SLA is 10 min |
 | **Insurance verified** | Eligibility returned | Click **Create patient** |

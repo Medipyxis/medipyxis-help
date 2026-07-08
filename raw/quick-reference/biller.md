@@ -6,28 +6,29 @@ audience: [billing]
 roles: [biller]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/billing
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/billing/work-queue
 tags: [quick-reference, billing, claims, era]
 ---
 
 # Biller cheat sheet
 
-Your daily loop: audit unbilled → submit → post ERAs → work denials. Medipyxis does the coding prep; you're the safety net.
+Your daily loop: work the Work Queue → submit → post ERAs → work denials. Medipyxis does the coding prep; you're the safety net.
 
-## Claim status glossary
+## Claim Status glossary
+
+The Work Queue's **Claim Status** dropdown (set by the biller) uses these values:
 
 | Status | Meaning |
 |---|---|
-| **Unbilled** | Visit signed, not yet reviewed |
-| **Ready to Submit** | Passed rule engine, awaiting your click |
-| **In Clearinghouse** | Submitted, awaiting 277 response |
-| **Accepted** | Clearinghouse accepted |
-| **Rejected** | Clearinghouse rejected (fix and resubmit) |
-| **Paid** | ERA posted |
-| **Denied** | Payer denied; in Denial Management |
-| **Appealed** | You submitted an appeal |
-| **Written off** | Closed, zero expected revenue |
+| **Needs Coding** / **Eligibility Needed** | Not ready to submit yet |
+| **Ready** | Reviewed and ready to submit |
+| **In Progress** / **Hold** / **Flag Clinical** | Working it / paused / sent back to the clinician |
+| **Billed** | Submitted to the payer |
+| **Paid** / **Partial Pay** | Payment posted (fully / partially) |
+| **Denied** | Payer denied; work it in Denial Management |
+| **Appealed** / **Corrected** | Appeal filed / claim corrected and resubmitted |
+| **Patient Responsibility** / **Write-Off** / **Void** | Closed outcomes |
 
 ## Auto-coding sources of truth
 
@@ -41,9 +42,9 @@ Your daily loop: audit unbilled → submit → post ERAs → work denials. Medip
 
 ## Daily targets
 
-- **Unbilled queue cleared within 72 hours** of visit signature.
+- **Work Queue "Ready" preset cleared within 72 hours** of visit signature.
 - **Zero clearinghouse rejections > 7 days old**.
-- **Every ERA posted within 24 hours** of receipt.
+- **Every unmatched ERA reconciled within 24 hours** (matched ERAs auto-post).
 - **Every denial triaged within 48 hours**.
 
 ## Speed tips
@@ -59,12 +60,12 @@ Your daily loop: audit unbilled → submit → post ERAs → work denials. Medip
 
 | CARC / RARC | Likely root cause | Fix |
 |---|---|---|
-| CO-50 (not medically necessary) | Missing LCD element | Check `policy_evaluations` for the failed rule → addendum to visit note |
-| CO-197 (precert missing) | No auth on file | **Authorization Requests** → retro-auth; if denied, appeal with clinical docs |
-| CO-16 (missing information) | Modifier or ID missing | Rule engine flags on correction; resubmit |
+| CO-50 (not medically necessary) | Missing LCD element | Add an addendum to the visit note that resolves the LCD item |
+| CO-197 (precert missing) | No auth on file | Obtain retro-auth; if denied, appeal with clinical docs |
+| CO-16 (missing information) | Modifier or ID missing | Correct on the claim form (`/billing/new`) and resubmit |
 | CO-29 (past timely filing) | Late submission | Check root cause; appeal only if system error |
-| PR-45 (charge exceeds allowed) | Fee schedule out of date | **Admin → Client Fee Schedule** |
+| PR-45 (charge exceeds allowed) | Charge out of date | Update the facility **Charge Master** |
 
-## Audit trail
+## Denial evidence
 
-Every claim has an **Audit Trail** tab showing every rule evaluation. For any denial appeal, export this tab to PDF — it's your evidence the claim was submitted correctly.
+Each claim and denial keeps a full activity trail. When appealing, reference the claim number, DOS, and denial CARC — see [Denial Management](../modules/billing/denial-management.md).

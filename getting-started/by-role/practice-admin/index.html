@@ -49,11 +49,11 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><p class="sidebar-group-label">Welcome</p><a class="sidebar-item" href="/medipyxis-help/getting-started/">Welcome to Medipyxis</a><a class="sidebar-item" href="/medipyxis-help/getting-started/login-and-setup/">Log in and set your working facility</a><a class="sidebar-item" href="/medipyxis-help/getting-started/your-dashboard/">Tour of your dashboard</a></div><div class="sidebar-group"><p class="sidebar-group-label">By role</p><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/bd-crm/">BD / CRM first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/billing/">Billing / RCM first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/clinician/">Clinician first hour</a><a class="sidebar-item" href="/medipyxis-help/getting-started/by-role/graft-vendor/">Graft vendor first hour</a><a class="sidebar-item active" href="/medipyxis-help/getting-started/by-role/practice-admin/">Practice admin first hour</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/getting-started/">Get started</a></p>
       <h1>Practice admin first hour</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">quickstart</span> <span class="meta-pill">⏱ 60 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-04-24</span></div>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">quickstart</span> <span class="meta-pill">⏱ 60 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-07-08</span></div>
       <p>By the end of this hour your facility is ready for clinical staff to sign in and work. You will have added your clinicians, configured roles, confirmed HR credentials tracking, and verified that referrals, scheduling, and billing routes are correctly wired.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You have been provisioned an <code>admin</code> account for your practice. (Note: <code>super_admin</code> is reserved for Medipyxis internal staff and is not assignable from your own organization.)</li>
+<li>You have been provisioned an <code>admin</code> account for your practice. (Note: <code>superadmin</code> and <code>customersupport</code> are reserved for Medipyxis internal staff and are not assignable from your own organization.)</li>
 <li>You know your organization's billing NPI, tax ID, and clearinghouse credentials (you can add these later, but now is faster).</li>
 <li>You have the list of clinicians to onboard and their credentials (license numbers, NPI, expiration dates).</li>
 </ul>
@@ -67,7 +67,7 @@
 <h2 id="step-2-configure-roles-10-min">Step 2 — Configure roles (10 min)</h2>
 <ol>
 <li>Click <strong>Administrator</strong> in the sidebar. You land on <strong>Organization Role Config</strong>.</li>
-<li>Review the default roles (<code>nurse</code>, <code>np</code>, <code>md</code>, <code>intake_coordinator</code>, <code>biller</code>, <code>bd_rep</code>, <code>practice_admin</code>).</li>
+<li>Review the real roles (<code>admin</code>, <code>clinical_manager</code>, <code>medical_director</code>, <code>clinician</code>, <code>referral_coordinator</code>, <code>bd_rep</code>, <code>bd_manager</code>, <code>finance_ap</code>, <code>vendor_coordinator</code>, <code>biller</code>).</li>
 <li>Toggle feature access per role. We recommend starting with defaults and only tightening once you see how your team uses the product.</li>
 </ol>
 <p>Full guide: <a href="/medipyxis-help/admin/role-config/">Admin: Role configuration</a></p>
@@ -86,12 +86,12 @@
 <p>Full guide: <a href="/medipyxis-help/admin/user-management/">Admin: User management</a></p>
 <h2 id="step-4-stand-up-credential-tracking-5-min">Step 4 — Stand up credential tracking (5 min)</h2>
 <ol>
-<li><strong>HR &amp; Compliance → Credential Tracker</strong>. You see a matrix of user × required credential.</li>
-<li>Upload a credential document by clicking the empty cell and attaching a PDF (license, BLS, HIPAA training).</li>
-<li>Set a reminder window (default: 60 days before expiration).</li>
+<li><strong>HR &amp; Compliance → Credential Tracker</strong>. You see each employee's tracked credentials.</li>
+<li>Click <strong>Upload Credential</strong> and attach a PDF (license, BLS, HIPAA training) with its expiration date.</li>
+<li>The tracker derives status automatically: <strong>Valid</strong>, <strong>Expiring</strong> (within 5 days), <strong>Expired</strong>, or <strong>Missing</strong>.</li>
 </ol>
 <p><Note>
-Medipyxis auto-emails the user and their supervisor when a credential is 60, 30, and 7 days from expiration.
+Credential status is computed from the expiration date; the <strong>Expiring</strong> window is 5 days. A <strong>Send Reminder</strong> action exists but does not currently send email — follow up with staff directly.
 </Note></p>
 <h2 id="step-5-wire-referrals-5-min">Step 5 — Wire referrals (5 min)</h2>
 <ol>
@@ -103,14 +103,14 @@ Medipyxis auto-emails the user and their supervisor when a credential is 60, 30,
 <ol>
 <li>Open <strong>Billing Operations → Clearinghouse Config</strong> (gear icon, top-right).</li>
 <li>Medipyxis uses <strong>Stedi</strong> as the clearinghouse (replaced ClaimMD in May 2026) and handles the connection for you. Your job is to <strong>enroll your providers with each payer</strong> under <strong>Billing → Enrollment</strong> — see <a href="/medipyxis-help/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a>.</li>
-<li>Upload your fee schedule: <strong>Client Fee Schedule</strong> tab. Use the CSV template for bulk.</li>
+<li>Set your charges in the <strong>Charge Master</strong> (Insurance Charges, Self-Pay Charges, and Templates tabs). Use the CSV import for bulk.</li>
 </ol>
 <p>Full guide: <a href="/medipyxis-help/admin/billing-setup/">Billing: Clearinghouse &amp; fee schedule</a></p>
 <h2 id="step-7-test-the-loop-5-min">Step 7 — Test the loop (5 min)</h2>
 <ol>
 <li>Create a throwaway referral in <strong>Referral Intake</strong> with test data.</li>
 <li>Assign it to a test patient, schedule a visit on <strong>Fleet Calendar</strong>, open the visit, and sign it off.</li>
-<li>Confirm the resulting draft claim appears in <strong>Billing Operations → Unbilled</strong>.</li>
+<li>Confirm the encounter appears in the <strong>Billing Work Queue</strong> as ready for billing.</li>
 <li>Delete the test data when you're done.</li>
 </ol>
 <h2 id="result">Result</h2>

@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: quickstart
 estimated_minutes: 45
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - bd-manage-reps
@@ -43,8 +43,8 @@ Medipyxis ties every referral it receives to a practice. If your referral source
 ## Step 3 — Log your first activity (5 min)
 
 1. Open a practice from the list → **Activity** tab.
-2. Click **+ Log activity**. Pick type: *Visit*, *Call*, *Email*, *Lunch*, *CME event*.
-3. Add notes and any follow-up date. The activity shows up on your manager's **Rep Coaching** view.
+2. Click **Log Call**, **New Visit**, or **Add Spend** from the quick-add strip. You can also capture the activity by **voice recording**.
+3. Add notes and any follow-up date. The activity rolls up into your manager's BD Management view.
 
 ## Step 4 — Read your ROI (10 min)
 

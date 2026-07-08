@@ -5,7 +5,7 @@ module: getting-started
 audience: [clinician, intake, admin, billing, bd, vendor]
 type: quickstart
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /dashboard
 related:
   - getting-started-login-and-setup
@@ -26,8 +26,8 @@ This page is your front door; the rest of this section follows the same order yo
 | You used to use | Now you use |
 |---|---|
 | Fax inbox + PDF readers | **Referral Intake** with OCR auto-extract |
-| Scheduling spreadsheet | **Fleet Calendar** with route optimization |
-| Paper charts or a separate EHR | **Visit Wizard** with offline support |
+| Scheduling spreadsheet | **Fleet Calendar** with routing and a facility map |
+| Paper charts or a separate EHR | **Visit Wizard** with continuous autosave |
 | Vendor emails and graft spreadsheets | **Inventory Management** with lot tracking |
 | Billing hand-off to a third-party coder | **Billing Operations** with auto-prep |
 | Separate CRM for referral sources | **Business Development** + **CRM** |
@@ -52,7 +52,7 @@ Pick the path that matches your job. Each one ends with you having completed one
 
 1. **Facility-scoped URLs.** Your URL always contains a facility UUID after `/facility/`. The facility you're viewing is shown in the top-left header. If you manage multiple facilities, use the **Organization Selector** to switch.
 2. **⌘K is your friend.** Press ⌘K (Mac) or Ctrl+K (Windows) anywhere to open **Quick Jump** — the fastest way to search patients, visits, referrals, and pages.
-3. **Offline works.** The clinician mobile experience charts visits and captures photos with zero connectivity. Everything syncs the moment you reconnect. See [Work offline](../modules/visit-wizard-ehr/work-offline.md).
+3. **Your work is saved as you go.** The Visit Wizard autosaves each field continuously, so a dropped connection or a device switch won't lose your documentation. (The web app is online-only — there is no separate offline mode.)
 
 ## Getting help
 

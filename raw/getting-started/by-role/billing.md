@@ -6,8 +6,8 @@ audience: [billing]
 roles: [biller]
 type: quickstart
 estimated_minutes: 45
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/billing
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/billing/work-queue
 related:
   - billing-work-queue
   - billing-submit-claim
@@ -42,35 +42,30 @@ Payer response (paid / denied / partial)
 ERA posting  →  denials routed to Denial Management
 ```
 
-## Step 1 — Tour the Billing workspace (5 min)
+## Step 1 — Tour the Work Queue (5 min)
 
-1. Click **Billing Operations** in the sidebar.
-2. You see work queues: **Unbilled**, **Ready to Submit**, **In Clearinghouse**, **Denied**, **Paid**. The count chip on each is live.
-3. The right-side panel shows **Activity** (recent status changes across claims you have open).
+1. Click **Billing → Work Queue** in the sidebar.
+2. The Work Queue is a calendar-synced readiness board — one row per encounter — showing Visit Status, Note Status, Billing Readiness, and (once a claim exists) a **Claim Status**. Use the **Ready** / **Pending Doc** / **Pending Sig** presets and the filters to focus your day. See [Work the Billing Work Queue](../../modules/billing/work-queue.md).
 
-## Step 2 — Audit an unbilled claim (15 min)
+## Step 2 — Review and submit a claim (15 min)
 
-1. Click **Unbilled**. Every row is a signed visit waiting for claim review.
-2. Open any row. You see a CMS-1500 preview with:
+1. Find an encounter that's **Ready for Billing**. Click **Edit** to open the claim form (`/billing/new`), or **Review** for the coding drawer.
+2. On the claim form you see a CMS-1500 layout with:
    - **Patient** (from the patient record)
-   - **Payer** (from insurance verification)
-   - **Diagnosis codes** (ICD-10, suggested by the visit note)
-   - **Procedure lines** (CPT/HCPCS, auto-derived from procedures documented)
-   - **Modifiers** (LT/RT, 25, 59 — auto-applied where appropriate)
-3. Your job: **audit**, not rebuild. The green checkmarks mean coding passed the Billing & Compliance Brain rule engine. Red flags mean a rule failed — click to see which one.
-4. Click **Submit to clearinghouse** when clean.
+   - **Payer** (from insurance)
+   - **Diagnosis codes** (ICD-10, from the visit note)
+   - **Procedure lines** (CPT/HCPCS, auto-derived from documented procedures; drag to reorder)
+   - **Modifiers** (25, 59, KX, etc. where appropriate)
+3. Your job is to **audit**, not rebuild. Correct anything flagged.
+4. Click **Submit Claim** when clean — it goes to the payer through Stedi.
 
 Detail: [Submit a claim](../../modules/billing/submit-claim.md)
 
-<Compliance>
-Every rule that passes or fails is logged in `policy_evaluations` with the exact rule id, predicate, and result. You can pull that audit trail for any claim under the **Audit Trail** tab — invaluable for denial appeals.
-</Compliance>
+## Step 3 — Review posted ERAs (10 min)
 
-## Step 3 — Post an ERA (10 min)
-
-1. Open **Billing Operations → ERA Posting**.
-2. Upload or auto-receive an 835 ERA file. Medipyxis parses it and shows payment amount, adjustment codes, and claim-level match.
-3. Click **Post** on matched rows. Unmatched rows (the payer couldn't find the claim) stay until you reconcile.
+1. Open the **ERA / Payments** view (`/era-eob`).
+2. ERAs (835) arrive automatically from Stedi over a webhook — there is no file to upload and no sync button. Matched lines auto-post and advance claims to **Paid**.
+3. Reconcile any **Unmatched** lines by matching them to the correct claim. See [ERA posting](../../modules/billing/era-posting.md).
 
 ## Step 4 — Work denials (10 min)
 
@@ -93,5 +88,5 @@ Detail: [Denial Management](../../modules/billing/denial-management.md)
 ## Next up
 
 - [Billing: Denial Management deep dive](../../modules/billing/denial-management.md)
-- [Billing: Authorization requests](../../modules/billing/work-queue.md)
+- [Work the Billing Work Queue](../../modules/billing/work-queue.md)
 - [Quick reference: biller daily](../../quick-reference/biller.md)

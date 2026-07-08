@@ -49,9 +49,10 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/quick-reference/bd-rep/">BD rep cheat sheet</a><a class="sidebar-item active" href="/medipyxis-help/quick-reference/biller/">Biller cheat sheet</a><a class="sidebar-item" href="/medipyxis-help/quick-reference/intake-coordinator/">Intake coordinator cheat sheet</a><a class="sidebar-item" href="/medipyxis-help/quick-reference/nurse-daily/">Nurse daily cheat sheet</a><a class="sidebar-item" href="/medipyxis-help/quick-reference/practice-admin/">Practice admin cheat sheet</a><a class="sidebar-item" href="/medipyxis-help/quick-reference/vendor-rep/">Vendor rep cheat sheet</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/quick-reference/">Quick reference</a></p>
       <h1>Biller cheat sheet</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 2 min read</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>Your daily loop: audit unbilled → submit → post ERAs → work denials. Medipyxis does the coding prep; you're the safety net.</p>
-<h2 id="claim-status-glossary">Claim status glossary</h2>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 2 min read</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-07-08</span></div>
+      <p>Your daily loop: work the Work Queue → submit → post ERAs → work denials. Medipyxis does the coding prep; you're the safety net.</p>
+<h2 id="claim-status-glossary">Claim Status glossary</h2>
+<p>The Work Queue's <strong>Claim Status</strong> dropdown (set by the biller) uses these values:</p>
 <table>
 <thead>
 <tr>
@@ -61,40 +62,36 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>Unbilled</strong></td>
-<td>Visit signed, not yet reviewed</td>
+<td><strong>Needs Coding</strong> / <strong>Eligibility Needed</strong></td>
+<td>Not ready to submit yet</td>
 </tr>
 <tr>
-<td><strong>Ready to Submit</strong></td>
-<td>Passed rule engine, awaiting your click</td>
+<td><strong>Ready</strong></td>
+<td>Reviewed and ready to submit</td>
 </tr>
 <tr>
-<td><strong>In Clearinghouse</strong></td>
-<td>Submitted, awaiting 277 response</td>
+<td><strong>In Progress</strong> / <strong>Hold</strong> / <strong>Flag Clinical</strong></td>
+<td>Working it / paused / sent back to the clinician</td>
 </tr>
 <tr>
-<td><strong>Accepted</strong></td>
-<td>Clearinghouse accepted</td>
+<td><strong>Billed</strong></td>
+<td>Submitted to the payer</td>
 </tr>
 <tr>
-<td><strong>Rejected</strong></td>
-<td>Clearinghouse rejected (fix and resubmit)</td>
-</tr>
-<tr>
-<td><strong>Paid</strong></td>
-<td>ERA posted</td>
+<td><strong>Paid</strong> / <strong>Partial Pay</strong></td>
+<td>Payment posted (fully / partially)</td>
 </tr>
 <tr>
 <td><strong>Denied</strong></td>
-<td>Payer denied; in Denial Management</td>
+<td>Payer denied; work it in Denial Management</td>
 </tr>
 <tr>
-<td><strong>Appealed</strong></td>
-<td>You submitted an appeal</td>
+<td><strong>Appealed</strong> / <strong>Corrected</strong></td>
+<td>Appeal filed / claim corrected and resubmitted</td>
 </tr>
 <tr>
-<td><strong>Written off</strong></td>
-<td>Closed, zero expected revenue</td>
+<td><strong>Patient Responsibility</strong> / <strong>Write-Off</strong> / <strong>Void</strong></td>
+<td>Closed outcomes</td>
 </tr>
 </tbody>
 </table>
@@ -131,9 +128,9 @@
 </table>
 <h2 id="daily-targets">Daily targets</h2>
 <ul>
-<li><strong>Unbilled queue cleared within 72 hours</strong> of visit signature.</li>
+<li><strong>Work Queue "Ready" preset cleared within 72 hours</strong> of visit signature.</li>
 <li><strong>Zero clearinghouse rejections &gt; 7 days old</strong>.</li>
-<li><strong>Every ERA posted within 24 hours</strong> of receipt.</li>
+<li><strong>Every unmatched ERA reconciled within 24 hours</strong> (matched ERAs auto-post).</li>
 <li><strong>Every denial triaged within 48 hours</strong>.</li>
 </ul>
 <h2 id="speed-tips">Speed tips</h2>
@@ -176,17 +173,17 @@
 <tr>
 <td>CO-50 (not medically necessary)</td>
 <td>Missing LCD element</td>
-<td>Check <code>policy_evaluations</code> for the failed rule → addendum to visit note</td>
+<td>Add an addendum to the visit note that resolves the LCD item</td>
 </tr>
 <tr>
 <td>CO-197 (precert missing)</td>
 <td>No auth on file</td>
-<td><strong>Authorization Requests</strong> → retro-auth; if denied, appeal with clinical docs</td>
+<td>Obtain retro-auth; if denied, appeal with clinical docs</td>
 </tr>
 <tr>
 <td>CO-16 (missing information)</td>
 <td>Modifier or ID missing</td>
-<td>Rule engine flags on correction; resubmit</td>
+<td>Correct on the claim form (<code>/billing/new</code>) and resubmit</td>
 </tr>
 <tr>
 <td>CO-29 (past timely filing)</td>
@@ -195,13 +192,13 @@
 </tr>
 <tr>
 <td>PR-45 (charge exceeds allowed)</td>
-<td>Fee schedule out of date</td>
-<td><strong>Admin → Client Fee Schedule</strong></td>
+<td>Charge out of date</td>
+<td>Update the facility <strong>Charge Master</strong></td>
 </tr>
 </tbody>
 </table>
-<h2 id="audit-trail">Audit trail</h2>
-<p>Every claim has an <strong>Audit Trail</strong> tab showing every rule evaluation. For any denial appeal, export this tab to PDF — it's your evidence the claim was submitted correctly.</p>
+<h2 id="denial-evidence">Denial evidence</h2>
+<p>Each claim and denial keeps a full activity trail. When appealing, reference the claim number, DOS, and denial CARC — see <a href="/medipyxis-help/modules/billing/denial-management/">Denial Management</a>.</p>
       
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -209,7 +206,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#claim-status-glossary">Claim status glossary</a></li><li><a class="" href="#auto-coding-sources-of-truth">Auto-coding sources of truth</a></li><li><a class="" href="#daily-targets">Daily targets</a></li><li><a class="" href="#speed-tips">Speed tips</a></li><li><a class="" href="#denial-reason-playbook">Denial reason playbook</a></li><li><a class="" href="#audit-trail">Audit trail</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#claim-status-glossary">Claim Status glossary</a></li><li><a class="" href="#auto-coding-sources-of-truth">Auto-coding sources of truth</a></li><li><a class="" href="#daily-targets">Daily targets</a></li><li><a class="" href="#speed-tips">Speed tips</a></li><li><a class="" href="#denial-reason-playbook">Denial reason playbook</a></li><li><a class="" href="#denial-evidence">Denial evidence</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/quick-reference/biller.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/quick-reference/biller.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
