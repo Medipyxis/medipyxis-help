@@ -3,10 +3,10 @@ id: inventory-product-catalog
 title: Manage products in the Product Catalog
 module: inventory
 audience: [clinician, admin]
-roles: [vendor_coordinator, practice_admin]
+roles: [vendor_coordinator, admin]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/inventory-management
 related:
   - inventory-overview
@@ -23,13 +23,17 @@ Add new products to your organization's master catalog and understand the column
 
 ## Before you start
 
-- You must have the `vendor_coordinator` or `practice_admin` role to add or edit products.
+- You must have the `vendor_coordinator` or `admin` role to add or edit products.
 - Confirm the product's HCPCS code with your billing team before saving, as it drives claim generation downstream.
 - For biologics and matrix products, have the manufacturer's lot format on hand — the form enforces it.
 
+## Products and Vendors tabs
+
+The Product Catalog has two tabs: **Products** (the SKU catalog described below) and **Vendors** (the inventory vendors you buy from, with their categories). Switch between them at the top of the catalog.
+
 ## Product Catalog columns
 
-From the **Inventory Management** hub, select **Product Catalog** to open the catalog table.
+From the **Inventory Management** hub, select **Product Catalog** and stay on the **Products** tab to open the catalog table.
 
 ![The Product Catalog table showing columns NAME, BRAND, SKU, LOT SUFFIX, CATEGORY, TYPE, HCPCS, and STATUS with sample product rows.](../../assets/inventory/product_catalog.png)
 
@@ -41,8 +45,8 @@ From the **Inventory Management** hub, select **Product Catalog** to open the ca
 | **BRAND** | The manufacturer or brand that markets the product. |
 | **SKU** | Stock Keeping Unit — your organization's internal identifier for this product. Must be unique within your facility. |
 | **LOT SUFFIX** | The suffix pattern appended to manufacturer lot numbers for this product (used during receiving to validate lot strings). |
-| **CATEGORY** | One of the three inventory categories: `Amniotic / Advance Treatment`, `Biologics / Matrix`, or `Conservative Care Products`. Determines which receiving tile accepts this product. |
-| **TYPE** | A subcategory within the category (e.g., `Dehydrated`, `Fresh`, `Meshed`). Drives Visit Wizard filter options. |
+| **CATEGORY** | The inventory category: `Amniotic / Advance Treatment`, `Biologics / Matrix`, `Conservative Care Products`, `PRP`, or `Ultrasonic Mist (UM)`. Determines which receiving tile accepts this product. |
+| **TYPE** | A subcategory within the category (for conservative care this includes items like Foam Dressing, Collagen Matrix, Compression Stocking, and supply types such as **Surgical Instrument**, **PPE**, and **General Supply**). PRP and UM do not have sub-types. |
 | **HCPCS** | The Healthcare Common Procedure Coding System code billed when this product is applied. Required for biologics and amniotic products. |
 | **STATUS** | `Active` — available for ordering and use. `Inactive` — hidden from clinician views and the receiving workflow but retained for historical records. |
 
@@ -54,7 +58,7 @@ From the **Inventory Management** hub, select **Product Catalog** to open the ca
 
 1. **Open the Add Product modal.** From the **Product Catalog** table, click **Add Product** in the upper-right corner. The modal opens with a single **Category** dropdown.
 
-2. **Select a category.** Choose one of `Amniotic / Advance Treatment`, `Biologics / Matrix`, or `Conservative Care Products`. The form expands to show the fields required for that category.
+2. **Select a category.** Choose one of `Amniotic / Advance Treatment`, `Biologics / Matrix`, `Conservative Care Products`, `PRP`, or `Ultrasonic Mist (UM)`. The form expands to show the fields required for that category.
 
     ![The Add Product form after a category is selected, showing fields for Name, Brand, SKU, LOT Suffix, Type, HCPCS, and Status.](../../assets/inventory/add_product_form.png)
 
@@ -70,6 +74,10 @@ From the **Inventory Management** hub, select **Product Catalog** to open the ca
    - **Status** — set to `Active` to make the product immediately available, or `Inactive` to hold it for future use.
 
 4. **Save the product.** Click **Save**. The new product appears in the **Product Catalog** table with `Active` or `Inactive` status.
+
+<Tip>
+To load many products or inventory records at once, use the **bulk upload** flow rather than adding items one by one. Bulk upload accepts a free-form spreadsheet and does not require a purchase order.
+</Tip>
 
 ## Result
 

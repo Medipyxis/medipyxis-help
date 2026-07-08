@@ -3,126 +3,74 @@ id: inventory-accounts-payable
 title: Receive shipments and reconcile invoices in Accounts Payable
 module: inventory
 audience: [admin]
-roles: [finance_ap, practice_admin]
+roles: [finance_ap, admin]
 type: how-to
 estimated_minutes: 7
-last_reviewed: 2026-04-24
-app_route: /facility/{facility_uuid}/inventory-management
+last_reviewed: 2026-07-08
+app_route: /facility/{facility_uuid}/inventory/accounts-payable
 related:
   - inventory-overview
   - inventory-amniotic-biologics-conservative
   - inventory-main-inventory
 prerequisites:
   - inventory-overview
-tags: [inventory, accounts payable, invoice, purchase order, vendor, finance, AP, shipment]
+tags: [inventory, accounts payable, invoice, vendor, finance, AP, matching, payments, disputes]
 ---
 
-# Receive shipments and reconcile invoices in Accounts Payable
+# Reconcile vendor invoices in Accounts Payable
 
-Record an incoming shipment, match the vendor invoice to the corresponding purchase order, and track payment status — all from the **Accounts Payable** tile in Inventory Management.
+Take a vendor invoice from intake through matching, payment, and (if needed) dispute resolution, using the tabbed **Accounts Payable** workspace.
 
 ## Before you start
 
-- You must have the `finance_ap` or `practice_admin` role to access the **Accounts Payable** tile.
-- The products in the shipment must already exist in the **Product Catalog** with `Active` status.
-- Have the vendor's packing slip and invoice on hand before starting — you will need the invoice number, invoice date, and line-item totals.
+- You must have the `finance_ap` or `admin` role to open **Accounts Payable**.
+- The products on the invoice should already exist in the **Product Catalog** and have been received into inventory.
 
 ## The Finance AP role
 
-The `finance_ap` role grants access to **Accounts Payable** and the financial columns in **Main Inventory** (unit cost, extended cost). Users with only the `vendor_coordinator` or `nurse` role see the inventory units but not the cost data. Assign the `finance_ap` role in **Administrator → Organization Role Config** to staff who are responsible for invoice reconciliation and purchase-order approval.
+The `finance_ap` role grants access to **Accounts Payable** and to cost data in inventory. Users with only `vendor_coordinator` or clinical roles see inventory units but not cost or AP information. Assign `finance_ap` in **Administrator → Organization Role Config** to staff responsible for invoice reconciliation.
 
-## Accounts Payable columns
+## Accounts Payable tabs
 
-From the **Inventory Management** hub, select **Accounts Payable**.
+Open **Accounts Payable** from the Inventory Management hub (route `/facility/{facility_uuid}/inventory/accounts-payable`). The workspace is organized into tabs:
 
-![The Accounts Payable table showing columns VENDOR, INVOICE #, DATE, DUE, TOTAL, STATUS, and ACTIONS with sample invoice rows in various statuses.](../../assets/inventory/accounts_payable.png)
-
-*Accounts Payable table. Each row represents one vendor invoice.*
-
-| Column | Description |
+| Tab | What it's for |
 |---|---|
-| **VENDOR** | The vendor or distributor name. Pulled from the vendor record associated with the purchase order. |
-| **INVOICE #** | The invoice number as printed on the vendor's invoice. Must be unique per vendor to prevent duplicate payments. |
-| **DATE** | The invoice date (the date the vendor issued the invoice, not the date it was received). |
-| **DUE** | The payment due date. Invoices approaching or past their due date display an amber or red indicator, respectively. |
-| **TOTAL** | The total amount billed on the invoice, in USD. |
-| **STATUS** | Current payment status. See status values below. |
-| **ACTIONS** | Contextual actions available for the invoice (e.g., **Match to PO**, **Mark Paid**, **Dispute**). Available actions depend on current STATUS. |
+| **Inbox** | Incoming vendor invoices awaiting triage. Start here to review and route new invoices. |
+| **Matching** | Match invoice lines to received shipments. Unmatched lines are surfaced so you can reconcile quantities and prices. |
+| **Payments** | Record payments against matched, approved invoices — including **partial payments**. |
+| **Disputes** | Track discrepancies. Open a dispute when an invoice doesn't reconcile; resolve it when the vendor issues a correction or credit. |
+| **Activity** | The audit trail of AP actions across invoices. |
+| **Reports** | Per-vendor rollups — total invoiced, total paid, total disputed, and match rate. |
 
-### STATUS values
+## Typical workflow
 
-| Value | Meaning |
-|---|---|
-| `Unmatched` | The invoice has been entered but has not yet been matched to a purchase order. |
-| `Matched` | The invoice has been matched to a PO and line items have been reconciled. Pending payment approval. |
-| `Approved` | The invoice has been approved for payment by an authorized user. Ready for payment processing. |
-| `Paid` | Payment has been issued. The invoice is closed. |
-| `Disputed` | A discrepancy was found between the invoice and the PO. Payment is held pending vendor resolution. |
+1. **Triage in the Inbox.** Review each incoming invoice — vendor, invoice number, date, and amount — and open it to see its lines.
+2. **Match the lines.** On the **Matching** tab, reconcile the invoice's line items against received shipments. Lines whose quantity and price agree reconcile cleanly; the **Unmatched Lines** view lists anything that doesn't.
+3. **Approve for payment.** Once an invoice is matched and reviewed, approve it so it's eligible for payment.
+4. **Record payment.** On the **Payments** tab, record a full or **partial** payment after payment is actually issued through your accounting system. An invoice can sit in a partially-paid state until the balance is cleared.
+5. **Handle discrepancies.** If a line can't be reconciled, open a **dispute** and work it on the **Disputes** tab. Resolve it by re-matching against a corrected invoice or by recording the vendor's credit.
+6. **Review performance.** Use the **Reports** tab to see each vendor's invoiced/paid/disputed totals and match rate.
 
-## Receive a shipment
+## Invoice statuses you'll see
 
-Receiving a shipment creates the inventory units (UINs) in Main Inventory and, optionally, opens an Accounts Payable record for the associated invoice.
-
-1. **Open the appropriate category tile.** Go to **Inventory Management** and select the tile that matches the products being received: **Amniotic / Advance Treatment**, **Biologics / Matrix**, or **Conservative Care Products**.
-
-2. **Initiate receiving.** Click **Receive Shipment** within the category tile.
-
-3. **Enter unit details.** For each unit in the shipment, complete the receiving form (Lot #, Tissue ID if applicable, Expiration Date, Size, HCPCS, quantity). Each unit entry generates one UIN. See [Specialty catalog tiles](./amniotic-biologics-conservative.md) for field requirements by category.
-
-4. **Attach the packing slip.** Upload a scan or photo of the vendor's packing slip using **Attach Document**. This links the physical receipt to the digital inventory record.
-
-5. **Save the receipt.** Click **Save**. The units appear in **Main Inventory** with status `Available`.
-
-## Enter and match a vendor invoice
-
-1. **Open Accounts Payable.** From the **Inventory Management** hub, select **Accounts Payable**.
-
-2. **Create an invoice record.** Click **New Invoice**. Complete the following fields:
-   - **Vendor** — select from the vendor list or type to search.
-   - **Invoice #** — enter exactly as printed on the vendor's invoice.
-   - **Date** — the date on the vendor's invoice.
-   - **Due** — the payment due date (typically 30 or 60 days from the invoice date per your vendor agreement).
-   - **Total** — the total amount billed.
-   - **Attach Invoice** — upload a PDF or image of the invoice document.
-
-3. **Save the invoice.** Click **Save**. The invoice appears in the table with status `Unmatched`.
-
-4. **Match to a purchase order.** Locate the invoice row and click **Match to PO** in the **ACTIONS** column. The system displays open purchase orders from the same vendor. Select the PO that corresponds to this shipment.
-
-5. **Reconcile line items.** The system compares the invoice line items to the PO line items. For each line:
-   - If the billed quantity and unit price match the PO: the line is marked reconciled automatically.
-   - If there is a discrepancy: the line is flagged. Correct the quantity or price if the invoice is accurate and the PO was entered in error, or click **Dispute Line** to hold the line and contact the vendor.
-
-6. **Complete the match.** When all lines are reconciled or disputed, click **Confirm Match**. The invoice status updates to `Matched`.
-
-## Approve and record payment
-
-1. **Review the matched invoice.** Open the invoice record and verify that the total and all line items are correct.
-
-2. **Approve for payment.** Click **Approve**. The invoice status updates to `Approved`. This action is logged with the approving user's name and timestamp.
-
-3. **Record payment.** After payment is issued (via check, ACH, or credit card through your external accounting system), return to the invoice record and click **Mark Paid**. Enter the payment date and reference number. The status updates to `Paid`.
-
-## Result
-
-The invoice is closed. The payment reference number is stored against the invoice record for audit and reconciliation purposes. The associated inventory units remain in **Main Inventory** linked to the receiving event and, when applied, to the patient encounter.
+Invoices move through states such as **matched**, **approved**, **partially paid**, **paid**, and **disputed**, which drive where they appear across the tabs and in the reports.
 
 <Warning>
-Do not mark an invoice `Paid` until payment has actually been issued. Marking an invoice paid prematurely closes the record and removes it from the outstanding-payables view, which can cause double-payment errors during bank reconciliation.
+Only record a payment after it has actually been issued. Marking an invoice paid prematurely removes it from the outstanding-payables view and can lead to double payments during bank reconciliation.
 </Warning>
 
 <Note>
-Disputed invoices remain visible in the **Accounts Payable** table with status `Disputed`. Use the **Notes** field on the invoice record to log every communication with the vendor until the dispute is resolved. When resolved, either update the invoiced amount to match what was agreed and re-match to the PO, or request a credit memo from the vendor.
+Receiving a shipment (through a category tile) and paying its invoice are separate steps. Receiving creates the inventory units (UINs); Accounts Payable reconciles and pays the vendor invoice for those units.
 </Note>
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **Accounts Payable** tile is not visible on the hub | Role does not include `finance_ap` or `practice_admin` | Ask a `practice_admin` or `super_admin` to update your role in **Administrator → Organization Role Config** |
-| **Match to PO** returns no results | No open PO exists for this vendor, or the PO is already matched to another invoice | Verify a PO was created for this order; if not, create one before matching |
-| Duplicate invoice number error | An invoice with this number already exists for this vendor | Check whether the invoice was already entered; if it is a legitimate re-invoice, append a suffix (e.g., `-R1`) and document the reason in **Notes** |
-| Line item quantity mismatch | The received quantity differs from what was ordered | Confirm the packing slip count; if the shipment was short, create a discrepancy note and contact the vendor before approving |
+| **Accounts Payable** is not accessible | Your role does not include `finance_ap` or `admin` | Ask an `admin` to update your role in **Administrator → Organization Role Config** |
+| An invoice has unmatched lines | Received quantity or price differs from the invoice | Reconcile on the **Matching** tab; if the vendor is wrong, open a **dispute** |
+| A vendor's match rate looks low | Recurring quantity/price mismatches | Review the vendor's recent invoices on **Reports** and follow up with the vendor |
 
 ## Related
 

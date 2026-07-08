@@ -3,10 +3,10 @@ id: inventory-amniotic-biologics-conservative
 title: Specialty catalog tiles — Amniotic, Biologics, and Conservative Care
 module: inventory
 audience: [clinician, admin]
-roles: [vendor_coordinator, nurse, practice_admin]
+roles: [vendor_coordinator, clinician, admin]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/inventory-management
 related:
   - inventory-overview
@@ -29,7 +29,9 @@ Understand the three product-category tiles in the Inventory Management hub, wha
 
 ## Why categories are separated
 
-Medipyxis separates inventory into three categories because each product class has different regulatory, billing, and clinical-documentation requirements. Keeping them in distinct tiles makes it faster to locate the right product during a visit and ensures the system enforces the correct validation rules at receiving time.
+Medipyxis separates inventory by product class because each has different regulatory, billing, and clinical-documentation requirements. Keeping them in distinct tiles makes it faster to locate the right product during a visit and ensures the system enforces the correct validation rules at receiving time.
+
+This article covers the three graft/supply categories below. Two more categories — **PRP** (platelet-rich plasma kits) and **Ultrasonic Mist (UM)** — have their own hub tiles and receive the same way; like conservative care, they do not require IVR prior authorization.
 
 ## Amniotic / Advance Treatment
 
@@ -69,7 +71,7 @@ Do not receive a biologic shipment and apply the product before an IVR is approv
 
 ## Conservative Care Products
 
-**Conservative Care Products** covers non-graft wound-care supplies: dressings, topical agents, offloading devices, compression wraps, and similar consumables. These products generally do not require HCPCS codes, though you may optionally add one if the product is billed separately on a claim.
+**Conservative Care Products** covers non-graft wound-care supplies: dressings, topical agents, offloading devices, compression wraps, and similar consumables. The type list is broad (foams, alginates, collagen matrices, compression, solutions, and more) and also includes general operational supply types such as **Surgical Instrument**, **PPE**, and **General Supply**. These products generally do not require HCPCS codes, though you may optionally add one if the product is billed separately on a claim.
 
 **Key differences from graft categories:**
 
@@ -83,7 +85,7 @@ For high-volume supply items such as gauze or foam dressings, set a PAR level in
 
 ## How receiving creates UINs
 
-Regardless of category, every unit entered through a receiving form generates exactly one **UIN** (Unique Inventory Number) in Main Inventory. The UIN is the bridge between the physical item and its clinical and billing records. When a clinician selects a product at step 13 (**Procedure Supplies**) of the Visit Wizard, they scan or enter the UIN to record which specific physical unit was applied to the patient.
+Regardless of category, every unit entered through a receiving form generates exactly one **UIN** (Unique Inventory Number) in Main Inventory. The UIN is the bridge between the physical item and its clinical and billing records. When a clinician selects a product in the **Procedures & Supplies** section of the Visit Wizard, they scan or enter the UIN to record which specific physical unit was applied to the patient.
 
 ## Related
 
