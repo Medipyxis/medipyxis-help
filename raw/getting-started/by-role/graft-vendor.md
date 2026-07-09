@@ -3,78 +3,64 @@ id: getting-started-vendor-first-hour
 title: Graft vendor first hour
 module: getting-started
 audience: [vendor]
-roles: [vendor_rep]
+roles: [vendor_admin, vendor_user]
 type: quickstart
 estimated_minutes: 30
-last_reviewed: 2026-04-24
-app_route: /vendor-portal
+last_reviewed: 2026-07-08
+app_route: /vendor
 related:
-  - vendor-portal-receive-po
-  - vendor-portal-ship-order
-  - vendor-portal-submit-invoice
-  - vendor-portal-reorder-request
-tags: [onboarding, vendor, graft, ivr]
+  - vendor-portal-index
+  - vendor-portal-manage-orders
+  - vendor-portal-submit-product
+  - vendor-portal-invoices-and-payment
+tags: [onboarding, vendor, orders, catalog, invoices]
 ---
 
 # Graft vendor first hour
 
-<Warning>
-**Vendor portal not yet implemented.** The dedicated vendor-facing portal described below is on the roadmap but is not live in the current release. Until it ships, vendor reps continue to coordinate POs, shipments, lot data and invoicing through email + fax with the practice's office staff. This page describes the planned experience so admins can prepare; expect changes when the feature goes live.
-</Warning>
-
-By the end of this hour you will have received a purchase order, confirmed a shipment against a lot, uploaded the invoice, and seen your reconciliation status. The vendor portal is read-mostly — your main job is to keep shipments and lot data accurate.
+By the end of this hour you will have signed in to the vendor portal, reviewed your catalog, worked an order end to end, and sent an invoice. The vendor portal is a dedicated app at `/vendor`, separate from the clinical app, and never shows PHI.
 
 ## Before you start
 
-- The practice has invited you via email. Click the link and set your password.
-- You know your product SKUs, LOT numbers, and unit pricing.
+- Your company's `vendor_admin` (or a clinic that set your company up) invited you by email. Accept the invite and set your password.
+- Know your product SKUs and pricing.
 
-## Step 1 — Sign in and pick your vendor (3 min)
+## Step 1 — Sign in (3 min)
 
-1. `https://app.medipyxis.com/vendor-portal`, sign in.
-2. If you supply more than one Medipyxis practice, the **Vendor Selector** at the top-right lets you switch.
+1. Go to `https://app.medipyxis.com/vendor` and sign in. You land on the vendor **Home** page.
+2. The portal navigation gives you **Home**, **Orders**, **Use Events**, **Catalog**, **Invoices**, and **Clinics**. **Staff** appears only if you're a `vendor_admin`.
 
-## Step 2 — See open POs (5 min)
+See [Sign in and manage staff](../../vendor-portal/onboarding-your-company.md).
 
-1. **Purchase Orders** tab. Columns: PO number, practice, order date, expected ship date, status (*Open*, *Partial*, *Shipped*, *Received*, *Reconciled*).
-2. Click any PO to see line items: SKU, quantity ordered, unit cost, required LOT expiration range.
+## Step 2 — Check your catalog (7 min)
 
-## Step 3 — Ship against a PO (10 min)
+1. Open **Catalog**.
+2. Confirm your SKUs are present and correct. Add or edit any with **New SKU**. You own your catalog directly — there is no practice approval step.
 
-1. From an open PO, click **Confirm Shipment**.
-2. For each line item, enter:
-   - **LOT number** (required)
-   - **Expiration date** (required)
-   - **Shipped quantity** (may be less than ordered for partial ships)
-   - **Tracking number** (optional but recommended)
-3. Click **Submit shipment**. The practice's **Receiving** queue is notified.
+See [Manage your product catalog](../../vendor-portal/submit-product.md).
 
-<Warning>
-LOT expiration dates must be **after** the earliest scheduled visit that uses the product. If not, the PO is flagged and the practice will reject receiving.
-</Warning>
+## Step 3 — Work an order (10 min)
 
-## Step 4 — Upload invoice (5 min)
+1. Open **Orders**. New orders arrive as **Pending**.
+2. **Accept** an order (it moves to In Progress), then **Ship** it and enter the **tracking number**. It completes as **Delivered** once the clinic confirms receipt.
 
-1. **Invoices** tab → **+ New invoice**. Pick the PO, attach the PDF, enter invoice number and amount.
-2. Medipyxis auto-matches your invoice lines to the PO lines. Any mismatches surface in **Disputes** for you and the practice AP team to resolve.
+See [Manage orders](../../vendor-portal/manage-orders.md).
 
-## Step 5 — Watch reconciliation status (2 min)
+## Step 4 — Send an invoice (5 min)
 
-Your dashboard tile **Reconciled $** shows lifetime and month-to-date paid vs. shipped. Anything in **Dispute** is your work-in-progress — click a row to see the AP note and respond.
+1. Open **Invoices**.
+2. Create an invoice for a shipped order and submit it. The clinic's finance team reconciles and pays it on their side.
 
-## Step 6 — Handle a reorder request (5 min)
+See [Send invoices](../../vendor-portal/invoices-and-payment.md).
 
-When the practice's PAR level trips for one of your products, you'll see a **Reorder Request** in the portal.
+## Step 5 — Review usage (5 min)
 
-1. Open it, confirm quantity and delivery date, click **Accept**.
-2. A new PO is created automatically — you're back at Step 2 above.
+- Open **Use Events** to see where your products were used, de-identified (initials + year of birth only). Open **Clinics** to see which facilities you're enabled at.
 
 ## Result
 
-- You've shipped one PO with accurate LOT + expiration data.
-- Your invoice is matched and in flight to payment.
-- You know where reorder requests appear.
+- You can sign in, keep your catalog current, work orders from Pending to Delivered, and send invoices.
 
 ## Need help?
 
-Email your practice's AP contact — the address is in your vendor profile. For portal issues, email support@medipyxis.com.
+For portal questions, see the [Vendor Portal Guide](../../vendor-portal/) and [FAQ](../../vendor-portal/faq.md). For account issues, contact your company's `vendor_admin` or email support@medipyxis.com.

@@ -81,11 +81,10 @@ Welcome. Use this index to find documentation by role, by module, or by task.
 ## Graft vendor portal
 
 - [Vendor portal home](./vendor-portal/index.md)
-- [Onboarding your company](./vendor-portal/onboarding-your-company.md)
-- [Submit a product](./vendor-portal/submit-product.md)
-- [Respond to an IVR](./vendor-portal/respond-to-ivr.md)
-- [Shipment & UIN](./vendor-portal/shipment-and-uin.md)
-- [Invoices & payment](./vendor-portal/invoices-and-payment.md)
+- [Sign in and manage staff](./vendor-portal/onboarding-your-company.md)
+- [Manage your product catalog](./vendor-portal/submit-product.md)
+- [Manage orders](./vendor-portal/manage-orders.md)
+- [Send invoices](./vendor-portal/invoices-and-payment.md)
 - [FAQ](./vendor-portal/faq.md)
 
 ## Release notes
