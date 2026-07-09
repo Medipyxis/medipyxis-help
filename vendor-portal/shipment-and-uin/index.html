@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Receive a shipment and understand UINs — Medipyxis Help</title>
+<title>Shipments and UINs (replaced by Manage orders) — Medipyxis Help</title>
 <meta name="description" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,134 +46,21 @@
   </div>
 </header>
 
-<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/submit-product/">Add a product to the catalog</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company to the vendor portal</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Receive a shipment and understand UINs</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an Insurance Verification Request (IVR)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Track invoices and payment in Accounts Payable</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/submit-product/">Manage your product catalog (SKUs)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Send invoices</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Shipments and UINs (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Sign in and manage staff</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
-      <h1>Receive a shipment and understand UINs</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>When your products arrive at a facility, you confirm receipt in Medipyxis to activate inventory and generate the UINs (Unique Inventory Numbers) that track each physical unit from receiving through clinical use.</p>
-<h2 id="what-is-a-uin">What is a UIN?</h2>
-<p>A <strong>UIN</strong> (Unique Inventory Number) is a system-generated identifier assigned to one physical graft unit at the moment it is received into inventory. It is distinct from the product's lot number — one lot may contain many units, each with its own UIN.</p>
-<table>
-<thead>
-<tr>
-<th>Identifier</th>
-<th>Who assigns it</th>
-<th>What it represents</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>LOT #</strong></td>
-<td>Manufacturer</td>
-<td>A production batch; one lot may have many units</td>
-</tr>
-<tr>
-<td><strong>SKU</strong></td>
-<td>Manufacturer</td>
-<td>The product model across all lots</td>
-</tr>
-<tr>
-<td><strong>UIN</strong></td>
-<td>Medipyxis (auto-generated at receiving)</td>
-<td>One specific physical unit in the facility's hands</td>
-</tr>
-</tbody>
-</table>
-<p>The UIN is what the clinician scans in the Visit Wizard (step 13 — Procedure Supplies) to document which exact unit was applied to a patient. This provides lot-level traceability for adverse event reporting and CMS audit purposes.</p>
-<h2 id="uin-generation-rules">UIN generation rules</h2>
-<p>Medipyxis generates a UIN for each unit when receiving is confirmed. The format is:</p>
-<pre><code>{facility_prefix}-{YYYYMMDD}-{sequential_number}
-</code></pre>
-<p>For example: <code>PT-20260401-00142</code> — the 142nd unit received at facility "PT" on April 1, 2026.</p>
-<p>The LOT SUFFIX pattern you defined in the Product Catalog entry is validated against the lot number entered during receiving. If the lot number does not match the expected format, receiving is blocked until the discrepancy is resolved.</p>
-<h2 id="receive-a-shipment">Receive a shipment</h2>
-<ol>
-<li>Navigate to <strong>Inventory → Main Inventory</strong> or open the <strong>Amniotic / Advance Treatment</strong> or <strong>Biologics / Matrix</strong> tile (depending on the product category).</li>
-<li>Click <strong>Receive Shipment</strong>.</li>
-<li>Select the <strong>Product</strong> from your catalog (type-ahead search by name or SKU).</li>
-<li>Enter the <strong>PO Number</strong> from the purchase order the practice issued. The system validates that the PO exists and is open.</li>
-<li>Enter the <strong>Lot Number</strong> — the system validates it against the LOT SUFFIX pattern in the Product Catalog.</li>
-<li>Enter the <strong>Tissue ID</strong> (if applicable — required for amniotic and biologic products).</li>
-<li>Enter the <strong>Expiration Date</strong> in <code>MM/DD/YYYY</code> format.</li>
-<li>Enter the <strong>Quantity</strong> of units in this shipment.</li>
-<li>Enter the <strong>Size</strong> for each unit (e.g., <code>2x3cm</code>).</li>
-<li>Click <strong>Confirm Receipt</strong>.</li>
-</ol>
-<p>Medipyxis generates one UIN per unit and adds them to the active inventory. The <strong>Active Inventory</strong> flat view shows each UIN with columns: UIN · LOT # · TISSUE ID · EXP DATE · SIZE · HCPCS · SKU · STATUS.</p>
-<h2 id="match-to-a-purchase-order">Match to a purchase order</h2>
-<p>If a PO number was not issued by the practice before you ship, your shipment cannot be received — the PO Number field is required. Contact the practice's <code>vendor_coordinator</code> to confirm the PO is open in their system before the shipment arrives.</p>
-<p>If your shipment covers only part of a PO (partial fulfillment), enter only the quantity delivered. The PO remains open and you can receive the remainder in a subsequent shipment.</p>
-<h2 id="lot-expiration-alerts">Lot expiration alerts</h2>
-<p>Medipyxis monitors expiration dates for all received units. Alerts are sent:</p>
-<table>
-<thead>
-<tr>
-<th>Threshold</th>
-<th>Who is notified</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>90 days before expiration</td>
-<td><code>vendor_coordinator</code> (practice side)</td>
-</tr>
-<tr>
-<td>30 days before expiration</td>
-<td><code>vendor_coordinator</code> + <code>clinical_manager</code></td>
-</tr>
-<tr>
-<td>7 days before expiration</td>
-<td>All staff with Inventory access</td>
-</tr>
-<tr>
-<td>Expired</td>
-<td>Unit status changes to <code>Expired</code>; it cannot be selected in Visit Wizard</td>
-</tr>
-</tbody>
-</table>
-<p>Expired units are not automatically removed from inventory — the practice's inventory coordinator must mark them as <strong>Disposed</strong> and document the disposal reason.</p>
-<h2 id="result">Result</h2>
-<p>Your shipment is confirmed, UINs are generated for each unit, and the practice's inventory is updated. Units are now available for clinical selection in Visit Wizard and an invoice line will be generated in Accounts Payable.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Likely cause</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Lot number fails validation</td>
-<td>Format does not match LOT SUFFIX in catalog</td>
-<td>Verify the lot format matches your product's catalog entry</td>
-</tr>
-<tr>
-<td>PO Number not found</td>
-<td>PO not yet created by practice</td>
-<td>Contact practice <code>vendor_coordinator</code> to create the PO</td>
-</tr>
-<tr>
-<td>Units showing <code>Expired</code> immediately after receiving</td>
-<td>Wrong expiration date entered</td>
-<td>Contact practice admin — correction requires a support ticket</td>
-</tr>
-<tr>
-<td>UINs not appearing in Visit Wizard</td>
-<td>Product status is <code>Inactive</code> in catalog</td>
-<td>Update product STATUS to <code>Active</code></td>
-</tr>
-</tbody>
-</table>
-      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/submit-product/">Add a product to the catalog</a></li><li><a href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an Insurance Verification Request (IVR)</a></li><li><a href="/medipyxis-help/vendor-portal/invoices-and-payment/">Track invoices and payment in Accounts Payable</a></li></ul></div>
+      <h1>Shipments and UINs (replaced by Manage orders)</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 1 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-07-08</span></div>
+      <p>This page has been replaced. Vendors do not receive shipments or assign UINs — you <strong>ship</strong> an order and record its tracking number; units are received into inventory on the clinic side.</p>
+<p><strong>Go to <a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders</a></strong> for the real flow: accept → in progress → ship (with tracking) → delivered.</p>
+<p>For an overview of the portal, see the <a href="../vendor-portal/">Vendor Portal Guide</a>.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a></li><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
         <span><a href="#">Yes</a> · <a href="#">No</a></span>
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#what-is-a-uin">What is a UIN?</a></li><li><a class="" href="#uin-generation-rules">UIN generation rules</a></li><li><a class="" href="#receive-a-shipment">Receive a shipment</a></li><li><a class="" href="#match-to-a-purchase-order">Match to a purchase order</a></li><li><a class="" href="#lot-expiration-alerts">Lot expiration alerts</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li style="padding:4px 12px;color:var(--c-slate-500);font-size:13px;">No subsections</li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/shipment-and-uin.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/shipment-and-uin.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

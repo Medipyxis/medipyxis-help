@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Respond to an Insurance Verification Request (IVR) — Medipyxis Help</title>
+<title>Respond to an IVR (replaced by Manage orders) — Medipyxis Help</title>
 <meta name="description" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,132 +46,21 @@
   </div>
 </header>
 
-<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/submit-product/">Add a product to the catalog</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company to the vendor portal</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Receive a shipment and understand UINs</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an Insurance Verification Request (IVR)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Track invoices and payment in Accounts Payable</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/submit-product/">Manage your product catalog (SKUs)</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Send invoices</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Shipments and UINs (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Sign in and manage staff</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
-      <h1>Respond to an Insurance Verification Request (IVR)</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 7 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>An IVR (Insurance Verification Request) is generated when a clinician plans to use one of your products and the practice needs to confirm payer authorization before the product ships or is applied. Your response directly affects whether the order proceeds.</p>
-<h2 id="before-you-start">Before you start</h2>
-<ul>
-<li>You need <code>vendor_coordinator</code> role.</li>
-<li>Your products must already be in the Product Catalog and approved. See <a href="/medipyxis-help/vendor-portal/submit-product/">Submit a Product</a>.</li>
-<li>IVRs are initiated by the practice — you cannot create an IVR yourself.</li>
-</ul>
-<h2 id="ivr-status-lifecycle">IVR status lifecycle</h2>
-<pre><code>Submitted → Pending → Approved
-                   ↘ Declined → Agreed
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Submitted</code></td>
-<td>Practice has sent the IVR to your company; action required</td>
-</tr>
-<tr>
-<td><code>Pending</code></td>
-<td>You have acknowledged receipt and are working with the payer</td>
-</tr>
-<tr>
-<td><code>Approved</code></td>
-<td>Payer has confirmed authorization; product can be applied</td>
-</tr>
-<tr>
-<td><code>Declined</code></td>
-<td>Payer denied authorization for this product</td>
-</tr>
-<tr>
-<td><code>Agreed</code></td>
-<td>Despite payer denial, the practice and vendor have agreed on an alternative arrangement (e.g., product substitution or patient self-pay)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="steps-responding-to-a-new-ivr">Steps — responding to a new IVR</h2>
-<ol>
-<li>Navigate to <strong>Inventory → IVR Tracking</strong> from the sidebar.</li>
-<li>The IVR Tracking list shows all IVRs routed to your company's products. IVRs in <code>Submitted</code> status require your immediate attention.</li>
-<li>Click the IVR row to open the detail panel.</li>
-<li>Review the request details: product name, HCPCS code, patient (name is PHI-redacted — shown as a reference number), date of service, payer name, and member ID.</li>
-<li>Click <strong>Acknowledge</strong> to move the IVR from <code>Submitted</code> to <code>Pending</code>. This starts the turnaround clock.</li>
-<li>Contact the payer using the payer name shown. Do not contact the patient — PHI access is not granted.</li>
-<li>When you receive the payer's decision:
-   - If approved: Click <strong>Mark Approved</strong> and enter the authorization number provided by the payer.
-   - If denied: Click <strong>Mark Declined</strong> and enter the denial reason code.</li>
-<li>If the payer declines and the practice wants to proceed under a separate arrangement, the practice's <code>vendor_coordinator</code> will initiate the <code>Agreed</code> transition — you do not set this status yourself.</li>
-</ol>
-<h2 id="turnaround-sla">Turnaround SLA</h2>
-<p>Medipyxis displays a countdown timer on each IVR from the moment it reaches <code>Submitted</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Urgency flag on the referral</th>
-<th>IVR response SLA</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Routine</td>
-<td>72 hours from <code>Submitted</code> to <code>Approved</code> or <code>Declined</code></td>
-</tr>
-<tr>
-<td>Urgent</td>
-<td>24 hours</td>
-</tr>
-<tr>
-<td>STAT</td>
-<td>4 hours</td>
-</tr>
-</tbody>
-</table>
-<p>If an IVR breaches SLA, it is flagged red in the IVR Tracking list and the practice's <code>vendor_coordinator</code> is notified automatically. Breaching SLA does not cancel the order — the practice decides how to proceed.</p>
-<p><Note>
-You can filter IVR Tracking by status to focus on <code>Submitted</code> and <code>Pending</code> items. Save a filtered view by bookmarking the URL after applying the filter.
-</Note></p>
-<h2 id="what-happens-after-approval">What happens after approval</h2>
-<p>Once you mark an IVR <code>Approved</code>:
-- The clinician receives a notification that the product is authorized.
-- The practice can proceed with scheduling the visit.
-- A shipment record is created in <strong>Inventory → Receiving</strong>, ready for you to fulfill. See <a href="/medipyxis-help/vendor-portal/shipment-and-uin/">Shipments and UINs</a>.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Likely cause</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>IVR does not appear in your list</td>
-<td>Product not linked to your brand, or wrong role</td>
-<td>Confirm the product is in the catalog under your brand</td>
-</tr>
-<tr>
-<td>Cannot mark Approved — button disabled</td>
-<td>Authorization number field is empty</td>
-<td>Enter the payer authorization number first</td>
-</tr>
-<tr>
-<td>IVR shows STAT urgency but no alert</td>
-<td>Notifications not enabled for your browser</td>
-<td>Enable browser notifications on your profile page</td>
-</tr>
-</tbody>
-</table>
-      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/submit-product/">Add a product to the catalog</a></li><li><a href="/medipyxis-help/vendor-portal/shipment-and-uin/">Receive a shipment and understand UINs</a></li><li><a href="/medipyxis-help/modules/inventory/ivr-tracking/">Track Insurance Verification Requests (IVRs)</a></li></ul></div>
+      <h1>Respond to an IVR (replaced by Manage orders)</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 1 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-07-08</span></div>
+      <p>This page has been replaced. The vendor portal does not have an "IVR response" workflow — vendors work the orders that clinics place with them.</p>
+<p><strong>Go to <a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders</a></strong> to accept an order, mark it in progress, ship it with a tracking number, and track it to delivery.</p>
+<p>For an overview of the portal, see the <a href="../vendor-portal/">Vendor Portal Guide</a>.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a></li><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
         <span><a href="#">Yes</a> · <a href="#">No</a></span>
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#ivr-status-lifecycle">IVR status lifecycle</a></li><li><a class="" href="#steps-responding-to-a-new-ivr">Steps — responding to a new IVR</a></li><li><a class="" href="#turnaround-sla">Turnaround SLA</a></li><li><a class="" href="#what-happens-after-approval">What happens after approval</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li style="padding:4px 12px;color:var(--c-slate-500);font-size:13px;">No subsections</li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/respond-to-ivr.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/respond-to-ivr.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

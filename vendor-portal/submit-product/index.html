@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Add a product to the catalog — Medipyxis Help</title>
+<title>Manage your product catalog (SKUs) — Medipyxis Help</title>
 <meta name="description" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,141 +46,35 @@
   </div>
 </header>
 
-<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/submit-product/">Add a product to the catalog</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company to the vendor portal</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Receive a shipment and understand UINs</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an Insurance Verification Request (IVR)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Track invoices and payment in Accounts Payable</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/submit-product/">Manage your product catalog (SKUs)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Send invoices</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipment-and-uin/">Shipments and UINs (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Sign in and manage staff</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
-      <h1>Add a product to the catalog</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-04-24</span></div>
-      <p>Submit a new graft or biologic product to the Medipyxis Product Catalog so it is available for clinical selection in the Visit Wizard and for inventory tracking.</p>
+      <h1>Manage your product catalog (SKUs)</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 6 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-07-08</span></div>
+      <p>Maintain the products your company offers to clinics from the <strong>Catalog</strong> page of the vendor portal (<code>/vendor/catalog</code>). You own your SKUs directly — adding or updating one takes effect without a separate practice approval step.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need <code>vendor_coordinator</code> role.</li>
-<li>Gather the product's regulatory documentation: FDA 510(k) clearance letter and Instructions for Use (IFU).</li>
-<li>Confirm the correct HCPCS code with your reimbursement team before submitting — changes after a product is in active use require the practice's <code>vendor_coordinator</code> to approve an edit.</li>
+<li>You are signed in to the vendor portal (<code>vendor_admin</code> or <code>vendor_user</code>). See <a href="/medipyxis-help/vendor-portal/onboarding-your-company/">Sign in and manage staff</a>.</li>
 </ul>
-<h2 id="required-product-fields">Required product fields</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>NAME</strong></td>
-<td>Full product name as labeled</td>
-<td>Matches FDA label</td>
-</tr>
-<tr>
-<td><strong>BRAND</strong></td>
-<td>Manufacturer brand name</td>
-<td>Must match your existing brand in the catalog</td>
-</tr>
-<tr>
-<td><strong>SKU</strong></td>
-<td>Your internal stock-keeping unit code</td>
-<td>Alphanumeric, max 50 characters</td>
-</tr>
-<tr>
-<td><strong>LOT SUFFIX</strong></td>
-<td>The lot number format your company uses (e.g., <code>XXX-YYYYMM</code>)</td>
-<td>Used to validate UIN generation at receiving</td>
-</tr>
-<tr>
-<td><strong>CATEGORY</strong></td>
-<td>Product category</td>
-<td>One of: <code>Amniotic / Advance Treatment</code>, <code>Biologics / Matrix</code>, <code>Conservative Care Products</code></td>
-</tr>
-<tr>
-<td><strong>TYPE</strong></td>
-<td>Product type within category</td>
-<td>Driven by category selection; options appear after category is set</td>
-</tr>
-<tr>
-<td><strong>HCPCS</strong></td>
-<td>CMS HCPCS code for this product</td>
-<td>Must be a current, active HCPCS code</td>
-</tr>
-<tr>
-<td><strong>STATUS</strong></td>
-<td>Availability status</td>
-<td><code>Active</code> or <code>Inactive</code>; set <code>Active</code> for products currently being supplied</td>
-</tr>
-</tbody>
-</table>
-<h2 id="steps">Steps</h2>
+<h2 id="add-or-update-a-sku">Add or update a SKU</h2>
 <ol>
-<li>Navigate to <strong>Inventory → Product Catalog</strong>.</li>
-<li>Click <strong>Add Product</strong>.</li>
-<li>The <strong>Add Product wizard</strong> opens at the <strong>Category</strong> selection step.</li>
-<li>Select the appropriate <strong>Category</strong> — this drives the remaining form fields.</li>
-<li>Complete the category-specific form:</li>
+<li>Open <strong>Catalog</strong>.</li>
+<li>Click <strong>New SKU</strong> (or open an existing SKU to edit it).</li>
+<li>Enter the product details — name, your SKU code, modality, HCPCS code where applicable, and handling attributes (for example cold-chain or consignable flags).</li>
+<li><strong>Save.</strong> The SKU is written to your catalog and is available to the clinics you serve.</li>
 </ol>
-<p><strong>For Amniotic / Advance Treatment and Biologics / Matrix:</strong>
-   - All eight required fields above apply.
-   - The <strong>HCPCS</strong> field validates against the CMS active code list in real time — a red border means the code is not recognized or has been retired.</p>
-<p><strong>For Conservative Care Products:</strong>
-   - <strong>HCPCS</strong> is optional but recommended.
-   - <strong>LOT SUFFIX</strong> is optional for non-biological products.</p>
-<ol start="6">
-<li>In the <strong>Documents</strong> section of the form, attach:
-   - <strong>510(k) clearance letter</strong> (PDF, max 20 MB)
-   - <strong>IFU</strong> (PDF, max 20 MB)</li>
-<li>Set <strong>STATUS</strong> to <code>Active</code> if the product is currently being shipped to this facility, or <code>Inactive</code> if you are pre-registering it.</li>
-<li>Click <strong>Save</strong>.</li>
-</ol>
-<h2 id="after-submission">After submission</h2>
-<ul>
-<li>The product appears immediately in the Product Catalog with your brand listed.</li>
-<li>The practice's <code>vendor_coordinator</code> or <code>practice_admin</code> receives a notification to review and approve the new catalog entry before it becomes selectable in the Visit Wizard.</li>
-<li>Approval typically takes one business day. You can check the entry's status in the catalog — a yellow <strong>Pending Approval</strong> badge indicates it is under review.</li>
-</ul>
-<p><Compliance>
-HCPCS codes for skin substitutes are subject to CMS reclassification. When CMS updates a code, you must submit an edit to the catalog row with the new HCPCS before the effective date. See <a href="/medipyxis-help/vendor-portal/faq/">FAQ — How do I update my HCPCS when CMS reclassifies?</a> for the update workflow.
-</Compliance></p>
-<h2 id="result">Result</h2>
-<p>Your product is submitted and pending approval. Once approved, clinical staff can select it in the Visit Wizard (step 13 — Procedure Supplies) and inventory coordinators can receive it via the shipment workflow.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Likely cause</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>HCPCS field shows red border</td>
-<td>Code retired or not in CMS list</td>
-<td>Verify the code at cms.gov/Medicare/Coding/HCPCSReleaseCodeSets and update</td>
-</tr>
-<tr>
-<td>Add Product button is disabled</td>
-<td>You do not have <code>vendor_coordinator</code> role</td>
-<td>Contact the practice admin</td>
-</tr>
-<tr>
-<td>Document upload fails</td>
-<td>File exceeds 20 MB</td>
-<td>Compress the PDF or split into multiple files</td>
-</tr>
-<tr>
-<td>Product stuck in Pending Approval for more than two business days</td>
-<td>Reviewer not notified</td>
-<td>Ask the practice's <code>vendor_coordinator</code> to approve in the catalog</td>
-</tr>
-</tbody>
-</table>
-      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company to the vendor portal</a></li><li><a href="/medipyxis-help/vendor-portal/shipment-and-uin/">Receive a shipment and understand UINs</a></li><li><a href="/medipyxis-help/modules/inventory/product-catalog/">Manage products in the Product Catalog</a></li></ul></div>
+<p><Note>
+The vendor catalog you manage here is your company's own SKU list. It is separate from a clinic's internal inventory Product Catalog. There is no 510(k)/IFU upload or "pending approval" gate in the portal — you maintain your SKUs directly.
+</Note></p>
+<h2 id="related">Related</h2>
+<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/onboarding-your-company/">Sign in and manage staff</a></li><li><a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
         <span><a href="#">Yes</a> · <a href="#">No</a></span>
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#required-product-fields">Required product fields</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="" href="#after-submission">After submission</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#add-or-update-a-sku">Add or update a SKU</a></li><li><a class="" href="#related">Related</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/submit-product.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/submit-product.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

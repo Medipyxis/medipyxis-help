@@ -3,97 +3,69 @@ id: vendor-portal-faq
 title: Vendor Portal FAQ
 module: vendor-portal
 audience: [vendor]
-roles: [vendor_rep, vendor_coordinator]
+roles: [vendor_admin, vendor_user]
 type: reference
-estimated_minutes: 5
-last_reviewed: 2026-04-24
+estimated_minutes: 4
+last_reviewed: 2026-07-08
 related:
   - vendor-portal-index
+  - vendor-portal-manage-orders
   - vendor-portal-submit-product
-  - vendor-portal-respond-to-ivr
-  - vendor-portal-shipment-and-uin
   - vendor-portal-invoices-and-payment
-tags: [FAQ, vendor, PHI, HCPCS, UIN, IVR, catalog, compliance]
+tags: [FAQ, vendor, PHI, orders, catalog, invoices]
 ---
 
 # Vendor Portal FAQ
 
-Answers to the questions vendor representatives and coordinators ask most frequently.
+Answers to the questions vendor staff ask most often about the vendor portal (`/vendor`).
 
 ---
 
 **1. Can I see patient-level data?**
 
-No. PHI is fully redacted from all vendor-accessible screens. When an IVR references a patient, you see a reference number — not a name, date of birth, diagnosis, or any other identifier. This design is intentional and required by HIPAA. Medipyxis's Business Associate Agreement does not extend PHI access to vendor users.
+No. The portal does not expose PHI. Where a patient is referenced — for example on the **Use Events** page — you see only minimal, de-identified detail such as the patient's initials and year of birth, never a name, full date of birth, or diagnosis.
 
 ---
 
-**2. How do I update my HCPCS code when CMS reclassifies a product?**
+**2. What are the two vendor roles?**
 
-1. Navigate to **Inventory → Product Catalog** and find your product.
-2. Click **Edit** on the product row.
-3. Update the **HCPCS** field to the new code.
-4. The system validates the new code against the current CMS active code list in real time.
-5. Click **Save**.
+- **vendor_admin** — full access, including the **Staff** page to invite and manage colleagues.
+- **vendor_user** — everything except Staff (Orders, Use Events, Catalog, Invoices, Clinics).
 
-The update takes effect immediately for new orders. Claims already submitted under the old code are not retroactively changed — your billing contact at the practice handles those separately.
-
-<Compliance>
-CMS HCPCS reclassifications have effective dates. Update the catalog before the effective date to avoid claim denials on new visits.
-</Compliance>
+See [Sign in and manage staff](./onboarding-your-company.md).
 
 ---
 
-**3. Why is my product not appearing in the clinician's Visit Wizard?**
+**3. How do orders reach me and how do I fulfill them?**
 
-Two common causes:
-
-- The product **STATUS** is set to `Inactive` in the Product Catalog. Set it to `Active`.
-- The product is `Pending Approval` — the practice's `vendor_coordinator` has not yet approved your catalog submission. Contact them to expedite review.
+Clinics place orders that appear on your **Orders** page as **Pending**. You accept them (In Progress), ship with a **tracking number** (Shipped), and they complete as **Delivered**. See [Manage orders](./manage-orders.md). There is no UIN/receiving step on the vendor side.
 
 ---
 
-**4. A UIN was scanned in the Visit Wizard but the unit was not used — how is wastage handled?**
+**4. How do I add or change a product?**
 
-The clinician documents wastage in Visit Wizard step 13 using the wastage calculator. The UIN is marked as `Partially Used` or `Wasted` in the active inventory rather than fully consumed. The invoice line reflects the actual quantity used, not the quantity scanned. Contact the practice's `vendor_coordinator` if you believe a wastage entry is incorrect.
-
----
-
-**5. How do I get notified about new IVRs?**
-
-Browser notifications are sent automatically when a new IVR is routed to your products, provided you have notifications enabled for `app.medipyxis.com`. To enable: visit the site, allow notifications in your browser's permission prompt, and confirm in **Profile → Notification Preferences** that IVR alerts are turned on.
+Manage your SKUs on the **Catalog** page — click **New SKU** or edit an existing one. Changes take effect directly; there is no separate practice approval step. See [Manage your product catalog](./submit-product.md).
 
 ---
 
-**6. Can I upload multiple products at once?**
+**5. Do I create invoices, or does the clinic?**
 
-Bulk product upload is not available in the current vendor portal release. Add each product individually via the **Add Product** wizard in **Inventory → Product Catalog**. If you have a large catalog to onboard, contact the practice's `vendor_coordinator` — they can request a bulk import from Medipyxis support.
-
----
-
-**7. What happens if a lot number fails validation at receiving?**
-
-Receiving is blocked until the discrepancy is resolved. The system compares the lot number you enter against the LOT SUFFIX pattern defined in your Product Catalog entry. If your lot numbering format has changed, update the LOT SUFFIX in the catalog first, then retry receiving.
+You **send** invoices from the **Invoices** page. The clinic's finance team reconciles and pays them in their Accounts Payable workspace. You track status from your Invoices list. See [Send invoices](./invoices-and-payment.md).
 
 ---
 
-**8. An invoice is marked Overdue but we have not received payment instructions — who do I contact?**
+**6. What is the Use Events page?**
 
-Contact the practice's `finance_ap` user or `vendor_coordinator` directly. Medipyxis does not process payments; the platform only tracks invoice status as updated by the practice's finance team. File a dispute in **Accounts Payable** to flag the invoice and trigger a notification to the practice's finance team.
-
----
-
-**9. Can I see which specific clinicians are using my products?**
-
-No. Clinician-level usage data is PHI-adjacent and is not surfaced to vendor users. You can see aggregate product consumption (units received vs. units consumed) from the **Main Inventory** view filtered by your SKU. Detailed clinical attribution is not available to vendor roles.
+**Use Events** shows where your products were used, de-identified (initials + year of birth only). Use it to reconcile consumption without any PHI.
 
 ---
 
-**10. How do I remove a product that is discontinued?**
+**7. What does the Clinics page show?**
 
-1. Navigate to **Inventory → Product Catalog** and find the product.
-2. Click **Edit**.
-3. Set **STATUS** to `Inactive`.
-4. Click **Save**.
+The **Clinics** page lists the clinics your company is enabled at, so you know which facilities you're serving.
 
-Setting a product to `Inactive` removes it from the Visit Wizard selection and prevents new orders, but preserves all historical records for audit and lot traceability purposes. Do not attempt to delete a product row — deletion is not permitted for products that have been received or used in a visit.
+---
+
+**8. Is the vendor portal the same login as the clinical app?**
+
+No. The vendor portal is a separate sign-in at `/vendor`. Vendor accounts are managed inside the portal's **Staff** page by a `vendor_admin`, not through a clinic's HR & Compliance.
