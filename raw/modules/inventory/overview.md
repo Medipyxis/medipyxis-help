@@ -14,6 +14,7 @@ related:
   - inventory-ivr-tracking
   - inventory-main-inventory
   - inventory-accounts-payable
+  - inventory-recall-lookup
 prerequisites: []
 tags: [inventory, UIN, PAR, graft, biologics, IVR]
 ---

@@ -9,6 +9,7 @@ estimated_minutes: 3
 last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/all-patients
 related:
+  - patient-management-zus-tefca
   - referral-intake-overview
   - visit-wizard-overview
   - fleet-calendar-overview

@@ -15,6 +15,7 @@ related:
   - visit-wizard-ehr-wound-cockpit
   - visit-wizard-ehr-work-offline
   - visit-wizard-ehr-sign-off
+  - visit-wizard-ehr-medication-dosespot
 tags: [visit-wizard, EHR, LCD, Medicare, autosave, AI-drafting, ABI]
 ---
 

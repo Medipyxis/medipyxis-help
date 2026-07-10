@@ -10,6 +10,7 @@ last_reviewed: 2026-06-29
 app_route: /facility/{facility_uuid}/hr
 related:
   - admin-index
+  - admin-practice-onboarding
   - admin-user-management
   - admin-facility-setup
 tags: [import, export, bulk-upload, ZusHealth, Practice Onboarding, referrals, claims]
