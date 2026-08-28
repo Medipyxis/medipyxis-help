@@ -26,7 +26,7 @@ HR & Compliance centralizes employee onboarding, credential monitoring, facility
 
 | Section | Purpose |
 |---|---|
-| **Announcements** | Post organization-wide or facility-level messages visible to all users on their dashboard. |
+| **Announcements** | Post organization-wide or facility-level messages visible to all users on their dashboard. See [Announcements](./announcements.md) for details. |
 | **Credential Tracker** | Monitor license and certification expiry dates for clinical staff. See [Credential Tracker](./credential-tracker.md) for details. |
 | **Activity Logs** | Audit trail of user actions across modules — logins, edits, exports, and sign-offs. |
 | **New Employee Onboarding** | Add a new employee and set up their access on a single form. See [Add a new employee](./new-employee.md). |

@@ -40,6 +40,7 @@ Faxes appear in the Fax Review Queue when OCR confidence is below the auto-routi
    - **Link to Referral** — associates the fax with an existing referral card in Referral Intake.
    - **Create Referral** — opens the New Referral form with OCR data pre-populated.
    - **Dismiss** — marks the fax as reviewed and non-actionable; it moves to Received Fax Logs.
+   - **File to patient chart** — attaches the fax to an existing patient's Documents tab. See [File a received fax to a patient chart](./file-to-chart.md).
 
 <Note>
 Inbound fax review and referral auto-creation are handled by the Fax Review Queue in Referral Intake, a separate page from the Fax Center. See [Fax Queue Review](../referral-intake/fax-queue-review.md) for that workflow.

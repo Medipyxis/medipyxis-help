@@ -6,12 +6,12 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-07-01
+last_reviewed: 2026-08-28
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - business-development-overview
   - crm-practice-detail
-tags: [business-development, call, visit, activity]
+tags: [business-development, call, visit, activity, archive]
 ---
 
 # Log a call or in-person visit
@@ -54,6 +54,33 @@ Both call and visit records are immediately visible in the CRM practice detail *
 Logging activity promptly keeps your **Next Best Action** queue and **AI Route Suggestions** accurate — both recompute on demand (with a short cache), so a new call or visit is reflected almost immediately after you refresh.
 </Note>
 
-## Related
+## Edit an activity
 
-Auto-rendered from `related:` in frontmatter.
+An activity you already saved stays editable from either the practice's Activity tab or the BD dashboard:
+
+1. Open the row's **⋯** menu.
+2. Click **Edit.** The composer reopens with the saved values.
+3. Update fields and save. The activity keeps its original date and creator; an `edited_at` timestamp is stored for the audit trail.
+
+## Archive an activity
+
+Archiving hides an activity from the live feed without deleting it — useful for entries logged by mistake, duplicates, or activities that should not count toward dashboard metrics.
+
+1. Open the row's **⋯** menu and click **Archive.**
+2. A confirm dialog explains that the activity will be excluded from Next Best Action and MTD spend calculations. Confirm.
+3. Toast confirms the archive. The row leaves the live view immediately.
+
+**Undo an archive** — the same toast shows an **Undo** button for a few seconds. If you miss it, restore the row from the archived view (below).
+
+### View archived activities
+
+- On the practice detail Activity tab, switch the view mode from **Live** to **Archived** to list every archived activity for that practice.
+- The row menu on an archived entry offers **Restore** to bring it back into the live feed.
+
+<Warning>
+Archived activities are excluded from Next Best Action, dashboard KPIs, and MTD spend rollups. They remain in the audit trail and export.
+</Warning>
+
+## Result
+
+Both call and visit records are immediately visible in the CRM practice detail **Activity** tab and feed the **Next Best Action** and **AI Route Suggestions** algorithms.

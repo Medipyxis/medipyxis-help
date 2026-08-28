@@ -67,7 +67,7 @@ A **PAR level** (Periodic Automatic Replenishment threshold) is the minimum quan
 ## Other tools
 
 - **FDA HCT/P Recall Lookup** — a lookup tool (not a hub tile) for checking received tissue products against FDA recall data.
-- **Bulk operations** — import receiving/inventory records in bulk (see the Product Catalog and receiving workflows).
+- **Bulk operations** — shipment logging, vendor receiving, manual receipt, and provider assignment from a single landing page. See [Bulk inventory workflows](./bulk-operations.md).
 
 ## How the tiles connect
 
