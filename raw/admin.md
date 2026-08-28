@@ -10,9 +10,11 @@ last_reviewed: 2026-04-24
 app_route: /administrator
 related:
   - admin-facility-setup
+  - admin-facility-timezone
   - admin-user-management
   - admin-role-config
   - admin-billing-setup
+  - admin-notifications
   - admin-security-and-compliance
   - admin-data-import-export
   - admin-deactivating-and-archiving
@@ -53,9 +55,11 @@ This separation means a `super_admin` configures roles once for the whole organi
 | Page | Type | What you'll learn |
 |---|---|---|
 | [Facility Setup](./facility-setup.md) | How-to | First-week tasks: UUID, fax, business hours, intake SLAs, superbill defaults |
+| [Facility Timezone](./facility-timezone.md) | How-to | Pick the canonical timezone for scheduling, reminders, and chart timestamps |
 | [User Management](./user-management.md) | How-to | Invite users, assign roles, bulk upload for 20+ employees |
 | [Role Config](./role-config.md) | Reference + How-to | Permission matrix, toggle permissions, clone roles |
 | [Billing Setup](./billing-setup.md) | How-to | Code Library, Fee Schedule, Stedi credentials + enrollment, webhooks, ERA auto-post |
+| [Notifications](./notifications.md) | Reference | Channels (in-app, email, SMS), user preferences, and event families |
 | [Security & Compliance](./security-and-compliance.md) | Concept | HIPAA session settings, audit logs, MFA, BAAs |
 | [Data Import & Export](./data-import-export.md) | How-to | Bulk upload, ZusHealth sync, export referrals/claims, API keys |
 | [Deactivating & Archiving](./deactivating-and-archiving.md) | How-to | Deactivate a facility, archive a patient, reassign work |
