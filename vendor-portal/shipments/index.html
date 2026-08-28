@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create and track shipments — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="active">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company on the vendor portal</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/receiving/">Receive a vendor shipment</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Send invoices</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
+      <h1>Create and track shipments</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-08-28</span></div>
+      <p>Every shipment you send from the vendor portal pre-stages the receiving clinic's inventory queue. When boxes arrive, the clinic side is match-and-confirm — never re-entry. This page covers the two entry paths (bulk Excel upload and manual single shipment), the destination-grouping logic, and how discrepancies flow back to you after check-in.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You need the <code>vendor_admin</code> or <code>vendor_user</code> role.</li>
+<li>Have your ship-out worksheet ready — one row per lot going out. Columns can be in any order; the mapper handles it.</li>
+<li>Every destination clinic must be tethered to your company. Untethered clinics show as a hard block on the upload preview.</li>
+</ul>
+<h2 id="the-shipments-page">The shipments page</h2>
+<p>Open <strong>Shipments</strong> from the vendor sidebar. The page shows every shipment your company has created:</p>
+<ul>
+<li><strong>Status column:</strong> <code>draft</code>, <code>shipped</code>, <code>in transit</code>, <code>received</code>, <code>flagged</code> (has an open discrepancy).</li>
+<li><strong>Lines column:</strong> shipment line count and destination clinic.</li>
+<li><strong>Actions:</strong> open the detail drawer, download packing slip, or void a draft.</li>
+</ul>
+<p>Click any row to open its detail drawer with lines, tracking history, and any exception raised by the clinic.</p>
+<h2 id="bulk-excel-upload">Bulk Excel upload</h2>
+<p>The upload flow (<strong>Create → Upload shipment file</strong>, route <code>/vendor/shipments/upload</code>) turns one worksheet into a shipment per destination clinic — matching how most vendor ops teams already work.</p>
+<h3 id="step-1-upload-the-file">Step 1 — Upload the file</h3>
+<p>Drop your <code>.xlsx</code> or <code>.csv</code> on the upload zone. The page reads the header row and tries to auto-map each column against a known field.</p>
+<p>Recognized fields and their aliases:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Common column headers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sku</code></td>
+<td>SKU, Item Code, Product Number, Item #</td>
+</tr>
+<tr>
+<td><code>product_name</code></td>
+<td>Product Name, Description, Item Description</td>
+</tr>
+<tr>
+<td><code>lot_number</code></td>
+<td>Lot, Lot Number, Batch, Batch Number</td>
+</tr>
+<tr>
+<td><code>expiration_date</code></td>
+<td>Exp Date, Expiration, Expiry, Expiration Date</td>
+</tr>
+<tr>
+<td><code>quantity</code></td>
+<td>Quantity, Qty, Units, Shipped Qty</td>
+</tr>
+<tr>
+<td><code>destination_clinic</code></td>
+<td>Ship To, Destination, Clinic, Facility</td>
+</tr>
+<tr>
+<td><code>external_ref</code></td>
+<td>PO Ref, PO Number, Reference, Order Ref</td>
+</tr>
+</tbody>
+</table>
+<p>Required for validation: <strong>SKU, lot_number, quantity, destination_clinic.</strong> Product name and PO ref are optional but strongly recommended.</p>
+<h3 id="step-2-confirm-column-mapping">Step 2 — Confirm column mapping</h3>
+<p>If a header didn't auto-map, use the dropdown next to each column to pick the right field. The preview shows the first row's value under each column so you can verify at a glance.</p>
+<h3 id="step-3-review-the-preview">Step 3 — Review the preview</h3>
+<p>The preview groups rows by destination clinic. For each group, you see:</p>
+<ul>
+<li>Clinic name (as it appears in your tether list).</li>
+<li>Line count and total quantity.</li>
+<li>Any rows the validator rejected — usually SKU not found, lot format wrong, or destination clinic not tethered.</li>
+</ul>
+<p>Rejected rows show a per-row reason. Fix the file and re-upload, or drop the rows and continue.</p>
+<h3 id="step-4-lot-integrity-check">Step 4 — Lot integrity check</h3>
+<p>The preview flags three lot-level integrity issues:</p>
+<ul>
+<li><strong>New lots</strong> — this is the first time you've shipped this lot to any clinic. The catalog engine registers the lot on confirm.</li>
+<li><strong>Expiring soon</strong> — any lot within 30 days of its expiration date. Consignment products under 30 days trigger an extra confirmation.</li>
+<li><strong>Duplicate lots in-file</strong> — two rows with the same lot and expiration but different destinations. Legal, but flagged so you can verify it's intentional.</li>
+</ul>
+<h3 id="step-5-confirm-the-shipment">Step 5 — Confirm the shipment</h3>
+<p>Click <strong>Create shipments.</strong> One shipment is created per destination clinic. Each shipment:</p>
+<ul>
+<li>Records the outbound lot, expiration, quantity, and destination.</li>
+<li>Pre-stages an <code>inventory_orders_v2</code> row plus <code>inventory_ordered_products_batches_v2</code> lines on the clinic side — their receiving queue is ready before your carrier hands off.</li>
+<li>Sends a notification to both the destination clinic's inventory admin and its assigned providers.</li>
+</ul>
+<h2 id="manual-single-shipment">Manual single shipment</h2>
+<p>When you're sending a one-off (patient-specific ship-out, urgent replacement), a full Excel upload is overkill.</p>
+<ol>
+<li>From <strong>Shipments</strong>, click <strong>New shipment (manual)</strong>.</li>
+<li>Pick the destination clinic.</li>
+<li>Add lines one at a time — SKU, lot, expiration, quantity.</li>
+<li>Optional: paste a tracking number and carrier.</li>
+<li><strong>Save &amp; ship.</strong> The record follows the same pre-staging flow as bulk uploads.</li>
+</ol>
+<h2 id="save-a-column-mapping-template">Save a column mapping template</h2>
+<p>If your ops team runs the same spreadsheet every week, save the mapping so future uploads skip the mapping step:</p>
+<ol>
+<li>On the mapping page, click <strong>Save mapping as template</strong> and give it a name.</li>
+<li>Next upload, pick the template from the dropdown above the mapping table. Every column pre-populates.</li>
+</ol>
+<h2 id="track-a-shipment">Track a shipment</h2>
+<p>The shipment detail drawer has five sections:</p>
+<ul>
+<li><strong>Summary</strong> — status, carrier, tracking number, expected delivery date.</li>
+<li><strong>Lines</strong> — every SKU/lot with its shipped and received quantities. Discrepancies show a red bar.</li>
+<li><strong>Timeline</strong> — created → shipped → in transit → received / flagged. Each transition shows who and when.</li>
+<li><strong>Discrepancies</strong> — any exception the clinic flagged at check-in (short quantity, wrong SKU, damaged lot). Each has a photo and note.</li>
+<li><strong>Documents</strong> — packing slip PDF (auto-generated) plus any attachments you or the clinic added.</li>
+</ul>
+<h2 id="discrepancies">Discrepancies</h2>
+<p>When a clinic marks a discrepancy at receiving, the shipment moves to <code>flagged</code> on your side and a notification lands in your <strong>Requests</strong> inbox.</p>
+<p>To resolve:</p>
+<ol>
+<li>Open the shipment detail; read the discrepancy note and view the photo.</li>
+<li>Take an action from the drawer:
+   - <strong>Accept and reship</strong> — creates a new draft shipment for the missing quantity.
+   - <strong>Accept as short-ship</strong> — the clinic receives the received quantity; the balance is written off.
+   - <strong>Dispute</strong> — opens a thread in <strong>Messages</strong> with the clinic's inventory admin for reconciliation.</li>
+</ol>
+<h2 id="draft-void-and-rerun">Draft, void, and rerun</h2>
+<ul>
+<li>Shipments in <code>draft</code> status can be edited or voided from the row menu.</li>
+<li>A voided shipment leaves an audit row and removes the pre-staged rows on the clinic side.</li>
+<li>Rerunning a failed bulk upload does not create duplicates as long as the source file's PO ref / external_ref is unchanged — the upload validator flags any row whose lot has already been shipped to the same destination.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Row 4: SKU not in your catalog"</td>
+<td>SKU missing from vendor catalog</td>
+<td>Add the SKU on the Catalog page first, then re-upload</td>
+</tr>
+<tr>
+<td>"Row 12: destination clinic not tethered"</td>
+<td>You haven't been onboarded with that clinic</td>
+<td>Ask the clinic to send a tether invite, or invite them from Directory</td>
+</tr>
+<tr>
+<td>Preview shows 0 valid rows</td>
+<td>Header row mis-mapped or file has extra top rows</td>
+<td>Re-check the mapping; delete banner rows above the header before saving</td>
+</tr>
+<tr>
+<td>Clinic sees "no shipments pending" after upload</td>
+<td>Notification delay or clinic filtering to a different tab</td>
+<td>Have the clinic refresh <strong>Receiving</strong> and check the <strong>Pending</strong> tab</td>
+</tr>
+<tr>
+<td>Duplicate shipment created</td>
+<td>Two uploads with different PO refs but same lots</td>
+<td>Void one draft before it ships</td>
+</tr>
+</tbody>
+</table>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a></li><li><a href="/medipyxis-help/vendor-portal/receiving/">Receive a vendor shipment</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-shipments-page">The shipments page</a></li><li><a class="" href="#bulk-excel-upload">Bulk Excel upload</a></li><li><a class="indent-3" href="#step-1-upload-the-file">Step 1 — Upload the file</a></li><li><a class="indent-3" href="#step-2-confirm-column-mapping">Step 2 — Confirm column mapping</a></li><li><a class="indent-3" href="#step-3-review-the-preview">Step 3 — Review the preview</a></li><li><a class="indent-3" href="#step-4-lot-integrity-check">Step 4 — Lot integrity check</a></li><li><a class="indent-3" href="#step-5-confirm-the-shipment">Step 5 — Confirm the shipment</a></li><li><a class="" href="#manual-single-shipment">Manual single shipment</a></li><li><a class="" href="#save-a-column-mapping-template">Save a column mapping template</a></li><li><a class="" href="#track-a-shipment">Track a shipment</a></li><li><a class="" href="#discrepancies">Discrepancies</a></li><li><a class="" href="#draft-void-and-rerun">Draft, void, and rerun</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/shipments.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/shipments.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>

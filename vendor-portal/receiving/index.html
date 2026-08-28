@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receive a vendor shipment — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="active">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company on the vendor portal</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/receiving/">Receive a vendor shipment</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Send invoices</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
+      <h1>Receive a vendor shipment</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 5 min read</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-08-28</span></div>
+      <p>Every shipment a tethered vendor sends you shows up in your <strong>Receiving</strong> queue pre-staged with lot, expiration, and quantity — you don't type any of it. Check-in is match-and-confirm, from either the facility's central Receiving page or straight out of a provider's inventory view.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>Any provider at your facility can receive a shipment; you don't need the <code>inventory_manager</code> role.</li>
+<li>Have the physical boxes on hand and a camera ready — discrepancy photos are how you flag exceptions back to the vendor.</li>
+</ul>
+<h2 id="where-check-in-lives">Where check-in lives</h2>
+<p>Two surfaces write through the same edge function — pick whichever is faster for your workflow.</p>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Best for</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Receiving page</strong> (facility-wide)</td>
+<td>Inventory admins working through the day's arrivals in one place</td>
+<td>Sidebar → Receiving</td>
+</tr>
+<tr>
+<td><strong>Provider inventory view</strong></td>
+<td>Providers checking in a graft that arrived just before their next visit</td>
+<td>Patient Management → Inventory tab, <strong>Pending Vendor Shipments</strong> section</td>
+</tr>
+</tbody>
+</table>
+<p>Both surfaces list the same pending shipments and both save through <code>clinic-receive-shipment</code>. Records are identical — check in from wherever you already are.</p>
+<h2 id="the-receiving-page">The Receiving page</h2>
+<p>Sidebar → <strong>Receiving</strong> opens a facility-scoped view with four KPI tiles across the top:</p>
+<table>
+<thead>
+<tr>
+<th>Tile</th>
+<th>What it counts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Expected today</strong></td>
+<td>Pending shipments with a delivery date in today's window</td>
+</tr>
+<tr>
+<td><strong>Awaiting check-in</strong></td>
+<td>Any shipment marked shipped or in transit</td>
+</tr>
+<tr>
+<td><strong>Open discrepancies</strong></td>
+<td>Line-level flags raised on prior receipts that the vendor hasn't resolved</td>
+</tr>
+<tr>
+<td><strong>Received this week</strong></td>
+<td>Shipments fully checked in over the last 7 days</td>
+</tr>
+</tbody>
+</table>
+<p>Below the tiles, the <strong>All shipments</strong> table lists every shipment tied to your facility with vendor name, shipment number, line count, expected delivery, and status badge (<code>in transit</code>, <code>checking in</code>, <code>received</code>).</p>
+<h2 id="check-in-a-shipment">Check in a shipment</h2>
+<ol>
+<li>Open the shipment (click the row on the Receiving page, or <strong>Check in</strong> from the Provider inventory view). The check-in modal opens with:
+   - Vendor name and shipment number.
+   - Every line the vendor shipped — SKU, product name, lot, expiration, and expected quantity.</li>
+<li><strong>Confirm each line.</strong> For each row:
+   - Compare the vendor's expected quantity against the physical count.
+   - If it matches, leave <strong>Received quantity</strong> at the pre-filled value.
+   - If it doesn't, edit the number and check the discrepancy option (short, damaged, wrong SKU, expired).</li>
+<li><strong>Photograph any discrepancy.</strong> The modal accepts one photo per flagged line. This becomes the evidence attached to the exception on the vendor's side.</li>
+<li><strong>Add notes</strong> (optional). Anything the vendor's ops team needs to know to reconcile — "outer box crushed but inner sterile packs intact", "lot A vs lot B mixed".</li>
+<li><strong>Confirm receipt.</strong> The shipment moves to <code>received</code> (perfect match) or <code>flagged</code> (any line has a discrepancy). Line-level status is preserved even for a flagged shipment — the accepted quantities stock immediately, only the flagged units wait.</li>
+</ol>
+<h2 id="what-lands-in-inventory">What lands in inventory</h2>
+<ul>
+<li><strong>Accepted lines</strong> create <code>inventory_product_batches_v2</code> rows and become on-hand stock in <strong>Main Inventory → In Stock</strong> the moment you confirm.</li>
+<li><strong>Flagged lines</strong> land in <strong>Receiving History → Needs review</strong> so an inventory admin can reconcile before those units stock.</li>
+<li><strong>Consignment lots</strong> are stocked with <code>ownership_model = consignment</code> so they show on the vendor's consignment position report but count against your on-hand for wizard availability.</li>
+</ul>
+<h2 id="provider-quick-receive">Provider quick-receive</h2>
+<p>The Provider inventory view (Patient Management → <strong>Inventory</strong> tab) surfaces pending shipments in a <strong>Pending Vendor Shipments</strong> card:</p>
+<ul>
+<li>Shows the same shipment list as the facility Receiving page, filtered to shipments where you are on the delivery list.</li>
+<li><strong>Check in</strong> opens the same modal as the Receiving page — no context switch required.</li>
+<li>Useful when a graft was just-in-time couriered for a patient you're about to see; you receive it 30 seconds before you use it, no walk to the supply room.</li>
+</ul>
+<h2 id="discrepancies-and-the-vendor-response">Discrepancies and the vendor response</h2>
+<p>Once you flag a line, the vendor's shipment moves to <code>flagged</code> on their side and lands in their <strong>Requests</strong> inbox with your photo and note. They resolve one of three ways:</p>
+<ul>
+<li><strong>Reship</strong> — a fresh draft shipment for the missing quantity lands in your queue.</li>
+<li><strong>Short-ship accepted</strong> — the balance is written off; the shipment closes.</li>
+<li><strong>Dispute</strong> — opens a message thread with you for reconciliation.</li>
+</ul>
+<p>You're notified in either the bell or <strong>Messages</strong> whenever the vendor responds.</p>
+<h2 id="aging-and-nudges">Aging and nudges</h2>
+<p>Pending shipments that stay uncheck-in for over 24 hours after their expected delivery date send an escalating nudge:</p>
+<ul>
+<li>Day 1 overdue → notification to the facility inventory admin.</li>
+<li>Day 3 overdue → notification to the vendor plus a red flag on the shipment.</li>
+<li>Day 5 overdue → escalated to your facility admin.</li>
+</ul>
+<p>Overdue shipments do not auto-close; someone has to check in or void them.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shipment not in queue</td>
+<td>Vendor hasn't marked it shipped yet</td>
+<td>Confirm the tracking number with the vendor; ask them to update status</td>
+</tr>
+<tr>
+<td>Cannot open the check-in modal</td>
+<td>Another provider is checking in the same shipment</td>
+<td>Refresh the page; if the shipment is now <code>received</code>, someone beat you to it</td>
+</tr>
+<tr>
+<td>Photo won't attach</td>
+<td>File over 10 MB or unsupported format</td>
+<td>Reshoot at lower resolution; PNG/JPG only</td>
+</tr>
+<tr>
+<td>Received quantity doesn't decrement in Main Inventory</td>
+<td>Stocking write failed; line landed in Needs Review</td>
+<td>Open <strong>Receiving History → Needs review</strong> and complete the reconcile</td>
+</tr>
+<tr>
+<td>Provider view doesn't show a shipment</td>
+<td>You are not on the delivery list for that shipment</td>
+<td>Use the facility Receiving page — any provider can check in from there</td>
+</tr>
+</tbody>
+</table>
+<h2 id="related">Related</h2>
+<ul>
+<li><strong><a href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a></strong> — the vendor-side flow that fed this queue.</li>
+<li><strong><a href="/medipyxis-help/modules/inventory/main-inventory/">Main Inventory</a></strong> — where received stock lands.</li>
+<li><strong><a href="/medipyxis-help/modules/inventory/bulk-operations/">Bulk inventory workflows</a></strong> — receiving without a vendor shipment (manual receive, non-vendor sources).</li>
+</ul>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a></li><li><a href="/medipyxis-help/modules/inventory/overview/">Inventory Management overview</a></li><li><a href="/medipyxis-help/modules/inventory/main-inventory/">Main Inventory reference</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#where-check-in-lives">Where check-in lives</a></li><li><a class="" href="#the-receiving-page">The Receiving page</a></li><li><a class="" href="#check-in-a-shipment">Check in a shipment</a></li><li><a class="" href="#what-lands-in-inventory">What lands in inventory</a></li><li><a class="" href="#provider-quick-receive">Provider quick-receive</a></li><li><a class="" href="#discrepancies-and-the-vendor-response">Discrepancies and the vendor response</a></li><li><a class="" href="#aging-and-nudges">Aging and nudges</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/receiving.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/receiving.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>
