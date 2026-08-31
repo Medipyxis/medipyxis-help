@@ -11,6 +11,10 @@ app_route: /facility/{facility_uuid}/billing/new
 related:
   - billing-overview
   - billing-work-queue
+  - billing-coding-review-drawer
+  - billing-eligibility-and-verify-insurance
+  - billing-diagnosis-code-validation
+  - billing-charge-master-and-zero-dollar-guard
   - billing-era-posting
   - billing-denial-management
 prerequisites:

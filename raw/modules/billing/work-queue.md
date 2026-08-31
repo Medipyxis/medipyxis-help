@@ -11,6 +11,8 @@ app_route: /facility/{facility_uuid}/billing/work-queue
 related:
   - billing-overview
   - billing-submit-claim
+  - billing-coding-review-drawer
+  - billing-eligibility-and-verify-insurance
   - billing-denial-management
   - billing-ar-aging
   - billing-era-posting
@@ -105,7 +107,7 @@ Filters stack — combine any of:
 4. **Read the Blocking Reason.** For anything not ready, the column tells you what's missing.
 5. **Open the chart if you need context.** Click **Open Chart** to review the patient.
 6. **Nudge the provider when the note is the blocker.** Click **Notify** to record a provider reminder — it also posts an in-app notification, a message in the encounter's team-chat thread, and a Slack nudge. (Notify is available only when the visit is **Seen** and the encounter isn't already ready or billed.)
-7. **Review a claim's coding.** When a claim exists, click **Review** to open the **Coding Review** drawer.
+7. **Review a claim's coding.** When a claim exists, click **Review** to open the [Coding Review drawer](./coding-review-drawer.md).
 8. **Edit a claim.** Click **Edit** to open the claim in the claim form (`/billing/new`). See [Submit a claim](./submit-claim.md).
 9. **Set the Claim Status.** Use the row's **Claim Status** dropdown as the claim progresses (Ready, Billed, Paid, Denied, etc.).
 10. **Add a biller note** inline in the **Biller Notes** column for anything your team needs to track.
