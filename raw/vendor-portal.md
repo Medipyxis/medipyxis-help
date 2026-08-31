@@ -6,14 +6,16 @@ audience: [vendor]
 roles: [vendor_admin, vendor_user, vendor_sales]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-08-28
+last_reviewed: 2026-08-31
 related:
   - vendor-portal-onboarding
   - vendor-portal-manage-catalog
   - vendor-portal-shipments
   - vendor-portal-receiving
   - vendor-portal-manage-orders
+  - vendor-portal-respond-to-requests
   - vendor-portal-invoices-and-payment
+  - vendor-portal-terms-and-contracts
   - vendor-portal-faq
 tags: [vendor, portal, orders, catalog, invoices, tethers, product master]
 ---
@@ -71,8 +73,10 @@ You never see patient names, addresses, phone numbers, insurance details, visit 
 | 3. Create and track shipments | [Create and track shipments](./shipments.md) |
 | 4. Understand how shipments land on the clinic side | [Receive a vendor shipment](./receiving.md) |
 | 5. Handle clinic-initiated orders and IVR requests | [Manage orders](./manage-orders.md) |
-| 6. Bill clinics under the terms you negotiated | [Invoices and payment](./invoices-and-payment.md) |
-| 7. Common questions | [FAQ](./faq.md) |
+| 6. Work the daily requests queue | [Respond to clinic requests](./respond-to-requests.md) |
+| 7. Set the commercial terms behind each clinic | [Terms and contracts](./terms-and-contracts.md) |
+| 8. Bill clinics under those terms | [Invoices and AR](./invoices-and-payment.md) |
+| 9. Common questions | [FAQ](./faq.md) |
 
 <Note>
 Your company must be onboarded through a clinic invitation. If you already have a Medipyxis account and a clinic invites you again, the invitation opens the "connect to existing vendor" flow rather than a duplicate onboarding wizard.

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Respond to clinic requests — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="active">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/invoices-and-payment/">Invoices and AR</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/onboarding-your-company/">Onboard your company on the vendor portal</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/receiving/">Receive a vendor shipment</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/respond-to-ivr/">Respond to an IVR (replaced by Manage orders)</a><a class="sidebar-item active" href="/medipyxis-help/vendor-portal/respond-to-requests/">Respond to clinic requests</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/terms-and-contracts/">Terms and contracts</a><a class="sidebar-item" href="/medipyxis-help/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/vendor-portal/">Vendor portal</a></p>
+      <h1>Respond to clinic requests</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 5 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-08-31</span></div>
+      <p><strong>Clinic Requests</strong> is where a clinic-side IVR turns into a real order on your desk. Every request in this queue is attributed to your catalog, came from an approved-tether clinic, and is waiting on you to accept it, ship it, or decline it.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You are signed in to the vendor portal as <code>vendor_admin</code> or <code>vendor_user</code>.</li>
+<li>Your company has at least one <strong>approved</strong> tether with a clinic. Requests from suspended, revoked, or terminated tethers never surface here — that guardrail lives on the read path.</li>
+<li>The clinic ordered a SKU <strong>you</strong> pushed through the catalog. Attribution flows: your catalog push → clinic accepts → product carries your vendor id → the clinic's IVR-to-order step stamps the order with your id.</li>
+</ul>
+<h2 id="what-lands-in-the-queue">What lands in the queue</h2>
+<p>Two kinds of requests show up on <code>/vendor/requests</code>:</p>
+<ul>
+<li><strong>IVR-derived orders</strong> — a clinician completed an IVR on the clinical side and the system converted it to an <code>inventory_orders_v2</code> row against your catalog. These carry a provider request id and the wound context is already resolved.</li>
+<li><strong>Bulk orders</strong> — an inventory admin at the clinic placed a straight replenishment order for one of your SKUs. No provider request id; treat these as reorders.</li>
+</ul>
+<p>Each row shows:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>What you see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Request</strong></td>
+<td>Clinic-side order name, with a <code>(bulk)</code> tag when there is no provider request behind it.</td>
+</tr>
+<tr>
+<td><strong>Product</strong></td>
+<td>Product summary (name, SKU, HCPCS/Q-code).</td>
+</tr>
+<tr>
+<td><strong>Qty</strong></td>
+<td>Total requested quantity across line items.</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td><code>Pending</code> (1), <code>Shipped</code> (2), <code>Completed</code> (4).</td>
+</tr>
+<tr>
+<td><strong>Actions</strong></td>
+<td>Accept, Ship, Decline — greyed out once the request has shipped.</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>Refresh</strong> button re-pulls the queue on demand; the page is otherwise read-only until you act.</p>
+<h2 id="what-each-action-does">What each action does</h2>
+<p>Actions here write to the tables the <strong>clinic</strong> watches, not just to your side — the clinic sees your response inside minutes of you clicking.</p>
+<h3 id="accept">Accept</h3>
+<p>Acknowledges the request. <strong>No status change on the shared order.</strong> By design, the clinic does not see movement at Accept — the clinic sees movement at Ship. Use Accept when you want an internal timestamp that says "we saw this and it's ours to fulfill" without changing anything on the clinic's screen. It writes an audit-log entry to your side.</p>
+<h3 id="ship">Ship</h3>
+<p>Moves the clinic order to <strong>Shipped</strong> (status 2) and creates the shipment projection (an Advance Ship Notice tied to the existing order — not a new order minted on top of theirs). This is the transition the clinic watches for: their receiving team can now expect the box, and the same shipment will pre-stage in their receiving queue when it arrives. See <a href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a> for the fields the shipment carries (carrier, tracking number, expected date, lot detail).</p>
+<p><Note>
+Ship is a forward-only transition. Once a request shows <strong>Shipped</strong> you cannot re-open it from this page — corrections happen on the shipment record.
+</Note></p>
+<h3 id="decline">Decline</h3>
+<p>Two behaviors depending on the request type:</p>
+<ul>
+<li><strong>IVR-derived</strong> — moves the clinic-side provider request to <strong>Declined</strong> (status 2). The clinic sees the decline immediately and can re-work the IVR or route to another vendor.</li>
+<li><strong>Bulk</strong> — records an audit note only. The clinic order stays open; the clinic's inventory admin gets the message through your account contact so they can re-route or cancel.</li>
+</ul>
+<p>Use Decline for anything you cannot fulfill: out of stock beyond a reasonable window, product discontinued, tether-scope mismatch, or a catalog error you have not yet fixed.</p>
+<h2 id="field-workflow">Field workflow</h2>
+<ol>
+<li>Open <strong>Requests</strong> (<code>/vendor/requests</code>). New requests land at the top.</li>
+<li>For each request:
+   - Confirm the product, quantity, and target clinic match what your ops team can fulfill today.
+   - Click <strong>Accept</strong> if you are handing to fulfillment and want an internal timestamp.
+   - Click <strong>Ship</strong> when the box goes out. Enter carrier, tracking number, and any lot detail on the shipment record (linked from the request).
+   - Click <strong>Decline</strong> with a short reason if you cannot fulfill.</li>
+<li>Watch the clinic-side status column update on your next refresh. The Home page also aggregates open requests, so the queue drains as you work.</li>
+</ol>
+<h2 id="guardrails-you-can-rely-on">Guardrails you can rely on</h2>
+<ul>
+<li><strong>Tether scope</strong> — a request never appears from a clinic whose relationship is not <code>approved</code>. If a tether goes revoked/suspended/terminated after a request was raised, the request drops out of your queue (no historical PHI exposure through the requests surface).</li>
+<li><strong>Optimistic guard on Ship</strong> — the transition is forward-only and refuses to re-fire on a request that already shows Shipped. You cannot accidentally double-ship by re-clicking a stale button in another tab.</li>
+<li><strong>PHI minimum-necessary</strong> — request rows carry the clinic id, product info, and quantities; patient identifiers on the underlying IVR are handled by the clinic. If your team needs de-identified per-patient consumption, use <a href="/medipyxis-help/vendor-portal/manage-orders/">Use Events</a> rather than reverse-engineering it from requests.</li>
+</ul>
+<h2 id="where-a-request-goes-after-you-ship">Where a request goes after you Ship</h2>
+<ul>
+<li>The clinic-side order flips to <strong>Shipped</strong>.</li>
+<li>Your <strong>Shipments</strong> list gets a new ASN (<code>/vendor/shipments</code>) — track it to delivery there.</li>
+<li>When the product is consumed at the clinic, the resulting <strong>Use Event</strong> joins the shipment lot to the patient (initials + birth year only) and eventually drives the auto-drafted invoice on your terms. See <a href="/medipyxis-help/vendor-portal/invoices-and-payment/">Invoices and AR</a>.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An expected clinic order is not in the queue</td>
+<td>The clinic tether is not yet approved, or the product they ordered is not attributed to your catalog</td>
+<td>Verify the tether status in <strong>Clinics</strong>; verify the SKU has been pushed and accepted at the clinic.</td>
+</tr>
+<tr>
+<td>Ship button is disabled</td>
+<td>Request already shows Shipped or Completed</td>
+<td>Refresh — you (or another user on your team) already shipped it.</td>
+</tr>
+<tr>
+<td>Decline did not update on the clinic side</td>
+<td>Bulk request without a provider request id</td>
+<td>Bulk declines record an audit note only; contact your clinic AP or ops contact to close out the order on their side.</td>
+</tr>
+<tr>
+<td>A request from a revoked-tether clinic reappeared</td>
+<td>Tether was re-approved</td>
+<td>Requests re-surface as soon as the tether returns to <code>approved</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="related">Related</h2>
+<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/medipyxis-help/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a></li><li><a href="/medipyxis-help/vendor-portal/shipments/">Create and track shipments</a></li><li><a href="/medipyxis-help/vendor-portal/invoices-and-payment/">Invoices and AR</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#what-lands-in-the-queue">What lands in the queue</a></li><li><a class="" href="#what-each-action-does">What each action does</a></li><li><a class="indent-3" href="#accept">Accept</a></li><li><a class="indent-3" href="#ship">Ship</a></li><li><a class="indent-3" href="#decline">Decline</a></li><li><a class="" href="#field-workflow">Field workflow</a></li><li><a class="" href="#guardrails-you-can-rely-on">Guardrails you can rely on</a></li><li><a class="" href="#where-a-request-goes-after-you-ship">Where a request goes after you Ship</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/respond-to-requests.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/vendor-portal/respond-to-requests.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>
