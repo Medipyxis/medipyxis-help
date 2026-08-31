@@ -14,6 +14,8 @@ related:
   - billing-overview
   - billing-diagnosis-code-validation
   - billing-charge-master-and-zero-dollar-guard
+  - billing-cms-1500-and-837p-fields
+  - billing-retired-cpt-guard
 tags: [billing, coding-review, drawer, soft-block, override, CPT, ICD-10]
 ---
 

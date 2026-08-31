@@ -15,6 +15,8 @@ related:
   - billing-eligibility-and-verify-insurance
   - billing-diagnosis-code-validation
   - billing-charge-master-and-zero-dollar-guard
+  - billing-cms-1500-and-837p-fields
+  - billing-retired-cpt-guard
   - billing-denial-management
   - billing-era-posting
   - billing-ar-aging
