@@ -50,7 +50,7 @@ Patient Management is your single-pane roster for every active and archived pati
 Clicking a patient opens the chart with tabs:
 
 - **Summary** — demographics, clinical (diagnoses, allergies, active medications), insurance, referral, and care-team sections. External-EHR records pulled from **ZusHealth** appear here with provenance indicators.
-- **Wounds** — the wound cockpit. One card per active wound with the last measurement trend line. Entry point for the Visit Wizard.
+- **Wounds** — the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), the canonical per-wound screen. One card per active wound with the last measurement trend line and the entry point for the Visit Wizard. The older Wound Log page is deprecated — use the cockpit for every per-wound task.
 - **Visits** — historical visit notes, sortable by date and provider.
 - **Documents** — uploaded PDFs, consent forms, prior records.
 - **Medications** — DoseSpot integration for e-prescribing and reconciliation.
@@ -65,4 +65,7 @@ Since the MED-1692 update, deleting a patient is disallowed. Use **Archive** on 
 ## Related
 
 - [Referral Intake → Assigned drops here](../referral-intake/status-transitions.md)
+- [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md) — the canonical wound screen.
 - [Starting a visit](../visit-wizard-ehr/start-a-visit.md)
+- [How the Visit Wizard opens](../visit-wizard-ehr/how-the-wizard-opens.md) — what happens when you tap Start Visit or Continue Visit.
+- [Note honesty guardrails](../visit-wizard-ehr/note-honesty-guardrails.md) — what the signed note will and will not add on your behalf.

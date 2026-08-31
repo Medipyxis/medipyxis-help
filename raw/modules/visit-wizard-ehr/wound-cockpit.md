@@ -6,19 +6,24 @@ audience: [clinician, clinical_manager]
 roles: [clinician, medical_director, clinical_manager]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-07-01
+last_reviewed: 2026-08-31
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
   - visit-wizard-ehr-start-a-visit
+  - visit-wizard-ehr-how-the-wizard-opens
   - visit-wizard-ehr-wound-assessment
   - visit-wizard-ehr-lcd-navigator
-tags: [wound-cockpit, where-this-wound-is-at, case-manager-readiness, wound-timeline, IVR, protocol-engine]
+tags: [wound-cockpit, canonical-wound-screen, case-manager-readiness, wound-timeline, IVR, protocol-engine, wound-log-deprecated]
 ---
 
 # Wound Cockpit overview
 
-The Wound Cockpit is the per-wound hub for everything that happens between visits. It sits in front of the Visit Wizard: when a clinician taps **Start Visit** for a wound care patient, Fleet Calendar's specialty routing lands them here first, not directly in the wizard.
+The Wound Cockpit is the **canonical wound screen** in Medipyxis — the per-wound hub for everything that happens between visits. It sits in front of the Visit Wizard: when a clinician taps **Start Visit** for a wound care patient, Fleet Calendar's specialty routing lands them here first, not directly in the wizard.
+
+<Note>
+The older **Wound Log** page is deprecated. It has been removed from the standard navigation menu; use the Wound Cockpit for every per-wound task. Legacy links or bookmarks that point at `/wound-log-page` still resolve for now, but new work should always link to the cockpit. The Patient Chart's wound list already links here.
+</Note>
 
 The cockpit answers four questions at a glance:
 
@@ -127,6 +132,8 @@ The cockpit's primary CTA is **Start Visit** (or **Continue Visit** if a draft e
 - **Continue Visit** opens the wizard where you left off. Drafts autosave continuously — each field is saved as you complete it — see [Visit Wizard overview](./overview.md).
 
 For initial evaluations, the wizard automatically picks the **Initial** visit type and prompts for full clinical history; for follow-ups, the **Follow-up** type is preselected and clinical history carries forward.
+
+Both buttons route through the same wizard resolver, which decides between resuming a draft and starting fresh based on what already exists for the appointment. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the full route-on-arrival behavior, including what happens on an appointment that already carries a signed note.
 
 ---
 

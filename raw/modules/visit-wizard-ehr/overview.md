@@ -10,6 +10,8 @@ last_reviewed: 2026-06-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-start-a-visit
+  - visit-wizard-ehr-how-the-wizard-opens
+  - visit-wizard-ehr-note-honesty-guardrails
   - visit-wizard-ehr-wound-assessment
   - visit-wizard-ehr-lcd-navigator
   - visit-wizard-ehr-wound-cockpit
@@ -31,7 +33,7 @@ The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It g
 
 ## How the Visit Wizard fits into the workflow
 
-The Visit Wizard opens from the **Fleet Calendar** (tap the appointment, then **Start Visit**) or from the **Wound Cockpit**. When opened, it locks to the selected patient, wound, and date of service. All documentation entered is scoped to that encounter record, which is recalled by a stable visit identifier — so an in-progress visit reloads correctly, including on a different device.
+The Visit Wizard opens from the **Fleet Calendar** (tap the appointment, then **Start Visit**), from the **Wound Cockpit**, or from the Patient Chart's Appointment Management card. All three surfaces call the same resolver, so a live draft is resumed by identifier no matter which surface you came from. When opened, the wizard locks to the selected patient, wound, and date of service. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the route-on-arrival behavior.
 
 The Visit Wizard route is `/facility/{facility_uuid}/visit-wizard-v2-page`.
 
@@ -139,7 +141,9 @@ The web Visit Wizard is online-only and saves continuously to the server; there 
 
 ## Related modules
 
-- [Wound Cockpit](./wound-cockpit.md) — the pre-visit and between-visit hub for each wound.
+- [Wound Cockpit](./wound-cockpit.md) — the canonical wound screen and between-visit hub.
+- [How the Visit Wizard opens](./how-the-wizard-opens.md) — route-on-arrival: draft resume, fresh start, and signed-note protection.
+- [Note honesty guardrails](./note-honesty-guardrails.md) — what the renderer will and will not add to your signed note.
 - [LCD Navigator](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
 - [Document a visit offline](./work-offline.md) — how offline field visits are handled.
