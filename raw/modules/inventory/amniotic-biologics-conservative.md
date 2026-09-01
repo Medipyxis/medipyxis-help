@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [vendor_coordinator, clinician, admin]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-07-08
+last_reviewed: 2026-09-01
 app_route: /facility/{facility_uuid}/inventory-management
 related:
   - inventory-overview
@@ -20,6 +20,14 @@ tags: [inventory, amniotic, biologics, matrix, conservative care, graft, receivi
 ---
 
 # Specialty catalog tiles — Amniotic, Biologics, and Conservative Care
+
+<Warning>
+**Legacy article — architecture migration in progress (last updated 2026-09-01).**
+
+The three specialty tiles (Amniotic, Biologics, Conservative Care) still appear in the Inventory Management hub, and receiving still flows through them. **What is changing:** the three category tables that back these tiles are being retired in favor of a single unified catalog. On demo and production, those legacy tables already hold zero rows — today's specialty products flow through the new catalog under the hood, and the tiles you see are a compatibility surface.
+
+Use this page while the tiles are still visible. When the migration completes, the tiles will be replaced by category filters on the unified Product Catalog and this article will be superseded. Track the unified path here: [Manage products in the Product Catalog](./product-catalog.md). Vendor-side context: [Vendor Portal Guide](../../vendor-portal/).
+</Warning>
 
 Understand the three product-category tiles in the Inventory Management hub, what distinguishes each category, and how receiving a shipment through each tile generates UINs in Main Inventory.
 

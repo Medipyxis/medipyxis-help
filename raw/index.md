@@ -53,7 +53,7 @@ Welcome. Use this index to find documentation by role, by module, or by task.
 
 ### Revenue cycle
 
-- [Billing Operations](./modules/billing/overview.md) — [Work queue](./modules/billing/work-queue.md) · [Submit a claim](./modules/billing/submit-claim.md) · [Denial management](./modules/billing/denial-management.md) · [ERA posting](./modules/billing/era-posting.md) · [AR aging & reports](./modules/billing/ar-aging.md) · [Superbill config](./modules/billing/superbill-config.md)
+- [Billing Operations](./modules/billing/overview.md) — [Work queue](./modules/billing/work-queue.md) · [Submit a claim](./modules/billing/submit-claim.md) · [Denial management](./modules/billing/denial-management.md) · [ERA posting](./modules/billing/era-posting.md) · [AR aging & reports](./modules/billing/ar-aging.md) · [Charge Master](./modules/billing/charge-master-and-zero-dollar-guard.md)
 
 ### Business development
 

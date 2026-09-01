@@ -13,7 +13,7 @@ related:
   - admin-facility-setup
   - billing-work-queue
   - billing-submit-claim
-  - billing-superbill-config
+  - billing-charge-master-and-zero-dollar-guard
 tags: [billing, superbill, Stedi, ERA, clearinghouse, fee-schedule, enrollment]
 prerequisites:
   - admin-facility-setup

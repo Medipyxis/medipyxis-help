@@ -101,8 +101,6 @@ Multiple missing codes are listed one per line, and the toast stays visible for 
 
 The **Templates** tab is not a pricing surface — it holds superbill templates: fixed lists of CPT/HCPCS/ICD-10 codes you attach to visit types so a clinician sees the right code menu on the wizard. Templates carry no dollar amounts; those still come from **Insurance Charges** and **Self-Pay Charges**.
 
-See [Superbill configuration](./superbill-config.md) for how templates plug into visit types.
-
 ---
 
 ## Result
