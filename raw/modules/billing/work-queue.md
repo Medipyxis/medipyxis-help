@@ -13,6 +13,8 @@ related:
   - billing-submit-claim
   - billing-coding-review-drawer
   - billing-eligibility-and-verify-insurance
+  - billing-stedi-actions-inbox
+  - billing-timely-filing
   - billing-denial-management
   - billing-ar-aging
   - billing-era-posting

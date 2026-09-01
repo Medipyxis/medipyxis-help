@@ -16,6 +16,8 @@ related:
   - billing-charge-master-and-zero-dollar-guard
   - billing-cms-1500-and-837p-fields
   - billing-retired-cpt-guard
+  - billing-claim-scrub
+  - billing-timely-filing
 tags: [billing, coding-review, drawer, soft-block, override, CPT, ICD-10]
 ---
 

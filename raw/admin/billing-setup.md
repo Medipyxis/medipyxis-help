@@ -14,6 +14,8 @@ related:
   - billing-work-queue
   - billing-submit-claim
   - billing-charge-master-and-zero-dollar-guard
+  - billing-ptan-and-payer-enrollment
+  - billing-stedi-actions-inbox
 tags: [billing, superbill, Stedi, ERA, clearinghouse, fee-schedule, enrollment]
 prerequisites:
   - admin-facility-setup

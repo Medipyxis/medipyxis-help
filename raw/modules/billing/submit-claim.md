@@ -17,6 +17,10 @@ related:
   - billing-charge-master-and-zero-dollar-guard
   - billing-cms-1500-and-837p-fields
   - billing-retired-cpt-guard
+  - billing-claim-scrub
+  - billing-stedi-actions-inbox
+  - billing-ptan-and-payer-enrollment
+  - billing-timely-filing
   - billing-era-posting
   - billing-denial-management
 prerequisites:
