@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>August 2026 release notes — Medipyxis Help</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/medipyxis-help/assets/site.css">
+</head>
+<body>
+<div class="top-banner">
+  This is a private documentation preview · <a href="https://medipyxis.com">medipyxis.com →</a>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/medipyxis-help/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/medipyxis-help/getting-started/" class="">Get started</a><a href="/medipyxis-help/modules/" class="">Modules</a><a href="/medipyxis-help/admin/" class="">Admin & billing</a><a href="/medipyxis-help/vendor-portal/" class="">Vendor portal</a><a href="/medipyxis-help/quick-reference/" class="">Quick reference</a><a href="/medipyxis-help/release-notes/" class="active">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-04/">April 2026 release notes</a><a class="sidebar-item active" href="/medipyxis-help/release-notes/2026-08/">August 2026 release notes</a><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-02/">February 2026 release notes</a><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-01/">January 2026 release notes</a><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-06/">June 2026 release notes</a><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-03/">March 2026 release notes</a><a class="sidebar-item" href="/medipyxis-help/release-notes/2026-05/">May 2026 release notes</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/medipyxis-help/">Help</a> / <a href="/medipyxis-help/release-notes/">Release notes</a></p>
+      <h1>August 2026 release notes</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">release-note</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Intake</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Business development</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-09-01</span></div>
+      <p>Changes shipped between 2026-08-01 and 2026-09-01. Items are grouped by module. Entries marked ★ are high-impact or frequently requested.</p>
+<p>The month was heavy on billing correctness, note honesty, and shipping the native app photo capture. 241 non-refactor feat/fix commits landed, spanning 8 release trains (v1.1.267 through v1.1.300).</p>
+<hr />
+<h2 id="provider-attestation-notes">Provider Attestation &amp; Notes</h2>
+<ul>
+<li>★ <strong>APRN is a first-class credential.</strong> The attestation dropdown used to offer a combined "NP / APRN" option that always stored <code>NP</code>. APRN and NP are now separate options; pick the one your state licence uses. See <a href="/medipyxis-help/modules/visit-wizard-ehr/aprn-credential/">APRN as a signature credential</a>.</li>
+<li>★ <strong>Signature timestamp is readable and carries a timezone.</strong> Notes used to print a raw UTC ISO instant (24% of signed notes) or a false "same day" fallback (99% of finalized notes). Now they print <code>Aug 25, 2026, 11:07 PM EDT</code> in the reader's device timezone with the zone abbreviation always shown. Legacy PDF fallback that stamped <code>new Date()</code> onto unsigned notes is deleted. See <a href="/medipyxis-help/modules/visit-wizard-ehr/signature-timestamp/">How the signature timestamp prints on a signed note</a>.</li>
+<li>★ <strong>Provider credential prints on the signature line.</strong> Previously the credential (NP, PA, MD, etc.) was silently dropped from the printed signature. Now it renders beside the provider's name on every signed note.</li>
+<li>★ <strong>Note-honesty guardrails.</strong> The renderer no longer synthesizes a post-debridement measurement that was never taken, and no longer invents an undocumented comorbidity type or stage. See <a href="/medipyxis-help/modules/visit-wizard-ehr/note-honesty-guardrails/">Note-honesty guardrails</a>.</li>
+<li><strong>Contradictory <code>is_clean</code> formulas reconciled</strong> in the perfect-note pipeline.</li>
+<li><strong>Wizard binding hardened.</strong> Visit Wizard now renders against the URL patient (not a frozen copy) and blocks documenting against another patient's appointment.</li>
+<li><strong>Running HPI preserved on resume.</strong> Fixed a defect that blanked and erased the Running HPI when a draft was reopened.</li>
+<li><strong>Exudate: allow "no exudate" wounds</strong> and resolve exudate type on write at every hydration path.</li>
+</ul>
+<hr />
+<h2 id="addendum">Addendum</h2>
+<ul>
+<li>★ <strong>Addendum surfaces in Progress Notes with download.</strong> Signed corrections after the fact are now visible from the Progress Notes tab, not buried in audit logs.</li>
+<li><strong>Encounter identity on every amendment.</strong> An addendum now identifies which encounter it belongs to — no more ambiguous "which visit is this?" corrections.</li>
+<li><strong>Patient name, MRN, and DOB print on every addendum page</strong> — required for HH agencies that receive faxed amendments.</li>
+</ul>
+<hr />
+<h2 id="billing-claims">Billing &amp; Claims</h2>
+<ul>
+<li>★ <strong>$0.00 claim guard.</strong> Auto-drafted claims now refuse to submit if the claim total is zero. Companion fix: unpriced-line rejections are readable to a biller. See <a href="/medipyxis-help/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a>.</li>
+<li>★ <strong>Coding Review Drawer soft-blocks and closes bypasses.</strong> Coding findings are soft-blocks — you can override with a reason — and the manual bypasses that used to skip the drawer entirely are closed. Coding Review now resolves 174 of 461 clinical notes (was 60).</li>
+<li>★ <strong>Service-date guard.</strong> Stops silent today-substitution when a service date is missing; uses the existing CMS-1500 date convention rather than inventing anchoring. Reworked twice after hostile review to close 84 findings.</li>
+<li>★ <strong>The claim scrubber shipped.</strong> Five wound-care-specific pre-submission rules (deleted C-codes, JW/JZ on Q-codes, WISeR PA, MAC state mismatch, debridement+CTP bundled). Advisory only, never hard-blocks. See <a href="/medipyxis-help/modules/billing/claim-scrub/">The claim scrubber</a>.</li>
+<li>★ <strong>Area-based CPT coding for debridement, CTP, and NPWT.</strong> Correct code selection driven by measured wound area.</li>
+<li>★ <strong>Retired CPT 99343 no longer emitted.</strong> Deleted by AMA on 2023-01-01; three prod notes had been billed with it in July 2026. See <a href="/medipyxis-help/modules/billing/retired-cpt-guard/">Retired CPT guard</a>.</li>
+<li><strong>ICD-10 catalog reconciled to CDC FY2026 billable leaf set.</strong> Diagnosis validation now checks against the billable catalog, not a regex.</li>
+<li><strong>CMS-1500 Box 1 marked from the same source as the 837P wire</strong> — the two now agree.</li>
+<li><strong>CMS-1500 checkboxes that never got marked are now marked.</strong></li>
+<li><strong>Timely filing severity thresholds</strong> with day-count math resistant to timezone drift. See <a href="/medipyxis-help/modules/billing/timely-filing/">Timely filing windows</a>.</li>
+</ul>
+<hr />
+<h2 id="stedi-837p">Stedi / 837P</h2>
+<ul>
+<li>★ <strong>837P payload validator built from Stedi's own JSON Schema.</strong> Catches structural errors before submission.</li>
+<li>★ <strong>PTAN and payer enrollment surface.</strong> Full self-service enrollment page at <code>/billing/enrollment</code> covering four transaction types. See <a href="/medipyxis-help/modules/billing/ptan-and-payer-enrollment/">PTAN and payer enrollment</a>.</li>
+<li>★ <strong>Stedi Actions Inbox.</strong> Triage surface for four Stedi event types (file failed, transaction processed, enrollment rejected, enrollment task assigned) with five actions and superadmin facility stamping. See <a href="/medipyxis-help/modules/billing/stedi-actions-inbox/">Stedi Actions Inbox</a>.</li>
+<li>★ <strong>First-ever coverage of the inbound path</strong> (277CA + 835 ERA). Documented why the inbound path was previously unproven — never ran, never failed.</li>
+<li><strong>Two Stedi webhook systems disambiguated</strong> in documentation.</li>
+<li><strong>Subscriber DOB recovered and paired with DMG03.</strong></li>
+<li><strong>DMG03 patient sex populated;</strong> stops CMS-1500 guessing Male when the field was blank.</li>
+<li><strong>All 6 always-required 837P <code>claimInformation</code> fields sent.</strong></li>
+<li><strong>Diagnosis pointers capped at 12</strong> per 837P spec; fix applied to frontend builder.</li>
+<li><strong>Resolved charge carried onto 837P service lines</strong> (previously blanked in some paths).</li>
+<li><strong>Primary line no longer counted twice</strong> on auto claims.</li>
+<li><strong>$0 claims blocked before Stedi submission</strong> — reads the charge/modifier keys the builder actually writes.</li>
+<li><strong>CMS-1500 field mapping documented.</strong> DMG03 M/F/U mapping, SV107 diagnosis pointer, DTP*472 format. See <a href="/medipyxis-help/modules/billing/cms-1500-and-837p-fields/">CMS-1500 and 837P fields</a>.</li>
+</ul>
+<hr />
+<h2 id="zushealth-interoperability">ZusHealth &amp; Interoperability</h2>
+<ul>
+<li>★ <strong>Import write layer rebuilt.</strong> Five mappers, <code>lab_tests</code> redirect, <code>Immunization</code> inlet, unique indexes, honest save counts. Medications imports unblocked after August 4 prod forensics.</li>
+<li>★ <strong>Patient.active preserved on identifier write-back.</strong> One-shot repair function shipped for patients whose <code>active</code> flag was stripped by the prior defect. Also unblocked FQS reads on Patient 403 responses.</li>
+<li><strong>UPID settlement against demographics</strong> before scoping FQS reads.</li>
+<li><strong>Sync button in pre-charting</strong> with toast feedback; SELECT RLS policy added for <code>zushealth_patient_relations</code>.</li>
+<li><strong>One pull button + honest post-pull import summary</strong> in precharting.</li>
+<li><strong>Legacy JWT + <code>sb_sec_</code> key formats both accepted</strong> in Zus edge functions.</li>
+<li><strong>Zus-Account header attached only to CE-delegated writes;</strong> reads go headerless at BA level.</li>
+<li><strong>PHI logs removed</strong> from Zus code paths.</li>
+<li><strong>CE Builder ID added for Integ Advanced Nursing (CA).</strong></li>
+</ul>
+<hr />
+<h2 id="native-electron-app">Native / Electron App</h2>
+<p>The native tablet build ("electron") shipped its wound-photo capture pipeline this month.</p>
+<ul>
+<li>★ <strong>Wound photos capture and file on the tablet, sync to web §7.</strong> 26 commits, culminating in an end-to-end path: photos are queued as base64 rows, filed under <code>facility_id</code> for storage RLS, content-addressed to prevent duplicates, and linked back to the web wizard's §7 by shared wound id.</li>
+<li>★ <strong>Cross-device visit continuity.</strong> Resuming a web visit on the tablet (or vice versa) keeps its wound and photo links intact; the tablet emits <code>id</code> in web's key shape so the two builds share one identity.</li>
+<li><strong>Refused picks surfaced</strong> to the clinician instead of silently dropped.</li>
+<li><strong>Removed photos cancel their queued upload.</strong></li>
+<li><strong>Persisted-file fallback</strong> when the picked file no longer exists on the device.</li>
+</ul>
+<hr />
+<h2 id="scheduling-appointments">Scheduling &amp; Appointments</h2>
+<ul>
+<li>★ <strong>Appointment-integrity review surface (Phase 2/3).</strong> Admin view for reviewing appointments with data-integrity flags.</li>
+<li><strong>Reassign dropdown reads the bookable roster,</strong> not every facility member. Scoped to the appointment's facility.</li>
+<li><strong>Shared clinician-id normalizer</strong> applied to create-appointment and reassign.</li>
+<li><strong>Explicit unassign on reschedule honored.</strong></li>
+<li><strong>Stale count fix inside the anti-stale-comment guard.</strong></li>
+</ul>
+<hr />
+<h2 id="fleet-map-calendar">Fleet Map &amp; Calendar</h2>
+<ul>
+<li>★ <strong>Map stays mounted during date-change refetch</strong> — no more full remount + flicker.</li>
+<li>★ <strong>Map pins no longer randomized for unresolved CA addresses.</strong></li>
+<li><strong>Marker listeners registered once,</strong> not once per render.</li>
+<li><strong>Fleet Calendar drains paged reads</strong> instead of truncating at max_rows.</li>
+</ul>
+<hr />
+<h2 id="fax">Fax</h2>
+<ul>
+<li>★ <strong>File faxes to charts from an edge function,</strong> not the browser. Closes tenancy and idempotency gaps.</li>
+<li>★ <strong>Cover page + message box on progress-note faxes.</strong></li>
+<li><strong>Fax IDP tables scoped by facility grant,</strong> not <code>user_profile.facility_id</code>.</li>
+</ul>
+<hr />
+<h2 id="insurance">Insurance</h2>
+<ul>
+<li>★ <strong>Verify-insurance writes the verified boolean + raw 271 eligibility response.</strong> Single <code>isInsuranceVerified</code> predicate for all readers.</li>
+<li><strong>NIM-202 closed.</strong> Fixed a defect that recorded "self" as an answer nobody gave, and shipped a documented, reproducible row repair.</li>
+<li><strong>Coinsurance fractions normalized to whole percents</strong> across legacy rows.</li>
+<li><strong>Payer shown in Claims picker;</strong> warns on duplicates and gates removal.</li>
+<li><strong>Billing &amp; Auth insurance add path guarded.</strong></li>
+<li><strong>Sex editable after intake;</strong> ends <code>patient.gender</code> drift between demographics and claims.</li>
+</ul>
+<hr />
+<h2 id="consent">Consent</h2>
+<ul>
+<li>★ <strong>Typed-name attestation as a backup signature method</strong> for consent capture.</li>
+<li><strong>Signer identity shared across modalities</strong> (paper, digital, typed).</li>
+<li><strong>Per-modality coherence</strong> enforced via AST walk rather than regex census.</li>
+<li><strong>Prefills may only add information,</strong> never remove it.</li>
+</ul>
+<hr />
+<h2 id="notifications">Notifications</h2>
+<ul>
+<li>★ <strong>Phase 0-2 shipped.</strong> Catalog + data-driven router → dispatcher + delivery ledger → real email/SMS/push wiring. Email launches first; SMS and push are "coming soon". Email sends through the existing Gmail SMTP path.</li>
+<li><strong>Retention purge moved into an edge function.</strong></li>
+<li><strong>Both service-role key formats accepted.</strong></li>
+</ul>
+<hr />
+<h2 id="business-development">Business Development</h2>
+<ul>
+<li>★ <strong>BD Activities: row menu, archive confirm with undo, edit modal, archived view.</strong></li>
+<li><strong>Archive-aware mode in <code>useBdActivities</code>;</strong> archived activities excluded from daily suggestions.</li>
+<li><strong><code>bd-activity-mutate</code> edge function</strong> with authorization predicate; soft-delete columns, privilege lockdown, reader filters on <code>bd_activities</code>.</li>
+</ul>
+<hr />
+<h2 id="home-health">Home Health</h2>
+<ul>
+<li><strong>"Add New Agency" in the home-health picker.</strong></li>
+<li><strong>Legacy soak gate retired</strong> — was reading 0 in front of a live table.</li>
+</ul>
+<hr />
+<h2 id="facility-setup">Facility Setup</h2>
+<ul>
+<li><strong>Blank Tax ID no longer silently blocks facility edit.</strong></li>
+<li><strong>RLS-denied edit no longer reports success.</strong></li>
+<li><strong>Migration aborted on rows with two bad identifiers is now idempotent.</strong></li>
+</ul>
+<hr />
+<h2 id="security-access">Security &amp; Access</h2>
+<ul>
+<li>★ <strong>Billing-surface role gates.</strong> Billers and superadmin now 403 on Submit Claim, fax, auth email, and verification — matching the documented permission model.</li>
+<li><strong>Client code can no longer hard-delete clinical records</strong> — DELETE policy dropped on <code>visit_data_v2</code>, and higher-level clinical writes routed through edge functions.</li>
+<li><strong>Verify-insurance bound to the facility</strong> on write.</li>
+<li><strong>Concise-arrow <code>console.*</code> calls stripped</strong> from the production build.</li>
+<li><strong>Coverage routing hostile-review findings closed:</strong> A+B state, Zus dup rows, Stedi timeout, hospice race, indeterminate payer gate, NPI fallback audit.</li>
+</ul>
+<hr />
+<h2 id="referral-intake">Referral Intake</h2>
+<ul>
+<li><strong>Cross-patient note bleed fixed</strong> in the referral intake pipeline; UTC note-date regressions pinned with timezone-independent tests.</li>
+</ul>
+<hr />
+<h2 id="analytics">Analytics</h2>
+<ul>
+<li><strong>GA4 wired at router root.</strong> SPA page views, <code>begin_checkout</code> before Stripe redirect, <code>sign_up</code> conversion on <code>/mini/confirmation</code>.</li>
+<li><strong>PostHog suppressed on <code>/mini/*</code> signup routes</strong> to isolate marketing-funnel telemetry.</li>
+</ul>
+<hr />
+<h2 id="release-trains">Release Trains</h2>
+<p>Eight release PRs landed in August: <strong>v1.1.267</strong> → <strong>v1.1.300</strong>. The largest single train was v1.1.297, which carried the Stedi 837P DMG03 recovery, the referring-provider write gap fix, and the coverage-routing hostile-review round.</p>
+<h2 id="related">Related</h2>
+<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/medipyxis-help/release-notes/2026-06/">June 2026 release notes</a></li><li><a href="/medipyxis-help/modules/visit-wizard-ehr/aprn-credential/">APRN as a signature credential</a></li><li><a href="/medipyxis-help/modules/visit-wizard-ehr/signature-timestamp/">How the signature timestamp prints on a signed note</a></li><li><a href="/medipyxis-help/modules/visit-wizard-ehr/note-honesty-guardrails/">Note honesty guardrails</a></li><li><a href="/medipyxis-help/modules/billing/claim-scrub/">The claim scrubber</a></li><li><a href="/medipyxis-help/modules/billing/stedi-actions-inbox/">Stedi Actions Inbox</a></li><li><a href="/medipyxis-help/modules/billing/ptan-and-payer-enrollment/">PTAN and payer enrollment</a></li><li><a href="/medipyxis-help/modules/billing/timely-filing/">Timely filing windows</a></li><li><a href="/medipyxis-help/modules/billing/cms-1500-and-837p-fields/">CMS-1500 and 837P fields</a></li><li><a href="/medipyxis-help/modules/billing/retired-cpt-guard/">Retired CPT guard</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div><aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list"><li><a class="" href="#provider-attestation-notes">Provider Attestation &amp; Notes</a></li><li><a class="" href="#addendum">Addendum</a></li><li><a class="" href="#billing-claims">Billing &amp; Claims</a></li><li><a class="" href="#stedi-837p">Stedi / 837P</a></li><li><a class="" href="#zushealth-interoperability">ZusHealth &amp; Interoperability</a></li><li><a class="" href="#native-electron-app">Native / Electron App</a></li><li><a class="" href="#scheduling-appointments">Scheduling &amp; Appointments</a></li><li><a class="" href="#fleet-map-calendar">Fleet Map &amp; Calendar</a></li><li><a class="" href="#fax">Fax</a></li><li><a class="" href="#insurance">Insurance</a></li><li><a class="" href="#consent">Consent</a></li><li><a class="" href="#notifications">Notifications</a></li><li><a class="" href="#business-development">Business Development</a></li><li><a class="" href="#home-health">Home Health</a></li><li><a class="" href="#facility-setup">Facility Setup</a></li><li><a class="" href="#security-access">Security &amp; Access</a></li><li><a class="" href="#referral-intake">Referral Intake</a></li><li><a class="" href="#analytics">Analytics</a></li><li><a class="" href="#release-trains">Release Trains</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/release-notes/2026-08.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/medipyxis-help/raw/release-notes/2026-08.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/medipyxis-help/assets/site.js"></script>
+</body>
+</html>

@@ -12,6 +12,8 @@ related:
   - visit-wizard-ehr-overview
   - visit-wizard-ehr-lcd-navigator
   - visit-wizard-ehr-start-a-visit
+  - visit-wizard-ehr-aprn-credential
+  - visit-wizard-ehr-signature-timestamp
 prerequisites:
   - visit-wizard-ehr-lcd-navigator
 tags: [attestation, e-signature, ESIGN, UETA, CMS, HIPAA, sign-off, addendum, provider]

@@ -12,6 +12,8 @@ related:
   - visit-wizard-ehr-sign-off
   - visit-wizard-ehr-wound-assessment
   - billing-diagnosis-code-validation
+  - visit-wizard-ehr-aprn-credential
+  - visit-wizard-ehr-signature-timestamp
 tags: [note-honesty, audit-defensibility, comorbidity, debridement, fabrication-guard, ICD-10]
 ---
 
