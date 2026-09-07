@@ -42,7 +42,7 @@ function runSearch(q) {
         <div class="search-result-title">${r.title}</div>
         <div class="search-result-meta">${r.section || ''} · ${r.type || 'article'}</div>
       </a>`
-    ).join('') || '<div class="search-empty">Start typing to search 82 articles</div>';
+    ).join('') || '<div class="search-empty">Start typing to search 112 articles</div>';
     searchFocusedIdx = 0;
     return;
   }
