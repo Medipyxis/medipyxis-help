@@ -8,9 +8,9 @@ type: reference
 estimated_minutes: 4
 last_reviewed: 2026-07-08
 related:
-  - vendor-portal-index
+  - vendor-portal-overview
   - vendor-portal-manage-orders
-  - vendor-portal-submit-product
+  - vendor-portal-manage-catalog
   - vendor-portal-invoices-and-payment
 tags: [FAQ, vendor, PHI, orders, catalog, invoices]
 ---
@@ -44,7 +44,7 @@ Clinics place orders that appear on your **Orders** page as **Pending**. You acc
 
 **4. How do I add or change a product?**
 
-Manage your SKUs on the **Catalog** page — click **New SKU** or edit an existing one. Changes take effect directly; there is no separate practice approval step. See [Manage your product catalog](./submit-product.md).
+Manage your SKUs on the **Catalog** page — click **New SKU** or edit an existing one. Changes take effect directly; there is no separate practice approval step. See [Manage your product catalog](./manage-catalog.md).
 
 ---
 

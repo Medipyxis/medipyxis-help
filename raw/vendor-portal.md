@@ -68,15 +68,15 @@ You never see patient names, addresses, phone numbers, insurance details, visit 
 
 | Step | Doc |
 |---|---|
-| 1. Accept your invite and finish onboarding | [Onboard your company](./onboarding-your-company.md) |
-| 2. Maintain your catalog and push to clinics | [Manage your catalog](./manage-catalog.md) |
-| 3. Create and track shipments | [Create and track shipments](./shipments.md) |
-| 4. Understand how shipments land on the clinic side | [Receive a vendor shipment](./receiving.md) |
-| 5. Handle clinic-initiated orders and IVR requests | [Manage orders](./manage-orders.md) |
-| 6. Work the daily requests queue | [Respond to clinic requests](./respond-to-requests.md) |
-| 7. Set the commercial terms behind each clinic | [Terms and contracts](./terms-and-contracts.md) |
-| 8. Bill clinics under those terms | [Invoices and AR](./invoices-and-payment.md) |
-| 9. Common questions | [FAQ](./faq.md) |
+| 1. Accept your invite and finish onboarding | [Onboard your company](./vendor-portal/onboarding-your-company.md) |
+| 2. Maintain your catalog and push to clinics | [Manage your catalog](./vendor-portal/manage-catalog.md) |
+| 3. Create and track shipments | [Create and track shipments](./vendor-portal/shipments.md) |
+| 4. Understand how shipments land on the clinic side | [Receive a vendor shipment](./vendor-portal/receiving.md) |
+| 5. Handle clinic-initiated orders and IVR requests | [Manage orders](./vendor-portal/manage-orders.md) |
+| 6. Work the daily requests queue | [Respond to clinic requests](./vendor-portal/respond-to-requests.md) |
+| 7. Set the commercial terms behind each clinic | [Terms and contracts](./vendor-portal/terms-and-contracts.md) |
+| 8. Bill clinics under those terms | [Invoices and AR](./vendor-portal/invoices-and-payment.md) |
+| 9. Common questions | [FAQ](./vendor-portal/faq.md) |
 
 <Note>
 Your company must be onboarded through a clinic invitation. If you already have a Medipyxis account and a clinic invites you again, the invitation opens the "connect to existing vendor" flow rather than a duplicate onboarding wizard.

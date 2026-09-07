@@ -11,7 +11,7 @@ app_route: /facility/{facility_uuid}/all-patients
 related:
   - patient-management-zus-tefca
   - referral-intake-overview
-  - visit-wizard-overview
+  - visit-wizard-ehr-overview
   - fleet-calendar-overview
 tags: [patients, records]
 ---

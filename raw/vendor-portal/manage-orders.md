@@ -9,8 +9,8 @@ estimated_minutes: 5
 last_reviewed: 2026-07-08
 app_route: /vendor/orders
 related:
-  - vendor-portal-index
-  - vendor-portal-submit-product
+  - vendor-portal-overview
+  - vendor-portal-manage-catalog
   - vendor-portal-invoices-and-payment
 tags: [vendor, orders, shipping, tracking, fulfillment]
 ---

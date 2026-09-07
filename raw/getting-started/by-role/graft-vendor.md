@@ -9,9 +9,9 @@ estimated_minutes: 30
 last_reviewed: 2026-07-08
 app_route: /vendor
 related:
-  - vendor-portal-index
+  - vendor-portal-overview
   - vendor-portal-manage-orders
-  - vendor-portal-submit-product
+  - vendor-portal-manage-catalog
   - vendor-portal-invoices-and-payment
 tags: [onboarding, vendor, orders, catalog, invoices]
 ---
@@ -37,7 +37,7 @@ See [Sign in and manage staff](../../vendor-portal/onboarding-your-company.md).
 1. Open **Catalog**.
 2. Confirm your SKUs are present and correct. Add or edit any with **New SKU**. You own your catalog directly — there is no practice approval step.
 
-See [Manage your product catalog](../../vendor-portal/submit-product.md).
+See [Manage your product catalog](../../vendor-portal/manage-catalog.md).
 
 ## Step 3 — Work an order (10 min)
 

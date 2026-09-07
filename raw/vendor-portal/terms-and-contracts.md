@@ -13,7 +13,7 @@ related:
   - vendor-portal-invoices-and-payment
   - vendor-portal-manage-catalog
   - vendor-portal-shipments
-  - vendor-portal-onboarding-your-company
+  - vendor-portal-onboarding
 tags: [vendor, terms, contracts, billing-model, cadence, pricing, consignment, net30, append-version, AKS]
 ---
 

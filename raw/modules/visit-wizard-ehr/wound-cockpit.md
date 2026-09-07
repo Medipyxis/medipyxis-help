@@ -5,8 +5,8 @@ module: visit-wizard-ehr
 audience: [clinician, clinical_manager]
 roles: [clinician, medical_director, clinical_manager]
 type: concept
-estimated_minutes: 6
-last_reviewed: 2026-08-31
+estimated_minutes: 5
+last_reviewed: 2026-09-07
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
@@ -14,137 +14,116 @@ related:
   - visit-wizard-ehr-how-the-wizard-opens
   - visit-wizard-ehr-wound-assessment
   - visit-wizard-ehr-lcd-navigator
-tags: [wound-cockpit, canonical-wound-screen, case-manager-readiness, wound-timeline, IVR, protocol-engine, wound-log-deprecated]
+tags: [wound-cockpit, wound-cases, compliance-pills, IVR-status]
 ---
 
 # Wound Cockpit overview
 
-The Wound Cockpit is the **canonical wound screen** in Medipyxis — the per-wound hub for everything that happens between visits. It sits in front of the Visit Wizard: when a clinician taps **Start Visit** for a wound care patient, Fleet Calendar's specialty routing lands them here first, not directly in the wizard.
+The Wound Cockpit is the patient-level wound management page in Medipyxis. It lists every wound case for the selected patient on one screen so you can see status, compliance, and measurements at a glance, and start or continue a visit from any wound.
 
-<Note>
-The older **Wound Log** page is deprecated. It has been removed from the standard navigation menu; use the Wound Cockpit for every per-wound task. Legacy links or bookmarks that point at `/wound-log-page` still resolve for now, but new work should always link to the cockpit. The Patient Chart's wound list already links here.
-</Note>
-
-The cockpit answers four questions at a glance:
-
-1. Where is this wound right now?
-2. Is it ready for case manager review?
-3. Where is it on its protocol?
-4. What happened on prior visits?
+---
 
 ## Before you start
 
-- You are working from the patient chart of a wound care patient.
-- The wound record exists. New wounds are created during intake or via the **Add wound** flow in the mobile app.
-- For follow-up visits, the prior visit's data carries forward into the next encounter — see [Visit Wizard overview](./overview.md).
+- You are viewing the chart of a wound care patient.
+- The patient has at least one wound record (created during intake or via the Add Wound flow).
 
 ---
 
-## "Where this wound is at" panel
+## Page layout
 
-The header panel summarizes the wound in one view:
+Open the Wound Cockpit from the patient chart. The page shows:
 
-| Field | What it shows |
+![Wound Cockpit — patient-level wound case list with KPIs and compliance pills](../../assets/visit-wizard/02_wound_cockpit.png)
+*The Wound Cockpit. The top banner summarizes medications, allergies, and vitals; metric counters show case volume; each wound is a card with compliance pills and measurements.*
+
+### Patient summary banner
+
+Three cards at the top give immediate clinical context:
+
+- **Medications** — count of active medications, with a short list.
+- **Allergies** — known allergy count.
+- **Vitals** — today's vitals (for example, blood pressure and A1C) where recorded.
+
+### Metric counters
+
+Five counters summarize the patient's wound caseload:
+
+- **Total Cases**
+- **Open Wounds**
+- **Graft Eligible**
+- **Overdue Visits**
+- **IVR Required**
+
+### Top actions
+
+- **Archived Wounds** — view wounds that have been archived.
+- **Advanced Filters** — filter the case list.
+- **Export Data** — export the current case list.
+- **Add Visit** — start a new encounter (also available on each wound card).
+
+---
+
+## Wound case cards
+
+Each wound appears as a card showing:
+
+| Element | What it shows |
 |---|---|
-| **Etiology + Stage** | Current etiology (DFU, VLU, pressure injury, etc.) and stage. |
-| **Anatomic location** | Precise editable location, e.g. `Right lateral malleolus`. |
-| **Latest measurements** | Length, Width, Depth from the most recent visit. |
-| **% area change** | Computed against the prior measurement. Color-coded: improving, static, worsening. |
-| **Tissue composition** | Granulation / Slough / Necrotic / Epithelial / Eschar, summing to 100%. |
-| **Days in care** | Days since the wound was opened in Medipyxis. |
-| **Last visit** | Date and provider of the most recent encounter. |
-| **Treating / Monitoring** | Each wound carries a **Treating** or **Monitoring** status. A wound set to Monitoring shows a yellow pill and stays Monitoring across visits until a clinician flips it back to Treating. |
-| **Status flags** | Compression in place · NPWT in place · Offloading in place · Awaiting IVR · etc. |
-
-Use this panel as your pre-visit briefing — it is the same data that carries forward into the wizard.
+| **Location & etiology** | The wound's anatomic location and etiology badge (for example, `venous_ulcer`, `pressure_injury`, `diabetic_foot`). |
+| **Wound ID** | The internal wound record ID. |
+| **Status pills** | `Active`, plus IVR readiness (`IVR: Not Ready` or `IVR Available`). |
+| **Photo** | A thumbnail if a photo is on file, with the count. |
+| **Compliance pills** | `Graft Eligible`, `IVR Available`, and `LCD: Compliant` — the current compliance and eligibility status. |
+| **Metrics grid** | Created date, number of visits, Length, Width, Depth, and Area (cm²). |
+| **Progress notes** | The latest progress note, if any. |
+| **Actions** | **Add Visit**, **Details**, **Intake**, and an overflow menu. |
 
 ---
 
-## Case-Manager Readiness
+## Starting a visit from a wound card
 
-The **Case-Manager Readiness** button runs a checklist that determines whether the wound is ready to hand off to a case manager for review (utilization management, IVR approval, advanced therapy authorization).
-
-The engine evaluates:
-
-- 4-week conservative care documented.
-- Failed prior therapies listed.
-- Recent measurements on file.
-- Tissue percentages summed correctly.
-- Comorbidities current.
-- Medical Necessity Statement present.
-- Photo on file within the last visit window.
-
-Each check returns **Ready**, **Needs Attention**, or **Blocking**. Click any non-green check to jump to the section where the missing data belongs. When all checks are green, the **Mark Ready for Case Manager** action is enabled.
-
-<Compliance>
-Case Manager Readiness does not approve advanced therapy on its own. It signals the wound is documentation-complete for case manager review and is the prerequisite gate for IVR submission.
-</Compliance>
-
----
-
-## Protocol progression
-
-If the wound is enrolled in a Medipyxis Protocol Engine treatment protocol, the cockpit shows a **Protocol progression timeline** with:
-
-- The current stage (for example, *Conservative care → NPWT → Advanced therapy*).
-- Days at the current stage.
-- The criteria for stage progression.
-- An indicator if the wound is overdue for the next protocol decision.
-
-Protocol status is also read by the IVR Readiness Modal: protocols inform the recommended IVR product and quantities. For the full protocol model, see the Protocol Engine admin guide.
-
----
-
-## Wound Timeline (merged Visit Log)
-
-The Wound Timeline is the merged view of all wound events — visits, IVR requests, IVR approvals, tissue applications, photo captures, write-offs, addenda. Each event shows:
-
-- Date and provider.
-- Event type with a status badge.
-- A short summary line.
-- A link to the underlying record (visit note, IVR, tissue log entry, etc.).
-
-This replaces the older Visit Log as a single chronological feed.
-
----
-
-## IVR Readiness Modal
-
-When a wound is ready for an IVR (Insurance Verification Request) for advanced therapy, click **Request IVR**. The IVR Readiness Modal opens with:
-
-1. **Pre-IVR checklist** — the same readiness checks as Case-Manager Readiness, plus product-specific items.
-2. **Auto-populated fields** — payer, plan, diagnosis codes (stage-aware), prior conservative care summary, planned product and quantity (from the protocol).
-3. **Manual fields** — anything the auto-populate could not resolve, highlighted for completion.
-
-Submit the IVR from the modal. The IVR moves through the verification flow; on **approval**, the system auto-creates the supply order, links it to the receiving record, and updates inventory allocation.
+Click **Add Visit** on a wound card to start a new encounter for that wound. The Visit Wizard opens with that wound selected in the Wound Assessment step (step 7).
 
 <Note>
-IVR auto-populate uses wound, comorbidity, and protocol data. Always review the auto-populated payer and quantities before submitting — payer-specific quirks may require manual override.
+If a draft already exists for today, continue from the existing draft instead of starting a new one. Drafts autosave continuously — each field is saved as you complete it. See [Visit Wizard overview](./overview.md).
 </Note>
 
 ---
 
-## Starting and continuing visits from the cockpit
+## Compliance and IVR status pills
 
-The cockpit's primary CTA is **Start Visit** (or **Continue Visit** if a draft exists for today).
+The colored pills on each card summarize readiness at a glance:
 
-- **Start Visit** opens the Visit Wizard with this wound pre-selected in section 7.
-- **Continue Visit** opens the wizard where you left off. Drafts autosave continuously — each field is saved as you complete it — see [Visit Wizard overview](./overview.md).
+- **LCD: Compliant** (green) — the wound's documentation meets the LCD compliance checks.
+- **Graft Eligible** (purple) — the wound qualifies for graft/advanced therapy consideration.
+- **IVR Available** (green) / **IVR: Not Ready** (gray) — whether the wound is ready for an Insurance Verification Request for advanced therapy.
 
-For initial evaluations, the wizard automatically picks the **Initial** visit type and prompts for full clinical history; for follow-ups, the **Follow-up** type is preselected and clinical history carries forward.
-
-Both buttons route through the same wizard resolver, which decides between resuming a draft and starting fresh based on what already exists for the appointment. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the full route-on-arrival behavior, including what happens on an appointment that already carries a signed note.
+A wound that is not IVR-ready shows `IVR: Not Ready` and `IVR Not Available` on the card's status bar. Resolve the outstanding documentation (measurements, tissue percentages, prior-treatment history) to advance IVR readiness.
 
 ---
 
-## Cockpit roles and permissions
+## Roles and permissions
 
-| Role | What they can do in the cockpit |
+| Role | What they can do |
 |---|---|
-| `clinician` | Read everything; start visits; run Case-Manager Readiness; submit IVR. |
-| `clinical_manager` | Read everything; mark wounds reviewed for case-management handoff. |
-| `medical_director` | Read everything; review attested notes; cannot edit signed encounters. |
-| `admin` | Read everything in their facility. |
+| `clinician` | View wounds and compliance status; start visits. |
+| `clinical_manager` | View wounds and compliance status. |
+| `medical_director` | View wounds and compliance status; review attested notes. |
+| `admin` | View everything in their facility. |
+
+---
+
+## Roadmap — planned wound cockpit features
+
+The following are planned but not yet live in the current product. Do not describe them to clinicians as available until they ship.
+
+- **Case-Manager Readiness** — a checklist button that evaluates whether a wound is ready for case manager review (conservative care documented, failed prior therapies listed, recent measurements, tissue percentages, comorbidities current, medical necessity statement, recent photo).
+- **Protocol progression timeline** — when a wound is enrolled in a Medipyxis Protocol Engine treatment protocol, a timeline showing the current stage, days at stage, and progression criteria.
+- **Wound Timeline (merged Visit Log)** — a single chronological feed of all wound events (visits, IVR requests, tissue applications, photo captures, write-offs, addenda).
+- **IVR Readiness Modal** — a modal that opens pre-IVR with an auto-populated checklist and payer/product fields for submitting an Insurance Verification Request.
+
+When these ship, this page will be updated with the live workflow.
 
 ---
 
@@ -152,11 +131,10 @@ Both buttons route through the same wizard resolver, which decides between resum
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **Start Visit** is disabled | A signed visit already exists for today, or another clinician has the draft open | Reload the cockpit; if another draft exists, contact the listed owner. |
-| Case-Manager Readiness stays red after fixes | Most recent visit was not saved | Confirm the section navigator in the wizard shows checkmarks; complete any pending sections. |
-| Protocol timeline is missing | Wound is not enrolled in a protocol | Enroll the wound in the appropriate protocol via the Protocol Engine admin tools. |
-| IVR modal auto-populated the wrong payer | Patient has multiple coverages on file | Open the patient's Insurance card and confirm primary coverage; re-open the IVR modal. |
-| Wound Timeline missing a recent event | The most recent visit was not saved | Reopen the visit and confirm the section navigator shows checkmarks; the timeline updates once the encounter saves. |
+| No wounds appear on the page | The patient has no wound records | Create a wound during intake or via the Add Wound flow. |
+| **Add Visit** is disabled | A visit is already in progress for today, or the wound is archived | Check for an existing draft; or restore the wound from Archived Wounds. |
+| **LCD: Compliant** pill is missing | Wound documentation is incomplete | Complete the Wound Assessment (step 7) measurements and tissue percentages, then save. |
+| IVR shows "Not Ready" | Required readiness data is missing | Complete measurements, tissue composition, and prior-treatment history; the pill updates on save. |
 
 ## Related
 

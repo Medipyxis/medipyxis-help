@@ -35,10 +35,10 @@ Medipyxis ships on a rolling-deploy model. Release notes are consolidated monthl
 
 | Release | Date range | Summary |
 |---|---|---|
-| [April 2026](./2026-04.md) | 2026-04-01 – 2026-04-24 | Fleet Calendar drag fix, ZusHealth integration, Wound Care Progress Notes, Bi-directional Med Reconciliation, MolecuLight DX, Referral Network Health, and 20+ additional fixes. |
-| [March 2026](./2026-03.md) | 2026-03-01 – 2026-03-31 | Maintenance-only release. |
-| [February 2026](./2026-02.md) | 2026-02-01 – 2026-02-28 | Maintenance-only release. |
-| [January 2026](./2026-01.md) | 2026-01-01 – 2026-01-31 | Maintenance-only release. |
+| [April 2026](./release-notes/2026-04.md) | 2026-04-01 – 2026-04-24 | Fleet Calendar drag fix, ZusHealth integration, Wound Care Progress Notes, Bi-directional Med Reconciliation, MolecuLight DX, Referral Network Health, and 20+ additional fixes. |
+| [March 2026](./release-notes/2026-03.md) | 2026-03-01 – 2026-03-31 | Maintenance-only release. |
+| [February 2026](./release-notes/2026-02.md) | 2026-02-01 – 2026-02-28 | Maintenance-only release. |
+| [January 2026](./release-notes/2026-01.md) | 2026-01-01 – 2026-01-31 | Maintenance-only release. |
 
 ## How to read a change entry
 

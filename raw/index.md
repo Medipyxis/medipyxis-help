@@ -14,7 +14,7 @@ Welcome. Use this index to find documentation by role, by module, or by task.
 
 ## Start here
 
-- [Welcome](./getting-started/index.md) — new client landing
+- [Welcome](./getting-started.md) — new client landing
 - [Log in and set your working facility](./getting-started/login-and-setup.md)
 - [Your dashboard](./getting-started/your-dashboard.md)
 
@@ -69,7 +69,7 @@ Welcome. Use this index to find documentation by role, by module, or by task.
 
 ## Admin guide
 
-- [Admin home](./admin/index.md)
+- [Admin home](./admin.md)
 - [Facility setup](./admin/facility-setup.md)
 - [User management](./admin/user-management.md)
 - [Role configuration](./admin/role-config.md)
@@ -80,16 +80,16 @@ Welcome. Use this index to find documentation by role, by module, or by task.
 
 ## Graft vendor portal
 
-- [Vendor portal home](./vendor-portal/index.md)
+- [Vendor portal home](./vendor-portal.md)
 - [Sign in and manage staff](./vendor-portal/onboarding-your-company.md)
-- [Manage your product catalog](./vendor-portal/submit-product.md)
+- [Manage your product catalog](./vendor-portal/manage-catalog.md)
 - [Manage orders](./vendor-portal/manage-orders.md)
 - [Send invoices](./vendor-portal/invoices-and-payment.md)
 - [FAQ](./vendor-portal/faq.md)
 
 ## Release notes
 
-- [Release notes home](./release-notes/index.md)
+- [Release notes home](./release-notes.md)
 - [April 2026](./release-notes/2026-04.md)
 - [March 2026](./release-notes/2026-03.md)
 - [February 2026](./release-notes/2026-02.md)

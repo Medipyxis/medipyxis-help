@@ -35,18 +35,18 @@ This page is your front door; the rest of this section follows the same order yo
 
 ## Welcome
 
-- [Log in and set your working facility](./login-and-setup.md) — two minutes to get the right facility selected and your session HIPAA-active.
-- [Tour of your dashboard](./your-dashboard.md) — what every panel on the home screen does.
+- [Log in and set your working facility](./getting-started/login-and-setup.md) — two minutes to get the right facility selected and your session HIPAA-active.
+- [Tour of your dashboard](./getting-started/your-dashboard.md) — what every panel on the home screen does.
 
 ## Your first hour, by role
 
 Pick the path that matches your job. Each one ends with you having completed one real piece of work.
 
-- **I'm a clinician** (RN, NP, MA, MD) → [Clinician first hour](./by-role/clinician.md)
-- **I'm a practice admin / ops manager** → [Practice admin first hour](./by-role/practice-admin.md)
-- **I'm in billing / RCM** → [Billing first hour](./by-role/billing.md)
-- **I'm in business development / CRM** → [BD first hour](./by-role/bd-crm.md)
-- **I'm a graft vendor rep** → [Vendor portal first hour](./by-role/graft-vendor.md)
+- **I'm a clinician** (RN, NP, MA, MD) → [Clinician first hour](./getting-started/by-role/clinician.md)
+- **I'm a practice admin / ops manager** → [Practice admin first hour](./getting-started/by-role/practice-admin.md)
+- **I'm in billing / RCM** → [Billing first hour](./getting-started/by-role/billing.md)
+- **I'm in business development / CRM** → [BD first hour](./getting-started/by-role/bd-crm.md)
+- **I'm a graft vendor rep** → [Vendor portal first hour](./getting-started/by-role/graft-vendor.md)
 
 ## Three things everyone should know
 

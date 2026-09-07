@@ -9,10 +9,10 @@ estimated_minutes: 45
 last_reviewed: 2026-07-08
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
-  - bd-manage-reps
-  - bd-rep-coaching
+  - business-development-overview
+  - business-development-log-call-and-visit
+  - crm-overview
   - crm-practice-detail
-  - crm-log-activity
 tags: [onboarding, bd, crm, roi]
 ---
 

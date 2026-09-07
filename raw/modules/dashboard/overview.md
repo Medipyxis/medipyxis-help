@@ -10,7 +10,7 @@ app_route: /facility/{facility_uuid}/dashboard
 related:
   - getting-started-your-dashboard
   - referral-intake-overview
-  - visit-wizard-overview
+  - visit-wizard-ehr-overview
 tags: [dashboard, home, widgets]
 ---
 
