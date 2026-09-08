@@ -6,7 +6,7 @@ let searchFocusedIdx = 0;
 async function loadIndex() {
   if (SEARCH_INDEX.length) return;
   try {
-    const r = await fetch('/medipyxis-help/search-index.json');
+    const r = await fetch('/search-index.json');
     SEARCH_INDEX = await r.json();
   } catch (e) {
     console.warn('search index unavailable', e);
