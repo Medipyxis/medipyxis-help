@@ -166,3 +166,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ---------- ClearFeed support chat (bottom-right bubble) ----------
+// Mirrors the main medipyxis.com loader (src/app/layout.tsx). Load the widget
+// script, then init on its onload so init never runs before window.ClearFeed
+// exists. site.js runs in <head>, so guard for document.body not yet existing.
+(function () {
+  function loadClearFeed() {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.clearfeed.app/chat-widget.js';
+    s.async = true;
+    s.onload = function () {
+      if (window.ClearFeed) {
+        window.ClearFeed('init', {
+          client_id: 'c6219cd3-ba57-4af8-95ee-5ec882c3b185',
+          config: { brand_color: '#264C64', icon_logo_color: '#FFFFFF' }
+        });
+      }
+    };
+    s.onerror = function () { console.error('ClearFeed widget failed to load'); };
+    (document.body || document.documentElement).appendChild(s);
+  }
+  if (document.body) loadClearFeed();
+  else document.addEventListener('DOMContentLoaded', loadClearFeed);
+})();
