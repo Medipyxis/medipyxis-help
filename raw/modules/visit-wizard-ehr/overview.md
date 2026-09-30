@@ -6,12 +6,13 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-06-29
+last_reviewed: 2026-09-30
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-start-a-visit
   - visit-wizard-ehr-how-the-wizard-opens
   - visit-wizard-ehr-note-honesty-guardrails
+  - visit-wizard-ehr-progress-note
   - visit-wizard-ehr-wound-assessment
   - visit-wizard-ehr-lcd-navigator
   - visit-wizard-ehr-wound-cockpit
@@ -51,7 +52,7 @@ The Visit Wizard uses **17 sections** that mirror the structure auditors expect.
 - **LCD Navigator ambient badge** — real-time Medicare compliance status, always visible at the top. See [LCD Navigator](./lcd-navigator.md).
 - **ABI documentation for compression** — the wizard flags a compression order that lacks a documented ankle-brachial index.
 - **AI-assisted drafting** — generate section text from structured data, with guardrails and a one-time AI Disclaimer acknowledgment.
-- **Medical Necessity Statement** — auto-generated narrative tied to LCD requirements.
+- **Medical necessity in your own words** — the note prints the necessity narrative you wrote, and prompts you for one when it is missing. It is not generated for you. See [How your progress note is written](./progress-note.md).
 - **Deterministic CPT autocode** with **AI fallback** when the deterministic engine returns zero rows; **Pull Codes** can auto-populate billing codes from the documentation.
 - **LCD audit on save** — every save runs a compliance audit that updates the ambient badge.
 
@@ -74,7 +75,7 @@ The Visit Wizard uses **17 sections** that mirror the structure auditors expect.
 | 11 | **Procedures & Supplies** | Graft SKU + UIN, wastage calculation, **Generate Procedure Note**, auto-mapped to billing codes. |
 | 12 | **Orders & DME** | Clinical orders and DME. DME is a vendor-fulfilled order — there is **no product picker** here; clinicians order and the item is fulfilled downstream. |
 | 13 | **Medication Management** | Medications and **DoseSpot** e-prescribing (pharmacy selection and prescription handled in the DoseSpot modal). |
-| 14 | **Billing** | Deterministic CPT autocode with AI fallback, E/M level, modifiers, POS code, **Medical Necessity Statement**. Billing lines can be dragged to reorder. |
+| 14 | **Billing** | Deterministic CPT autocode with AI fallback, E/M level, modifiers, POS code, medical necessity narrative. Billing lines can be dragged to reorder. Staging codes here opens the documentation checklist — see [How your progress note is written](./progress-note.md). |
 | 15 | **Patient Education** | Handout selection and teach-back. |
 | 16 | **LCD Audit & Review** | LCD Navigator final review — see [LCD Navigator](./lcd-navigator.md). |
 | 17 | **Provider Attestation** | ESIGN/UETA/CMS/HIPAA attestation and **Sign & Lock**. See [Sign Off](./sign-off.md). |
@@ -111,9 +112,7 @@ Click the badge to open **Dojo tiles** with intervention guidance and the **copy
 
 Several sections expose an **AI-assisted draft** button. The model drafts a clinical narrative from the structured data you have entered. You must read the draft, edit anything inaccurate, and acknowledge the **AI Disclaimer** the first time you use AI drafting in a visit.
 
-<Warning>
-Anything left in an AI draft becomes part of your signed note — review carefully before attestation. Progress notes are generated with zero-fabrication safeguards: only clinician-documented supplies, plans, and findings appear.
-</Warning>
+Anything left in an AI draft becomes part of your signed note, so review it carefully before attestation. The progress note itself prints only what you documented: where a field is blank it says "Not documented." rather than supplying a sentence. See [How your progress note is written](./progress-note.md).
 
 ---
 
@@ -146,6 +145,7 @@ The web Visit Wizard is online-only and saves continuously to the server; there 
 - [Note honesty guardrails](./note-honesty-guardrails.md) — what the renderer will and will not add to your signed note.
 - [LCD Navigator](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
+- [How your progress note is written](./progress-note.md) — what the note prints, and the documentation checklist before it.
 - [Document a visit offline](./work-offline.md) — how offline field visits are handled.
 
 ## Related

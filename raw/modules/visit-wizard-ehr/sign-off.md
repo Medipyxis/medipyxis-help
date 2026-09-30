@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-06-29
+last_reviewed: 2026-09-30
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -14,6 +14,7 @@ related:
   - visit-wizard-ehr-start-a-visit
   - visit-wizard-ehr-aprn-credential
   - visit-wizard-ehr-signature-timestamp
+  - visit-wizard-ehr-progress-note
 prerequisites:
   - visit-wizard-ehr-lcd-navigator
 tags: [attestation, e-signature, ESIGN, UETA, CMS, HIPAA, sign-off, addendum, provider]
@@ -90,10 +91,13 @@ Once a note is signed, the encounter is read-only. To correct or add information
 
 1. **Open the locked encounter** from the patient chart or Fleet Calendar.
 2. **Click Addendum** in the top action bar.
-3. **Select an addendum reason** from the dropdown. Common reasons include:
-   - Correction to clinical documentation
-   - Additional findings documented after the visit
-   - Billing code correction (coordinate with your biller)
+3. **Select an addendum reason** from the dropdown. The list covers three kinds of correction:
+
+   - **Clinical corrections** — a correction to clinical documentation, or additional findings documented after the visit.
+   - **Billing corrections** — a billing code correction, which you should coordinate with your biller.
+   - **Corrections to written-in language** — reasons that name a specific kind of sentence the note used to supply on your behalf, for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. Use these when an older signed note contains a sentence you did not write. [How your progress note is written](./progress-note.md) lists what those sentences were.
+
+   Pick the reason that names what you are correcting. A reviewer reads the reason alongside the addendum text, so a precise reason is worth more than a general one.
 4. **Enter the addendum text.** Describe what changed and why. Do not delete or re-state the original note — the addendum appears as a dated attachment below the original signed note.
 5. **Click Save Addendum.** The addendum is appended to the encounter record with your name, credential, and a new timestamp.
 
