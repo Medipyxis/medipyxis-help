@@ -19,56 +19,13 @@ Short videos of recent changes, recorded in our demo system. The videos have no 
 
 ## Available now
 
-### Nursing homes and assisted living facilities as buildings in CRM
+### Rounding at a nursing facility, start to finish
 
-*Available now · CRM*
+*Series · Skilled nursing and assisted living*
 
-Video (no sound, 22 seconds): [crm-building-snf.mp4](/assets/videos/whats-new/crm-building-snf.mp4)
+From adding the building in CRM to booking the day, seeing each resident, billing the visit and sending the facility its notes, as one series of short videos in order.
 
-**What you're seeing**
-
-- Adding a building in CRM with the practice type **Skilled Nursing Facility**.
-- Opening the building. Skilled nursing and assisted living buildings get three extra tabs.
-- **Providers**: who rounds at the building and on which days, plus anyone who backs them up or covers for set dates.
-- **Residents**: the patients whose chart says they live there now, with the date of their last signed visit there.
-- **Clinical Notes**: signed visits that took place at the building, for a date range you pick.
-
-**Why it matters**
-
-Everything about a building is on one page: who covers it, who lives there, and which notes have been signed there. You no longer have to piece this together from the schedule and individual charts.
-
-### Book a whole facility day at once
-
-*Available now · Fleet Calendar*
-
-Video (no sound, 20 seconds): [book-facility-day.mp4](/assets/videos/whats-new/book-facility-day.mp4)
-
-**What you're seeing**
-
-- In Fleet Calendar, **Book facility day**: pick the building, date, provider, start time and minutes per resident.
-- The building's residents are listed. Tick the ones to see and pick a visit type for each.
-- Each ticked resident gets a visit back to back (9:00, 9:20, 9:40, 10:00). A resident who is already booked that day is left alone.
-
-**Why it matters**
-
-A morning of rounds takes one booking instead of one booking per resident, and every visit records the building it happens at.
-
-### Claims name the building, and the building gets its notes
-
-*Available now · Billing and CRM*
-
-Video (no sound, 26 seconds): [claim-and-facility-notes.mp4](/assets/videos/whats-new/claim-and-facility-notes.mp4)
-
-**What you're seeing**
-
-- A claim from a nursing facility visit. Place of service 31 came from the booking.
-- The **Service Facility** card, Box 32 on the claim form, names the building where the care was given and its address.
-- Back on the building's **Clinical Notes** tab, **Download notes (.zip)** collects the signed notes for the dates you pick.
-- The download holds each clinical note without its billing section, any amendments as separate files, and an index.
-
-**Why it matters**
-
-The claim says where the care happened, not just where your office is. When a facility asks for its residents' notes, you can send them in one download with no billing detail.
+Watch the series: [/whats-new/snf-rounding/](/whats-new/snf-rounding/)
 
 ### Pull Codes suggests the visit code for where the visit happened
 
