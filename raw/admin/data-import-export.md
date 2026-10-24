@@ -11,6 +11,7 @@ app_route: /facility/{facility_uuid}/hr
 related:
   - admin-index
   - admin-practice-onboarding
+  - admin-practice-onboarding-csv-reference
   - admin-user-management
   - admin-facility-setup
 tags: [import, export, bulk-upload, ZusHealth, Practice Onboarding, referrals, claims]
@@ -58,7 +59,7 @@ To migrate an entire practice's patients and clinical history, use the **Practic
 
 1. Navigate to **`/administrator` → Practice Onboarding**.
 2. Work through the guided, step-dependent import pipeline: **Patients** first, then **Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Documents, and Wounds**, and finally **Visit History**.
-3. Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully.
+3. Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully. See [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/) for the complete column-by-column schema and patient consent attestation rules.
 
 <Note>
 Practice Onboarding is the supported path for bulk patient/chart migration (including from other EMRs). Imported patients are flagged so their first visit shows a migration-context banner in the Visit Wizard.

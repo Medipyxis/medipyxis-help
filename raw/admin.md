@@ -17,6 +17,8 @@ related:
   - admin-notifications
   - admin-security-and-compliance
   - admin-data-import-export
+  - admin-practice-onboarding
+  - admin-practice-onboarding-csv-reference
   - admin-deactivating-and-archiving
 tags: [admin, setup, roles, HIPAA]
 ---
@@ -62,6 +64,8 @@ This separation means a `super_admin` configures roles once for the whole organi
 | [Notifications](./admin/notifications.md) | Reference | Channels (in-app, email, SMS), user preferences, and event families |
 | [Security & Compliance](./admin/security-and-compliance.md) | Concept | HIPAA session settings, audit logs, MFA, BAAs |
 | [Data Import & Export](./admin/data-import-export.md) | How-to | Bulk upload, ZusHealth sync, export referrals/claims, API keys |
+| [Practice Onboarding](./admin/practice-onboarding.md) | How-to | Guided 9-step CSV migration pipeline for incoming practices |
+| [Practice Data Import CSV Reference](./admin/practice-onboarding-csv-reference.md) | Reference | Column-by-column breakdown of all 9 CSV templates, prior EHR duplicate handling, and `consent_*` attestation rules |
 | [Deactivating & Archiving](./admin/deactivating-and-archiving.md) | How-to | Deactivate a facility, archive a patient, reassign work |
 
 ## Before you start
