@@ -4,10 +4,11 @@ title: How do I move my practice's patient data into Medipyxis?
 module: admin
 audience: [admin]
 type: whats-new
-last_reviewed: 2026-10-23
+last_reviewed: 2026-10-24
 tags: [whats-new, video, import, onboarding, csv, migration]
 related:
   - whats-new
+  - admin-practice-onboarding-csv-reference
   - admin-practice-onboarding
   - admin-data-import-export
 ---
@@ -43,7 +44,9 @@ Each step has its own CSV template. Upload your file, check that its columns are
 
 ## What can I import, and in what order?
 
-1. **Patients**: Names, dates of birth, contact details and address, and the provider each patient is assigned to.
+For the complete column-by-column specification, accepted values, and default rules for every template below, see [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/).
+
+1. **Patients** (`patient_import_template.csv`): Names, dates of birth (`YYYY-MM-DD`), contact details and address, assigned provider (`provider_email`), optional prior EHR IDs (`prior_ehr_system`, `prior_ehr_mrn`, `duplicate_decision`), and optional patient consent attestation columns (`consent_on_file` and 7 supporting `consent_*` columns).
 2. **Insurance**: Payer, policy and group numbers.
 3. **Medications**: Current medications with dose, frequency and prescriber.
 4. **Allergies**: Known allergies with severity and reaction.
@@ -98,6 +101,10 @@ No. Documents (such as scanned referrals and consent forms) and wound photos are
 ### Can I edit or bill imported visits?
 
 No. Imported visits come in as read-only history: you can see them on the patient's record, but they are not Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual.
+
+### Where can I see every CSV column and how patient consent attestation works?
+
+See [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/) for the complete column-by-column breakdown of all 9 templates. In Step 1 (`patient_import_template.csv`), the 8 optional `consent_*` columns gate on `consent_on_file`: when blank or `no`, no consent is recorded and the other 7 columns are ignored; when `yes`, Medipyxis records an `external_attested` treatment and billing consent under the importing admin's account. Only attest `consent_on_file = yes` when your practice holds its own signed consent form for that patient — never use a nursing facility's admission paperwork.
 
 ### Who can run the import?
 

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Data Import CSV templates and column reference — Medipyxis Help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<!-- seo:start -->
+<meta name="description" content="Complete column-by-column reference for all 9 Practice Onboarding CSV templates, including prior_ehr_mrn duplicate handling, the 8 consent_* patient consent attestation columns, persistent patient_uid downloads, and date formatting rules.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://help.medipyxis.com/admin/practice-onboarding-csv-reference/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#202371">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Medipyxis Help">
+<meta property="og:title" content="Practice Data Import CSV templates and column reference — Medipyxis Help">
+<meta property="og:description" content="Complete column-by-column reference for all 9 Practice Onboarding CSV templates, including prior_ehr_mrn duplicate handling, the 8 consent_* patient consent attestation columns, persistent patient_uid downloads, and date formatting rules.">
+<meta property="og:url" content="https://help.medipyxis.com/admin/practice-onboarding-csv-reference/">
+<meta property="og:image" content="https://medipyxis.com/images/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Practice Data Import CSV templates and column reference — Medipyxis Help">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Practice Data Import CSV templates and column reference — Medipyxis Help">
+<meta name="twitter:description" content="Complete column-by-column reference for all 9 Practice Onboarding CSV templates, including prior_ehr_mrn duplicate handling, the 8 consent_* patient consent attestation columns, persistent patient_uid downloads, and date formatting rules.">
+<meta name="twitter:image" content="https://medipyxis.com/images/og-default.png">
+<!-- seo:end -->
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/" class="site-logo">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="Medipyxis logo">
+  <g fill="none" stroke="#202371" stroke-width="2.6" stroke-linecap="round">
+    <path d="M20 4 a16 16 0 0 1 16 16" />
+    <path d="M36 20 a16 16 0 0 1 -8 13.85" stroke="#3c52a3" />
+    <path d="M28 33.85 a16 16 0 0 1 -16 0" stroke="#66cccc" stroke-dasharray="2 3" />
+    <path d="M12 33.85 a16 16 0 0 1 -8 -13.85" stroke="#3c52a3" />
+    <path d="M4 20 a16 16 0 0 1 5 -11.6" />
+  </g>
+  <g fill="#3c52a3">
+    <circle cx="11" cy="14" r="2.4" />
+    <circle cx="20" cy="20" r="2.8" fill="#202371" />
+    <circle cx="29" cy="14" r="2.4" />
+    <circle cx="14" cy="22" r="1.8" fill="#66cccc" />
+    <circle cx="26" cy="26" r="2.2" />
+  </g>
+</svg>
+      <span class="site-logo-text">medipyxis</span>
+      <span class="site-logo-tag">Help</span>
+    </a>
+    <nav class="top-nav"><a href="/getting-started/" class="">Get started</a><a href="/modules/" class="">Modules</a><a href="/admin/" class="active">Admin & billing</a><a href="/vendor-portal/" class="">Vendor portal</a><a href="/quick-reference/" class="">Quick reference</a><a href="/release-notes/" class="">Release notes</a></nav>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="header-search-input" class="search-input" placeholder="Search documentation" readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+    <a href="https://medipyxis.com/book-a-demo" class="cta-button">Contact support</a>
+  </div>
+</header>
+
+<div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item active" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
+      <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin &amp; billing</a></p>
+      <h1>Practice Data Import CSV templates and column reference</h1>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 15 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-10-24</span></div>
+      <p>Use this column-by-column reference when preparing spreadsheets for the <strong>Practice Onboarding</strong> importer at <code>/administrator/practice-onboarding</code> (<strong>Practice Onboarding</strong> in the Administrator sidebar). Every column name, required flag, accepted value, validation rule, and fallback default below matches the live importer and downloadable CSV templates.</p>
+      <p>For the step-by-step upload walkthrough and silent video overview, see:</p>
+      <ul>
+        <li><a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a></li>
+        <li><a href="/whats-new/practice-data-import/">How do I move my practice's patient data into Medipyxis? (What's new video guide)</a></li>
+      </ul>
+
+      <h2 id="templates-overview">Templates overview</h2>
+      <p>Download the latest template directly from each step's <strong>Upload</strong> screen on <code>/administrator/practice-onboarding</code>. Templates include a UTF-8 byte-order mark (BOM) and a leading <code>sep=,</code> hint line so Microsoft Excel opens them cleanly; the importer strips <code>sep=,</code> automatically when you upload the file back.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Module</th>
+            <th>Template file name</th>
+            <th>Prerequisite</th>
+            <th>Produces ID column</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Patients</strong></td>
+            <td><code>patient_import_template.csv</code></td>
+            <td>—</td>
+            <td><code>patient_uid</code> (<code>patients_import_results.csv</code>)</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Insurance</strong></td>
+            <td><code>insurance_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Medications</strong></td>
+            <td><code>medications_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Allergies</strong></td>
+            <td><code>allergies_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Comorbidities</strong></td>
+            <td><code>comorbidities_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Emergency Contacts</strong></td>
+            <td><code>contacts_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>Documents</strong></td>
+            <td><code>documents_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td>—</td>
+            <td><strong>Disabled in UI</strong> (<em>Not available yet</em>)</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><strong>Wounds</strong> (read-only history)</td>
+            <td><code>wounds_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>)</td>
+            <td><code>wound_uid</code> (<code>wounds_import_results.csv</code>)</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><strong>Visit History</strong> (read-only history)</td>
+            <td><code>visit_history_import_template.csv</code></td>
+            <td>Step 8 (<code>patient_uid</code>, optional <code>wound_uid</code>)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="step-1-patients">Step 1 — Patients (<code>patient_import_template.csv</code>)</h2>
+      <p>The Patients template contains <strong>22 columns</strong> across three groups:</p>
+      <ol>
+        <li><strong>Core demographic and provider fields</strong> (11 columns — 3 required, 8 optional)</li>
+        <li><strong>Identity and duplicate-handling fields</strong> (3 optional columns)</li>
+        <li><strong>Patient consent attestation fields</strong> (<code>consent_*</code>, 8 optional columns)</li>
+      </ol>
+
+      <h3 id="patients-core-columns">Core demographic and provider columns</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>first_name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Non-empty patient first name.</td>
+            <td>Row is rejected on Confirm if blank.</td>
+          </tr>
+          <tr>
+            <td><code>last_name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Non-empty patient last name.</td>
+            <td>Row is rejected on Confirm if blank.</td>
+          </tr>
+          <tr>
+            <td><code>date_of_birth</code></td>
+            <td><strong>Required</strong></td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Valid calendar date in <code>YYYY-MM-DD</code> (recommended) or <code>MM/DD/YYYY</code>. Rollover dates such as <code>2026-02-31</code> are rejected before write.</td>
+            <td>Row is rejected if blank or not a real calendar date.</td>
+          </tr>
+          <tr>
+            <td><code>phone</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Patient phone number (e.g., <code>555-123-4567</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>email</code></td>
+            <td>Optional</td>
+            <td>Email</td>
+            <td>Must match <code>name@domain.tld</code> if provided.</td>
+            <td>Stored as <code>null</code> if blank; invalid format triggers a validation error.</td>
+          </tr>
+          <tr>
+            <td><code>address_street</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Street address (e.g., <code>123 Main St</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>address_city</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>City name (e.g., <code>Springfield</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>address_state</code></td>
+            <td>Optional</td>
+            <td>Text (2-letter US state)</td>
+            <td>Validated against standard 2-letter US state and territory codes (<code>AL</code>–<code>WY</code>, <code>DC</code>, <code>PR</code>, <code>VI</code>, <code>GU</code>, <code>AS</code>, <code>MP</code>), case-insensitive.</td>
+            <td>Normalized to uppercase; stored as <code>null</code> if blank. Invalid state codes are flagged on Confirm.</td>
+          </tr>
+          <tr>
+            <td><code>address_zip</code></td>
+            <td>Optional</td>
+            <td>Text (ZIP code)</td>
+            <td>5-digit (<code>62701</code>) or 9-digit (<code>62701-1234</code>) US ZIP code.</td>
+            <td>Stored as <code>null</code> if blank. Invalid formats are flagged on Confirm.</td>
+          </tr>
+          <tr>
+            <td><code>provider_email</code></td>
+            <td>Optional</td>
+            <td>Email</td>
+            <td>Email address of an existing clinician/provider in the facility (<code>user_profile</code> / <code>providers</code>).</td>
+            <td><strong>Matched:</strong> Assigns the provider and sets patient status to <code>ASSIGNED</code>. <strong>Blank or unmatched:</strong> Imports the patient unassigned (<code>status = NEW</code>) and adds a non-blocking <em>Needs Follow-Up</em> warning so an admin can assign a provider later.</td>
+          </tr>
+          <tr>
+            <td><code>notes</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Free-text onboarding or chart note (e.g., <code>Transferred from Dr. Adams</code>).</td>
+            <td>Saved to the patient's standalone <code>notes</code> table (<code>note_date</code> = import date, deduplicated by <code>(source, external_id)</code> on re-import).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="patients-identity-duplicate-handling">Identity &amp; duplicate handling (<code>prior_ehr_*</code> and <code>duplicate_decision</code>)</h3>
+      <p>When migrating from another EHR, two different patients can legitimately share a first name, last name, and date of birth, or the same CSV may be uploaded more than once. Medipyxis uses three optional columns to prevent both silent wrong-person merges and accidental duplicate charts:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>How it works</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>prior_ehr_system</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Name of the source EHR (for example, <code>DrChrono</code>, <code>PointClickCare</code>, <code>Athena</code>). Namespaces <code>prior_ehr_mrn</code> in <code>patient.external_id</code> as <code>&lt;prior_ehr_system&gt;:&lt;mrn&gt;</code> (lowercased, colons removed).</td>
+          </tr>
+          <tr>
+            <td><code>prior_ehr_mrn</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Patient's chart number or MRN in the prior EHR. Leading zeros are normalized (<code>001842</code> and <code>1842</code> match the same ID). When re-importing, a matching <code>prior_ehr_mrn</code> + <code>first_name</code> + <code>date_of_birth</code> is recognized as the same patient and counted as <strong>Skipped (existing)</strong> while still returning <code>patient_uid</code>. If <code>prior_ehr_mrn</code> matches an existing patient whose <code>first_name</code> or <code>date_of_birth</code> differs, the row is <strong>blocked with an error</strong> unless explicitly confirmed via <code>duplicate_decision</code> so a mistyped MRN never merges two different people.</td>
+          </tr>
+          <tr>
+            <td><code>duplicate_decision</code></td>
+            <td>Optional</td>
+            <td>UUID or <code>NEW</code></td>
+            <td>Resolves a row held for review when <code>first_name + last_name + date_of_birth</code> matches an existing patient in the facility without a matching <code>prior_ehr_mrn</code>:<ul><li><strong>Enter the existing <code>patient_uid</code> UUID</strong> (shown in the error message) to link/reuse that existing chart and backfill its <code>external_id</code>.</li><li><strong>Enter <code>NEW</code></strong> (case-insensitive) to confirm this row is a different person with the same name and date of birth and create a separate patient record. (If the existing same-name patient was also imported without a <code>prior_ehr_mrn</code>, provide <code>prior_ehr_mrn</code> alongside <code>NEW</code> so subsequent runs can tell the two charts apart.)</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="patient-consent-attestation">Patient consent attestation columns (<code>consent_*</code>)</h3>
+      <p>All 8 <code>consent_*</code> columns in <code>patient_import_template.csv</code> are <strong>optional</strong> and let an administrator record that the practice already holds a signed treatment and billing consent form on file for an incoming patient.</p>
+
+      <h4 id="consent-gating-rule">Gating rule (<code>consent_on_file</code>)</h4>
+      <p>Everything gates on <strong><code>consent_on_file</code></strong>:</p>
+      <ul>
+        <li>If <code>consent_on_file</code> is <strong>blank</strong> or <strong><code>no</code></strong> (<code>false</code>, <code>0</code>, <code>n</code>), <strong>no consent attestation is created</strong> and the other 7 <code>consent_*</code> columns are completely ignored—even if those 7 columns contain values.</li>
+        <li>If <code>consent_on_file</code> contains an unrecognized value (anything other than <code>yes</code>/<code>no</code>, <code>true</code>/<code>false</code>, <code>1</code>/<code>0</code>, <code>y</code>/<code>n</code>), the patient still imports, no consent is recorded, and a non-blocking warning is added to the <strong>Needs Follow-Up</strong> list.</li>
+      </ul>
+
+      <h4 id="consent-compliance-rule">Clinical and compliance rule (practice's own consent only)</h4>
+      <p>Setting <code>consent_on_file = yes</code> writes a <code>patient_consents</code> record (<code>collection_method = 'external_attested'</code>, <code>text_version = 'external'</code>, <code>status = 'current'</code>, <code>consent_to_treatment = true</code>, <code>consent_to_bill = true</code>) attested under the <strong>signed-in administrator's user account</strong> (<code>obtained_by_user_id</code>).</p>
+      <ul>
+        <li><strong>Only set <code>consent_on_file = yes</code> when your practice holds its own signed treatment and billing consent form</strong> for that patient (signed by the patient or their legal POA / healthcare surrogate).</li>
+        <li><strong>Never use a skilled nursing facility's (SNF) admission paperwork</strong> to satisfy <code>consent_on_file = yes</code>, and <strong>never list facility staff as the signer</strong>. Nursing facility admission packets authorize the facility, not an independent wound-care practice, and facility staff cannot legally consent on a resident's behalf.</li>
+        <li>If a patient already has a <code>current</code> consent record in Medipyxis, re-importing with <code>consent_on_file = yes</code> leaves the existing consent untouched and logs a non-blocking warning.</li>
+      </ul>
+
+      <h4 id="consent-columns-table">All 8 <code>consent_*</code> columns and defaults</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Accepted values</th>
+            <th>Behavior &amp; exact default when <code>consent_on_file = yes</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>consent_on_file</code></td>
+            <td>Optional</td>
+            <td><code>yes</code> / <code>no</code> (also accepts <code>true</code> / <code>false</code>, <code>1</code> / <code>0</code>, <code>y</code> / <code>n</code>, case-insensitive)</td>
+            <td><strong>Master gate.</strong> When blank or <code>no</code>, no consent row is created and all other <code>consent_*</code> columns are ignored. When <code>yes</code>, records an <code>external_attested</code> treatment + billing consent.</td>
+          </tr>
+          <tr>
+            <td><code>consent_signed_on</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code> or <code>MM/DD/YYYY</code>)</td>
+            <td>Stored in <code>external_signed_on</code> (<code>YYYY-MM-DD</code>) and sets <code>signed_at</code> to <code>YYYY-MM-DDT00:00:00Z</code>. <strong>Default if blank or unreadable:</strong> <code>external_signed_on = null</code> and <code>signed_at</code> defaults to the import timestamp (<code>now</code>). An unreadable date logs a warning on the Confirm screen and never blocks the patient import.</td>
+          </tr>
+          <tr>
+            <td><code>consent_signer_capacity</code></td>
+            <td>Optional</td>
+            <td><code>patient</code>, <code>poa</code>, or <code>surrogate</code> (case-insensitive)</td>
+            <td>Indicates who signed the form (<code>patient</code>, legal power of attorney <code>poa</code>, or healthcare <code>surrogate</code>). <strong>Default if blank or any other value:</strong> <code>patient</code> (unrecognized values also log a <em>Needs Follow-Up</em> warning).</td>
+          </tr>
+          <tr>
+            <td><code>consent_signer_name</code></td>
+            <td>Optional</td>
+            <td>Text (full name of signer)</td>
+            <td>Stored in <code>signer_name</code>. Required in practice workflows when <code>consent_signer_capacity</code> is <code>poa</code> or <code>surrogate</code>. <strong>Default if blank:</strong> <code>&lt;first_name&gt; &lt;last_name&gt;</code> from the same CSV row.</td>
+          </tr>
+          <tr>
+            <td><code>consent_witnessed</code></td>
+            <td>Optional</td>
+            <td><code>yes</code> / <code>no</code> (<code>true</code> / <code>false</code>, <code>1</code> / <code>0</code>, <code>y</code> / <code>n</code>)</td>
+            <td>Stored in <code>external_witnessed</code>. <strong>Default if blank:</strong> <code>null</code> (not recorded). <code>yes</code> stores <code>true</code>; <code>no</code> stores <code>false</code>.</td>
+          </tr>
+          <tr>
+            <td><code>consent_location</code></td>
+            <td>Optional</td>
+            <td>Text (where the signed form is kept, e.g., <code>Paper chart</code>, <code>DrChrono archive</code>)</td>
+            <td>Stored in <code>external_document_location</code>. <strong>Default if blank:</strong> <code>practice records (onboarding import)</code>.</td>
+          </tr>
+          <tr>
+            <td><code>consent_photo</code></td>
+            <td>Optional</td>
+            <td><code>yes</code> / <code>no</code> (<code>true</code> / <code>false</code>, <code>1</code> / <code>0</code>, <code>y</code> / <code>n</code>)</td>
+            <td>Clinical wound photography consent (<code>consent_to_photo</code>). <strong>Default if blank or <code>no</code>:</strong> <code>false</code> (photography consent is <strong>off</strong> unless explicitly attested <code>yes</code>).</td>
+          </tr>
+          <tr>
+            <td><code>consent_npp_acknowledged</code></td>
+            <td>Optional</td>
+            <td><code>yes</code> / <code>no</code> (<code>true</code> / <code>false</code>, <code>1</code> / <code>0</code>, <code>y</code> / <code>n</code>)</td>
+            <td>HIPAA Notice of Privacy Practices acknowledgement (<code>npp_acknowledged</code>). <strong>Default if blank or <code>no</code>:</strong> <code>false</code> (off unless explicitly attested <code>yes</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="persistent-patient-uid-and-reimports">Persistent <code>patient_uid</code> download &amp; idempotent re-imports</h2>
+
+      <h3 id="downloading-patient-uid-anytime">Downloading <code>patient_uid</code> (and <code>wound_uid</code>) mappings anytime</h3>
+      <p>Steps 2 through 9 link every row back to a patient using <code>patient_uid</code> (the Medipyxis UUID generated in Step 1), and Step 9 optionally links visits to wounds using <code>wound_uid</code> (generated in Step 8). You can download those IDs in two places:</p>
+      <ol>
+        <li><strong>Immediately after an import finishes:</strong> Click <strong>Download Results CSV</strong> in the blue banner on the Results screen to download <code>patients_import_results.csv</code> or <code>wounds_import_results.csv</code>.</li>
+        <li><strong>Anytime later on <code>/administrator/practice-onboarding</code>:</strong> Completed <strong>Step 1 — Patients</strong> and <strong>Step 8 — Wounds</strong> cards display a persistent <strong>Download results CSV</strong> action (rebuilt server-side via <code>batch_results</code> from the saved batch mapping). This lets you re-download <code>patient_uid</code> and <code>wound_uid</code> mappings even after clicking <strong>Done</strong>, refreshing the browser, or signing in from another computer.
+          <ul>
+            <li><code>patients_import_results.csv</code> columns: <code>csv_row</code>, <code>first_name</code>, <code>last_name</code>, <code>date_of_birth</code>, <code>patient_uid</code></li>
+            <li><code>wounds_import_results.csv</code> columns: <code>csv_row</code>, <code>patient_uid</code>, <code>wound_location</code>, <code>wound_type</code>, <code>first_seen_date</code>, <code>wound_uid</code></li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3 id="how-reimporting-works">How re-importing works (<code>Skipped (existing)</code> and batch statuses)</h3>
+      <p>Every active step in the Practice Onboarding importer is <strong>idempotent</strong>:</p>
+      <ul>
+        <li><strong>Natural-key deduplication:</strong> If you re-upload the same CSV (or a superset CSV containing previously imported rows alongside new rows), Medipyxis checks whether each record already exists for that patient/facility:
+          <ul>
+            <li><strong>Step 1 (Patients):</strong> Matches on <code>(facility_id, external_id)</code> + <code>first_name</code> + <code>date_of_birth</code>, or explicit <code>duplicate_decision = &lt;patient_uid&gt;</code>, or an already-imported identical <code>(first_name, last_name, date_of_birth)</code> when <code>external_id</code> is blank on both.</li>
+            <li><strong>Step 2 (Insurance):</strong> Matches on <code>(patient_id, insurance_provider, policy_number)</code> (case-insensitive).</li>
+            <li><strong>Step 3 (Medications):</strong> Matches on <code>(patient_id, name)</code> (case-insensitive).</li>
+            <li><strong>Step 4 (Allergies):</strong> Matches on <code>(patient_id, allergen_name)</code> (case-insensitive).</li>
+            <li><strong>Step 5 (Comorbidities):</strong> Merges and deduplicates condition strings (case-insensitive) into <code>patient.conditions[]</code>.</li>
+            <li><strong>Step 6 (Emergency Contacts):</strong> Matches on <code>(patient_id, contact_name, phone_number)</code> (case-insensitive).</li>
+            <li><strong>Step 8 (Wounds):</strong> Matches on <code>(patient_id, wound_location, wound_type, first_seen_date)</code> in <code>wound_import_history</code>.</li>
+            <li><strong>Step 9 (Visit History):</strong> Matches on <code>(patient_id, service_date, visit_number, provider_name, visit_summary)</code> in <code>visit_import_history</code>.</li>
+          </ul>
+        </li>
+        <li><strong><code>Skipped (existing)</code> count &amp; UID return:</strong> Rows that already exist are not duplicated; they increment the <strong>Skipped</strong> counter (<code>skipped_count</code>). For Step 1 (Patients) and Step 8 (Wounds), skipped existing rows <strong>still return their existing <code>patient_uid</code> or <code>wound_uid</code></strong> in the results CSV so you never lose your ID mapping.</li>
+        <li><strong>Step card progress &amp; batch status:</strong>
+          <ul>
+            <li>Each step card shows cumulative imported rows across all batches plus the latest run breakdown: <code>&lt;N&gt; imported total · last run: X imported, Y skipped, Z errors</code>.</li>
+            <li><strong>Complete (<code>completed</code>):</strong> All importable rows were imported or skipped with <code>0</code> errors.</li>
+            <li><strong>Completed with errors (<code>Import Completed with Errors</code>):</strong> At least 1 row was imported or skipped, and 1 or more rows had errors. Good rows are committed immediately; you can fix only the failed rows and re-upload without duplicating the rows that succeeded.</li>
+            <li><strong>Failed (<code>failed</code>):</strong> Recorded only when <code>success_count = 0</code>, <code>skipped_count = 0</code>, and <code>error_count &gt; 0</code> (no rows could be imported at all).</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2 id="steps-2-to-9-reference">Steps 2–9 column-by-column reference tables</h2>
+
+      <h3 id="step-2-insurance">Step 2 — Insurance (<code>insurance_import_template.csv</code>)</h3>
+      <p>Creates patient coverage records in <code>patient_insurances</code> with <code>coverage_order = 1</code> (primary) and <code>is_active = true</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid UUID from Step 1 <code>patients_import_results.csv</code> belonging to a patient in the active facility.</td>
+            <td>Row is rejected if missing, not a UUID, or not found in the facility.</td>
+          </tr>
+          <tr>
+            <td><code>insurance_provider</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Payer / insurance company name (e.g., <code>BlueCross BlueShield</code>, <code>Medicare</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>policy_number</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Policy or subscriber ID number (e.g., <code>BCBS-998877</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>group_number</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Plan group number (e.g., <code>GRP-001</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>member_id</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Member ID if distinct from <code>policy_number</code>.</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>effective_date</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Coverage effective start date (<code>YYYY-MM-DD</code> or <code>MM/DD/YYYY</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>subscriber_name</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Full name of the policy subscriber (e.g., <code>Jane Doe</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>subscriber_dob</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Subscriber's date of birth (<code>YYYY-MM-DD</code> or <code>MM/DD/YYYY</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>subscriber_relationship</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Relationship of the patient to the subscriber (e.g., <code>Self</code>, <code>Spouse</code>, <code>Child</code>).</td>
+            <td>Stored as <code>null</code> if blank (downstream billing readers treat <code>null</code> as <code>Self</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-3-medications">Step 3 — Medications (<code>medications_import_template.csv</code>)</h3>
+      <p>Creates records in <code>patient_medications</code> with <code>source = 'imported'</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Medication name (e.g., <code>Metformin</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>dosage</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Strength / dose (e.g., <code>500mg</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>frequency</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Dosing schedule (e.g., <code>Twice daily</code>, <code>BID</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>route</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Administration route (e.g., <code>Oral</code>, <code>Topical</code>, <code>IV</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>prescribing_physician</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Prescriber name (e.g., <code>Dr. Smith</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>start_date</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Date medication was started/prescribed.</td>
+            <td>Populates both <code>start_date</code> and <code>date_prescribed</code>; <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>status</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td><code>active</code>, <code>discontinued</code> (aliases: <code>stopped</code>, <code>inactive</code>, <code>d/c</code>, <code>dc</code>), or <code>held</code> (aliases: <code>hold</code>, <code>on_hold</code>).</td>
+            <td>Defaults to <code>active</code> if blank. Unrecognized values default to <code>active</code> and log a non-blocking warning.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-4-allergies">Step 4 — Allergies (<code>allergies_import_template.csv</code>)</h3>
+      <p>Creates records in <code>patient_allergies</code> with <code>source = 'imported'</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>allergen_name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Allergen name (e.g., <code>Penicillin</code>, <code>Latex</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>allergy_type</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td><code>medication</code>, <code>food</code>, <code>environmental</code>, <code>latex</code>, <code>insect</code>, <code>other</code>, or <code>nkda</code> (case-insensitive).</td>
+            <td>Defaults to <code>other</code> if blank. Unrecognized values default to <code>other</code> with a warning.</td>
+          </tr>
+          <tr>
+            <td><code>severity</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td><code>mild</code> (aliases: <code>low</code>, <code>minor</code>), <code>moderate</code>, <code>severe</code>, <code>life_threatening</code> (aliases: <code>life-threatening</code>, <code>life threatening</code>, <code>high</code>, <code>critical</code>, <code>anaphylaxis</code>), or <code>none</code>.</td>
+            <td>Required on the Confirm screen; if an unrecognized value reaches the backend, it defaults to <code>moderate</code> with a warning.</td>
+          </tr>
+          <tr>
+            <td><code>reaction_description</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Description of the reaction (e.g., <code>Hives and swelling</code>, <code>Anaphylaxis</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>status</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td><code>active</code>, <code>inactive</code>, <code>resolved</code>, <code>unknown</code>, or <code>not_applicable</code> (alias: <code>n/a</code>).</td>
+            <td>Defaults to <code>active</code> if blank (or <code>active</code> with a warning if unrecognized).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-5-comorbidities">Step 5 — Medical History / Comorbidities (<code>comorbidities_import_template.csv</code>)</h3>
+      <p>Appends deduplicated condition names to the <code>conditions</code> array on the <code>patient</code> record (<code>patient.conditions</code>). Include <strong>one condition per row</strong>; multiple rows for the same <code>patient_uid</code> are grouped together automatically.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>condition</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Condition or diagnosis name (e.g., <code>Type 2 Diabetes</code>, <code>Peripheral Vascular Disease</code>, <code>Hypertension</code>).</td>
+            <td>Row is rejected if blank. Duplicate conditions already on the patient chart (case-insensitive) are skipped idempotently.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-6-emergency-contacts">Step 6 — Emergency Contacts (<code>contacts_import_template.csv</code>)</h3>
+      <p>Creates records in <code>patient_emergency_contacts</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>contact_name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Emergency contact's full name (e.g., <code>John Doe</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>relationship</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Relationship to the patient (e.g., <code>Spouse</code>, <code>Daughter</code>, <code>POA</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>phone_number</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Contact phone number (e.g., <code>555-987-6543</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>email</code></td>
+            <td>Optional</td>
+            <td>Email</td>
+            <td>Contact email address (<code>name@domain.tld</code>).</td>
+            <td>Stored as <code>null</code> if blank; invalid format is flagged on Confirm.</td>
+          </tr>
+          <tr>
+            <td><code>is_primary</code></td>
+            <td>Optional</td>
+            <td>Boolean</td>
+            <td><code>true</code> / <code>false</code>, <code>yes</code> / <code>no</code>, <code>1</code> / <code>0</code> (case-insensitive).</td>
+            <td>Defaults to <code>false</code> if blank.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-7-documents">Step 7 — Documents (<code>documents_import_template.csv</code> — currently disabled)</h3>
+      <p><Note>
+      Step 7 (<strong>Documents</strong>) is currently disabled on <code>/administrator/practice-onboarding</code> and displays <strong>Not available yet</strong>. Documents and wound photographs are not migrated via CSV; upload clinical documents directly to the patient's chart after onboarding. If the <code>documents</code> import endpoint is invoked directly, it returns <code>Document import is not available yet. No documents were imported.</code>
+      </Note></p>
+      <p>For schema reference, the template columns defined in <code>documentsImportConfig.ts</code> are:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> from Step 1.</td>
+          </tr>
+          <tr>
+            <td><code>file_name</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Document file name (e.g., <code>referral_jane_doe.pdf</code>).</td>
+          </tr>
+          <tr>
+            <td><code>document_type</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td><code>referral</code>, <code>consent</code>, <code>lab_result</code>, <code>imaging</code>, <code>prior_auth</code>, or <code>other</code>.</td>
+          </tr>
+          <tr>
+            <td><code>document_date</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Document date (<code>YYYY-MM-DD</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="step-8-wounds-and-step-9-visit-history">Step 8 — Wounds (<code>wounds_import_template.csv</code>) &amp; Step 9 — Visit History (<code>visit_history_import_template.csv</code>)</h3>
+      <p><Note>
+      <strong>Read-only clinical history:</strong> Both imported wounds (Step 8) and imported visits (Step 9) are stored in dedicated <strong>read-only history tables</strong> (<code>wound_import_history</code> and <code>visit_import_history</code>). Clinicians can view them on the patient's chart for historical context, but imported history records <strong>cannot be edited, signed, or billed</strong> as active Medipyxis visits, and wound photos are not migrated. To document and bill a new encounter in Medipyxis, start a new visit on the patient's active chart.
+      </Note></p>
+
+      <h4 id="step-8-wounds">Step 8 — Wounds (<code>wounds_import_template.csv</code>)</h4>
+      <p>Produces <code>wound_uid</code> in <code>wounds_import_results.csv</code> so Step 9 (<strong>Visit History</strong>) can link historical visits to specific historical wounds.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>wound_location</code></td>
+            <td><strong>Required</strong></td>
+            <td>Text</td>
+            <td>Anatomical wound location (e.g., <code>Left lower extremity, medial malleolus</code>).</td>
+            <td>Row is rejected if blank.</td>
+          </tr>
+          <tr>
+            <td><code>wound_type</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Wound classification (e.g., <code>Venous ulcer</code>, <code>Diabetic foot ulcer</code>, <code>Pressure injury</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>wound_etiology</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Underlying etiology (e.g., <code>Chronic venous insufficiency</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>wound_status</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Status in prior EHR (e.g., <code>active</code>, <code>healed</code>, <code>improving</code>).</td>
+            <td>Defaults to <code>active</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>length_cm</code></td>
+            <td>Optional</td>
+            <td>Number (decimal)</td>
+            <td>Length in centimeters using a period decimal (e.g., <code>3.2</code>). Must be <code>&gt;= 0</code>.</td>
+            <td>Stored as <code>null</code> if blank; non-numeric or negative values fail validation.</td>
+          </tr>
+          <tr>
+            <td><code>width_cm</code></td>
+            <td>Optional</td>
+            <td>Number (decimal)</td>
+            <td>Width in centimeters (e.g., <code>2.1</code>). Must be <code>&gt;= 0</code>.</td>
+            <td>Stored as <code>null</code> if blank; non-numeric or negative values fail validation.</td>
+          </tr>
+          <tr>
+            <td><code>depth_cm</code></td>
+            <td>Optional</td>
+            <td>Number (decimal)</td>
+            <td>Depth in centimeters (e.g., <code>0.4</code>). Must be <code>&gt;= 0</code>.</td>
+            <td>Stored as <code>null</code> if blank; non-numeric or negative values fail validation.</td>
+          </tr>
+          <tr>
+            <td><code>first_seen_date</code></td>
+            <td>Optional</td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Date the wound was first documented (<code>YYYY-MM-DD</code> or <code>MM/DD/YYYY</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>prior_treatments</code></td>
+            <td>Optional</td>
+            <td>Text (comma- or semicolon-separated)</td>
+            <td>List of prior treatments (e.g., <code>Compression therapy, Foam dressing</code>). Split on <code>,</code> or <code>;</code> into a <code>text[]</code> array.</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>diagnosis_codes</code></td>
+            <td>Optional</td>
+            <td>Text (comma- or semicolon-separated)</td>
+            <td>ICD-10 codes associated with the wound (e.g., <code>I87.2, L97.429</code>). Split on <code>,</code> or <code>;</code> into a <code>text[]</code> array.</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>notes</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Free-text wound summary or prior treatment note.</td>
+            <td>Saved to <code>treatment_notes</code> on <code>wound_import_history</code> (<code>null</code> if blank).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 id="step-9-visit-history">Step 9 — Visit History (<code>visit_history_import_template.csv</code>)</h4>
+      <p>Creates read-only historical encounter summaries in <code>visit_import_history</code>.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Column (<code>key</code>)</th>
+            <th>Required</th>
+            <th>Type / Format</th>
+            <th>Accepted values &amp; validation</th>
+            <th>Default / Fallback behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>patient_uid</code></td>
+            <td><strong>Required</strong></td>
+            <td>UUID</td>
+            <td>Valid <code>patient_uid</code> in the active facility.</td>
+            <td>Row is rejected if invalid or not found.</td>
+          </tr>
+          <tr>
+            <td><code>wound_uid</code></td>
+            <td>Optional</td>
+            <td>UUID (or comma/semicolon-separated UUIDs)</td>
+            <td>One or more <code>wound_uid</code> values from Step 8's <code>wounds_import_results.csv</code> (stored in <code>wound_import_ids[]</code>).</td>
+            <td>Stored as <code>null</code> if blank. Any non-UUID token is dropped with a non-blocking warning so the visit row still imports.</td>
+          </tr>
+          <tr>
+            <td><code>service_date</code></td>
+            <td><strong>Required</strong></td>
+            <td>Date (<code>YYYY-MM-DD</code>)</td>
+            <td>Date of the historical visit (<code>YYYY-MM-DD</code> or <code>MM/DD/YYYY</code>).</td>
+            <td>Row is rejected if blank or invalid.</td>
+          </tr>
+          <tr>
+            <td><code>visit_number</code></td>
+            <td>Optional</td>
+            <td>Integer</td>
+            <td>Sequential visit number from the prior EHR (e.g., <code>1</code>, <code>2</code>). Must be a positive whole number.</td>
+            <td>Stored as <code>null</code> if blank; non-integer values are dropped with a warning on the backend or flagged on Confirm.</td>
+          </tr>
+          <tr>
+            <td><code>provider_name</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Name of the clinician who performed the historical visit (e.g., <code>Dr. Jane Smith</code>).</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+          <tr>
+            <td><code>visit_summary</code></td>
+            <td>Optional</td>
+            <td>Text</td>
+            <td>Free-text clinical summary of the historical visit.</td>
+            <td>Stored as <code>null</code> if blank.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="date-and-formatting-checklist">Date, number &amp; CSV formatting checklist</h2>
+      <p>Before uploading any CSV into the Practice Onboarding importer, verify the following formatting rules:</p>
+      <ol>
+        <li><strong>Format all dates as ISO <code>YYYY-MM-DD</code> (recommended):</strong>
+          <ul>
+            <li>Always prefer <code>YYYY-MM-DD</code> (for example, <code>2026-06-15</code>) across <code>date_of_birth</code>, <code>consent_signed_on</code>, <code>effective_date</code>, <code>subscriber_dob</code>, <code>start_date</code>, <code>first_seen_date</code>, and <code>service_date</code>.</li>
+            <li><strong>Avoid mixing <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code> in the same file:</strong> Opening a CSV in Microsoft Excel under different regional settings can silently rewrite some cells as <code>MM/DD/YYYY</code> and others as <code>DD/MM/YYYY</code>. While the Confirm screen inspects every date column and converts unambiguous slash dates (<code>15/06/2026</code> vs <code>06/15/2026</code>), ambiguous dates where both numbers are <code>12</code> or below (such as <code>03/04/2026</code>) default to US month-first (<code>MM/DD/YYYY</code>) and raise an amber warning banner on the Confirm screen. Because a transposed <code>date_of_birth</code> breaks payer eligibility and claim submission, format date columns as <code>YYYY-MM-DD</code> text before saving.</li>
+          </ul>
+        </li>
+        <li><strong>Impossible calendar / rollover dates are rejected before write:</strong>
+          <ul>
+            <li>Both the Confirm screen validator and the backend importer check exact calendar month lengths and leap years. Rollover dates that do not exist on the calendar—such as <code>2026-02-31</code>, <code>2026-02-29</code> (non-leap year), or <code>2026-04-31</code>—are rejected with <code>Invalid calendar date</code> rather than rolling into the following month.</li>
+          </ul>
+        </li>
+        <li><strong>Use a period (<code>.</code>) for decimal numbers:</strong>
+          <ul>
+            <li>Wound dimensions (<code>length_cm</code>, <code>width_cm</code>, <code>depth_cm</code>) must use a period decimal (<code>3.2</code>, not <code>3,2</code>) and must be zero or greater.</li>
+          </ul>
+        </li>
+        <li><strong>Wrap fields containing commas in double quotes:</strong>
+          <ul>
+            <li>Any free-text cell that contains commas—such as <code>wound_location</code> (<code>"Left lower extremity, medial malleolus"</code>), <code>prior_treatments</code> (<code>"Compression therapy, Foam dressing"</code>), <code>diagnosis_codes</code> (<code>"I87.2, L97.429"</code>), or <code>notes</code>—must be enclosed in standard CSV double quotes (<code>"..."</code>) so commas inside a field do not shift subsequent columns.</li>
+          </ul>
+        </li>
+        <li><strong>Leave the template header row intact:</strong>
+          <ul>
+            <li>Keep the exact lowercase snake_case column names on the header row so the <strong>Map Columns</strong> step auto-matches every field with 100% confidence. (If a downloaded template starts with Excel's <code>sep=,</code> hint line above the header row, you can leave it as-is—Medipyxis strips <code>sep=,</code> automatically on upload.)</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h2 id="related">Related</h2>
+      <p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+      <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a></li><li><a href="/whats-new/practice-data-import/">How do I move my practice's patient data into Medipyxis?</a></li><li><a href="/admin/data-import-export/">Import and export data</a></li><li><a href="/admin/facility-setup/">Set up a facility in your first week</a></li></ul></div>
+      <div class="feedback">
+        <span>Was this article helpful?</span>
+        <span><a href="#">Yes</a> · <a href="#">No</a></span>
+      </div>
+    </div>    <aside class="toc">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list">
+        <li><a class="" href="#templates-overview">Templates overview</a></li>
+        <li><a class="" href="#step-1-patients">Step 1 — Patients</a></li>
+        <li><a class="indent-3" href="#patients-core-columns">Core demographic &amp; provider columns</a></li>
+        <li><a class="indent-3" href="#patients-identity-duplicate-handling">Identity &amp; duplicate handling</a></li>
+        <li><a class="indent-3" href="#patient-consent-attestation">Patient consent attestation (consent_*)</a></li>
+        <li><a class="" href="#persistent-patient-uid-and-reimports">Persistent patient_uid &amp; re-imports</a></li>
+        <li><a class="indent-3" href="#downloading-patient-uid-anytime">Downloading patient_uid anytime</a></li>
+        <li><a class="indent-3" href="#how-reimporting-works">How re-importing works</a></li>
+        <li><a class="" href="#steps-2-to-9-reference">Steps 2–9 column reference</a></li>
+        <li><a class="indent-3" href="#step-2-insurance">Step 2 — Insurance</a></li>
+        <li><a class="indent-3" href="#step-3-medications">Step 3 — Medications</a></li>
+        <li><a class="indent-3" href="#step-4-allergies">Step 4 — Allergies</a></li>
+        <li><a class="indent-3" href="#step-5-comorbidities">Step 5 — Comorbidities</a></li>
+        <li><a class="indent-3" href="#step-6-emergency-contacts">Step 6 — Emergency Contacts</a></li>
+        <li><a class="indent-3" href="#step-7-documents">Step 7 — Documents (disabled)</a></li>
+        <li><a class="indent-3" href="#step-8-wounds-and-step-9-visit-history">Steps 8 &amp; 9 — Wounds &amp; Visit History</a></li>
+        <li><a class="" href="#date-and-formatting-checklist">Date &amp; formatting checklist</a></li>
+        <li><a class="" href="#related">Related</a></li>
+      </ul>
+      <div class="toc-action-stack">
+        <button class="toc-action" id="copy-md" data-md-url="/raw/admin/practice-onboarding-csv-reference.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
+        <a class="toc-action" href="/raw/admin/practice-onboarding-csv-reference.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
+        <a class="toc-action" href="https://medipyxis.com/book-a-demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Give feedback</span></a>
+      </div>
+    </aside></div>
+
+<footer class="site-footer">
+  © 2026 Medipyxis · Documentation library v1 · <a href="https://medipyxis.com">medipyxis.com</a>
+</footer>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m17 17-3.5-3.5"/></svg>
+      <input type="text" id="search-modal-input" placeholder="Search docs…" autocomplete="off">
+      <span class="search-shortcut">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<script src="/assets/site.js"></script>
+</body>
+</html>
