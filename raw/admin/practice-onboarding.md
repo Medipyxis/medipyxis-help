@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-07-10
+last_reviewed: 2026-10-23
 app_route: /administrator/practice-onboarding
 related:
   - admin-data-import-export
@@ -36,7 +36,7 @@ Steps unlock as their prerequisites complete. **Patients** is always first becau
 | 4 | **Allergies** | Patients |
 | 5 | **Comorbidities** | Patients |
 | 6 | **Emergency Contacts** | Patients |
-| 7 | **Documents** | Patients |
+| 7 | **Documents** (not available yet) | Patients |
 | 8 | **Wounds** | Patients |
 | 9 | **Visit History** | Wounds |
 
@@ -55,7 +55,9 @@ Start with **Patients** and import it cleanly before the dependent steps — eve
 
 ## Result
 
-The practice's patients, coverage, clinical history, documents, wounds, and prior visits are in Medipyxis, ready for scheduling and documentation. Import batches are tracked per facility so you can review what was loaded.
+The practice's patients, coverage, clinical history, wounds, and prior visits are in Medipyxis, ready for scheduling and documentation. Documents and wound photos are not migrated (step 7 shows *Not available yet*), and imported visits are read-only history: they can be seen on the patient's record but cannot be edited, signed or billed. Import batches are tracked per facility so you can review what was loaded.
+
+See it on screen: [How do I move my practice's patient data into Medipyxis?](/whats-new/practice-data-import/) (a short silent video with a text description).
 
 ## Related
 
