@@ -52,9 +52,9 @@ For the complete column-by-column specification, accepted values, and default ru
 4. **Allergies**: Known allergies with severity and reaction.
 5. **Comorbidities**: Medical history and conditions, with ICD-10 codes.
 6. **Emergency contacts**: Name, relationship and phone number.
-7. **Documents**: Not available yet. See "What is not imported" below.
-8. **Wounds**: Active wounds with location, type, measurements and staging.
-9. **Visit history**: Past visits, linked to the patient and wounds. Comes in as read-only history.
+7. **Wounds**: Historical wounds with location, type, measurements and staging (`wounds_import_results.csv` provides `wound_uid`).
+8. **Documents & Historical Wound Photos**: Clinical PDFs/TIFFs and historical wound photos, linked to `patient_uid` and optionally `wound_uid` / `wound_id`.
+9. **Visit history**: Past visits, linked to the patient and wounds (`wound_uid` / `wound_id`). Comes in as read-only history.
 
 ## What is not imported?
 

@@ -137,14 +137,6 @@
           </tr>
           <tr>
             <td>7</td>
-            <td><strong>Documents</strong></td>
-            <td><code>documents_import_template.csv</code></td>
-            <td>Step 1 (<code>patient_uid</code>)</td>
-            <td>—</td>
-            <td><strong>Disabled in UI</strong> (<em>Not available yet</em>)</td>
-          </tr>
-          <tr>
-            <td>8</td>
             <td><strong>Wounds</strong> (read-only history)</td>
             <td><code>wounds_import_template.csv</code></td>
             <td>Step 1 (<code>patient_uid</code>)</td>
@@ -152,10 +144,18 @@
             <td>Active</td>
           </tr>
           <tr>
+            <td>8</td>
+            <td><strong>Documents &amp; Historical Wound Photos</strong></td>
+            <td><code>documents_import_template.csv</code></td>
+            <td>Step 1 (<code>patient_uid</code>; optional <code>wound_uid</code> / <code>wound_id</code> from Step 7)</td>
+            <td>—</td>
+            <td>Active</td>
+          </tr>
+          <tr>
             <td>9</td>
             <td><strong>Visit History</strong> (read-only history)</td>
             <td><code>visit_history_import_template.csv</code></td>
-            <td>Step 8 (<code>patient_uid</code>, optional <code>wound_uid</code>)</td>
+            <td>Step 7 (<code>patient_uid</code>, optional <code>wound_uid</code> / <code>wound_id</code>)</td>
             <td>—</td>
             <td>Active</td>
           </tr>
@@ -378,10 +378,10 @@
       <h2 id="persistent-patient-uid-and-reimports">Persistent <code>patient_uid</code> download &amp; idempotent re-imports</h2>
 
       <h3 id="downloading-patient-uid-anytime">Downloading <code>patient_uid</code> (and <code>wound_uid</code>) mappings anytime</h3>
-      <p>Steps 2 through 9 link every row back to a patient using <code>patient_uid</code> (the Medipyxis UUID generated in Step 1), and Step 9 optionally links visits to wounds using <code>wound_uid</code> (generated in Step 8). You can download those IDs in two places:</p>
+      <p>Steps 2 through 9 link every row back to a patient using <code>patient_uid</code> (the Medipyxis UUID generated in Step 1), and Steps 8 and 9 optionally link historical wound photos, wound-specific documents, and visits to wounds using <code>wound_uid</code> / <code>wound_id</code> (generated in Step 7). You can download those IDs in two places:</p>
       <ol>
         <li><strong>Immediately after an import finishes:</strong> Click <strong>Download Results CSV</strong> in the blue banner on the Results screen to download <code>patients_import_results.csv</code> or <code>wounds_import_results.csv</code>.</li>
-        <li><strong>Anytime later on <code>/administrator/practice-onboarding</code>:</strong> Completed <strong>Step 1 — Patients</strong> and <strong>Step 8 — Wounds</strong> cards display a persistent <strong>Download results CSV</strong> action (rebuilt server-side via <code>batch_results</code> from the saved batch mapping). This lets you re-download <code>patient_uid</code> and <code>wound_uid</code> mappings even after clicking <strong>Done</strong>, refreshing the browser, or signing in from another computer.
+        <li><strong>Anytime later on <code>/administrator/practice-onboarding</code>:</strong> Completed <strong>Step 1 — Patients</strong> and <strong>Step 7 — Wounds</strong> cards display a persistent <strong>Download results CSV</strong> action (rebuilt server-side via <code>batch_results</code> from the saved batch mapping). This lets you re-download <code>patient_uid</code> and <code>wound_uid</code> mappings even after clicking <strong>Done</strong>, refreshing the browser, or signing in from another computer.
           <ul>
             <li><code>patients_import_results.csv</code> columns: <code>csv_row</code>, <code>first_name</code>, <code>last_name</code>, <code>date_of_birth</code>, <code>patient_uid</code></li>
             <li><code>wounds_import_results.csv</code> columns: <code>csv_row</code>, <code>patient_uid</code>, <code>wound_location</code>, <code>wound_type</code>, <code>first_seen_date</code>, <code>wound_uid</code></li>
@@ -400,11 +400,12 @@
             <li><strong>Step 4 (Allergies):</strong> Matches on <code>(patient_id, allergen_name)</code> (case-insensitive).</li>
             <li><strong>Step 5 (Comorbidities):</strong> Merges and deduplicates condition strings (case-insensitive) into <code>patient.conditions[]</code>.</li>
             <li><strong>Step 6 (Emergency Contacts):</strong> Matches on <code>(patient_id, contact_name, phone_number)</code> (case-insensitive).</li>
-            <li><strong>Step 8 (Wounds):</strong> Matches on <code>(patient_id, wound_location, wound_type, first_seen_date)</code> in <code>wound_import_history</code>.</li>
+            <li><strong>Step 7 (Wounds):</strong> Matches on <code>(patient_id, wound_location, wound_type, first_seen_date)</code> in <code>wound_import_history</code>.</li>
+            <li><strong>Step 8 (Documents &amp; Historical Wound Photos):</strong> Deduplicates by SHA-256 content hash (<code>external_id = po_&lt;sha256&gt;</code>) in <code>public.documents</code> and <code>wound_import_history.photo_urls</code>.</li>
             <li><strong>Step 9 (Visit History):</strong> Matches on <code>(patient_id, service_date, visit_number, provider_name, visit_summary)</code> in <code>visit_import_history</code>.</li>
           </ul>
         </li>
-        <li><strong><code>Skipped (existing)</code> count &amp; UID return:</strong> Rows that already exist are not duplicated; they increment the <strong>Skipped</strong> counter (<code>skipped_count</code>). For Step 1 (Patients) and Step 8 (Wounds), skipped existing rows <strong>still return their existing <code>patient_uid</code> or <code>wound_uid</code></strong> in the results CSV so you never lose your ID mapping.</li>
+        <li><strong><code>Skipped (existing)</code> count &amp; UID return:</strong> Rows that already exist are not duplicated; they increment the <strong>Skipped</strong> counter (<code>skipped_count</code>). For Step 1 (Patients) and Step 7 (Wounds), skipped existing rows <strong>still return their existing <code>patient_uid</code> or <code>wound_uid</code></strong> in the results CSV so you never lose your ID mapping.</li>
         <li><strong>Step card progress &amp; batch status:</strong>
           <ul>
             <li>Each step card shows cumulative imported rows across all batches plus the latest run breakdown: <code>&lt;N&gt; imported total · last run: X imported, Y skipped, Z errors</code>.</li>
@@ -714,7 +715,7 @@
         </tbody>
       </table>
 
-      <h3 id="step-7-documents">Step 7 — Documents (<code>documents_import_template.csv</code> — currently disabled)</h3>
+      <h3 id="step-7-wounds">Step 7 — Wounds (<code>wounds_import_template.csv</code>) &amp; Step 8 — Documents &amp; Historical Wound Photos (<code>documents_import_template.csv</code>)</h3>
       <p><Note>
       Step 7 (<strong>Documents</strong>) is currently disabled on <code>/administrator/practice-onboarding</code> and displays <strong>Not available yet</strong>. Documents and wound photographs are not migrated via CSV; upload clinical documents directly to the patient's chart after onboarding. If the <code>documents</code> import endpoint is invoked directly, it returns <code>Document import is not available yet. No documents were imported.</code>
       </Note></p>
@@ -756,13 +757,13 @@
         </tbody>
       </table>
 
-      <h3 id="step-8-wounds-and-step-9-visit-history">Step 8 — Wounds (<code>wounds_import_template.csv</code>) &amp; Step 9 — Visit History (<code>visit_history_import_template.csv</code>)</h3>
+      <h3 id="step-8-documents-and-step-9-visit-history">Step 7 — Wounds, Step 8 — Documents &amp; Historical Wound Photos, &amp; Step 9 — Visit History</h3>
       <p><Note>
       <strong>Read-only clinical history:</strong> Both imported wounds (Step 8) and imported visits (Step 9) are stored in dedicated <strong>read-only history tables</strong> (<code>wound_import_history</code> and <code>visit_import_history</code>). Clinicians can view them on the patient's chart for historical context, but imported history records <strong>cannot be edited, signed, or billed</strong> as active Medipyxis visits, and wound photos are not migrated. To document and bill a new encounter in Medipyxis, start a new visit on the patient's active chart.
       </Note></p>
 
-      <h4 id="step-8-wounds">Step 8 — Wounds (<code>wounds_import_template.csv</code>)</h4>
-      <p>Produces <code>wound_uid</code> in <code>wounds_import_results.csv</code> so Step 9 (<strong>Visit History</strong>) can link historical visits to specific historical wounds.</p>
+      <h4 id="step-7-wounds-table">Step 7 — Wounds (<code>wounds_import_template.csv</code>)</h4>
+      <p>Produces <code>wound_uid</code> in <code>wounds_import_results.csv</code> so Step 8 (<strong>Documents &amp; Historical Wound Photos</strong>, via <code>wound_uid</code> or <code>wound_id</code>) and Step 9 (<strong>Visit History</strong>) can link historical wound photos, wound-specific documents, and historical visits to specific historical wounds.</p>
       <table>
         <thead>
           <tr>
@@ -885,7 +886,7 @@
             <td><code>wound_uid</code></td>
             <td>Optional</td>
             <td>UUID (or comma/semicolon-separated UUIDs)</td>
-            <td>One or more <code>wound_uid</code> values from Step 8's <code>wounds_import_results.csv</code> (stored in <code>wound_import_ids[]</code>).</td>
+            <td>One or more <code>wound_uid</code> (or <code>wound_id</code>) values from Step 7's <code>wounds_import_results.csv</code> (stored in <code>wound_import_ids[]</code>).</td>
             <td>Stored as <code>null</code> if blank. Any non-UUID token is dropped with a non-blocking warning so the visit row still imports.</td>
           </tr>
           <tr>
@@ -974,8 +975,8 @@
         <li><a class="indent-3" href="#step-4-allergies">Step 4 — Allergies</a></li>
         <li><a class="indent-3" href="#step-5-comorbidities">Step 5 — Comorbidities</a></li>
         <li><a class="indent-3" href="#step-6-emergency-contacts">Step 6 — Emergency Contacts</a></li>
-        <li><a class="indent-3" href="#step-7-documents">Step 7 — Documents (disabled)</a></li>
-        <li><a class="indent-3" href="#step-8-wounds-and-step-9-visit-history">Steps 8 &amp; 9 — Wounds &amp; Visit History</a></li>
+        <li><a class="indent-3" href="#step-7-wounds">Step 7 — Wounds</a></li>
+        <li><a class="indent-3" href="#step-8-documents-and-step-9-visit-history">Steps 8 &amp; 9 — Documents &amp; Visit History</a></li>
         <li><a class="" href="#date-and-formatting-checklist">Date &amp; formatting checklist</a></li>
         <li><a class="" href="#related">Related</a></li>
       </ul>

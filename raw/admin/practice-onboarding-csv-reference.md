@@ -37,9 +37,9 @@ Download the latest template directly from each step's **Upload** screen on `/ad
 | 4 | **Allergies** | `allergies_import_template.csv` | Step 1 (`patient_uid`) | — | Active |
 | 5 | **Comorbidities** | `comorbidities_import_template.csv` | Step 1 (`patient_uid`) | — | Active |
 | 6 | **Emergency Contacts** | `contacts_import_template.csv` | Step 1 (`patient_uid`) | — | Active |
-| 7 | **Documents** | `documents_import_template.csv` | Step 1 (`patient_uid`) | — | **Disabled in UI** (*Not available yet*) |
-| 8 | **Wounds** (read-only history) | `wounds_import_template.csv` | Step 1 (`patient_uid`) | `wound_uid` (`wounds_import_results.csv`) | Active |
-| 9 | **Visit History** (read-only history) | `visit_history_import_template.csv` | Step 8 (`patient_uid`, optional `wound_uid`) | — | Active |
+| 7 | **Wounds** (read-only history) | `wounds_import_template.csv` | Step 1 (`patient_uid`) | `wound_uid` (`wounds_import_results.csv`) | Active |
+| 8 | **Documents & Historical Wound Photos** | `documents_import_template.csv` | Step 1 (`patient_uid`; optional `wound_uid` / `wound_id` from Step 7) | — | Active |
+| 9 | **Visit History** (read-only history) | `visit_history_import_template.csv` | Step 7 (`patient_uid`, optional `wound_uid` / `wound_id`) | — | Active |
 
 ---
 
@@ -115,10 +115,10 @@ Setting `consent_on_file = yes` writes a `patient_consents` record (`collection_
 
 ### Downloading `patient_uid` (and `wound_uid`) mappings anytime
 
-Steps 2 through 9 link every row back to a patient using `patient_uid` (the Medipyxis UUID generated in Step 1), and Step 9 optionally links visits to wounds using `wound_uid` (generated in Step 8). You can download those IDs in two places:
+Steps 2 through 9 link every row back to a patient using `patient_uid` (the Medipyxis UUID generated in Step 1), and Steps 8 and 9 optionally link historical wound photos, wound-specific documents, and visits to wounds using `wound_uid` / `wound_id` (generated in Step 7). You can download those IDs in two places:
 
 1. **Immediately after an import finishes:** Click **Download Results CSV** in the blue banner on the Results screen to download `patients_import_results.csv` or `wounds_import_results.csv`.
-2. **Anytime later on `/administrator/practice-onboarding`:** Completed **Step 1 — Patients** and **Step 8 — Wounds** cards display a persistent **Download results CSV** action (rebuilt server-side via `batch_results` from the saved batch mapping). This lets you re-download `patient_uid` and `wound_uid` mappings even after clicking **Done**, refreshing the browser, or signing in from another computer.
+2. **Anytime later on `/administrator/practice-onboarding`:** Completed **Step 1 — Patients** and **Step 7 — Wounds** cards display a persistent **Download results CSV** action (rebuilt server-side via `batch_results` from the saved batch mapping). This lets you re-download `patient_uid` and `wound_uid` mappings even after clicking **Done**, refreshing the browser, or signing in from another computer.
    - `patients_import_results.csv` columns: `csv_row`, `first_name`, `last_name`, `date_of_birth`, `patient_uid`
    - `wounds_import_results.csv` columns: `csv_row`, `patient_uid`, `wound_location`, `wound_type`, `first_seen_date`, `wound_uid`
 
@@ -133,9 +133,10 @@ Every active step in the Practice Onboarding importer is **idempotent**:
   - **Step 4 (Allergies):** Matches on `(patient_id, allergen_name)` (case-insensitive).
   - **Step 5 (Comorbidities):** Merges and deduplicates condition strings (case-insensitive) into `patient.conditions[]`.
   - **Step 6 (Emergency Contacts):** Matches on `(patient_id, contact_name, phone_number)` (case-insensitive).
-  - **Step 8 (Wounds):** Matches on `(patient_id, wound_location, wound_type, first_seen_date)` in `wound_import_history`.
+  - **Step 7 (Wounds):** Matches on `(patient_id, wound_location, wound_type, first_seen_date)` in `wound_import_history`.
+  - **Step 8 (Documents & Historical Wound Photos):** Deduplicates by SHA-256 content hash (`external_id = po_<sha256>`) in `public.documents` and `wound_import_history.photo_urls`.
   - **Step 9 (Visit History):** Matches on `(patient_id, service_date, visit_number, provider_name, visit_summary)` in `visit_import_history`.
-- **`Skipped (existing)` count & UID return:** Rows that already exist are not duplicated; they increment the **Skipped** counter (`skipped_count`). For Step 1 (Patients) and Step 8 (Wounds), skipped existing rows **still return their existing `patient_uid` or `wound_uid`** in the results CSV so you never lose your ID mapping.
+- **`Skipped (existing)` count & UID return:** Rows that already exist are not duplicated; they increment the **Skipped** counter (`skipped_count`). For Step 1 (Patients) and Step 7 (Wounds), skipped existing rows **still return their existing `patient_uid` or `wound_uid`** in the results CSV so you never lose your ID mapping.
 - **Step card progress & batch status:**
   - Each step card shows cumulative imported rows across all batches plus the latest run breakdown: `<N> imported total · last run: X imported, Y skipped, Z errors`.
   - **Complete (`completed`):** All importable rows were imported or skipped with `0` errors.
@@ -212,26 +213,13 @@ Creates records in `patient_emergency_contacts`.
 | `email` | Optional | Email | Contact email address (`name@domain.tld`). | Stored as `null` if blank; invalid format is flagged on Confirm. |
 | `is_primary` | Optional | Boolean | `true` / `false`, `yes` / `no`, `1` / `0` (case-insensitive). | Defaults to `false` if blank. |
 
-### Step 7 — Documents (`documents_import_template.csv` — currently disabled)
+### Step 7 — Wounds (`wounds_import_template.csv`), Step 8 — Documents & Historical Wound Photos (`documents_import_template.csv`), & Step 9 — Visit History (`visit_history_import_template.csv`)
 
-> **Note:** Step 7 (**Documents**) is currently disabled on `/administrator/practice-onboarding` and displays **Not available yet**. Documents and wound photographs are not migrated via CSV; upload clinical documents directly to the patient's chart after onboarding. If the `documents` import endpoint is invoked directly, it returns `Document import is not available yet. No documents were imported.`
+> **Read-only clinical history:** Imported wounds (Step 7), historical wound photos and prior-EHR documents (Step 8), and imported visits (Step 9) are stored in dedicated **read-only history tables and private buckets** (`wound_import_history`, `visit_import_history`, `patient-documents`, and `wound-images`). Clinicians can view them on the patient's chart for historical context, but imported history records **cannot be edited, signed, or billed** as active Medipyxis visits. To document and bill a new encounter in Medipyxis, start a new visit on the patient's active chart.
 
-For schema reference, the template columns defined in `documentsImportConfig.ts` are:
+#### Step 7 — Wounds (`wounds_import_template.csv`)
 
-| Column (`key`) | Required | Type / Format | Accepted values |
-|---|---|---|---|
-| `patient_uid` | **Required** | UUID | Valid `patient_uid` from Step 1. |
-| `file_name` | **Required** | Text | Document file name (e.g., `referral_jane_doe.pdf`). |
-| `document_type` | Optional | Text | `referral`, `consent`, `lab_result`, `imaging`, `prior_auth`, or `other`. |
-| `document_date` | Optional | Date (`YYYY-MM-DD`) | Document date (`YYYY-MM-DD`). |
-
-### Step 8 — Wounds (`wounds_import_template.csv`) & Step 9 — Visit History (`visit_history_import_template.csv`)
-
-> **Read-only clinical history:** Both imported wounds (Step 8) and imported visits (Step 9) are stored in dedicated **read-only history tables** (`wound_import_history` and `visit_import_history`). Clinicians can view them on the patient's chart for historical context, but imported history records **cannot be edited, signed, or billed** as active Medipyxis visits, and wound photos are not migrated. To document and bill a new encounter in Medipyxis, start a new visit on the patient's active chart.
-
-#### Step 8 — Wounds (`wounds_import_template.csv`)
-
-Produces `wound_uid` in `wounds_import_results.csv` so Step 9 (**Visit History**) can link historical visits to specific historical wounds.
+Produces `wound_uid` in `wounds_import_results.csv` so Step 8 (**Documents & Historical Wound Photos**) and Step 9 (**Visit History**) can link historical wound photos, wound-specific documents, and historical visits to specific historical wounds.
 
 | Column (`key`) | Required | Type / Format | Accepted values & validation | Default / Fallback behavior |
 |---|---|---|---|---|
@@ -248,6 +236,19 @@ Produces `wound_uid` in `wounds_import_results.csv` so Step 9 (**Visit History**
 | `diagnosis_codes` | Optional | Text (comma- or semicolon-separated) | ICD-10 codes associated with the wound (e.g., `I87.2, L97.429`). Split on `,` or `;` into a `text[]` array. | Stored as `null` if blank. |
 | `notes` | Optional | Text | Free-text wound summary or prior treatment note. | Saved to `treatment_notes` on `wound_import_history` (`null` if blank). |
 
+#### Step 8 — Documents & Historical Wound Photos (`documents_import_template.csv`)
+
+Uploads local clinical documents (`.pdf`, `.jpg`, `.jpeg`, `.png`, `.heic`, `.tif`, `.tiff`) and historical wound photographs (`.jpg`, `.jpeg`, `.png`, `.heic`) into private HIPAA-compliant storage buckets using a two-phase signed-upload + SHA-256 commit flow. Image files with a `wound_uid` (or `wound_id`) attach to `wound_import_history.photo_urls`, while PDFs/TIFFs (with or without `wound_uid` / `wound_id`) commit to `patient-documents` and `public.documents` (`prior_ehr_record = true`).
+
+| Column (`key`) | Required | Type / Format | Accepted values & validation | Default / Fallback behavior |
+|---|---|---|---|---|
+| `patient_uid` | **Required** | UUID | Valid `patient_uid` from Step 1 (`patient_id` is also accepted as a column header alias). | Row is rejected if invalid or not found. |
+| `file_name` | **Required** | Text | Exact filename of an attached local file (e.g., `referral_jane_doe.pdf` or `left_heel_2025-10-12.jpg`). | Rows with no matching attached local file are skipped with a warning and never create broken-link records. |
+| `document_type` | Optional | Text | `Lab Results`, `Referral`, `Insurance Card`, `Signed Consent`, `Prior Progress Note`, `Imaging / Vascular Study`, `Wound Photo`, or `Other`. | Defaults to `Prior EHR Record` if blank. |
+| `document_date` | Optional | Date (`YYYY-MM-DD`) | Date of the original document or photo (`YYYY-MM-DD` or `MM/DD/YYYY`). | Defaults to import date if blank. |
+| `wound_uid` (or `wound_id`) | Optional (Required for Wound Photos) | UUID | Valid `wound_uid` from Step 7's `wounds_import_results.csv` (`wound_id` is also accepted). Links a historical wound photo (`.jpg`/`.png`/`.heic`) or a wound-specific document (`.pdf`/`.tiff`) to a historical wound in `wound_import_history`. | Verified against `wound_import_history` for that patient and facility. |
+| `prior_ehr_system` | Optional | Text | Source EHR name (e.g., `PointClickCare`, `NetHealth`, `Athena`). | Recorded in `notes` on `public.documents`. |
+
 #### Step 9 — Visit History (`visit_history_import_template.csv`)
 
 Creates read-only historical encounter summaries in `visit_import_history`.
@@ -255,7 +256,7 @@ Creates read-only historical encounter summaries in `visit_import_history`.
 | Column (`key`) | Required | Type / Format | Accepted values & validation | Default / Fallback behavior |
 |---|---|---|---|---|
 | `patient_uid` | **Required** | UUID | Valid `patient_uid` in the active facility. | Row is rejected if invalid or not found. |
-| `wound_uid` | Optional | UUID (or comma/semicolon-separated UUIDs) | One or more `wound_uid` values from Step 8's `wounds_import_results.csv` (stored in `wound_import_ids[]`). | Stored as `null` if blank. Any non-UUID token is dropped with a non-blocking warning so the visit row still imports. |
+| `wound_uid` (or `wound_id`) | Optional | UUID (or comma/semicolon-separated UUIDs) | One or more `wound_uid` values from Step 7's `wounds_import_results.csv` (stored in `wound_import_ids[]`). | Stored as `null` if blank. Any non-UUID token is dropped with a non-blocking warning so the visit row still imports. |
 | `service_date` | **Required** | Date (`YYYY-MM-DD`) | Date of the historical visit (`YYYY-MM-DD` or `MM/DD/YYYY`). | Row is rejected if blank or invalid. |
 | `visit_number` | Optional | Integer | Sequential visit number from the prior EHR (e.g., `1`, `2`). Must be a positive whole number. | Stored as `null` if blank; non-integer values are dropped with a warning on the backend or flagged on Confirm. |
 | `provider_name` | Optional | Text | Name of the clinician who performed the historical visit (e.g., `Dr. Jane Smith`). | Stored as `null` if blank. |
