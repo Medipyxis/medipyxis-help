@@ -41,8 +41,8 @@ Steps unlock as their prerequisites complete. **Patients** is always first becau
 | 4 | **Allergies** (`allergies_import_template.csv`) | Patients | — |
 | 5 | **Comorbidities** (`comorbidities_import_template.csv`) | Patients | — |
 | 6 | **Emergency Contacts** (`contacts_import_template.csv`) | Patients | — |
-| 7 | **Documents** (not available yet) | Patients | — |
-| 8 | **Wounds** (`wounds_import_template.csv` — read-only history) | Patients | `wound_uid` |
+| 7 | **Wounds** (`wounds_import_template.csv` — read-only history) | Patients | `wound_uid` |
+| 8 | **Documents & Historical Wound Photos** (`documents_import_template.csv`) | Patients (and Step 7 Wounds when linking `wound_uid` / `wound_id`) | — |
 | 9 | **Visit History** (`visit_history_import_template.csv` — read-only history) | Wounds | — |
 
 ## Steps
@@ -55,16 +55,16 @@ Steps unlock as their prerequisites complete. **Patients** is always first becau
 4. **Map Columns** — Match each column from your CSV to the corresponding Medipyxis field. Columns that match the template header names are mapped automatically.
 5. **Confirm** — Inspect the parsed rows, check the blue date-interpretation preflight banner, and fix any validation errors inline (or skip invalid rows) before importing.
 6. **Results & `patient_uid` download** — Review the counts of **Imported**, **Skipped (existing)**, **Warnings (`Needs Follow-Up`)**, and **Errors**. Click **Download Results CSV** to save `patients_import_results.csv` containing each patient's generated `patient_uid`.
-   - You can also re-download `patients_import_results.csv` (and Step 8's `wounds_import_results.csv`) anytime later directly from the completed **Patients** or **Wounds** step card on `/administrator/practice-onboarding` (**Download results CSV**), even after clicking **Done** or switching devices.
-7. Click **Back to Overview** (or **Done**) and repeat the flow for steps 2–6 and 8–9 as each step unlocks. Re-uploading a file is idempotent: existing records are counted as **Skipped** without creating duplicates.
+   - You can also re-download `patients_import_results.csv` (and Step 7's `wounds_import_results.csv`) anytime later directly from the completed **Patients** or **Wounds** step card on `/administrator/practice-onboarding` (**Download results CSV**), even after clicking **Done** or switching devices.
+7. Click **Back to Overview** (or **Done**) and repeat the flow for steps 2–9 as each step unlocks. Re-uploading a file is idempotent: existing records are counted as **Skipped** without creating duplicates.
 
 <Note type="tip">
-Start with **Patients** and import it cleanly before the dependent steps — every other record type links to `patient_uid`. Import **Wounds** before **Visit History** so historical visits can attach to `wound_uid`.
+Start with **Patients** and import it cleanly before the dependent steps — every other record type links to `patient_uid`. Import **Step 7 — Wounds** before **Step 8 — Documents & Historical Wound Photos** and **Step 9 — Visit History** so wound photos, wound-linked documents, and historical visits can attach to `wound_uid` (or `wound_id`).
 </Note>
 
 ## Result
 
-The practice's patients, coverage, clinical history, wounds, and prior visits are in Medipyxis, ready for scheduling and documentation. Documents and wound photos are not migrated (step 7 shows *Not available yet*), and imported wounds and visits are read-only history (`wound_import_history` and `visit_import_history`): they can be seen on the patient's record for clinical context but cannot be edited, signed, or billed. Import batches are tracked per facility so you can review what was loaded.
+The practice's patients, coverage, clinical history, wounds, and prior visits are in Medipyxis, ready for scheduling and documentation. Prior EHR documents and historical wound photos imported in Step 8 are stored in private buckets (`patient-documents` and `wound-images`) and tagged as historical records (`prior_ehr_record = true`), and imported wounds (Step 7) and visits (Step 9) are read-only history (`wound_import_history` and `visit_import_history`): they can be seen on the patient's record for clinical context but cannot be edited, signed, or billed. Import batches are tracked per facility so you can review what was loaded.
 
 - **Column-by-column specification:** [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/)
 - **See it on screen:** [How do I move my practice's patient data into Medipyxis?](/whats-new/practice-data-import/) (a short silent video with a text description)
