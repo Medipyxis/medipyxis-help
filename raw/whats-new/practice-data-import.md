@@ -4,7 +4,7 @@ title: How do I move my practice's patient data into Medipyxis?
 module: admin
 audience: [admin]
 type: whats-new
-last_reviewed: 2026-10-24
+last_reviewed: 2026-10-26
 tags: [whats-new, video, import, onboarding, csv, migration]
 related:
   - whats-new
@@ -15,7 +15,7 @@ related:
 
 # How do I move my practice's patient data into Medipyxis?
 
-Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.
+Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.
 
 The video has no sound, and a text description is below it. Every patient in it is a made-up test patient; staff names and emails are blurred.
 
@@ -40,26 +40,27 @@ Each step has its own CSV template. Upload your file, check that its columns are
 - 0:51 The import runs.
 - 0:54 Import Complete: 3 rows sent, 2 imported, 1 skipped, 2 warnings. The skipped row was the same patient listed twice (same name and date of birth), so it was not created a second time. Needs Follow-Up lists the two new patients that had no provider email: they were imported without a provider and need one assigned.
 - 1:04 Download Results CSV is clicked. The file is your original rows plus a patient_uid column with each patient's new Medipyxis ID, which the later steps use.
-- 1:07 Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open. Documents shows Not available yet.
+- 1:07 Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open (and Step 9, Past Visits, opens once Step 7, Wounds, is completed).
 
 ## What can I import, and in what order?
 
 For the complete column-by-column specification, accepted values, and default rules for every template below, see [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/).
 
-1. **Patients** (`patient_import_template.csv`): Names, dates of birth (`YYYY-MM-DD`), contact details and address, assigned provider (`provider_email`), optional prior EHR IDs (`prior_ehr_system`, `prior_ehr_mrn`, `duplicate_decision`), and optional patient consent attestation columns (`consent_on_file` and 7 supporting `consent_*` columns).
-2. **Insurance**: Payer, policy and group numbers.
-3. **Medications**: Current medications with dose, frequency and prescriber.
-4. **Allergies**: Known allergies with severity and reaction.
-5. **Comorbidities**: Medical history and conditions, with ICD-10 codes.
-6. **Emergency contacts**: Name, relationship and phone number.
-7. **Wounds**: Historical wounds with location, type, measurements and staging (`wounds_import_results.csv` provides `wound_uid`).
-8. **Documents & Historical Wound Photos**: Clinical PDFs/TIFFs and historical wound photos, linked to `patient_uid` and optionally `wound_uid` / `wound_id`.
-9. **Visit history**: Past visits, linked to the patient and wounds (`wound_uid` / `wound_id`). Comes in as read-only history.
+1. **1. Patients** (`patient_import_template.csv`): Names, dates of birth (`YYYY-MM-DD`), contact details and address, assigned provider (`provider_email`), optional prior EHR IDs (`prior_ehr_system`, `prior_ehr_mrn`, `duplicate_decision`, `force_distinct_patient`), and optional patient consent attestation columns (`consent_on_file` and 7 supporting `consent_*` columns).
+2. **2. Insurance** (`insurance_import_template.csv`): Payer, subscriber/member ID, policy and group numbers linked to `patient_uid`.
+3. **3. Medications** (`medications_import_template.csv`): Current medications with dose, route, frequency and prescriber linked to `patient_uid`.
+4. **4. Allergies** (`allergies_import_template.csv`): Known allergies with allergy type, severity and reaction linked to `patient_uid`.
+5. **5. Conditions** (`conditions_import_template.csv` — Comorbidities): Medical history and conditions, with ICD-10 codes linked to `patient_uid`.
+6. **6. Emergency Contacts** (`contacts_import_template.csv`): Name, relationship, phone number and primary contact flag linked to `patient_uid`.
+7. **7. Wounds** (`wounds_import_template.csv`): Historical wounds with anatomical location, wound type, baseline measurements (period-decimal cm) and staging (`wounds_import_results.csv` provides `wound_uid`).
+8. **8. Documents & Historical Wound Photos** (`documents_manifest.csv` / `wound_photos_manifest.csv` + ZIP archive): Clinical PDFs/TIFFs (stored in `patient-documents` under `imported-records/`) and historical wound photos (stored in `wound-images` under `historical/`), linked to `patient_uid` and optionally `wound_uid` / `wound_id`.
+9. **9. Past Visits** (`visit_history_import_template.csv` — Visit history): Past visits, linked to the patient (`patient_uid`) and wounds (`wound_uid` / `wound_id`). Imported as read-only history (`visit_import_history`).
 
-## What is not imported?
+## What is not imported (and what safeguards apply)?
 
-- **Documents and wound photos are not migrated.** Scanned referrals, consent forms, other attachments and wound photos stay in your old system. Keep access to it, or an export of it, for those files.
-- **Imported visits are read-only history.** You can see past visits on the patient's record, but they cannot be edited, signed or billed in Medipyxis. New visits are documented in Medipyxis as usual.
+- **Imported visits are read-only history (`visit_import_history`).** You can see past visits on the patient's record, but they cannot be edited, signed or billed as active Medipyxis visits. New visits are documented in Medipyxis as usual.
+- **Historical wound photos are isolated from live clinical assessments.** Photos uploaded in Step 8 are stored in `wound-images` under `historical/` on `wound_import_history.photo_urls` and never create or overwrite live `wound_assessment` records.
+- **Strict preflight & identity-collision safeguards.** Excel `sep=` preamble lines are stripped automatically; mixed `MM/DD/YYYY` and `DD/MM/YYYY` slash dates, impossible calendar dates (such as `2026-02-31`), and decimal-comma measurements (such as `2,5` instead of `2.5`) are blocked before saving; and patients sharing `first_name + last_name + date_of_birth` with conflicting secondary identifiers (`subscriber_id`, `mrn`, `ssn_last4`, `phone`, `address`, or `email`) are quarantined (`PATIENT_IDENTITY_COLLISION`) for disambiguation rather than silently merged.
 
 ## What does the results file look like?
 
@@ -76,31 +77,31 @@ For the complete column-by-column specification, accepted values, and default ru
 
 ### What can I import into Medipyxis from my old EHR?
 
-Patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds and past visit history, each from its own CSV file. Patients go first, because every other step links its rows to the patients created in step 1. Visit history goes after wounds, because past visits link to the imported wounds.
+Nine categories in dependency order: (1) Patients, (2) Insurance, (3) Medications, (4) Allergies, (5) Conditions / Comorbidities, (6) Emergency Contacts, (7) Wounds, (8) Documents & Historical Wound Photos (ZIP archive + manifest CSV), and (9) Past Visits (Visit History). Patients go first because every later step links its rows to the `patient_uid` created in Step 1. Wounds go in Step 7 so Step 8 and Step 9 can attach historical photos, wound-linked documents, and past visits to each imported `wound_uid` or `wound_id`.
 
 ### What happens to rows with errors?
 
-Before anything is saved, every row is checked. A row with a missing required field, a date that does not exist or an email that is not valid is marked in red with the reason. You can correct it on screen, or skip it and import the rest. Skipped rows are counted in the summary and stay in the results file without a Medipyxis ID, so you can fix them in your spreadsheet and import them later.
+Before anything is saved, every row is checked. Excel `sep=` preamble headers are stripped automatically, and rows with missing required fields, impossible calendar dates (such as `2026-02-31`), mixed `MM/DD/YYYY` and `DD/MM/YYYY` date formats, decimal-comma measurements (such as `2,5` instead of `2.5`), or invalid emails are marked in red with the exact reason. You can correct them on screen or skip them and import the rest. Skipped rows stay in the results file without a Medipyxis ID so you can fix them in your spreadsheet and import them later.
 
 ### Will importing the same patient twice create a duplicate?
 
-No. A patient with the same first name, last name and date of birth as an existing patient at the facility is not created again; the row is counted as skipped and the results file gives it the existing patient's ID. This also makes it safe to re-run an import.
+No. Re-importing the same patient reuses the existing chart and returns its `patient_uid` in the results CSV. Furthermore, if two rows share the same `first_name`, `last_name`, and `date_of_birth` (DOB) but have conflicting secondary identifiers (`subscriber_id`, `mrn`, `ssn_last4`, `phone`, street address/ZIP, or `email`), Medipyxis quarantines the row with a `PATIENT_IDENTITY_COLLISION` diagnostic instead of silently merging two distinct people. You can disambiguate twins, family-plan dependents, or common-name patients using `patient_uid`, `force_distinct_patient=true`, or `duplicate_decision`.
 
 ### What is the results CSV for?
 
-It is your file with one column added: each patient's new Medipyxis ID (patient_uid). The insurance, medication, allergy, condition, contact and wound files use that ID to attach their rows to the right patient. The Wounds step gives the same kind of file with wound IDs for the visit history import. The latest results file can be downloaded again from the step's card at any time.
+It is your file with one column added: each patient's new Medipyxis ID (`patient_uid`). The insurance, medication, allergy, condition, emergency contact, wound, and document steps use that ID to attach their rows to the right patient. Step 7 (Wounds) produces `wounds_import_results.csv` with `wound_uid` values for Step 8 (Documents & Historical Wound Photos) and Step 9 (Past Visits). The latest results file can be downloaded again from the step's card at any time.
 
 ### What if a patient has no provider in the file?
 
-The patient is still imported, without a provider, and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider's Medipyxis email in the provider_email column.
+The patient is still imported without a provider and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider's Medipyxis email in the `provider_email` column.
 
 ### Are documents and wound photos imported?
 
-No. Documents (such as scanned referrals and consent forms) and wound photos are not migrated. The Documents step shows Not available yet. Keep access to your old system, or an export of it, for those files, and attach new documents and photos in Medipyxis from here on.
+Yes, in Step 8 (**Documents & Historical Wound Photos**). Upload a ZIP archive together with `documents_manifest.csv` or `wound_photos_manifest.csv`. Clinical PDFs and TIFFs are stored in the private `patient-documents` bucket under `imported-records/` and indexed in `prior_ehr_record`; historical wound photos (JPEG, PNG, WebP, HEIC) are stored in the private `wound-images` bucket under `historical/` and appended to `wound_import_history.photo_urls` (never mixed into live clinical `wound_assessment` records).
 
 ### Can I edit or bill imported visits?
 
-No. Imported visits come in as read-only history: you can see them on the patient's record, but they are not Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual.
+No. Imported visits come in as read-only history (`visit_import_history`): you can see them on the patient's record, but they are not active Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual.
 
 ### Where can I see every CSV column and how patient consent attestation works?
 

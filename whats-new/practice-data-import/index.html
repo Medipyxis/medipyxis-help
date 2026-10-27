@@ -11,21 +11,21 @@
 <link rel="stylesheet" href="/assets/whats-new.css">
 <!-- seo:start -->
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-<meta name="description" content="Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.">
+<meta name="description" content="Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.">
 <link rel="canonical" href="https://help.medipyxis.com/whats-new/practice-data-import/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#202371">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Medipyxis Help">
 <meta property="og:title" content="How do I move my practice&#x27;s patient data into Medipyxis?">
-<meta property="og:description" content="Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.">
+<meta property="og:description" content="Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.">
 <meta property="og:url" content="https://help.medipyxis.com/whats-new/practice-data-import/">
 <meta property="og:image" content="https://help.medipyxis.com/assets/videos/whats-new/practice-data-import.jpg">
 <meta property="og:video" content="https://help.medipyxis.com/assets/videos/whats-new/practice-data-import.mp4">
 <meta property="og:video:type" content="video/mp4">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How do I move my practice&#x27;s patient data into Medipyxis?">
-<meta name="twitter:description" content="Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.">
+<meta name="twitter:description" content="Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.">
 <meta name="twitter:image" content="https://help.medipyxis.com/assets/videos/whats-new/practice-data-import.jpg">
 <script type="application/ld+json">
 {
@@ -36,10 +36,10 @@
       "@id": "https://help.medipyxis.com/whats-new/practice-data-import/",
       "url": "https://help.medipyxis.com/whats-new/practice-data-import/",
       "name": "How do I move my practice's patient data into Medipyxis?",
-      "description": "Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.",
+      "description": "Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.",
       "inLanguage": "en-US",
       "datePublished": "2026-10-23",
-      "dateModified": "2026-10-24",
+      "dateModified": "2026-10-26",
       "about": {
         "@id": "https://medipyxis.com/#software"
       },
@@ -49,6 +49,9 @@
       "hasPart": [
         {
           "@id": "https://help.medipyxis.com/whats-new/practice-data-import/#video"
+        },
+        {
+          "@id": "https://help.medipyxis.com/whats-new/practice-data-import/#howto"
         }
       ],
       "mainEntity": [
@@ -57,7 +60,7 @@
           "name": "What can I import into Medipyxis from my old EHR?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds and past visit history, each from its own CSV file. Patients go first, because every other step links its rows to the patients created in step 1. Visit history goes after wounds, because past visits link to the imported wounds."
+            "text": "Nine categories in dependency order: (1) Patients, (2) Insurance, (3) Medications, (4) Allergies, (5) Conditions / Comorbidities, (6) Emergency Contacts, (7) Wounds, (8) Documents & Historical Wound Photos (ZIP archive + manifest CSV), and (9) Past Visits (Visit History). Patients go first because every later step links its rows to the patient_uid created in Step 1. Wounds go in Step 7 so Step 8 and Step 9 can attach historical photos, wound-linked documents, and past visits to each imported wound_uid or wound_id."
           }
         },
         {
@@ -65,7 +68,7 @@
           "name": "What happens to rows with errors?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Before anything is saved, every row is checked. A row with a missing required field, a date that does not exist or an email that is not valid is marked in red with the reason. You can correct it on screen, or skip it and import the rest. Skipped rows are counted in the summary and stay in the results file without a Medipyxis ID, so you can fix them in your spreadsheet and import them later."
+            "text": "Before anything is saved, every row is checked. Excel sep= preamble headers are stripped automatically, and rows with missing required fields, impossible calendar dates (such as 2026-02-31), mixed MM/DD/YYYY and DD/MM/YYYY date formats, decimal-comma measurements (such as 2,5 instead of 2.5), or invalid emails are marked in red with the exact reason. You can correct them on screen or skip them and import the rest. Skipped rows stay in the results file without a Medipyxis ID so you can fix them in your spreadsheet and import them later."
           }
         },
         {
@@ -73,7 +76,7 @@
           "name": "Will importing the same patient twice create a duplicate?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. A patient with the same first name, last name and date of birth as an existing patient at the facility is not created again; the row is counted as skipped and the results file gives it the existing patient's ID. This also makes it safe to re-run an import."
+            "text": "No. Re-importing the same patient reuses the existing chart and returns its patient_uid in the results CSV. Furthermore, if two rows share the same first_name, last_name, and date_of_birth (DOB) but have conflicting secondary identifiers (subscriber_id, mrn, ssn_last4, phone, street address/ZIP, or email), Medipyxis quarantines the row with a PATIENT_IDENTITY_COLLISION diagnostic instead of silently merging two distinct people. You can disambiguate twins, family-plan dependents, or common-name patients using patient_uid, force_distinct_patient=true, or duplicate_decision."
           }
         },
         {
@@ -81,7 +84,7 @@
           "name": "What is the results CSV for?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "It is your file with one column added: each patient's new Medipyxis ID (patient_uid). The insurance, medication, allergy, condition, contact and wound files use that ID to attach their rows to the right patient. The Wounds step gives the same kind of file with wound IDs for the visit history import. The latest results file can be downloaded again from the step's card at any time."
+            "text": "It is your file with one column added: each patient's new Medipyxis ID (patient_uid). The insurance, medication, allergy, condition, emergency contact, wound, and document steps use that ID to attach their rows to the right patient. Step 7 (Wounds) produces wounds_import_results.csv with wound_uid values for Step 8 (Documents & Historical Wound Photos) and Step 9 (Past Visits). The latest results file can be downloaded again from the step's card at any time."
           }
         },
         {
@@ -89,7 +92,7 @@
           "name": "What if a patient has no provider in the file?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The patient is still imported, without a provider, and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider's Medipyxis email in the provider_email column."
+            "text": "The patient is still imported without a provider and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider's Medipyxis email in the provider_email column."
           }
         },
         {
@@ -97,7 +100,7 @@
           "name": "Are documents and wound photos imported?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Documents (such as scanned referrals and consent forms) and wound photos are not migrated. The Documents step shows Not available yet. Keep access to your old system, or an export of it, for those files, and attach new documents and photos in Medipyxis from here on."
+            "text": "Yes, in Step 8 (Documents & Historical Wound Photos). Upload a ZIP archive together with documents_manifest.csv or wound_photos_manifest.csv. Clinical PDFs and TIFFs are stored in the private patient-documents bucket under imported-records/ and indexed in prior_ehr_record; historical wound photos (JPEG, PNG, WebP, HEIC) are stored in the private wound-images bucket under historical/ and appended to wound_import_history.photo_urls (never mixed into live clinical wound_assessment records)."
           }
         },
         {
@@ -105,7 +108,15 @@
           "name": "Can I edit or bill imported visits?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Imported visits come in as read-only history: you can see them on the patient's record, but they are not Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual."
+            "text": "No. Imported visits come in as read-only history (visit_import_history): you can see them on the patient's record, but they are not active Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I see every CSV column and how patient consent attestation works?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "See Practice Data Import CSV templates and column reference (/admin/practice-onboarding-csv-reference/) for the complete column-by-column breakdown of all 9 templates. In Step 1 (patient_import_template.csv), the 8 optional consent_* columns gate on consent_on_file: when blank or no, no consent is recorded and the other 7 columns are ignored; when yes, Medipyxis records an external_attested treatment and billing consent under the importing admin's account. Only attest consent_on_file = yes when your practice holds its own signed consent form for that patient \u2014 never use a nursing facility's admission paperwork."
           }
         },
         {
@@ -119,6 +130,68 @@
       ]
     },
     {
+      "@type": "HowTo",
+      "@id": "https://help.medipyxis.com/whats-new/practice-data-import/#howto",
+      "name": "How to import practice data into Medipyxis in 9 steps",
+      "description": "Import patients, clinical history, wounds, documents, historical wound photos, and past visits into Medipyxis using Practice Onboarding.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "1. Patients",
+          "text": "Upload patient_import_template.csv with demographics, provider_email, optional prior_ehr_system/prior_ehr_mrn, and optional consent_* attestation fields, then download patients_import_results.csv containing each patient_uid."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "2. Insurance",
+          "text": "Upload insurance_import_template.csv linked by patient_uid with payer, member_id/subscriber_id, policy_number, and group_number."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "3. Medications",
+          "text": "Upload medications_import_template.csv linked by patient_uid with medication_name, dosage, route, frequency, and status."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "4. Allergies",
+          "text": "Upload allergies_import_template.csv linked by patient_uid with allergen, allergy_type, reaction, severity, and status."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "5. Conditions",
+          "text": "Upload conditions_import_template.csv (Comorbidities) linked by patient_uid with icd10_code, description, and status."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "6. Emergency Contacts",
+          "text": "Upload contacts_import_template.csv linked by patient_uid with contact name, relationship, phone, and is_primary."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 7,
+          "name": "7. Wounds",
+          "text": "Upload wounds_import_template.csv linked by patient_uid with anatomical location, wound_type, baseline measurements (period-decimal cm), and pressure stage, then download wounds_import_results.csv containing each wound_uid."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 8,
+          "name": "8. Documents & Historical Wound Photos",
+          "text": "Upload a ZIP archive and manifest CSV (documents_manifest.csv or wound_photos_manifest.csv) linked by patient_uid and optional wound_uid / wound_id to store PDFs/TIFFs in patient-documents and historical wound photos in wound-images under historical/."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 9,
+          "name": "9. Past Visits",
+          "text": "Upload visit_history_import_template.csv linked by patient_uid and wound_uid / wound_id to import read-only historical visit records into visit_import_history."
+        }
+      ]
+    },
+    {
       "@type": "SoftwareApplication",
       "@id": "https://medipyxis.com/#software",
       "name": "Medipyxis",
@@ -128,12 +201,12 @@
       "operatingSystem": "Web browser",
       "description": "Wound care EMR and practice management platform for mobile wound care teams, from referral intake through billing.",
       "featureList": [
-        "CSV import of patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds and visit history",
-        "Downloadable CSV template for each import step",
-        "Automatic column matching",
+        "Nine-step Practice Onboarding import: Patients, Insurance, Medications, Allergies, Conditions, Emergency Contacts, Wounds, Documents & Historical Wound Photos, and Past Visits",
+        "Downloadable CSV template for each import step plus Excel sep= header stripping",
+        "Automatic column matching and strict calendar date & period-decimal preflight validation",
         "Row-by-row review before saving: problem rows fixed on screen or skipped with a reason",
-        "Duplicate patients detected by name and date of birth",
-        "Results CSV with the new Medipyxis ID for every imported patient and wound"
+        "Patient identity collision disambiguation (PATIENT_IDENTITY_COLLISION) across subscriber_id, mrn, ssn_last4, phone, address, and email",
+        "Results CSV with the new Medipyxis ID (patient_uid and wound_uid) for every imported patient and wound"
       ],
       "publisher": {
         "@type": "Organization",
@@ -153,7 +226,7 @@
       "uploadDate": "2026-10-23",
       "duration": "PT76S",
       "inLanguage": "en-US",
-      "transcript": "0:00 The Practice Onboarding page (Administrator, then Practice Onboarding) lists nine import steps. Step 1, Patients, is open to start; the others are locked until patients are imported. Visit History waits for Wounds. 0:12 Step 1, Patients, is opened. A panel lists the providers at this facility and their Medipyxis emails, blurred in this video. Below it is the upload area. 0:19 Download Patients Template is clicked and the template CSV downloads. It has one column per field, with an example row. 0:22 A test CSV with six made-up patients is uploaded. Map Columns shows every column in the file matched to a Medipyxis field automatically: 10 of 10. Required fields are starred. Confirm Mapping is clicked. 0:36 Review Patients Data shows 3 valid rows and 3 errors. Row 4 has a birth date that does not exist, row 5 has no last name and row 6 has an email address that is not valid. A note explains how dates were read (month first) and asks you to check them. 0:47 Skip all 3 error rows is clicked. The three rows are greyed out and marked Skipped. The button now reads Import 3 Patients Records. 0:51 The import runs. 0:54 Import Complete: 3 rows sent, 2 imported, 1 skipped, 2 warnings. The skipped row was the same patient listed twice (same name and date of birth), so it was not created a second time. Needs Follow-Up lists the two new patients that had no provider email: they were imported without a provider and need one assigned. 1:04 Download Results CSV is clicked. The file is your original rows plus a patient_uid column with each patient's new Medipyxis ID, which the later steps use. 1:07 Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open. Documents shows Not available yet.",
+      "transcript": "0:00 The Practice Onboarding page (Administrator, then Practice Onboarding) lists nine import steps. Step 1, Patients, is open to start; the others are locked until patients are imported. Visit History waits for Wounds. 0:12 Step 1, Patients, is opened. A panel lists the providers at this facility and their Medipyxis emails, blurred in this video. Below it is the upload area. 0:19 Download Patients Template is clicked and the template CSV downloads. It has one column per field, with an example row. 0:22 A test CSV with six made-up patients is uploaded. Map Columns shows every column in the file matched to a Medipyxis field automatically: 10 of 10. Required fields are starred. Confirm Mapping is clicked. 0:36 Review Patients Data shows 3 valid rows and 3 errors. Row 4 has a birth date that does not exist, row 5 has no last name and row 6 has an email address that is not valid. A note explains how dates were read (month first) and asks you to check them. 0:47 Skip all 3 error rows is clicked. The three rows are greyed out and marked Skipped. The button now reads Import 3 Patients Records. 0:51 The import runs. 0:54 Import Complete: 3 rows sent, 2 imported, 1 skipped, 2 warnings. The skipped row was the same patient listed twice (same name and date of birth), so it was not created a second time. Needs Follow-Up lists the two new patients that had no provider email: they were imported without a provider and need one assigned. 1:04 Download Results CSV is clicked. The file is your original rows plus a patient_uid column with each patient's new Medipyxis ID, which the later steps use. 1:07 Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open (and Step 9, Past Visits, opens as soon as Step 7, Wounds, is imported).",
       "about": {
         "@id": "https://medipyxis.com/#software"
       }
@@ -200,8 +273,8 @@
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/whats-new/">What's new</a> / Import your practice data</p>
       <p class="eyebrow">Practice setup &middot; 1 short video</p>
       <h1>How do I move my practice&#x27;s patient data into Medipyxis?</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">whats-new</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-10-24</span></div>
-      <p class="lede">Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">whats-new</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-10-26</span></div>
+      <p class="lede">Practice Onboarding imports your patient records from your old EHR system across nine guided steps: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds, clinical documents and historical wound photos, and past visits. You see every row before it is saved, rows with problems or identity collisions are held with a reason, and a results file tells you exactly what was imported.</p>
       <p class="note">The video has no sound, and a text description is below it. Every patient in it is a made-up test patient; staff names and emails are blurred.</p>
       <ol class="parts-nav"><li><a href="#video">How does the import work, step by step?</a></li><li><a href="#what">What can I import, and in what order?</a></li><li><a href="#limits">What is not imported?</a></li><li><a href="#results">What does the results file look like?</a></li><li><a href="#screens">Screenshots</a></li><li><a href="#faq">Questions and answers</a></li></ol>
 
@@ -216,21 +289,22 @@
         <p class="why"><strong>Why it matters:</strong> A new practice starts with its patient list, active wounds and history already in place, without retyping them. One bad row never blocks the rest, and nothing is dropped without a reason you can see.</p>
         <details class="transcript">
           <summary>Text description of this video</summary>
-          <ol><li><span class="t">0:00</span> The Practice Onboarding page (Administrator, then Practice Onboarding) lists nine import steps. Step 1, Patients, is open to start; the others are locked until patients are imported. Visit History waits for Wounds.</li><li><span class="t">0:12</span> Step 1, Patients, is opened. A panel lists the providers at this facility and their Medipyxis emails, blurred in this video. Below it is the upload area.</li><li><span class="t">0:19</span> Download Patients Template is clicked and the template CSV downloads. It has one column per field, with an example row.</li><li><span class="t">0:22</span> A test CSV with six made-up patients is uploaded. Map Columns shows every column in the file matched to a Medipyxis field automatically: 10 of 10. Required fields are starred. Confirm Mapping is clicked.</li><li><span class="t">0:36</span> Review Patients Data shows 3 valid rows and 3 errors. Row 4 has a birth date that does not exist, row 5 has no last name and row 6 has an email address that is not valid. A note explains how dates were read (month first) and asks you to check them.</li><li><span class="t">0:47</span> Skip all 3 error rows is clicked. The three rows are greyed out and marked Skipped. The button now reads Import 3 Patients Records.</li><li><span class="t">0:51</span> The import runs.</li><li><span class="t">0:54</span> Import Complete: 3 rows sent, 2 imported, 1 skipped, 2 warnings. The skipped row was the same patient listed twice (same name and date of birth), so it was not created a second time. Needs Follow-Up lists the two new patients that had no provider email: they were imported without a provider and need one assigned.</li><li><span class="t">1:04</span> Download Results CSV is clicked. The file is your original rows plus a patient_uid column with each patient&#x27;s new Medipyxis ID, which the later steps use.</li><li><span class="t">1:07</span> Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open. Documents shows Not available yet.</li></ol>
+          <ol><li><span class="t">0:00</span> The Practice Onboarding page (Administrator, then Practice Onboarding) lists nine import steps. Step 1, Patients, is open to start; the others are locked until patients are imported. Visit History waits for Wounds.</li><li><span class="t">0:12</span> Step 1, Patients, is opened. A panel lists the providers at this facility and their Medipyxis emails, blurred in this video. Below it is the upload area.</li><li><span class="t">0:19</span> Download Patients Template is clicked and the template CSV downloads. It has one column per field, with an example row.</li><li><span class="t">0:22</span> A test CSV with six made-up patients is uploaded. Map Columns shows every column in the file matched to a Medipyxis field automatically: 10 of 10. Required fields are starred. Confirm Mapping is clicked.</li><li><span class="t">0:36</span> Review Patients Data shows 3 valid rows and 3 errors. Row 4 has a birth date that does not exist, row 5 has no last name and row 6 has an email address that is not valid. A note explains how dates were read (month first) and asks you to check them.</li><li><span class="t">0:47</span> Skip all 3 error rows is clicked. The three rows are greyed out and marked Skipped. The button now reads Import 3 Patients Records.</li><li><span class="t">0:51</span> The import runs.</li><li><span class="t">0:54</span> Import Complete: 3 rows sent, 2 imported, 1 skipped, 2 warnings. The skipped row was the same patient listed twice (same name and date of birth), so it was not created a second time. Needs Follow-Up lists the two new patients that had no provider email: they were imported without a provider and need one assigned.</li><li><span class="t">1:04</span> Download Results CSV is clicked. The file is your original rows plus a patient_uid column with each patient&#x27;s new Medipyxis ID, which the later steps use.</li><li><span class="t">1:07</span> Done returns to the step list. Patients is marked Completed (2 imported, 1 skipped) with a Download results CSV link, so the file can be downloaded again later. Steps 2 to 8 are now open (and Step 9, Past Visits, opens once Step 7, Wounds, is completed).</li></ol>
         </details>
       </section>
 
       <section class="part" id="what">
         <h2>What can I import, and in what order?</h2>
         <p class="caption">Nine steps, each with its own CSV template. Patients come first; steps 2 to 8 open once patients are imported, and visit history opens once wounds are imported. For the step-by-step walkthrough, see <a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a>. For every column name, required flag, accepted value, <code>prior_ehr_*</code> duplicate-handling rule, and the 8 <code>consent_*</code> patient consent attestation columns, see the <a href="/admin/practice-onboarding-csv-reference/"><strong>Practice Data Import CSV templates and column reference</strong></a>.</p>
-        <ol class="steps"><li><strong>Patients</strong> (<code>patient_import_template.csv</code>): Names, dates of birth (<code>YYYY-MM-DD</code>), contact details, address, assigned provider (<code>provider_email</code>), optional prior EHR identifiers (<code>prior_ehr_system</code>, <code>prior_ehr_mrn</code>, <code>duplicate_decision</code>), and optional patient consent attestation columns (<code>consent_on_file</code> and 7 supporting <code>consent_*</code> fields). See the <a href="/admin/practice-onboarding-csv-reference/#step-1-patients">Step 1 column &amp; consent breakdown</a>.</li><li><strong>Insurance</strong>: Payer, policy and group numbers.</li><li><strong>Medications</strong>: Current medications with dose, frequency and prescriber.</li><li><strong>Allergies</strong>: Known allergies with severity and reaction.</li><li><strong>Comorbidities</strong>: Medical history and conditions, with ICD-10 codes.</li><li><strong>Emergency contacts</strong>: Name, relationship and phone number.</li><li><strong>Wounds</strong>: Historical wounds with location, type, measurements and staging (produces <code>wound_uid</code>).</li><li><strong>Documents &amp; Historical Wound Photos</strong>: Clinical PDFs/TIFFs and historical wound photos, linked to <code>patient_uid</code> and optionally <code>wound_uid</code> / <code>wound_id</code>.</li><li><strong>Visit history</strong>: Past visits, linked to the patient and wounds. Comes in as read-only history.</li></ol>
+        <ol class="steps"><li id="step-1"><strong>1. Patients</strong> (<code>patient_import_template.csv</code>): Names, dates of birth (<code>YYYY-MM-DD</code>), contact details, address, assigned provider (<code>provider_email</code>), optional prior EHR identifiers (<code>prior_ehr_system</code>, <code>prior_ehr_mrn</code>, <code>duplicate_decision</code>, <code>force_distinct_patient</code>), and optional patient consent attestation columns (<code>consent_on_file</code> and 7 supporting <code>consent_*</code> fields). See the <a href="/admin/practice-onboarding-csv-reference/#step-1-patients">Step 1 column &amp; consent breakdown</a>.</li><li id="step-2"><strong>2. Insurance</strong> (<code>insurance_import_template.csv</code>): Payer, subscriber/member ID, policy and group numbers linked to <code>patient_uid</code>.</li><li id="step-3"><strong>3. Medications</strong> (<code>medications_import_template.csv</code>): Current medications with dose, route, frequency and prescriber linked to <code>patient_uid</code>.</li><li id="step-4"><strong>4. Allergies</strong> (<code>allergies_import_template.csv</code>): Known allergies with allergy type, severity and reaction linked to <code>patient_uid</code>.</li><li id="step-5"><strong>5. Conditions</strong> (<code>conditions_import_template.csv</code> — Comorbidities): Medical history and conditions with ICD-10 codes linked to <code>patient_uid</code>.</li><li id="step-6"><strong>6. Emergency Contacts</strong> (<code>contacts_import_template.csv</code>): Name, relationship, phone number and primary contact flag linked to <code>patient_uid</code>.</li><li id="step-7"><strong>7. Wounds</strong> (<code>wounds_import_template.csv</code>): Historical wounds with anatomical location, wound type, baseline measurements (period-decimal cm) and staging (produces <code>wounds_import_results.csv</code> with <code>wound_uid</code>).</li><li id="step-8"><strong>8. Documents &amp; Historical Wound Photos</strong> (<code>documents_manifest.csv</code> / <code>wound_photos_manifest.csv</code> + ZIP archive): Clinical PDFs/TIFFs (stored in <code>patient-documents</code> under <code>imported-records/</code>) and historical wound photos (stored in <code>wound-images</code> under <code>historical/</code>), linked to <code>patient_uid</code> and optionally <code>wound_uid</code> / <code>wound_id</code>.</li><li id="step-9"><strong>9. Past Visits</strong> (<code>visit_history_import_template.csv</code> — Visit history): Past visits linked to <code>patient_uid</code> and <code>wound_uid</code> / <code>wound_id</code>. Imported as read-only history (<code>visit_import_history</code>).</li></ol>
       </section>
 
       <section class="part" id="limits">
-        <h2>What is not imported?</h2>
+        <h2>What is not imported (and what safeguards apply)?</h2>
         <ul class="limits">
-          <li><strong>Documents and wound photos are not migrated.</strong> Scanned referrals, consent forms, other attachments and wound photos stay in your old system. Keep access to it, or an export of it, for those files.</li>
-          <li><strong>Imported visits are read-only history.</strong> You can see past visits on the patient's record, but they cannot be edited, signed or billed in Medipyxis. New visits are documented in Medipyxis as usual.</li>
+          <li><strong>Imported visits are read-only history (<code>visit_import_history</code>).</strong> You can view past visits on the patient's chart, but they cannot be edited, signed, or billed as active Medipyxis visits. New visits are documented in Medipyxis as usual.</li>
+          <li><strong>Historical wound photos are isolated from live clinical assessments.</strong> Photos uploaded in Step 8 are stored in <code>wound-images</code> under <code>historical/</code> on <code>wound_import_history.photo_urls</code> and never create or overwrite live <code>wound_assessment</code> records.</li>
+          <li><strong>Strict preflight &amp; identity-collision safeguards.</strong> Excel <code>sep=</code> preamble lines are stripped automatically; mixed <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code> slash dates, impossible calendar dates (such as <code>2026-02-31</code>), and decimal-comma measurements (such as <code>2,5</code> instead of <code>2.5</code>) are blocked before saving; and patients sharing <code>first_name + last_name + date_of_birth</code> with conflicting secondary identifiers (<code>subscriber_id</code>, <code>mrn</code>, <code>ssn_last4</code>, <code>phone</code>, <code>address</code>, or <code>email</code>) are quarantined (<code>PATIENT_IDENTITY_COLLISION</code>) for disambiguation rather than silently merged.</li>
         </ul>
       </section>
 
@@ -247,7 +321,7 @@
 
       <section class="faq" id="faq">
         <h2>Questions and answers about importing practice data into Medipyxis</h2>
-        <div class="qa"><h3>What can I import into Medipyxis from my old EHR?</h3><p>Patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds and past visit history, each from its own CSV file. Patients go first, because every other step links its rows to the patients created in step 1. Visit history goes after wounds, because past visits link to the imported wounds.</p></div><div class="qa"><h3>What happens to rows with errors?</h3><p>Before anything is saved, every row is checked. A row with a missing required field, a date that does not exist or an email that is not valid is marked in red with the reason. You can correct it on screen, or skip it and import the rest. Skipped rows are counted in the summary and stay in the results file without a Medipyxis ID, so you can fix them in your spreadsheet and import them later.</p></div><div class="qa"><h3>Will importing the same patient twice create a duplicate?</h3><p>No. A patient with the same first name, last name and date of birth as an existing patient at the facility is not created again; the row is counted as skipped and the results file gives it the existing patient&#x27;s ID. This also makes it safe to re-run an import.</p></div><div class="qa"><h3>What is the results CSV for?</h3><p>It is your file with one column added: each patient&#x27;s new Medipyxis ID (patient_uid). The insurance, medication, allergy, condition, contact and wound files use that ID to attach their rows to the right patient. The Wounds step gives the same kind of file with wound IDs for the visit history import. The latest results file can be downloaded again from the step&#x27;s card at any time.</p></div><div class="qa"><h3>What if a patient has no provider in the file?</h3><p>The patient is still imported, without a provider, and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider&#x27;s Medipyxis email in the provider_email column.</p></div><div class="qa"><h3>Are documents and wound photos imported?</h3><p>No. Documents (such as scanned referrals and consent forms) and wound photos are not migrated. The Documents step shows Not available yet. Keep access to your old system, or an export of it, for those files, and attach new documents and photos in Medipyxis from here on.</p></div><div class="qa"><h3>Can I edit or bill imported visits?</h3><p>No. Imported visits come in as read-only history: you can see them on the patient&#x27;s record, but they are not Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual.</p></div><div class="qa"><h3>Where can I see every CSV column and how patient consent attestation works?</h3><p>See <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a> for the complete column-by-column breakdown of all 9 templates. In Step 1 (<code>patient_import_template.csv</code>), the 8 optional <code>consent_*</code> columns gate on <code>consent_on_file</code>: when blank or <code>no</code>, no consent is recorded and the other 7 columns are ignored; when <code>yes</code>, Medipyxis records an <code>external_attested</code> treatment and billing consent under the importing admin's account. Only attest <code>consent_on_file = yes</code> when your practice holds its own signed consent form for that patient — never use a nursing facility's admission paperwork.</p></div><div class="qa"><h3>Who can run the import?</h3><p>An organization administrator, from Administrator, then Practice Onboarding. Data is imported into the facility you are working in.</p></div>
+        <div class="qa"><h3>What can I import into Medipyxis from my old EHR?</h3><p>Nine categories in dependency order: (1) Patients, (2) Insurance, (3) Medications, (4) Allergies, (5) Conditions / Comorbidities, (6) Emergency Contacts, (7) Wounds, (8) Documents &amp; Historical Wound Photos (ZIP archive + manifest CSV), and (9) Past Visits (Visit History). Patients go first because every later step links its rows to the <code>patient_uid</code> created in Step 1. Wounds go in Step 7 so Step 8 and Step 9 can attach historical photos, wound-linked documents, and past visits to each imported <code>wound_uid</code> or <code>wound_id</code>.</p></div><div class="qa"><h3>What happens to rows with errors?</h3><p>Before anything is saved, every row is checked. Excel <code>sep=</code> preamble headers are stripped automatically, and rows with missing required fields, impossible calendar dates (such as <code>2026-02-31</code>), mixed <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code> date formats, decimal-comma measurements (such as <code>2,5</code> instead of <code>2.5</code>), or invalid emails are marked in red with the exact reason. You can correct them on screen or skip them and import the rest. Skipped rows stay in the results file without a Medipyxis ID so you can fix them in your spreadsheet and import them later.</p></div><div class="qa"><h3>Will importing the same patient twice create a duplicate?</h3><p>No. Re-importing the same patient reuses the existing chart and returns its <code>patient_uid</code> in the results CSV. Furthermore, if two rows share the same <code>first_name</code>, <code>last_name</code>, and <code>date_of_birth</code> (DOB) but have conflicting secondary identifiers (<code>subscriber_id</code>, <code>mrn</code>, <code>ssn_last4</code>, <code>phone</code>, street address/ZIP, or <code>email</code>), Medipyxis quarantines the row with a <code>PATIENT_IDENTITY_COLLISION</code> diagnostic instead of silently merging two distinct people. You can disambiguate twins, family-plan dependents, or common-name patients using <code>patient_uid</code>, <code>force_distinct_patient=true</code>, or <code>duplicate_decision</code>.</p></div><div class="qa"><h3>What is the results CSV for?</h3><p>It is your file with one column added: each patient&#x27;s new Medipyxis ID (<code>patient_uid</code>). The insurance, medication, allergy, condition, emergency contact, wound, and document steps use that ID to attach their rows to the right patient. Step 7 (Wounds) produces <code>wounds_import_results.csv</code> with <code>wound_uid</code> values for Step 8 (Documents &amp; Historical Wound Photos) and Step 9 (Past Visits). The latest results file can be downloaded again from the step&#x27;s card at any time.</p></div><div class="qa"><h3>What if a patient has no provider in the file?</h3><p>The patient is still imported without a provider and listed under Needs Follow-Up so you can assign one. To assign providers during the import, put each provider&#x27;s Medipyxis email in the <code>provider_email</code> column.</p></div><div class="qa"><h3>Are documents and wound photos imported?</h3><p>Yes, in Step 8 (<strong>Documents &amp; Historical Wound Photos</strong>). Upload a ZIP archive together with <code>documents_manifest.csv</code> or <code>wound_photos_manifest.csv</code>. Clinical PDFs and TIFFs are stored in the private <code>patient-documents</code> bucket under <code>imported-records/</code> and indexed in <code>prior_ehr_record</code>; historical wound photos (JPEG, PNG, WebP, HEIC) are stored in the private <code>wound-images</code> bucket under <code>historical/</code> and appended to <code>wound_import_history.photo_urls</code> (never mixed into live clinical <code>wound_assessment</code> records).</p></div><div class="qa"><h3>Can I edit or bill imported visits?</h3><p>No. Imported visits come in as read-only history (<code>visit_import_history</code>): you can see them on the patient&#x27;s record, but they are not active Medipyxis visits, so they cannot be edited, signed or billed. New visits are documented in Medipyxis as usual.</p></div><div class="qa"><h3>Where can I see every CSV column and how patient consent attestation works?</h3><p>See <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a> for the complete column-by-column breakdown of all 9 templates. In Step 1 (<code>patient_import_template.csv</code>), the 8 optional <code>consent_*</code> columns gate on <code>consent_on_file</code>: when blank or <code>no</code>, no consent is recorded and the other 7 columns are ignored; when <code>yes</code>, Medipyxis records an <code>external_attested</code> treatment and billing consent under the importing admin's account. Only attest <code>consent_on_file = yes</code> when your practice holds its own signed consent form for that patient — never use a nursing facility's admission paperwork.</p></div><div class="qa"><h3>Who can run the import?</h3><p>An organization administrator, from Administrator, then Practice Onboarding. Data is imported into the facility you are working in.</p></div>
       </section>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a></li><li><a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a></li><li><a href="/admin/data-import-export/">Import and export data</a></li><li><a href="/whats-new/">What&#x27;s new, in video</a></li></ul></div>
     </div><aside class="toc">
