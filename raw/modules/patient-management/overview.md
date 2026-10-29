@@ -6,7 +6,7 @@ audience: [clinician, intake, admin]
 roles: [clinician, medical_director, referral_coordinator, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/all-patients
 related:
   - patient-management-zus-tefca
@@ -50,7 +50,7 @@ Patient Management is your single-pane roster for every active and archived pati
 Clicking a patient opens the chart with tabs:
 
 - **Summary** — demographics, clinical (diagnoses, allergies, active medications), insurance, referral, and care-team sections. External-EHR records pulled from **ZusHealth** appear here with provenance indicators.
-- **Wounds** — the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), the canonical per-wound screen. One card per active wound with the last measurement trend line and the entry point for the Visit Wizard. The older Wound Log page is deprecated — use the cockpit for every per-wound task.
+- **Wounds** — the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), the canonical per-wound screen. One card per active wound with the last measurement trend line and the entry point for the Visit Wizard. Use the cockpit for every per-wound task.
 - **Visits** — historical visit notes, sortable by date and provider.
 - **Documents** — uploaded PDFs, consent forms, prior records.
 - **Medications** — DoseSpot integration for e-prescribing and reconciliation.
@@ -60,7 +60,7 @@ Clicking a patient opens the chart with tabs:
 
 ## Archive, don't delete
 
-Since the MED-1692 update, deleting a patient is disallowed. Use **Archive** on the patient header to retire a record. Archived patients are excluded from scheduling (MED-1695) but preserved for audit and billing reconciliation.
+You cannot delete a patient. Use **Archive** on the patient header to retire a record. Archived patients are excluded from scheduling but preserved for audit and billing reconciliation.
 
 ## Related
 

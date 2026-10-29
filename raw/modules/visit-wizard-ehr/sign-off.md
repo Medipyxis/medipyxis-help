@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-09-30
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -27,7 +27,7 @@ Complete step 17 of the Visit Wizard by reading the attestation statement, apply
 ## Before you start
 
 - All 17 steps of the Visit Wizard are complete, including the LCD Navigator™ checklist (step 16).
-- You are the rendering provider — a `clinician` with a provider profession title (NP, PA, MD, DO) or a `medical_director`. Support staff cannot complete Provider Attestation.
+- You are the rendering provider — a clinician with a provider profession title (NP, PA, MD, DO) or a medical director. Support staff cannot complete Provider Attestation.
 - You have confirmed that all clinical documentation reflects the actual care provided during this encounter.
 
 <Compliance>
@@ -95,7 +95,7 @@ Once a note is signed, the encounter is read-only. To correct or add information
 
    - **Clinical corrections** — a correction to clinical documentation, or additional findings documented after the visit.
    - **Billing corrections** — a billing code correction, which you should coordinate with your biller.
-   - **Corrections to written-in language** — reasons that name a specific kind of sentence the note used to supply on your behalf, for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. Use these when an older signed note contains a sentence you did not write. [How your progress note is written](./progress-note.md) lists what those sentences were.
+   - **Corrections to written-in language** — reasons that name a specific kind of sentence in a signed note that you did not write, for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. Use these when a signed note contains a sentence you did not write.
 
    Pick the reason that names what you are correcting. A reviewer reads the reason alongside the addendum text, so a precise reason is worth more than a general one.
 4. **Enter the addendum text.** Describe what changed and why. Do not delete or re-state the original note — the addendum appears as a dated attachment below the original signed note.

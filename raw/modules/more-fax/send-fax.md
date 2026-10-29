@@ -6,7 +6,7 @@ audience: [intake, admin]
 roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/fax-logs
 related:
   - more-fax-overview
@@ -25,7 +25,7 @@ Send a fax directly from Medipyxis and track its delivery status from the Send F
 
 ## Steps
 
-1. **Open the Fax Center** (`/fax-logs`).
+1. **Open the Fax Center.**
 2. **Click New Fax** (top-right).
 3. **Enter the recipient fax number.** Type or paste the 10-digit number. Include area code; do not use dashes or parentheses.
 4. **Select or upload the document.**

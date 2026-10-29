@@ -3,17 +3,16 @@ id: admin-deactivating-and-archiving
 title: Deactivate a facility, archive a patient, and disable a user
 module: admin
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-04-24
+last_reviewed: 2026-10-29
 app_route: /facilities
 related:
   - admin-index
   - admin-user-management
   - admin-security-and-compliance
-tags: [deactivate, archive, offboarding, HIPAA, MED-1692]
-updated_for_ticket: MED-1692
+tags: [deactivate, archive, offboarding, HIPAA]
 ---
 
 # Deactivate a facility, archive a patient, and disable a user
@@ -22,14 +21,14 @@ Medipyxis distinguishes between deactivation (temporarily stopping operations) a
 
 ## Before you start
 
-- You need `practice_admin` or `super_admin` role.
+- You need to be an admin.
 - Archiving a patient is irreversible from the UI; only Medipyxis support can unarchive.
-- Never delete a patient record — archive instead (per platform policy MED-1692).
+- Never delete a patient record — archive instead.
 - Before deactivating a facility or disabling a user, reassign all open work first.
 
 ## Archive a patient (not delete)
 
-Per MED-1692, patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.
+Patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.
 
 1. Navigate to **Patient Management** and open the patient's record.
 2. Click the **Actions** menu (three-dot icon at top-right of the patient card).
@@ -39,7 +38,7 @@ Per MED-1692, patient records must be archived — not deleted — to preserve t
 
 **Effect of archiving:**
 - The patient record moves to an **Archived** filter state; they no longer appear in active patient lists or search results.
-- All historical visits, claims, and documents are retained and accessible to `super_admin` and `practice_admin` via the Archived filter.
+- All historical visits, claims, and documents are retained and accessible to admins via the Archived filter.
 - Open referrals and pending claims associated with the patient are flagged for manual resolution before archiving completes. The system will not archive a patient with an unresolved claim in `Pending` or `Needs Info` status.
 
 <Warning>

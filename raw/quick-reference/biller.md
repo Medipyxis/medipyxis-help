@@ -6,7 +6,7 @@ audience: [billing]
 roles: [biller]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/billing/work-queue
 tags: [quick-reference, billing, claims, era]
 ---
@@ -62,7 +62,7 @@ The Work Queue's **Claim Status** dropdown (set by the biller) uses these values
 |---|---|---|
 | CO-50 (not medically necessary) | Missing LCD element | Add an addendum to the visit note that resolves the LCD item |
 | CO-197 (precert missing) | No auth on file | Obtain retro-auth; if denied, appeal with clinical docs |
-| CO-16 (missing information) | Modifier or ID missing | Correct on the claim form (`/billing/new`) and resubmit |
+| CO-16 (missing information) | Modifier or ID missing | Correct on the claim form and resubmit |
 | CO-29 (past timely filing) | Late submission | Check root cause; appeal only if system error |
 | PR-45 (charge exceeds allowed) | Charge out of date | Update the facility **Charge Master** |
 

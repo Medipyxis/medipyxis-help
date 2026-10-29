@@ -6,7 +6,7 @@ audience: [clinician, billing, admin]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 7
-last_reviewed: 2026-09-30
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-sign-off
@@ -25,19 +25,17 @@ Nothing blocks you. You can always continue.
 
 ---
 
-## Why the note changed
+## Why the note prints only what you documented
 
-Medicare's Program Integrity Manual — the chapter that tells reviewers how to read a medical record — says three things that applied directly to this note:
+Medicare's Program Integrity Manual — the chapter that tells reviewers how to read a medical record — says three things that apply directly to your note:
 
 - A reviewer judges the service by **your** documentation. Sentences the software wrote carry no weight.
 - Reviewers are told to be suspicious of **template and cloned language**, meaning the same sentence appearing on every note.
 - An attestation on its own — "I confirm this was medically necessary" — proves nothing.
 
-The note was doing all three. It filled blank fields with clinical findings such as "no known drug allergies", "tolerated the procedure well" and "hemostasis achieved with direct pressure", and it closed sections with conclusions like "these findings establish medical necessity". Those sentences looked helpful. Under audit they were a liability, because you signed for them and no one could show where they came from.
+See also [Note honesty guardrails](./note-honesty-guardrails.md).
 
-This change, shipped on 2026-09-18, finishes work that began in August with the [Note honesty guardrails](./note-honesty-guardrails.md), which stopped the note inventing a post-debridement measurement and an undocumented diabetes type or kidney-disease stage.
-
-Six Medicare policy citations in the note were also incorrect. Three pointed at policies that do not govern this service — tracheostomy supplies, seat-lift mechanisms, and surgical dressings supplied as DME — and three cited policy numbers that do not exist. All six have been removed. The two verified wound-care policies remain.
+The note cites only the two verified wound-care policies.
 
 ---
 
@@ -45,17 +43,17 @@ Six Medicare policy citations in the note were also incorrect. Three pointed at 
 
 ### Blank means blank
 
-| Where | It used to print | It now prints |
-|---|---|---|
-| **Allergies** | "NKDA (No Known Drug Allergies)", "No known latex allergy", and "Reconciled this visit: Yes — confirmed with patient and caregiver" | "Not documented." on each, until you record it |
-| **Debridement** | "Tolerated well", "Achieved with direct pressure", "Applied per wound care protocol", and a default tissue depth | "Not documented." on each. The depth is whatever you recorded |
-| **Pressure-injury risk** | A prevention plan listing a pressure-redistribution mattress, heel offloading, repositioning, nutrition, and moisture management | "Prevention plan: Not documented." The Braden score and risk band still print |
-| **Same-day visit and procedure** | "E/M service is significant and separately identifiable from procedure(s)…" | "Separate E/M evaluation: Not documented." — unless you answer the checklist item |
-| **Medical necessity** | "These findings establish medical necessity for ongoing skilled wound management…" | The findings themselves, for example "Devitalized tissue present: Yes — slough 20% on left heel" |
-| **Home visits** | An automatically written homebound paragraph | Nothing, unless you typed a homebound justification — which prints exactly as you wrote it |
-| **Patient education** | "Verbal instruction and demonstration" as the teaching method | "Not documented." There was never a field in which to record a method |
+| Where | What prints |
+|---|---|
+| **Allergies** | "Not documented." on each allergy item, until you record it |
+| **Debridement** | "Not documented." on each detail you leave blank. The depth is whatever you recorded |
+| **Pressure-injury risk** | "Prevention plan: Not documented." The Braden score and risk band print as documented |
+| **Same-day visit and procedure** | "Separate E/M evaluation: Not documented." — unless you answer the checklist item |
+| **Medical necessity** | The findings themselves, for example "Devitalized tissue present: Yes — slough 20% on left heel" |
+| **Home visits** | Nothing, unless you typed a homebound justification — which prints exactly as you wrote it |
+| **Patient education** | "Not documented." for the teaching method. There is no field in which to record a method |
 
-Three rows have disappeared from the debridement section entirely, because no screen in Medipyxis ever asked for them: **Pathology sent**, **Tissue present pre**, and **Post-procedure dressing**. Every debridement note used to answer those questions on your behalf.
+The debridement section does not include **Pathology sent**, **Tissue present pre**, or **Post-procedure dressing**, because no screen in Medipyxis asks for them.
 
 ---
 
@@ -69,7 +67,7 @@ When you stage billing codes, a line appears — for example **"3 documentation 
 
 ### Continuing past an item that affects a claim
 
-If an item affects what can be billed — a debridement missing the elements the policy requires, or a billed code with no documented wound — choosing **Continue anyway** asks you to tick a box confirming you understand. That is the only new friction, and it is deliberate: the decision stays yours, and it goes on the record.
+If an item affects what can be billed — a debridement missing the elements the policy requires, or a billed code with no documented wound — choosing **Continue anyway** asks you to tick a box confirming you understand. That is the only friction, and it is deliberate: the decision stays yours, and it goes on the record.
 
 ---
 
@@ -89,13 +87,13 @@ The review screen shows the actual PDF that will be stored, rather than a separa
 
 ## Common questions
 
-**Will my note look emptier?** On a visit where you documented normally, almost nothing changes. On a visit where fields were left blank, yes — the note is shorter, and says so. That is the point: a shorter honest note defends better than a longer one full of sentences you did not write.
+**Why is my note shorter on some visits?** Where fields were left blank, the note is shorter, and says so. A shorter honest note defends better than a longer one full of sentences you did not write.
 
-**Are my already-signed notes changed?** No. The note you signed is a permanent file, and opening it from the patient's **Progress Notes** list shows you that exact file, unchanged.
+**Can my signed note change?** No. The note you signed is a permanent file, and opening it from the patient's **Progress Notes** list shows you that exact file, unchanged.
 
-There is one place the difference shows up. The **Download Clinical Note** action builds a fresh provider copy from the visit's recorded data. Downloaded from now on, that copy follows the new rules, so it reads differently from the version you signed — the written-in sentences are gone and "Not documented." stands in their place. Your signed note is still the signed note; the fresh copy is a fresh copy.
+The **Download Clinical Note** action builds a fresh provider copy from the visit's recorded data, following the rules on this page, so it can read differently from the version you signed. Your signed note is still the signed note; the fresh copy is a fresh copy.
 
-**What if an old note contains one of the removed sentences?** File an addendum naming the specific kind of sentence being corrected. The addendum reason list now covers every class that was removed — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. See [Sign Off](./sign-off.md).
+**What if a signed note contains a sentence I did not write?** File an addendum naming the specific kind of sentence being corrected. The addendum reason list covers each kind — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. See [Sign Off](./sign-off.md).
 
 **Do I have to answer the checklist?** No. Every item is advisory and none of them stop you signing.
 
@@ -103,15 +101,13 @@ There is one place the difference shows up. The **Download Clinical Note** actio
 
 **Does dictation get rewritten?** Not in the checklist box. The microphone there types what you said, word for word, and adds it to whatever is already in the box.
 
-**Will I get more warnings at signing?** Fewer, and better ones. One check was running against an empty form and telling you to use a new-patient code for patients who were already established. That is fixed. What remains reflects something real in the documentation.
-
 ---
 
-## What to expect in the first week
+## What the checklist commonly flags
 
-- **Debridement notes will flag missing elements**, tissue removed in particular, because until now there was nowhere to record it. That is a gap the policy asks for, not a software error.
-- **Home visits without a necessity sentence will show the necessity item.**
-- **Visits coded on medical decision-making will ask for your assessment narrative.** The old note filled that table from the billing code's own definition, which is exactly what a reviewer discounts.
+- **Debridement notes flag missing elements**, tissue removed in particular. That is a gap the policy asks for, not a software error.
+- **Home visits without a necessity sentence show the necessity item.**
+- **Visits coded on medical decision-making ask for your assessment narrative.**
 
 ---
 

@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [clinician, medical_director, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/patients/{patient_uuid}/orders-dme
 related:
   - orders-dme-create-dme-order
@@ -15,7 +15,7 @@ tags: [orders, DME, laboratory, imaging, referrals, home-health]
 
 # Orders & DME overview
 
-Orders & DME is the per-patient hub for generating and tracking clinical orders that flow out of a visit — from durable medical equipment to outbound referrals. It opens from a patient's chart (`/patients/{patient_uuid}/orders-dme`).
+Orders & DME is the per-patient hub for generating and tracking clinical orders that flow out of a visit — from durable medical equipment to outbound referrals. It opens from a patient's chart.
 
 ![Orders & DME page showing the order-type tabs](../../assets/orders-dme/hub.png)
 

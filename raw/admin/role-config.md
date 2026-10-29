@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, superadmin]
 type: reference
 estimated_minutes: 8
-last_reviewed: 2026-06-29
+last_reviewed: 2026-10-29
 app_route: /administrator/org-role-config
 related:
   - admin-index
@@ -23,13 +23,13 @@ The **Organization Role Config** screen is where you control what each role can 
 
 ## Before you start
 
-- Access requires the `superadmin` role, or a facility-admin role (`admin`, `clinical_manager`, or `bd_manager`) for at least one facility.
+- Access requires a facility-admin role (admin, clinical manager, or BD manager) for at least one facility, or Medipyxis platform-level access.
 - Configuration is **per organization** — you select the organization at the top of the screen.
-- Changes take effect on an affected user's next page load (the configuration is cached).
+- Changes take effect on an affected user's next page load.
 
 ## Open the screen
 
-Navigate to **`/administrator` → Organization Role Config** (`/administrator/org-role-config`). The `/administrator` cockpit link appears in the sidebar for admin roles, outside the facility-scoped navigation.
+Open the **Administrator** cockpit, then choose **Organization Role Config**. The Administrator cockpit link appears in the sidebar for admin roles, outside the facility-scoped navigation.
 
 ![Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of feature permissions with checkboxes.](../assets/admin/role-config.png)
 *The **Organization Role Config** matrix. Rows are roles; columns are features. A checked box means the role has access to that feature.*
@@ -40,19 +40,19 @@ Medipyxis ships ten built-in roles. They cover the most common job functions and
 
 | Role | Primary function |
 |---|---|
-| `admin` | Full organization access; manages all facilities and users |
-| `clinical_manager` | Oversees clinical staff; access to Fleet Calendar, Visit Wizard, Oversight Cockpit |
-| `medical_director` | Clinical sign-off; access to LCD Navigator™ audit and reporting |
-| `clinician` | Visit documentation; access to Visit Wizard, patient records, orders |
-| `referral_coordinator` | Manages Referral Intake kanban and Fax Review Queue |
-| `bd_rep` | Business Development; CRM, BD Dashboard, limited patient view |
-| `bd_manager` | BD rep management; CRM, BD Dashboard, Oversight Cockpit BD metrics |
-| `finance_ap` | Accounts Payable; Billing (read), Inventory Accounts Payable |
-| `vendor_coordinator` | Vendor-facing inventory management; Product Catalog and inventory |
-| `biller` | Billing access; Claims, Denials, Payments, and the facility Charge Master |
+| Admin | Full organization access; manages all facilities and users |
+| Clinical manager | Oversees clinical staff; access to Fleet Calendar, Visit Wizard, Oversight Cockpit |
+| Medical director | Clinical sign-off; access to LCD Navigator™ audit and reporting |
+| Clinician | Visit documentation; access to Visit Wizard, patient records, orders |
+| Referral coordinator | Manages Referral Intake kanban and Fax Review Queue |
+| BD rep | Business Development; CRM, BD Dashboard, limited patient view |
+| BD manager | BD rep management; CRM, BD Dashboard, Oversight Cockpit BD metrics |
+| Finance (AP) | Accounts Payable; Billing (read), Inventory Accounts Payable |
+| Vendor coordinator | Vendor-facing inventory management; Product Catalog and inventory |
+| Biller | Billing access; Claims, Denials, Payments, and the facility Charge Master |
 
 <Note>
-Platform-level roles `superadmin` and `customersupport` (Medipyxis-internal) sit above these organization roles and are not configured here.
+Platform-level roles used internally by Medipyxis staff sit above these organization roles and are not configured here.
 </Note>
 
 ## Feature permission matrix
@@ -62,18 +62,18 @@ The matrix uses checkboxes at the intersection of each role and feature. A check
 | Feature | Typical roles with access |
 |---|---|
 | Dashboard | All roles |
-| Referral Intake | `referral_coordinator`, `clinician`, `clinical_manager`, `admin` |
-| Patient Management | `clinician`, `clinical_manager`, `medical_director`, `admin` |
-| Visit Wizard / EHR | `clinician`, `clinical_manager`, `medical_director` |
-| Fleet Calendar | `clinician`, `clinical_manager`, `admin` |
-| Inventory | `vendor_coordinator`, `finance_ap`, `clinical_manager`, `admin` |
-| Orders & DME | `clinician`, `clinical_manager` |
-| Billing | `biller`, `finance_ap`, `admin` |
-| CRM | `bd_rep`, `bd_manager`, `admin` |
-| Business Development | `bd_rep`, `bd_manager`, `admin` |
-| Oversight Cockpit | `clinical_manager`, `medical_director`, `bd_manager`, `admin` |
-| HR & Compliance | `admin`, `clinical_manager` |
-| Administrator | `superadmin`, `admin` |
+| Referral Intake | Referral coordinator, clinician, clinical manager, admin |
+| Patient Management | Clinician, clinical manager, medical director, admin |
+| Visit Wizard / EHR | Clinician, clinical manager, medical director |
+| Fleet Calendar | Clinician, clinical manager, admin |
+| Inventory | Vendor coordinator, finance (AP), clinical manager, admin |
+| Orders & DME | Clinician, clinical manager |
+| Billing | Biller, finance (AP), admin |
+| CRM | BD rep, BD manager, admin |
+| Business Development | BD rep, BD manager, admin |
+| Oversight Cockpit | Clinical manager, medical director, BD manager, admin |
+| HR & Compliance | Admin, clinical manager |
+| Administrator | Admin |
 | Team Chat | All roles |
 
 <Note>
@@ -93,13 +93,13 @@ Removing a feature from a role hides that sidebar link for every user with that 
 
 ## Billing roles are facility-scoped
 
-Billing roles (`biller` and related) are scoped to a specific facility — they cannot hold a global (all-facility) wildcard. Assign the billing role at the facility where the user works. The `biller` role can view and edit that facility's **Charge Master**; creating and editing claim codes and claim status remains governed by the same role configuration.
+Billing roles (biller and related) are scoped to a specific facility — they cannot be assigned across all facilities at once. Assign the billing role at the facility where the user works. The biller role can view and edit that facility's **Charge Master**; creating and editing claim codes and claim status remains governed by the same role configuration.
 
 ## Worked example
 
-Scenario: give `referral_coordinator` visibility into **Billing** so coordinators can see claim status without creating or editing claims.
+Scenario: give referral coordinators visibility into **Billing** so they can see claim status without creating or editing claims.
 
 1. Open Organization Role Config and select the organization.
-2. Find the `referral_coordinator` row and the **Billing** column and check the box.
+2. Find the referral coordinator row and the **Billing** column and check the box.
 3. Click **Save**.
 4. Notify affected users that the Billing link is now visible in their sidebar. If you need finer-grained (read-only) billing access than the feature toggle provides, contact Medipyxis support.

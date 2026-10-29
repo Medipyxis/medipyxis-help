@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-07-10
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -34,7 +34,7 @@ Before you can e-prescribe — especially controlled substances — your DoseSpo
 4. Medications reconcile across the chart (pre-charting, the wizard, and Meds & Orders stay in sync).
 
 <Note>
-"eRx" throughout Medipyxis means DoseSpot. Prescriptions are sent through DoseSpot's console; Medipyxis routes the calls through a server-side proxy, so you prescribe without leaving the visit.
+"eRx" throughout Medipyxis means DoseSpot. Prescriptions are sent through DoseSpot's console, which opens inside Medipyxis, so you prescribe without leaving the visit.
 </Note>
 
 ## Related

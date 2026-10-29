@@ -6,7 +6,7 @@ audience: [admin, clinician]
 roles: [admin, clinical_manager, clinician]
 type: how-to
 estimated_minutes: 5
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/ops/fleet-calendar
 related:
   - fleet-calendar-overview
@@ -55,7 +55,7 @@ See each provider's stops for a day laid out on a map, review drive distance and
 You have reviewed each provider's stops, distance, and utilization for the day on the map, and exported the scheduling data you need as CSV.
 
 <Note>
-The Routes panel and Fleet Map are for review and reporting. Medipyxis does not currently re-optimize stop order automatically or send a route to a clinician's device — clinicians see their assigned visits on their own calendar. See [Manage your day as a clinician](./my-day.md).
+The Routes panel and Fleet Map are for review and reporting. Medipyxis does not re-optimize stop order automatically or send a route to a clinician's device — clinicians see their assigned visits on their own calendar. See [Manage your day as a clinician](./my-day.md).
 </Note>
 
 ## Troubleshooting

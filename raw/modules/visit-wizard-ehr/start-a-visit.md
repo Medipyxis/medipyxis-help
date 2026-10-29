@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-07-01
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -103,7 +103,7 @@ Carry-forward is a starting point, not a substitute for re-assessment — always
 |---|---|
 | **3. Review of Systems** | Body-system checklist. Pre-populated from the prior visit; review each system and update as needed. |
 | **4. Objective Assessment** | Vitals: BP, HR, Temp, SpO₂, Respirations, Weight, Height, BMI. |
-| **5. Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. These feed the billing engine and the stage-aware ICD-10 resolver. |
+| **5. Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. These feed the billing engine and stage-aware ICD-10 selection. |
 | **6. Functional Status & ADLs** | Ambulation, ADL independence, fall risk. |
 
 Each section saves as you complete it. The LCD ambient badge refreshes on every save.
@@ -129,10 +129,10 @@ Each section saves as you complete it. The LCD ambient badge refreshes on every 
 Document prior interventions so the plan and LCD checklist have the history they need.
 
 1. Add or update prior treatments — offloading, compression, debridement history, prior grafts.
-2. **ABI for compression.** If you intend to order compression, document the most recent **ankle-brachial index**. If compression is documented without an ABI on file, the wizard raises a **soft warning** and records a review flag — it no longer hard-blocks you from proceeding.
+2. **ABI for compression.** If you intend to order compression, document the most recent **ankle-brachial index**. If compression is documented without an ABI on file, the wizard raises a **soft warning** and records a review flag — it does not block you from proceeding.
 
    <Warning>
-   Compression therapy without a documented ABI is a top LCD denial reason. The wizard now warns instead of blocking, so it is your responsibility to enter the ABI (or order one) before the note is signed.
+   Compression therapy without a documented ABI is a top LCD denial reason. The wizard warns but does not block, so it is your responsibility to enter the ABI (or order one) before the note is signed.
    </Warning>
 
 3. Click **Next**.
@@ -197,9 +197,9 @@ On save, a **tissue log** entry is written and inventory is deducted automatical
 ## 13. Section 14 — Billing
 
 1. Review the **Medical Necessity Statement**. It is auto-generated from the clinical sections. Edit anything that doesn't match what you did.
-2. Review the **CPT autocode** output. The deterministic engine runs first; if it returns zero rows, the **AI fallback** engages and the BillingLine provenance shows `AI` for the relevant lines. **Pull Codes** can auto-populate codes from your documentation.
+2. Review the **CPT autocode** output. The deterministic engine runs first; if it finds no matching codes, the **AI fallback** engages and the billing line provenance shows `AI` for the relevant lines. **Pull Codes** can auto-populate codes from your documentation.
 3. Verify E/M level, modifiers (`25`, `59`, `KX`, `JW`, `JZ`), and **POS code**. Billing lines can be dragged to reorder.
-4. **Read the BillingLine provenance panel.** Each line shows `Deterministic` or `AI`. Spot-check AI-sourced lines before continuing.
+4. **Read the billing line provenance panel.** Each line shows `Deterministic` or `AI`. Spot-check AI-sourced lines before continuing.
 5. Click **Next**.
 
    <Compliance>
@@ -241,7 +241,7 @@ Once locked, a **Go to Billing** prompt appears. The note is now locked and any 
 
 ## Saving and resuming
 
-- **Continuous autosave** — each field is saved as you complete it (per-field debounced save plus a safety-net heartbeat), so drafts survive network drops and device switches. The web wizard is online-only; there is no separate offline mode.
+- **Continuous autosave** — each field is saved as you complete it, so drafts survive network drops and device switches. The web wizard is online-only; there is no separate offline mode.
 - **Resume** by tapping the same appointment tile on the Fleet Calendar (or opening the Wound Cockpit and clicking **Continue Visit**). You land back where you left off, on any device.
 
 ---
@@ -261,8 +261,8 @@ You completed all 17 sections, the LCD ambient badge is green, the Medical Neces
 | Wizard opens but shows the wrong patient | Tapped the wrong appointment tile | Close the wizard, then reopen from the correct tile. |
 | Compression order shows a warning in section 8 | No ABI value on file | Enter the ABI in section 8 (Previous Treatment) or order one — the warning does not block you, but resolve it before Sign & Lock. |
 | LCD ambient badge stays amber after a save | One or more checklist items still need data | Click the badge to open the Navigator; follow the jump-back link to the offending section. |
-| BillingLine shows `AI` for unexpected lines | Deterministic engine returned zero rows for that scenario | Verify the line is supported by your documentation; correct in section 11 or 14. |
-| PDF generation fails after Sign & Lock | Transient downstream error | The system retries automatically; if still failing, the Sentry event ID is shown — share it with support. See [Sign Off](./sign-off.md). |
+| A billing line shows `AI` unexpectedly | The deterministic engine found no matching code for that scenario | Verify the line is supported by your documentation; correct in section 11 or 14. |
+| PDF generation fails after Sign & Lock | Transient downstream error | The system retries automatically; if still failing, an error ID is shown — share it with support. See [Sign Off](./sign-off.md). |
 
 ## Related
 

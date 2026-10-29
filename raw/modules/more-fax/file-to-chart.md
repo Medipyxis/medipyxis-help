@@ -3,10 +3,10 @@ id: more-fax-file-to-chart
 title: File a received fax to a patient chart
 module: more-fax
 audience: [intake, clinician]
-roles: [intake_coordinator, referral_coordinator, nurse, np, admin]
+roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-08-28
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/received-fax
 related:
   - more-fax-overview
@@ -37,14 +37,14 @@ Every fax that lands in Medipyxis stays in the **Received Fax** queue until you 
 - The audit log records who filed the fax, when, and the triage notes you added.
 
 <Note>
-Filing a fax is tenant-scoped. You can only file to patients in the facility that owns the fax — the edge function rejects cross-facility filings, so you won't accidentally attach a fax to a chart in another practice.
+You can only file a fax to patients in the facility that received it, so you won't accidentally attach a fax to a chart in another practice.
 </Note>
 
 ## Re-file the same fax
 
 Filing the exact same fax to the same patient a second time is safe:
 
-- The chart is not duplicated. The system detects the existing chart row and returns `already_filed: true`.
+- The chart is not duplicated. The system recognizes that the fax is already filed to that patient.
 - The queue re-attempts the routing step if it failed the first time. Use this to recover a fax that filed to the chart but stayed pending in the queue (see troubleshooting).
 
 ## Also attach to a lab order
@@ -61,11 +61,11 @@ Both actions can be done from the same triage session — you do not need to reo
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| "Document filed, but this fax could not be marked as routed" | Chart write succeeded; queue update failed | Click **File to Patient Chart** again — the re-file retries the queue update |
+| "Document filed, but this fax could not be marked as routed" | The fax was filed to the chart, but the queue did not update | Click **File to Patient Chart** again — filing again retries the queue update |
 | "You do not have access to this fax" | Fax belongs to another facility in your organization | Switch to that facility from the Organization Selector, then reopen the fax |
 | Patient search returns no results | Patient not created yet, or you are looking in the wrong facility | Create the patient in Patient Management or Referral Intake first |
 | No PDF preview shown | The fax file did not finish uploading from the fax vendor | Wait 30 seconds and reload. If it persists, contact support with the fax ID |
-| Filed fax not visible on chart | Chart cache stale | Open the patient's Documents tab and pull to refresh, or reload the browser |
+| Filed fax not visible on chart | The chart has not refreshed | Open the patient's Documents tab and pull to refresh, or reload the browser |
 
 ## Related
 

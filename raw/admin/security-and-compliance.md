@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, superadmin]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-06-29
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/hr
 related:
   - admin-index
@@ -57,7 +57,7 @@ If you open a support ticket or share a screen with Medipyxis support, avoid exp
 
 ## Access control
 
-Role-based access is configured per organization at **`/administrator` → Organization Role Config** (see [Configure organization roles and permissions](./role-config.md)). Assign each user the least-privileged role that lets them do their job.
+Role-based access is configured per organization in **Administrator → Organization Role Config** (see [Configure organization roles and permissions](./role-config.md)). Assign each user the least-privileged role that lets them do their job.
 
 ## Security summary
 
@@ -67,4 +67,4 @@ Role-based access is configured per organization at **`/administrator` → Organ
 | Authentication (MFA/SSO) | Configured at the account level with your Medipyxis contact |
 | Activity logs | HR & Compliance → Activity Logs; retained per HIPAA |
 | BAA | Executed at contracting with Medipyxis |
-| Role-based access | `/administrator` → Organization Role Config |
+| Role-based access | Administrator → Organization Role Config |

@@ -6,7 +6,7 @@ audience: [intake, admin]
 roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/fax-logs
 related:
   - more-fax-send-fax
@@ -16,7 +16,7 @@ tags: [fax, outbound, inbound, review-queue]
 
 # More (Fax) overview
 
-The **Fax Center** (`/fax-logs`) is the dedicated interface for managing outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake. Faxing runs through a fax service (edge function) and is available to all roles.
+The **Fax Center** is the dedicated interface for managing outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake. Faxing is available to all roles.
 
 ![Fax Review Queue with incoming fax rows](../../assets/more-fax/review-queue.png)
 

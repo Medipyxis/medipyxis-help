@@ -6,7 +6,7 @@ audience: [billing]
 roles: [biller, admin]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-07-01
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/billing/work-queue
 related:
   - billing-overview
@@ -27,14 +27,14 @@ The Billing Work Queue is the biller's daily home. It is a **calendar-synced rea
 
 ## Before you start
 
-- You have the `biller` role, or `admin`.
+- You have the biller or admin role.
 - You understand that readiness is **derived** from the visit and note state — a claim is ready to bill once the visit is Seen and the progress note is complete.
 
 ---
 
 ## Work Queue columns
 
-Navigate to `/facility/{facility_uuid}/billing/work-queue`. Each row is an encounter:
+Open **Billing** → **Work Queue**. Each row is an encounter:
 
 | Column | Description |
 |---|---|
@@ -103,14 +103,14 @@ Filters stack — combine any of:
 
 ## Steps — work your day
 
-1. **Open the Work Queue.** Sidebar → **Billing** → **Work Queue**, or navigate to `/billing/work-queue`.
+1. **Open the Work Queue.** Sidebar → **Billing** → **Work Queue**.
 2. **Set your date range** and click **Apply**. The queue defaults to the last 30 days.
 3. **Use a quick preset.** Click **Ready** to see encounters ready to bill, or **Pending Doc** / **Pending Sig** to see what's waiting on the provider.
 4. **Read the Blocking Reason.** For anything not ready, the column tells you what's missing.
 5. **Open the chart if you need context.** Click **Open Chart** to review the patient.
-6. **Nudge the provider when the note is the blocker.** Click **Notify** to record a provider reminder — it also posts an in-app notification, a message in the encounter's team-chat thread, and a Slack nudge. (Notify is available only when the visit is **Seen** and the encounter isn't already ready or billed.)
+6. **Nudge the provider when the note is the blocker.** Click **Notify** to record a provider reminder — it also posts an in-app notification and a message in the encounter's team-chat thread. (Notify is available only when the visit is **Seen** and the encounter isn't already ready or billed.)
 7. **Review a claim's coding.** When a claim exists, click **Review** to open the [Coding Review drawer](./coding-review-drawer.md).
-8. **Edit a claim.** Click **Edit** to open the claim in the claim form (`/billing/new`). See [Submit a claim](./submit-claim.md).
+8. **Edit a claim.** Click **Edit** to open the claim in the claim form. See [Submit a claim](./submit-claim.md).
 9. **Set the Claim Status.** Use the row's **Claim Status** dropdown as the claim progresses (Ready, Billed, Paid, Denied, etc.).
 10. **Add a biller note** inline in the **Biller Notes** column for anything your team needs to track.
 

@@ -6,7 +6,7 @@ audience: [billing, admin]
 roles: [biller, admin]
 type: how-to
 estimated_minutes: 10
-last_reviewed: 2026-09-01
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/billing/stedi-actions
 related:
   - billing-overview
@@ -20,7 +20,7 @@ tags: [billing, Stedi, webhooks, 999, 277CA, 271, 835, enrollment, action-inbox]
 
 The Stedi Actions Inbox is where every webhook from Stedi lands: file failures, transaction responses, enrollment updates. It is a triage surface — one row per event, with assignment, notes, resolve, and dismiss — so nothing that comes back from the clearinghouse gets lost between submission and the work queue.
 
-Open it at **Billing → Stedi Actions**. Route: `/facility/{facility_uuid}/billing/stedi-actions`.
+Open it at **Billing → Stedi Actions**.
 
 ## What lands here
 
@@ -37,7 +37,7 @@ The event type and its payload come from Stedi verbatim. Medipyxis stores the ev
 
 ## The four statuses
 
-Every row starts in `open`. You move it through the four statuses using the buttons on the row:
+Every row starts in **Open**. You move it through the four statuses using the buttons on the row:
 
 - **Open** — new, unassigned or unread.
 - **In Progress** — someone assigned it to themselves or added a note. The row is being worked.
@@ -50,8 +50,8 @@ Filters at the top let you scope by status, event type, payer, and assignee. Def
 
 Each row expands to show the enrichment Medipyxis added on top of the raw Stedi payload:
 
-- **Claim link** — when the event references a submitted claim (via `stedi_transaction_id`), the row shows the patient name, the claim's local status, and the payer name. Click through to open the claim detail.
-- **Enrollment link** — when the event references an enrollment, the row shows the payer, the transaction type (`professional_claim_submission`, `eligibility`, `claim_status`, `remittance`), and the current status.
+- **Claim link** — when the event references a submitted claim, the row shows the patient name, the claim's local status, and the payer name. Click through to open the claim detail.
+- **Enrollment link** — when the event references an enrollment, the row shows the payer, the transaction type (professional claim submission, eligibility, claim status, remittance), and the current status.
 - **Affected claims count** — for `file.failed` events, how many claims were in the rejected file.
 - **Raw payload** — the original Stedi webhook body, unmodified, for reference or to send back to Stedi support.
 
@@ -61,25 +61,23 @@ Right side of every row:
 
 | Action | What it does | Who can do it |
 |---|---|---|
-| **Assign** | Puts the row in your name. Sets status to `in_progress`. Others still see it — assignment is not exclusive. | Any biller. |
-| **Unassign** | Removes the assignment. Returns the row to `open` if no note or resolution is on it. | The assignee or admin. |
+| **Assign** | Puts the row in your name. Sets status to **In Progress**. Others still see it — assignment is not exclusive. | Any biller. |
+| **Unassign** | Removes the assignment. Returns the row to **Open** if no note or resolution is on it. | The assignee or admin. |
 | **Note** | Adds a comment on the row without changing status. Notes are stacked chronologically and stamped with author + time. | Any biller. |
-| **Resolve** | Marks the row `resolved` with a resolution note. Records who resolved it and when. | Any biller. |
-| **Dismiss** | Marks the row `dismissed` with a reason. Same audit shape as resolve. | Any biller. |
+| **Resolve** | Marks the row **Resolved** with a resolution note. Records who resolved it and when. | Any biller. |
+| **Dismiss** | Marks the row **Dismissed** with a reason. Same audit shape as resolve. | Any biller. |
 
 Resolve and Dismiss both take a required note. That note is the audit trail — three months from now, when a payer asks why a specific 277CA rejection wasn't worked, the resolution note is the answer.
 
-## Superadmin only: Stamp facility
+## Events that arrive without a facility
 
-Some webhooks arrive from Stedi without a facility identifier — the payload references a claim number or an enrollment ID that Medipyxis can resolve, but the initial resolution missed. When that happens, the row appears without a facility link and no biller sees it in their scoped view.
-
-Superadmin (and customer support) users have an extra **Stamp facility** action that writes the correct `facility_id` onto the `stedi_webhook_log` row, making it visible to that facility's billers. Everyone else does not see this button. This is a support tool, not a routing correction — the underlying resolution logic is what should be fixed if stamping is happening often.
+Occasionally an event arrives from Stedi without a facility link. When that happens, no biller sees it in their facility's view. If you expect an event (for example, a payer response for a claim you submitted) and it does not appear, ask Medipyxis support — they can attach it to your facility so your billers see it.
 
 ## How this connects to the work queue
 
 The Actions Inbox is the raw event log; the [Work queue](./work-queue.md) is the claim-centric view. When a `transaction.processed` event carries a 277CA rejection for a claim, both surfaces move in lockstep:
 
-- The claim's `stedi_status` field updates from `submitted` to the payer's specific state (`accepted`, `rejected_277ca`, `paid`, etc.).
+- The claim's Stedi status updates from submitted to the payer's specific state (accepted, rejected on the 277CA, paid, etc.).
 - The claim appears in the Work Queue under the appropriate bucket ("Needs biller attention" for a rejection, "Paid" when an 835 arrives).
 - The event stays in the Actions Inbox as the audit record of when the response arrived and what it said.
 
@@ -103,12 +101,12 @@ Work the claim in the Work Queue. Use the Actions Inbox when the biller needs to
 
 If an event needs escalation to Stedi, copy these from the expanded row:
 
-1. The `event_id` (top of the expanded panel).
-2. The `event_type` (from the row).
-3. The `created_at` timestamp.
+1. The event ID (top of the expanded panel).
+2. The event type (from the row).
+3. The timestamp when the event was created.
 4. The raw payload (there is a copy button in the expanded view).
 
-Stedi support looks these up by `event_id`. Anything else you share is context; those four items are the lookup key.
+Stedi support looks these up by event ID. Anything else you share is context; those four items are the lookup key.
 
 ## Related
 

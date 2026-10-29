@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: quickstart
 estimated_minutes: 60
-last_reviewed: 2026-07-08
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/pm-clinician-dashboard
 related:
   - visit-wizard-ehr-start-a-visit
@@ -40,11 +40,6 @@ Open **Fleet Calendar** (week view) once per Monday to preview the whole week �
 1. From the Wound Cockpit, click the **+ Initial Evaluation** button (top-right of the cockpit chrome).
 2. The **Visit Wizard** opens as a multi-step form. Use the left sidebar inside the wizard to jump between sections; the active section is highlighted.
 3. Your work autosaves continuously as you go — a dropped connection or a device switch won't lose it. (The web app is online-only; there is no separate offline mode.)
-
-<Warning>
-The Wizard button may show a loading error in some environments. If this occurs, contact your Medipyxis administrator — visits can be entered via the data-entry fallback path until the error clears.
-</Warning>
-
 ## Step 3 — Move through the 17 wizard steps (35 min)
 
 The wizard captures every field Medicare LCD policy needs to make the visit billable. Don't skip anything the wizard flags with a red dot.

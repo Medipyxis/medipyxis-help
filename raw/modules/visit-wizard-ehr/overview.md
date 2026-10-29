@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-09-30
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-start-a-visit
@@ -34,9 +34,7 @@ The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It g
 
 ## How the Visit Wizard fits into the workflow
 
-The Visit Wizard opens from the **Fleet Calendar** (tap the appointment, then **Start Visit**), from the **Wound Cockpit**, or from the Patient Chart's Appointment Management card. All three surfaces call the same resolver, so a live draft is resumed by identifier no matter which surface you came from. When opened, the wizard locks to the selected patient, wound, and date of service. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the route-on-arrival behavior.
-
-The Visit Wizard route is `/facility/{facility_uuid}/visit-wizard-v2-page`.
+The Visit Wizard opens from the **Fleet Calendar** (tap the appointment, then **Start Visit**), from the **Wound Cockpit**, or from the Patient Chart's Appointment Management card. All three behave the same way, so a live draft is resumed no matter which surface you came from. When opened, the wizard locks to the selected patient, wound, and date of service. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the route-on-arrival behavior.
 
 Fleet Calendar uses **specialty routing**: **Start Visit** sends primary-care patients to the Primary Care Cockpit and wound-care patients into the Visit Wizard.
 
@@ -46,14 +44,14 @@ Fleet Calendar uses **specialty routing**: **Start Visit** sends primary-care pa
 
 The Visit Wizard uses **17 sections** that mirror the structure auditors expect. Notable behaviors:
 
-- **Continuous autosave** — each field is saved as you complete it (per-field debounced save plus a safety-net heartbeat), so drafts survive network drops and device switches. There is no separate offline mode in the web app.
-- **Warn-and-proceed** — sections that used to hard-block on incomplete fields now surface a **soft warning** and let you continue, recording a review flag rather than stopping documentation. (One exception: if the service date does not match the appointment date, a soft-block prompt at close-out asks for a reason.)
+- **Continuous autosave** — each field is saved as you complete it, so drafts survive network drops and device switches. There is no separate offline mode in the web app.
+- **Warn-and-proceed** — sections with incomplete fields surface a **soft warning** and let you continue, recording a review flag rather than stopping documentation. (One exception: if the service date does not match the appointment date, a soft-block prompt at close-out asks for a reason.)
 - **Clinical history carry-forward** — comorbidities, allergies, prior treatments, and historic measurements pre-populate from the prior visit; a **Pull from History** action can bring forward documented sections on demand.
 - **LCD Navigator ambient badge** — real-time Medicare compliance status, always visible at the top. See [LCD Navigator](./lcd-navigator.md).
 - **ABI documentation for compression** — the wizard flags a compression order that lacks a documented ankle-brachial index.
 - **AI-assisted drafting** — generate section text from structured data, with guardrails and a one-time AI Disclaimer acknowledgment.
 - **Medical necessity in your own words** — the note prints the necessity narrative you wrote, and prompts you for one when it is missing. It is not generated for you. See [How your progress note is written](./progress-note.md).
-- **Deterministic CPT autocode** with **AI fallback** when the deterministic engine returns zero rows; **Pull Codes** can auto-populate billing codes from the documentation.
+- **Deterministic CPT autocode** with **AI fallback** when the deterministic engine finds no matching codes; **Pull Codes** can auto-populate billing codes from the documentation.
 - **LCD audit on save** — every save runs a compliance audit that updates the ambient badge.
 
 ---
@@ -66,7 +64,7 @@ The Visit Wizard uses **17 sections** that mirror the structure auditors expect.
 | 2 | **Patient Context / Demographics** | Reason for visit, visit type, allergies. Insurance is shown here; the **secondary payer is read-only** — edit insurance on the **Insurance** tab. |
 | 3 | **Review of Systems** | Body-system checklist; carries forward from prior visit. |
 | 4 | **Objective Assessment** | Vitals: **BP**, **HR**, **Temp**, **SpO₂**, **Respirations**, **Weight**, **Height**, **BMI**. |
-| 5 | **Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. Feeds the billing engine and stage-aware ICD-10 resolver. |
+| 5 | **Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. Feeds the billing engine and stage-aware ICD-10 selection. |
 | 6 | **Functional Status & ADLs** | Ambulation, ADL independence, fall risk. |
 | 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, anatomical location, exudate, pain, infection signs, photo upload. Each wound carries a **Treating / Monitoring** status. See [Wound Assessment](./wound-assessment.md). |
 | 8 | **Previous Treatment** | Prior interventions (offloading, compression, debridement history, prior grafts). |
@@ -84,7 +82,7 @@ The Visit Wizard uses **17 sections** that mirror the structure auditors expect.
 
 ## Autosave and drafts
 
-The Visit Wizard saves continuously — each field is written as you complete it, with a safety-net heartbeat — so you rarely need to save manually. Draft visits appear on the **Fleet Calendar** with a draft status and can be resumed on any device.
+The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. Draft visits appear on the **Fleet Calendar** with a draft status and can be resumed on any device.
 
 ---
 
@@ -142,7 +140,7 @@ The web Visit Wizard is online-only and saves continuously to the server; there 
 
 - [Wound Cockpit](./wound-cockpit.md) — the canonical wound screen and between-visit hub.
 - [How the Visit Wizard opens](./how-the-wizard-opens.md) — route-on-arrival: draft resume, fresh start, and signed-note protection.
-- [Note honesty guardrails](./note-honesty-guardrails.md) — what the renderer will and will not add to your signed note.
+- [Note honesty guardrails](./note-honesty-guardrails.md) — what Medipyxis will and will not add to your signed note.
 - [LCD Navigator](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
 - [How your progress note is written](./progress-note.md) — what the note prints, and the documentation checklist before it.

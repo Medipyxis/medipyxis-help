@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [admin, clinical_manager, clinician]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-07-01
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/ops/fleet-calendar
 related:
   - fleet-calendar-create-appointment
@@ -35,7 +35,7 @@ Switch views using the **Day / Week / Month** toggle in the top-right of the cal
 
 ## Appointment status colors
 
-Each appointment card carries a color-coded status that updates as the visit progresses. The status set is **data-driven** — colors and labels come from your organization's `appointment_status` configuration — so the exact list can vary. The common statuses are:
+Each appointment card carries a color-coded status that updates as the visit progresses. Colors and labels are configured for your organization, so the exact list can vary. The common statuses are:
 
 | Status | Meaning |
 |---|---|

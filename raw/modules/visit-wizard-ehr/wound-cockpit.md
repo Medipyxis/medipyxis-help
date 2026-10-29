@@ -6,7 +6,7 @@ audience: [clinician, clinical_manager]
 roles: [clinician, medical_director, clinical_manager]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-09-07
+last_reviewed: 2026-10-29
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
@@ -107,23 +107,10 @@ A wound that is not IVR-ready shows `IVR: Not Ready` and `IVR Not Available` on 
 
 | Role | What they can do |
 |---|---|
-| `clinician` | View wounds and compliance status; start visits. |
-| `clinical_manager` | View wounds and compliance status. |
-| `medical_director` | View wounds and compliance status; review attested notes. |
-| `admin` | View everything in their facility. |
-
----
-
-## Roadmap — planned wound cockpit features
-
-The following are planned but not yet live in the current product. Do not describe them to clinicians as available until they ship.
-
-- **Case-Manager Readiness** — a checklist button that evaluates whether a wound is ready for case manager review (conservative care documented, failed prior therapies listed, recent measurements, tissue percentages, comorbidities current, medical necessity statement, recent photo).
-- **Protocol progression timeline** — when a wound is enrolled in a Medipyxis Protocol Engine treatment protocol, a timeline showing the current stage, days at stage, and progression criteria.
-- **Wound Timeline (merged Visit Log)** — a single chronological feed of all wound events (visits, IVR requests, tissue applications, photo captures, write-offs, addenda).
-- **IVR Readiness Modal** — a modal that opens pre-IVR with an auto-populated checklist and payer/product fields for submitting an Insurance Verification Request.
-
-When these ship, this page will be updated with the live workflow.
+| Clinician | View wounds and compliance status; start visits. |
+| Clinical manager | View wounds and compliance status. |
+| Medical director | View wounds and compliance status; review attested notes. |
+| Admin | View everything in their facility. |
 
 ---
 
