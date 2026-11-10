@@ -45,7 +45,7 @@ The **New Claim** form maps directly to the CMS-1500 paper claim form sections. 
 
 | CMS-1500 Section | Fields in Medipyxis |
 |---|---|
-| **§1 Insurance Type** | Insurance type selector (Medicare · Medicaid · Tricare · Champva · Group Health Plan · FECA Blk Lung · Other) |
+| **§1 Insurance Type** | Insurance type selector (Medicare · Medicaid · TRICARE · CHAMPVA · Group Health Plan · FECA Blk Lung · Other) |
 | **§2 Patient Name** | `patient_last_name`, `patient_first_name`, `patient_middle_initial`, `patient_suffix` |
 | **§4 Insured Name** | `insured_last_name`, `insured_first_name`, `insured_middle_initial` |
 | **§5 Patient Address** | `patient_address`, `patient_city`, `patient_state`, `patient_zip`, `patient_phone` |

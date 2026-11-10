@@ -40,7 +40,7 @@ This is the part that catches people out. Each location carries two names, and t
 
 If the **Legal / Billing Name** does not match NPPES character for character, claims and payer enrollments for that location can be rejected. Medipyxis fills this in for you from the NPI — step 2 shows how. Do it for every location, including your first one, which starts out blank.
 
-Keep **Facility Name** readable and presentable. It is the name other providers see on the shared patient record, so it should be the name you would want a referring practice to recognise.
+Keep **Facility Name** readable and presentable. It is the name other providers see on the shared patient record, so it should be the name you would want a referring practice to recognize.
 
 ## Steps
 
