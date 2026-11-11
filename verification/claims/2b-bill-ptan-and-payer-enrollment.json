@@ -11,18 +11,14 @@
           "type": "grep",
           "fixed": true,
           "pattern": "path: \"/facility/:facilityId/billing/enrollment\",",
-          "paths": [
-            "frontend/src/user-routes.tsx"
-          ],
+          "paths": ["frontend/src/user-routes.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "navigate(`/facility/${resolvedFacilityId}/billing/enrollment`)",
-          "paths": [
-            "frontend/src/pages/BillingDashboard.tsx"
-          ],
+          "paths": ["frontend/src/pages/BillingDashboard.tsx"],
           "expect": "present"
         }
       ],
@@ -30,21 +26,62 @@
     },
     {
       "id": "ptan-02",
+      "status": "removed",
       "claim": "PTAN is Medicare-only. Commercial payers, Medicaid, TRICARE, ChampVA — none of them use PTAN. The field is optional at the transaction level and is only checked by Medicare intermediaries.",
-      "checks": [],
-      "finding": "Payer/regulatory fact, not product behavior. The product does not restrict PTAN to Medicare payers: any payer with a PTAN in its box gets providerTransactionAccessNumber (request-provider-enrollment/enrollment-identity.ts:44-82)."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!isMedicarePayer",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Payer/regulatory fact, not product behavior. The product does not restrict PTAN to Medicare payers: any payer with a PTAN in its box gets providerTransactionAccessNumber (request-provider-enrollment/enrollment-identity.ts:44-82).",
+      "reason": "The product does not restrict PTAN to Medicare payers; \"only checked by Medicare intermediaries\" is unverifiable. Replaced by ptan-02b (external) and ptan-02c."
+    },
+    {
+      "id": "ptan-02b",
+      "claim": "PTAN is a Medicare identifier. Commercial payers, Medicaid, TRICARE and ChampVA do not use it.",
+      "kind": "external"
+    },
+    {
+      "id": "ptan-02c",
+      "claim": "Medipyxis does not limit it to Medicare: any payer whose PTAN box is filled on the Enrollment page receives it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "isMedicare|medicare_only|MEDICARE_PAYER",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts", "backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PayerPtanFields",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
+          "expect": "present"
+        }
+      ]
     },
     {
       "id": "ptan-03",
+      "status": "removed",
       "claim": "PTAN is MAC-specific. Medipyxis stores one PTAN per facility today, which matches the wound-care norm (a facility bills one MAC).",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "absent",
           "note": "true only if there is no per-enrollment PTAN"
         }
@@ -56,18 +93,35 @@
           "type": "grep",
           "fixed": true,
           "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "ADD COLUMN IF NOT EXISTS ptan text;",
-          "paths": [
-            "backend/supabase/migrations/20260810120000_add_ptan_to_facility.sql"
-          ],
+          "paths": ["backend/supabase/migrations/20260810120000_add_ptan_to_facility.sql"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Medipyxis stores a group PTAN on the facility and a PTAN per payer enrollment. Replaced by ptan-03b."
+    },
+    {
+      "id": "ptan-03b",
+      "claim": "PTAN is MAC-specific. Medipyxis keeps one group PTAN on the location and can store a different PTAN for each payer enrollment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ADD COLUMN IF NOT EXISTS ptan text;",
+          "paths": ["backend/supabase/migrations/20260810120000_add_ptan_to_facility.sql"],
           "expect": "present"
         }
       ]
@@ -80,18 +134,14 @@
           "type": "grep",
           "fixed": true,
           "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "provider_npi: formState.providerNpi,",
-          "paths": [
-            "frontend/src/pages/StediEnrollmentPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediEnrollmentPage.tsx"],
           "expect": "present"
         }
       ],
@@ -99,16 +149,14 @@
     },
     {
       "id": "ptan-05",
+      "status": "removed",
       "claim": "PTAN lives in facility_billing_settings.ptan.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "facility_billing_settings",
-          "paths": [
-            "frontend/src/services/billingConfigService.ts",
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["frontend/src/services/billingConfigService.ts", "backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present",
           "note": "true only if PTAN is read/written on facility_billing_settings"
         }
@@ -120,18 +168,42 @@
           "type": "grep",
           "fixed": true,
           "pattern": ".select('ptan' as any)",
-          "paths": [
-            "frontend/src/services/billingConfigService.ts"
-          ],
+          "paths": ["frontend/src/services/billingConfigService.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": ".select(\"npi_code, tax_id, ptan\")",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "PTAN lives on the facility record and on each enrollment, not in facility_billing_settings. Replaced by ptan-05b."
+    },
+    {
+      "id": "ptan-05b",
+      "claim": "The location keeps one group PTAN; each payer enrollment also stores the PTAN it was sent with.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select('ptan' as any)",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"npi_code, tax_id, ptan\")",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         }
       ]
@@ -144,36 +216,28 @@
           "type": "grep",
           "fixed": true,
           "pattern": "<Label htmlFor=\"providerPtan\" className=\"text-sm\">Provider PTAN</Label>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "export const PTAN_MIN = 4;",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "export const PTAN_MAX = 10;",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "if (!ptan) return \"\";",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "present",
           "note": "blank allowed"
         }
@@ -181,15 +245,14 @@
     },
     {
       "id": "ptan-07",
+      "status": "removed",
       "claim": "On Admin → Billing Setup — same underlying field, different surface. Either place updates the same row.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "Billing Setup",
-          "paths": [
-            "frontend/src"
-          ],
+          "paths": ["frontend/src"],
           "excludeTests": true,
           "expect": "present",
           "note": "true only if a Billing Setup surface exists"
@@ -202,9 +265,7 @@
           "type": "grep",
           "fixed": true,
           "pattern": "Billing Setup",
-          "paths": [
-            "frontend/src"
-          ],
+          "paths": ["frontend/src"],
           "excludeTests": true,
           "expect": "absent"
         },
@@ -212,9 +273,29 @@
           "type": "grep",
           "fixed": true,
           "pattern": "if (!savedPtan) plan.fill.ptan = ptan;",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "No Billing Setup screen exists; the Enrollment page fills the PTAN only when empty. Replaced by ptan-07b."
+    },
+    {
+      "id": "ptan-07b",
+      "claim": "The Enrollment page is the only place to enter a PTAN. It fills the location's PTAN only when none is saved; it never replaces a saved one.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing Setup",
+          "paths": ["frontend/src"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!savedPtan) plan.fill.ptan = ptan;",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
           "expect": "present"
         }
       ]
@@ -227,42 +308,35 @@
           "type": "grep",
           "fixed": true,
           "pattern": "\"PTAN must be 4-10 letters or numbers, or left blank. Please correct the PTAN field.\",",
-          "paths": [
-            "frontend/src/services/facilityService.ts"
-          ],
+          "paths": ["frontend/src/services/facilityService.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "if (ptan.length < PTAN_MIN) return `PTAN must be at least ${PTAN_MIN} characters`;",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "CHECK (ptan IS NULL OR ptan ~ '^[a-zA-Z0-9]{4,10}$');",
-          "paths": [
-            "backend/supabase/migrations/20260810120000_add_ptan_to_facility.sql"
-          ],
+          "paths": ["backend/supabase/migrations/20260810120000_add_ptan_to_facility.sql"],
           "expect": "present"
         }
       ]
     },
     {
       "id": "ptan-09",
+      "status": "removed",
       "claim": "PTAN is sent on Medicare enrollment requests to Stedi as provider_ptan. It travels with the enrollment record and is written to stedi_enrollments when the enrollment lands.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "enrollBody.provider_ptan",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present",
           "note": "true only if Stedi receives a provider_ptan field"
         },
@@ -270,9 +344,7 @@
           "type": "grep",
           "fixed": true,
           "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         }
       ],
@@ -283,18 +355,35 @@
           "type": "grep",
           "fixed": true,
           "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Stedi receives providerTransactionAccessNumber, for any payer with a PTAN, not only Medicare. Replaced by ptan-09b."
+    },
+    {
+      "id": "ptan-09b",
+      "claim": "The PTAN is sent to Stedi on the enrollment for each payer whose PTAN box is filled, and is saved on that enrollment record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "provider_ptan: ptanByPayer[payerId] ?? null,",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         }
       ]
@@ -307,75 +396,67 @@
           "type": "grep",
           "pattern": "ptan|providerTransactionAccessNumber",
           "ignoreCase": true,
-          "paths": [
-            "backend/supabase/functions/_shared/stediTransform.ts",
-            "frontend/src/services/stediService.ts",
-            "backend/supabase/functions/_shared/claimProviderBlocks.ts"
-          ],
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts", "backend/supabase/functions/_shared/claimProviderBlocks.ts"],
           "expect": "absent"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "employerId,",
-          "paths": [
-            "backend/supabase/functions/_shared/claimProviderBlocks.ts"
-          ],
+          "paths": ["backend/supabase/functions/_shared/claimProviderBlocks.ts"],
           "expect": "present"
         }
       ]
     },
     {
       "id": "ptan-11",
-      "claim": "Provider block: Provider name, NPI (10 digits), Tax ID (SSN or EIN, 9 digits, dashes are stripped), PTAN (Medicare only, 4–10 alphanumeric), Provider address (line 1, city, state, ZIP). Contact block: Contact name, Contact email, Contact phone.",
+      "claim": "Provider block: Organization / Provider Name, NPI (10 digits), Tax ID (EIN; dashes and spaces are stripped), Provider PTAN (4–10 letters or numbers, optional), Provider address (line 1, city, state, ZIP). Contact block: Contact name, Contact email, Contact phone.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<Label htmlFor=\"providerName\" className=\"text-sm\">Organization / Provider Name</Label>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<Label htmlFor=\"providerTaxId\" className=\"text-sm\">Tax ID (EIN)</Label>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "const sanitizedTaxId = payload.provider_tax_id.replace(/[^0-9]/g, \"\");",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<Label htmlFor=\"contactPhone\" className=\"text-sm\">Contact Phone</Label>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<Label htmlFor=\"providerZip\" className=\"text-sm\">ZIP</Label>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-sm font-medium\">Provider PTAN</p>",
+          "paths": ["frontend/src/components/billing/stedi/PayerPtanFields.tsx"],
           "expect": "present"
         }
       ],
-      "reason": "Labels on screen: 'Organization / Provider Name', 'NPI', 'Tax ID (EIN)', 'Provider PTAN', 'Address', 'City', 'State', 'ZIP', 'Contact Name', 'Contact Email', 'Contact Phone'."
+      "reason": "Labels on screen: 'Organization / Provider Name', 'NPI', 'Tax ID (EIN)', 'Provider PTAN', 'Address', 'City', 'State', 'ZIP', 'Contact Name', 'Contact Email', 'Contact Phone'.",
+      "reworded": "labels aligned to the form; dropped the unenforced \"9 digits\" and \"Medicare only\"; checks unchanged plus PTAN label"
     },
     {
       "id": "ptan-12",
@@ -385,9 +466,7 @@
           "type": "grep",
           "fixed": true,
           "pattern": "const { payers, loading: payersLoading } = useStediPayerList();",
-          "paths": [
-            "frontend/src/pages/StediEnrollmentPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediEnrollmentPage.tsx"],
           "expect": "present"
         },
         {
@@ -399,16 +478,14 @@
     },
     {
       "id": "ptan-13",
+      "status": "removed",
       "claim": "Transaction type(s) — check the ones you want registered: professional_claim_submission (837P), eligibility (270/271), claim_status (276/277), remittance (835).",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "claim_status",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx",
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx", "backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present",
           "note": "true only if claim status is an option"
         }
@@ -420,28 +497,49 @@
           "type": "grep",
           "fixed": true,
           "pattern": "{ id: \"era\", label: \"ERA / Remittance (835)\" },",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "export const DEFAULT_ENROLLMENT_TYPES: string[] = [\"claims\", \"eligibility\"];",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "claim_status",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx",
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx", "backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "There are three options (no claim status); Claims and Eligibility are default and ERA is off by default. Replaced by ptan-13b."
+    },
+    {
+      "id": "ptan-13b",
+      "claim": "Transaction type(s): Professional Claims (837P), Eligibility (270/271), and ERA / Remittance (835). Claims and Eligibility are checked by default; ERA is off by default because enrolling ERA with Stedi stops ERA delivery through any other clearinghouse.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"era\", label: \"ERA / Remittance (835)\" },",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const DEFAULT_ENROLLMENT_TYPES: string[] = [\"claims\", \"eligibility\"];",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claim_status",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx", "backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "absent"
         }
       ]
@@ -454,36 +552,31 @@
           "type": "grep",
           "fixed": true,
           "pattern": "}, { onConflict: \"facility_id,payer_id,transaction_type\" });",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "// One POST /enrollments per (payer x transaction type)",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         }
       ]
     },
     {
       "id": "ptan-15",
-      "claim": "Submit sends the whole batch to Stedi via the request-provider-enrollment edge function.",
+      "claim": "Submit sends the whole batch to Stedi.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "`${supabaseUrl}/functions/v1/request-provider-enrollment`,",
-          "paths": [
-            "frontend/src/pages/StediEnrollmentPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediEnrollmentPage.tsx"],
           "expect": "present"
         }
-      ]
+      ],
+      "reworded": "edge function name removed; checks unchanged"
     },
     {
       "id": "ptan-16",
@@ -493,18 +586,14 @@
           "type": "grep",
           "fixed": true,
           "pattern": "{r.status || \"Submitted\"} — Stedi is processing this enrollment",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<p className=\"text-xs text-red-600\">{r.error}</p>",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
           "expect": "present"
         }
       ],
@@ -518,28 +607,34 @@
           "type": "grep",
           "fixed": true,
           "pattern": "await loadCurrentEnrollments();",
-          "paths": [
-            "frontend/src/pages/StediEnrollmentPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediEnrollmentPage.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "<CardTitle className=\"text-base\">Current Enrollments</CardTitle>",
-          "paths": [
-            "frontend/src/pages/StediEnrollmentPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediEnrollmentPage.tsx"],
           "expect": "present"
         }
       ]
     },
     {
       "id": "ptan-17b",
+      "status": "removed",
       "claim": "The Current Enrollments panel below the form [...]",
-      "checks": [],
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Current Enrollments",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"],
+          "expect": "present"
+        }
+      ],
       "finding": "Layout is not grep-checkable, and the code contradicts it: the Current Enrollments card is rendered above the form cards (frontend/src/pages/StediEnrollmentPage.tsx:493-497 vs EnrollmentTypesCard/ProviderInfoCard/ContactInfoCard at ~611-646).",
-      "proposed_text": "The Current Enrollments panel above the form refreshes after submit."
+      "proposed_text": "The Current Enrollments panel above the form refreshes after submit.",
+      "reason": "The Current Enrollments card renders above the form, not below. Layout order cannot be grep-encoded; the check below is a proxy (the panel living in the form-cards component after the form) and fails. Sentence now omits the position."
     },
     {
       "id": "ptan-18",
@@ -549,9 +644,7 @@
           "type": "grep",
           "fixed": true,
           "pattern": "errorMessage: rawMessage || `Enrollment failed (HTTP ${res.status})`,",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/classify-response.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/classify-response.ts"],
           "expect": "present"
         }
       ],
@@ -565,27 +658,21 @@
           "type": "grep",
           "fixed": true,
           "pattern": "'enrollment.rejected',",
-          "paths": [
-            "backend/supabase/functions/stedi-action-list/index.ts"
-          ],
+          "paths": ["backend/supabase/functions/stedi-action-list/index.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "'enrollment.task.assigned',",
-          "paths": [
-            "backend/supabase/functions/stedi-action-list/index.ts"
-          ],
+          "paths": ["backend/supabase/functions/stedi-action-list/index.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "Stedi Actions",
-          "paths": [
-            "frontend/src/pages/StediActionInboxPage.tsx"
-          ],
+          "paths": ["frontend/src/pages/StediActionInboxPage.tsx"],
           "expect": "present"
         }
       ],
@@ -593,15 +680,14 @@
     },
     {
       "id": "ptan-20",
+      "status": "removed",
       "claim": "PTAN entered with a hyphen or space. The validator rejects anything outside [A-Za-z0-9]{4,10}.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "export const cleanPtanInput = (value: string): string => value.replace(/[^a-zA-Z0-9]/g, \"\");",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "absent",
           "note": "true only if hyphens/spaces are rejected rather than removed"
         }
@@ -613,49 +699,83 @@
           "type": "grep",
           "fixed": true,
           "pattern": "export const cleanPtanInput = (value: string): string => value.replace(/[^a-zA-Z0-9]/g, \"\");",
-          "paths": [
-            "frontend/src/components/billing/stedi/payerPtans.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "return typeof value === \"string\" ? value.replace(/[^a-zA-Z0-9]/g, \"\") : \"\";",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Hyphens and spaces are stripped, not rejected. Replaced by ptan-20b."
+    },
+    {
+      "id": "ptan-20b",
+      "claim": "PTAN entered with a hyphen or space: the Enrollment page removes them; the remaining letters and numbers must be 4–10 characters.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const cleanPtanInput = (value: string): string => value.replace(/[^a-zA-Z0-9]/g, \"\");",
+          "paths": ["frontend/src/components/billing/stedi/payerPtans.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return typeof value === \"string\" ? value.replace(/[^a-zA-Z0-9]/g, \"\") : \"\";",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/enrollment-identity.ts"],
           "expect": "present"
         }
       ]
     },
     {
       "id": "ptan-21",
-      "claim": "NPI/PTAN mismatch with Medicare is the most common enrollment reject. MAC processing can legitimately take 4–8 weeks. Stedi sometimes needs a form signed manually before Medicare will finalize.",
+      "claim": "NPI/PTAN mismatch with Medicare is a common enrollment reject. MAC processing can take 4–8 weeks. Stedi sometimes needs a form signed manually before Medicare will finalize.",
       "checks": [],
-      "finding": "Payer/Stedi process facts; not checkable from code."
+      "finding": "Payer/Stedi process facts; not checkable from code.",
+      "kind": "external",
+      "reworded": "\"most common\" softened; payer/Stedi process facts, not product behavior"
+    },
+    {
+      "id": "ptan-21b",
+      "claim": "Fix: verify both values on the CMS PECOS portal, enter the correct PTAN in that payer's PTAN box on the Enrollment page, and resubmit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Optional per-payer boxes. They start blank and are not filled from the group PTAN. */",
+          "paths": ["frontend/src/components/billing/stedi/PayerPtanFields.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        }
+      ]
     },
     {
       "id": "ptan-22",
+      "status": "removed",
       "claim": "Wrong tax ID shape. The field accepts SSN or EIN. Medipyxis strips dashes and whitespace before sending, so 12-3456789 and 123456789 both work — but 12-345678 (8 digits) fails.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "const sanitizedTaxId = payload.provider_tax_id.replace(/[^0-9]/g, \"\");",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "pattern": "sanitizedTaxId\\.length|taxId\\.length !== 9|\\\\d\\{9\\}",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts",
-            "frontend/src/pages/StediEnrollmentPage.tsx",
-            "frontend/src/components/billing/stedi"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts", "frontend/src/pages/StediEnrollmentPage.tsx", "frontend/src/components/billing/stedi"],
           "expect": "present",
           "note": "true only if Medipyxis itself refuses a tax ID that is not 9 digits"
         }
@@ -667,19 +787,33 @@
           "type": "grep",
           "fixed": true,
           "pattern": "const sanitizedTaxId = payload.provider_tax_id.replace(/[^0-9]/g, \"\");",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         },
         {
           "type": "grep",
           "pattern": "sanitizedTaxId\\.length|taxId\\.length !== 9|\\\\d\\{9\\}",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts",
-            "frontend/src/pages/StediEnrollmentPage.tsx",
-            "frontend/src/components/billing/stedi"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts", "frontend/src/pages/StediEnrollmentPage.tsx", "frontend/src/components/billing/stedi"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "Nothing checks for 9 digits; an 8-digit tax ID is sent as-is. Replaced by ptan-22b."
+    },
+    {
+      "id": "ptan-22b",
+      "claim": "Medipyxis strips dashes and spaces before sending, so 12-3456789 and 123456789 are the same. It does not check the digit count — count the digits before you submit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const sanitizedTaxId = payload.provider_tax_id.replace(/[^0-9]/g, \"\");",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "sanitizedTaxId\\.length|taxId\\.length !== 9|\\\\d\\{9\\}",
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts", "frontend/src/pages/StediEnrollmentPage.tsx", "frontend/src/components/billing/stedi"],
           "expect": "absent"
         }
       ]
@@ -692,9 +826,7 @@
           "type": "grep",
           "fixed": true,
           "pattern": "enrollBody.providerTransactionAccessNumber = payerPtan;",
-          "paths": [
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present"
         }
       ],
@@ -702,16 +834,14 @@
     },
     {
       "id": "ptan-24",
+      "status": "removed",
       "claim": "Enroll all four transaction types the first time — submission, eligibility, claim status, remittance.",
       "checks": [
         {
           "type": "grep",
           "fixed": true,
           "pattern": "claim_status",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx",
-            "backend/supabase/functions/request-provider-enrollment/handler.ts"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx", "backend/supabase/functions/request-provider-enrollment/handler.ts"],
           "expect": "present",
           "note": "true only if four types can be chosen"
         }
@@ -723,18 +853,35 @@
           "type": "grep",
           "fixed": true,
           "pattern": "export const DEFAULT_ENROLLMENT_TYPES: string[] = [\"claims\", \"eligibility\"];",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
           "expect": "present"
         },
         {
           "type": "grep",
           "fixed": true,
           "pattern": "Switching a provider to Stedi stops ERA delivery through the previous",
-          "paths": [
-            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
-          ],
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Only three types exist and ERA is deliberately off by default. Replaced by ptan-24b."
+    },
+    {
+      "id": "ptan-24b",
+      "claim": "Enroll Professional Claims and Eligibility the first time. Add ERA / Remittance only when this practice is ready to receive ERAs through Stedi instead of another clearinghouse.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const DEFAULT_ENROLLMENT_TYPES: string[] = [\"claims\", \"eligibility\"];",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switching a provider to Stedi stops ERA delivery through the previous",
+          "paths": ["frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"],
           "expect": "present"
         }
       ]

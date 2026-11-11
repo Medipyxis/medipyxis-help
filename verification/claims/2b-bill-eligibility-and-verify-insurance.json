@@ -5,118 +5,521 @@
   "claims": [
     {
       "id": "elig-01",
+      "status": "removed",
       "claim": "Medipyxis sends a 270 request to Stedi, the payer answers with a 271, and Medipyxis writes both the verdict and the raw response back to the patient's insurance record.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "'/2024-04-01/change/medicalnetwork/eligibility/v3',", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": ".from(\"patient_insurance\")", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "if (ok && isActive && data) {", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "absent", "note": "true only if the raw 271 is always written back"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/eligibility/v3',",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"patient_insurance\")",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ok && isActive && data) {",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "absent",
+          "note": "true only if the raw 271 is always written back"
+        }
       ],
       "finding": "The verdict is always written, but the raw 271 (eligibility_response) is written only when the payer reports active coverage (backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts:358-369). The page says so itself further down.",
       "proposed_text": "Medipyxis sends a 270 request to Stedi, the payer answers with a 271, and Medipyxis writes the verdict back to the patient's insurance record — plus the raw 271 when coverage is active.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (ok && isActive && data) {", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "updateData.eligibility_response = data;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ok && isActive && data) {",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.eligibility_response = data;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The raw 271 is written only when coverage is active. Replaced by elig-01b."
+    },
+    {
+      "id": "elig-01b",
+      "claim": "Medipyxis sends a 270 request to Stedi, the payer answers with a 271, and Medipyxis writes the verdict back to the patient's insurance record — plus the raw 271 when coverage is active.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ok && isActive && data) {",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.eligibility_response = data;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-02",
+      "status": "removed",
       "claim": "Before you start: You have the biller, medical assistant, or admin role.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "'medical_assistant'", "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"], "expect": "present", "note": "true only if a medical assistant role is allowed"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'medical_assistant'",
+          "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"],
+          "expect": "present",
+          "note": "true only if a medical assistant role is allowed"
+        }
       ],
       "finding": "verify-insurance allows BILLING_SURFACE_ROLES (backend/supabase/functions/verify-insurance/index.ts:35-38): admin, clinician, clinical_manager, medical_director, provider, biller, billing_lead, coder, third_party_biller, superadmin, customersupport (backend/supabase/functions/_shared/auth-helpers.ts:295, 332-340). There is no medical assistant role.",
       "proposed_text": "You have a billing role (biller, billing lead, coder, third-party biller), a clinical role (clinician, provider, clinical manager, medical director), or admin.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "BILLING_SURFACE_ROLES", "paths": ["backend/supabase/functions/verify-insurance/index.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "  'third_party_biller',", "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "BILLING_SURFACE_ROLES",
+          "paths": ["backend/supabase/functions/verify-insurance/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  'third_party_biller',",
+          "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There is no medical assistant role; verify-insurance allows the billing-surface roles. Replaced by elig-02b."
+    },
+    {
+      "id": "elig-02b",
+      "claim": "You have a billing role (biller, billing lead, coder, third-party biller), a clinical role (clinician, provider, clinical manager, medical director), or admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "BILLING_SURFACE_ROLES",
+          "paths": ["backend/supabase/functions/verify-insurance/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  'third_party_biller',",
+          "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'billing_lead',",
+          "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'medical_director',",
+          "paths": ["backend/supabase/functions/_shared/auth-helpers.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-03",
       "claim": "The patient has an insurance row with member ID, DOB, and payer ID mapped to a Stedi trading partner.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "const catalogResult = await lookupPayerInCatalog(supabase, payerId);", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "'missing_dob',", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "memberId: insurance.member_id || insurance.policy_number,", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const catalogResult = await lookupPayerInCatalog(supabase, payerId);",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'missing_dob',",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "memberId: insurance.member_id || insurance.policy_number,",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-04",
+      "status": "removed",
       "claim": "The rendering provider is enrolled with the payer through Stedi.",
-      "checks": [],
-      "finding": "verify-insurance (the button path) has no enrollment check: it gates on name, member ID, DOB, NPI, tax ID and the payer catalog only (verifyInsuranceCore.ts:181-275). Whether a payer needs Stedi eligibility enrollment is a payer/Stedi fact, not checkable from code."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "stedi_enrollments",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "verify-insurance (the button path) has no enrollment check: it gates on name, member ID, DOB, NPI, tax ID and the payer catalog only (verifyInsuranceCore.ts:181-275). Whether a payer needs Stedi eligibility enrollment is a payer/Stedi fact, not checkable from code.",
+      "reason": "Verification has no enrollment check; prerequisite deleted."
     },
     {
       "id": "elig-05",
+      "status": "removed",
       "claim": "Open the patient chart → Insurance. Click Verify on the insurance row you want to check.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "Manage in Billing", "paths": ["frontend/src/components/PatientInsuranceTab.tsx"], "expect": "absent", "note": "true only if the chart Insurance tab is itself the verify surface"},
-        {"type": "grep", "fixed": true, "pattern": "<span>Verify</span>", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage in Billing",
+          "paths": ["frontend/src/components/PatientInsuranceTab.tsx"],
+          "expect": "absent",
+          "note": "true only if the chart Insurance tab is itself the verify surface"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Verify</span>",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ],
       "finding": "The patient chart Insurance tab is a read-only viewer with a 'Manage in Billing' button (frontend/src/components/PatientInsuranceTab.tsx:29-42, 170). Verification runs on the billing insurance page (BillingAuthPage), where the row's button is an icon with the tooltip 'Verify insurance coverage' (frontend/src/pages/BillingAuthPage.tsx:6178-6222); the only 'Verify' text button there verifies an authorization (BillingAuthPage.tsx:7060-7080).",
       "proposed_text": "Open the patient chart → Insurance → Manage in Billing. On the insurance row, click the shield icon (tooltip: Verify insurance coverage).",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "Manage in Billing", "paths": ["frontend/src/components/PatientInsuranceTab.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": ": \"Verify insurance coverage\"}", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "handleVerifyInsurance(insurance.id);", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage in Billing",
+          "paths": ["frontend/src/components/PatientInsuranceTab.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Verify insurance coverage\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handleVerifyInsurance(insurance.id);",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The verify action is the shield icon on the Billing & Authorization page, not a Verify button on the chart Insurance tab. Replaced by elig-05b."
+    },
+    {
+      "id": "elig-05b",
+      "claim": "Open the patient's overview → Billing & Auth. On the insurance row you want to check, click the shield icon (tooltip: Verify insurance coverage).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Verify insurance coverage\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handleVerifyInsurance(insurance.id);",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing & Auth",
+          "paths": ["frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PatientOverviewPage patientId={patientId} />",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Shield size={16} />",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingAuthPage />",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-06",
       "claim": "Medipyxis sends a 270 request with service type 30 (Health Benefit Plan Coverage).",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "serviceTypeCodes: ['30'],", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "\"verify-insurance\",", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present", "note": "the row button calls verify-insurance"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceTypeCodes: ['30'],",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"verify-insurance\",",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present",
+          "note": "the row button calls verify-insurance"
+        }
       ]
     },
     {
       "id": "elig-07",
+      "status": "removed",
       "claim": "Wait for the row's status pill to update: Verified, Failed, or Timeout.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "? \"✅ Verified\"", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "? \"✗ Failed\"", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "pattern": "[\"'>] *[^A-Za-z]*Timeout *[\"'<]", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present", "note": "true only if a Timeout pill exists"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"✅ Verified\"",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"✗ Failed\"",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "[\"'>] *[^A-Za-z]*Timeout *[\"'<]",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present",
+          "note": "true only if a Timeout pill exists"
+        }
       ],
       "finding": "There is no Timeout pill. The pill shows '✅ Verified', '⏳ Pending', '⏳ Pending Approval', '📋 Manual Required', '✗ Failed', and any other status (including 'timeout') falls through to '⚠ Expired' (frontend/src/pages/BillingAuthPage.tsx:6110-6134). A row whose legacy verified flag is still true shows Verified regardless of status (frontend/src/utils/insuranceStatus.ts:10-14).",
       "proposed_text": "Wait for the row's status pill to update: Verified, Failed, Pending, Pending Approval, Manual Required, or Expired (a timed-out check shows Expired unless the row was already verified).",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": ": \"⚠ Expired\"}", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "return row?.verified === true || row?.verification_status === 'verified';", "paths": ["frontend/src/utils/insuranceStatus.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"⚠ Expired\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return row?.verified === true || row?.verification_status === 'verified';",
+          "paths": ["frontend/src/utils/insuranceStatus.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There is no Timeout pill; a timed-out row shows Expired (or Verified). Replaced by elig-07b."
+    },
+    {
+      "id": "elig-07b",
+      "claim": "Wait for the row's status pill to update: Verified, Failed, Pending, Pending Approval, Manual Required, or Expired (a timed-out check shows Expired unless the row was already verified).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"⚠ Expired\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return row?.verified === true || row?.verification_status === 'verified';",
+          "paths": ["frontend/src/utils/insuranceStatus.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"⏳ Pending Approval\"",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"📋 Manual Required\"",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"✗ Failed\"",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-08",
+      "status": "removed",
       "claim": "Click View Verification Response to open the raw 271 in a modal — the full payer response, formatted for reading.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "View Verification Response", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present", "note": "button label"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "View Verification Response",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present",
+          "note": "button label"
+        }
       ],
       "finding": "The button is labelled 'View Response' and appears only on rows that read as verified and were not manually verified (frontend/src/pages/BillingAuthPage.tsx:6586-6604).",
       "proposed_text": "Click View Response to open the saved 271 in a modal. The button appears only on verified rows that were checked through Stedi.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": ": \"View Response\"}", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "insurance.verification_method !== \"manual\" && (", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"View Response\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insurance.verification_method !== \"manual\" && (",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The button is \"View Response\" and shows only on verified, non-manual rows. Replaced by elig-08b."
+    },
+    {
+      "id": "elig-08b",
+      "claim": "Click View Response to open the saved 271 in a modal. The button appears only on verified rows that were checked through Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"View Response\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insurance.verification_method !== \"manual\" && (",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-09",
+      "status": "removed",
       "claim": "You can re-verify at any time. The most recent attempt wins on the record — including a fresh Failed or Timeout, which correctly replaces a stale Verified.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "verification_status: verificationStatus,", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "updateData.verified = isActive;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "absent", "note": "true only if the verified flag is not held back on transport failures"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "verification_status: verificationStatus,",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "absent",
+          "note": "true only if the verified flag is not held back on transport failures"
+        }
       ],
       "finding": "The status column takes the latest attempt, but on a transport failure (timeout / 5xx) the legacy verified flag is left as it was (verifyInsuranceCore.ts:352-356), and the screen treats verified=true as Verified (frontend/src/utils/insuranceStatus.ts:13). So a fresh timeout does NOT replace a stale Verified on screen; only a payer answer (active or not) does.",
       "proposed_text": "You can re-verify at any time. A payer answer always replaces the previous result, including an inactive answer replacing an old Verified. A timeout records the attempt but keeps an earlier verification.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "updateData.verified = isActive;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "verification_status: verificationStatus,", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "verification_status: verificationStatus,",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "A timeout leaves the old verified flag, so it does not replace a stale Verified on screen. Replaced by elig-09b."
+    },
+    {
+      "id": "elig-09b",
+      "claim": "You can re-verify at any time. A payer answer always replaces the previous result, including an inactive answer replacing an old Verified. A timeout records the attempt but keeps an earlier verification.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "verification_status: verificationStatus,",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-10",
       "claim": "Plan status — Medipyxis checks whether any plan status the payer returns says \"active\". This is the authoritative \"is coverage active today\" signal.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "return planStatuses.some(isActiveCoverage);", "paths": ["backend/supabase/functions/_shared/eligibilityStatus.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "const isActive = hasActiveCoverage(data);", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return planStatuses.some(isActiveCoverage);",
+          "paths": ["backend/supabase/functions/_shared/eligibilityStatus.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isActive = hasActiveCoverage(data);",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ],
       "reason": "It reads the numeric EB01 status code (1-5, 11), with an exact-label fallback — not a 'says active' text match (eligibilityStatus.ts:26-85). The behavior described holds."
     },
@@ -124,26 +527,96 @@
       "id": "elig-11",
       "claim": "Verified — Stedi returned a response AND the payer reports at least one active plan. Failed — Stedi returned a response but no active plan, OR any other error that is not a timeout.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "const verificationStatus = ok && isActive ? 'verified' : (isTimeout ? 'timeout' : 'failed');", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const verificationStatus = ok && isActive ? 'verified' : (isTimeout ? 'timeout' : 'failed');",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-12",
       "claim": "Timeout — Stedi timed out. An earlier verification is preserved — a connection failure does not erase a prior real verification.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "const isTimeout = data?.error?.toLowerCase?.()?.includes?.('timeout') || false;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "updateData.verified = isActive;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present", "note": "set only inside if (ok)"},
-        {"type": "grep", "fixed": true, "pattern": "if (ok && isActive && data) {", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present", "note": "raw 271 not overwritten on failure"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isTimeout = data?.error?.toLowerCase?.()?.includes?.('timeout') || false;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present",
+          "note": "set only inside if (ok)"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ok && isActive && data) {",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present",
+          "note": "raw 271 not overwritten on failure"
+        }
+      ]
+    },
+    {
+      "id": "elig-12b",
+      "claim": "Timeout — the pill shows Expired.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"⚠ Expired\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const verificationStatus = ok && isActive ? 'verified' : (isTimeout ? 'timeout' : 'failed');",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-13",
       "claim": "On every 270/271 round trip, Medipyxis saves: Verification status, Last verified (date and time of this attempt), Raw 271 (only when active), Copay, deductible, deductible met, coinsurance %, out-of-pocket max, out-of-pocket met, and Notes.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "last_verified_date: new Date().toISOString(),", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "if (parsed.out_of_pocket_met !== null) updateData.out_of_pocket_met = parsed.out_of_pocket_met;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "if (parsed.coinsurance_percentage !== null) updateData.coinsurance_percentage = parsed.coinsurance_percentage;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "notes: notesSummary,", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "last_verified_date: new Date().toISOString(),",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (parsed.out_of_pocket_met !== null) updateData.out_of_pocket_met = parsed.out_of_pocket_met;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (parsed.coinsurance_percentage !== null) updateData.coinsurance_percentage = parsed.coinsurance_percentage;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "notes: notesSummary,",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ],
       "reason": "Benefit columns are written only when the 271 carried that value; otherwise the previous value is kept."
     },
@@ -151,26 +624,74 @@
       "id": "elig-14",
       "claim": "Notes — Summary — plan name, payer, and any error text.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "parts.push(`Plan: ${planName}.`);", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "return `Verification failed: ${msg}`.substring(0, 500);", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "parts.push(`Plan: ${planName}.`);",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `Verification failed: ${msg}`.substring(0, 500);",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-15",
       "claim": "The raw 271 is saved only when coverage is active, so the response view never shows an inactive or terminated plan as active coverage.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (ok && isActive && data) {", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ok && isActive && data) {",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-16",
       "claim": "Medipyxis reads the X12 271 EB01 code letter (not the free-text benefit name): A coinsurance %, B copay, C deductible (or deductible met for a remaining/met/used variant), G out-of-pocket max (or out-of-pocket met for the remaining variant).",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "} else if (code === 'B') {", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "} else if (code === 'C') {", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "} else if (code === 'G') {", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "return name.includes('remaining') || name.includes('met') || name.includes('used');", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "result.deductible_met = Math.max(0, result.deductible_amount - deductibleRemaining);", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (code === 'B') {",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (code === 'C') {",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (code === 'G') {",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return name.includes('remaining') || name.includes('met') || name.includes('used');",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result.deductible_met = Math.max(0, result.deductible_amount - deductibleRemaining);",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        }
       ],
       "reason": "The remaining/met variant is detected from the benefit name text, and 'met' is computed as amount minus remaining. Entries with no EB01 code fall back to name matching (parseBenefits.ts:209-235)."
     },
@@ -178,90 +699,288 @@
       "id": "elig-17",
       "claim": "Within a benefit type, entries are ranked: individual coverage outranks family, in-network outranks out-of-network, and service type 30 outranks others. The highest-ranked line wins.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (b.coverageLevelCode === 'IND') score += 4;", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "if (b.inPlanNetworkIndicatorCode === 'Y') score += 2;", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "if (b.serviceTypeCodes?.includes('30')) score += 1;", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (b.coverageLevelCode === 'IND') score += 4;",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (b.inPlanNetworkIndicatorCode === 'Y') score += 2;",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (b.serviceTypeCodes?.includes('30')) score += 1;",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-18",
       "claim": "When the payer sends a Co-Payment (EB01 B) line, that is always the copay Medipyxis uses. Other copay-like text from a non-standard payer cannot override it.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "copayFromB = true;", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "&& !copayFromB && score > copayScore) {", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": {"min": 2}}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "copayFromB = true;",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "&& !copayFromB && score > copayScore) {",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": {"min": 2}
+        }
       ]
     },
     {
       "id": "elig-19",
+      "status": "removed",
       "claim": "A verified row unblocks pre-service checks in the Work Queue, feeds copay/deductible into the biller-facing claim summary, and preserves the exact 271 for audit.",
       "checks": [
-        {"type": "grep", "pattern": "verification_status|isInsuranceVerified", "paths": ["frontend/src/components/billing"], "excludeTests": true, "expect": "present", "note": "true only if the Work Queue reads the verification result"}
+        {
+          "type": "grep",
+          "pattern": "verification_status|isInsuranceVerified",
+          "paths": ["frontend/src/components/billing"],
+          "excludeTests": true,
+          "expect": "present",
+          "note": "true only if the Work Queue reads the verification result"
+        }
       ],
       "finding": "No billing Work Queue component reads verification_status or isInsuranceVerified (frontend/src/components/billing has no hit), and the claim editor initialises copay_amount to null rather than reading the verified copay (frontend/src/pages/NewBillingSubmitPage.tsx:2450). Only the 271-preserved part holds (verifyInsuranceCore.ts:358-369).",
       "proposed_text": "A verified row keeps the exact 271 so you can open it with View Response.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "updateData.eligibility_response = data;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.eligibility_response = data;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "No Work Queue check reads the verification, and the claim editor does not read the verified copay. Replaced by elig-19b."
+    },
+    {
+      "id": "elig-19b",
+      "claim": "A verified row keeps the exact 271 so you can open it with View Response.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.eligibility_response = data;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"View Response\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-20",
       "claim": "Re-verify before the DOS if the last check is stale — the row records the date and time of every attempt so you can tell.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "last_verified_date: new Date().toISOString(),", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "last_verified_date: new Date().toISOString(),",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ],
       "reason": "Only the latest attempt's time is kept on the row (one column, overwritten); the row shows it as a date (toLocaleDateString, BillingAuthPage.tsx:6158-6162)."
     },
     {
       "id": "elig-21",
+      "status": "removed",
       "claim": "Troubleshooting: View Verification Response disabled → No 271 response is saved on the row. Click Verify again to run a fresh 270.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "View Verification Response", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "View Verification Response",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ],
       "finding": "The button is 'View Response' and is hidden (not disabled) unless the row reads as verified and the method is not manual; it is disabled only while a response is being parsed (frontend/src/pages/BillingAuthPage.tsx:6586-6604).",
       "proposed_text": "No View Response button → the row is not verified (or was verified manually). Run the check again.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "disabled={isParsingResponse}", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "insurance.verification_method !== \"manual\" && (", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isParsingResponse}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insurance.verification_method !== \"manual\" && (",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The button is \"View Response\" and is hidden, not disabled, on unverified rows. Replaced by elig-21b."
+    },
+    {
+      "id": "elig-21b",
+      "claim": "No View Response button → the row is not verified, or was verified manually. Run the check again.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isParsingResponse}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insurance.verification_method !== \"manual\" && (",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-22",
+      "status": "removed",
       "claim": "Status stuck at Timeout → Stedi timed out; existing verification is preserved on purpose. Retry after a minute.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "return 'Verification timed out. Retry later.';", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"},
-        {"type": "grep", "pattern": "[\"'>] *[^A-Za-z]*Timeout *[\"'<]", "paths": ["frontend/src/pages/BillingAuthPage.tsx"], "expect": "present", "note": "true only if the screen shows a Timeout status"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'Verification timed out. Retry later.';",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "[\"'>] *[^A-Za-z]*Timeout *[\"'<]",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present",
+          "note": "true only if the screen shows a Timeout status"
+        }
       ],
       "finding": "The screen has no Timeout status; a timed-out row shows '⚠ Expired' (or still Verified if the old verified flag is true) and the notes read 'Verification timed out. Retry later.' (BillingAuthPage.tsx:6110-6134; parseBenefits.ts:270-272).",
       "proposed_text": "Notes say \"Verification timed out. Retry later.\" → Stedi timed out; an earlier verification is kept on purpose. Retry after a minute.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "return 'Verification timed out. Retry later.';", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'Verification timed out. Retry later.';",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There is no Timeout status on screen; the notes carry the timeout text. Replaced by elig-22b."
+    },
+    {
+      "id": "elig-22b",
+      "claim": "Notes say \"Verification timed out. Retry later.\" → Stedi timed out; an earlier verification is kept on purpose. Retry after a minute.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'Verification timed out. Retry later.';",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-23",
       "claim": "Status flips Verified → Failed on re-verify → coverage really did lapse, OR the member ID / DOB is mistyped. Compare the row's notes to the raw 271.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "updateData.verified = isActive;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateData.verified = isActive;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
       ],
       "reason": "A payer answer with no active plan sets verified=false and status failed. Note the raw 271 is not saved for a failed check (elig-15), so only the notes can be compared."
     },
     {
       "id": "elig-24",
+      "status": "removed",
       "claim": "Copay is $0.00 but the payer's card shows a copay → The 271 either had no Co-Payment (EB01 B) line or listed only family coverage.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (amount !== null && !remaining && (!copayFromB || score > copayScore)) {", "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"], "expect": "absent", "note": "true only if a family-only B line is ignored"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (amount !== null && !remaining && (!copayFromB || score > copayScore)) {",
+          "paths": ["backend/supabase/functions/verify-insurance/parseBenefits.ts"],
+          "expect": "absent",
+          "note": "true only if a family-only B line is ignored"
+        }
       ],
       "finding": "A family-only Co-Payment line is still used: ranking only orders candidates, it never drops one, so a lone family B line becomes the copay (backend/supabase/functions/verify-insurance/parseBenefits.ts:182-192). When no copay is found the column is left unchanged rather than set to $0 (verifyInsuranceCore.ts:371).",
       "proposed_text": "Copay is blank or old but the payer's card shows a copay → the 271 had no Co-Payment (EB01 B) line. Open View Response and read the benefits.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (parsed.copay_amount !== null) updateData.copay_amount = parsed.copay_amount;", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (parsed.copay_amount !== null) updateData.copay_amount = parsed.copay_amount;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "A family-only copay line is still used, and a missing copay leaves the old value rather than $0. Replaced by elig-24b."
+    },
+    {
+      "id": "elig-24b",
+      "claim": "Copay is blank or old but the payer's card shows a copay → the 271 had no Co-Payment (EB01 B) line. Open View Response and read the benefits.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (parsed.copay_amount !== null) updateData.copay_amount = parsed.copay_amount;",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"View Response\"}",
+          "paths": ["frontend/src/pages/BillingAuthPage.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "elig-25",
       "claim": "Row shows Verified but claim submission still fails on eligibility → The 270 checks base coverage, not payer enrollment through Stedi. The provider may need to complete Stedi enrollment for that payer.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "stedi_enrollments", "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"], "expect": "absent"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "stedi_enrollments",
+          "paths": ["backend/supabase/functions/verify-insurance/verifyInsuranceCore.ts"],
+          "expect": "absent"
+        }
       ]
     }
   ]

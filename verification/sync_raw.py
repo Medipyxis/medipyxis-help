@@ -9,7 +9,7 @@ class P(HTMLParser):
     def flush(s,prefix):
         if s.buf is not None:
             t=''.join(s.buf).strip()
-            if t: s.blocks.append(prefix+t)
+            if t: s.blocks.append(('> ' if getattr(s,'quote',False) else '')+prefix+t)
         s.buf=None
     def handle_starttag(s,tag,a):
         a=dict(a)
@@ -18,16 +18,24 @@ class P(HTMLParser):
         elif tag=='tr' and getattr(s,'table',None) is not None: s.table.append([])
         elif tag in ('td','th') and getattr(s,'table',None) is not None: s.start()
         elif tag=='p': s.kind=''; s.start()
-        elif tag=='ul':
+        elif tag in ('ul','ol'):
             if s.buf is not None: s.flush(s.cur())
             s.depth+=1
-        elif tag=='li': s.kind=None; s.start()
+            s.lists=getattr(s,'lists',[])+[[tag,0]]
+        elif tag=='blockquote': s.quote=True
+        elif tag=='li':
+            s.kind=None; s.start()
+            if getattr(s,'lists',None): s.lists[-1][1]+=1
         elif tag=='hr': s.blocks.append('---')
         elif tag=='strong': s.buf is not None and s.buf.append('**')
         elif tag=='em': s.buf is not None and s.buf.append('_')
         elif tag=='code': s.buf is not None and s.buf.append('`')
         elif tag=='a': s.href.append(a.get('href','')); s.buf is not None and s.buf.append('[')
-    def cur(s): return '  '*(s.depth-1)+'- ' if s.kind is None else s.kind
+    def bullet(s):
+        l=getattr(s,'lists',None)
+        mark=f"{l[-1][1]}. " if l and l[-1][0]=='ol' else '- '
+        return '  '*(s.depth-1)+mark
+    def cur(s): return s.bullet() if s.kind is None else s.kind
     def handle_endtag(s,tag):
         if tag in('h2','h3','h4','p') and getattr(s,'table',None) is None: s.flush(s.kind)
         elif tag in ('td','th') and getattr(s,'table',None) is not None:
@@ -40,8 +48,11 @@ class P(HTMLParser):
                 md=['| '+' | '.join(rows[0])+' |','|'+'---|'*n]+['| '+' | '.join(r)+' |' for r in rows[1:]]
                 s.blocks.append('\n'.join(md))
             s.table=None
-        elif tag=='li': s.flush('  '*(s.depth-1)+'- ')
-        elif tag=='ul': s.depth-=1; s.blocks.append('')
+        elif tag=='li': s.flush(s.bullet())
+        elif tag in ('ul','ol'):
+            s.depth-=1; s.blocks.append('')
+            if getattr(s,'lists',None): s.lists.pop()
+        elif tag=='blockquote': s.quote=False
         elif tag=='strong': s.buf is not None and s.buf.append('**')
         elif tag=='em': s.buf is not None and s.buf.append('_')
         elif tag=='code': s.buf is not None and s.buf.append('`')
@@ -54,7 +65,7 @@ def conv(b):
     p=P(); p.feed(b)
     out=[]; prev_li=False
     for blk in p.blocks:
-        is_li=blk.lstrip().startswith('- ')
+        is_li=bool(re.match(r'\s*(- |\d+\. )',blk))
         if blk=='' : prev_li=False; continue
         out.append(('\n' if is_li and prev_li else '\n\n')+blk)
         prev_li=is_li

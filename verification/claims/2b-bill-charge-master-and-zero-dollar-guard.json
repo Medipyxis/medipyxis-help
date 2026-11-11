@@ -5,6 +5,7 @@
   "claims": [
     {
       "id": "cm-01",
+      "status": "removed",
       "claim": "Medipyxis will not let a claim leave the system for $0.00 — not one line at $0, not a claim total at $0, no escape hatch.",
       "checks": [
         {
@@ -42,12 +43,43 @@
           "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
           "expect": "present"
         }
+      ],
+      "reason": "The $0.00 guard runs only on the electronic (Stedi) paths; Send Fax, Mark as Submitted and Fix & Resubmit do not run it. Replaced by cm-01b."
+    },
+    {
+      "id": "cm-01b",
+      "claim": "Medipyxis will not send a claim to Stedi for $0.00 — not one line at $0, not a claim total at $0, no escape hatch.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "There is deliberately no override flag",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-02",
+      "status": "removed",
       "claim": "You have the biller or admin role.",
-      "checks": [],
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireRole roles={[\"biller\", \"admin\"]}",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present",
+          "note": "would hold if the route were gated by a biller/admin role"
+        }
+      ],
       "finding": "Not checkable as a role: the Charge Master route is gated by the \"Billing Operations\" feature (RequireFeature + FeatureAccess, frontend/src/user-routes.tsx:1014-1022), not by a biller/admin role check. Which roles carry that feature is tenant data.",
       "proposed_text": "You have access to Billing Operations.",
       "proposed_checks": [
@@ -55,6 +87,27 @@
           "type": "grep",
           "fixed": true,
           "pattern": "<FeatureAccess feature=\"Billing Operations\">",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The Charge Master route is gated by the Billing Operations feature, not by a biller/admin role check. Replaced by cm-02b."
+    },
+    {
+      "id": "cm-02b",
+      "claim": "You have access to Billing Operations.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Billing Operations\">",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ChargeMasterPage />",
           "paths": ["frontend/src/user-routes.tsx"],
           "expect": "present"
         }
@@ -136,6 +189,7 @@
     },
     {
       "id": "cm-06",
+      "status": "removed",
       "claim": "Templates: Superbill templates (fixed CPT/HCPCS/ICD-10 code lists) you attach to visit types.",
       "checks": [
         {
@@ -149,6 +203,26 @@
       "finding": "A template is a name, description and active flag plus codes picked from the facility's superbill code list (frontend/src/pages/ChargeMasterPage.tsx:160-195). There is no visit-type link; templates are read by the billing code picker (frontend/src/components/claims/BillingCodeEntry.tsx:175) and the claim editor, not the visit wizard.",
       "proposed_text": "Templates: named superbill templates that group codes from the facility's superbill code list.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ superbill_config_id: templateId, updated_at: new Date().toISOString() })",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "visit_type|visitType",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "Templates have no visit-type link. Replaced by cm-06b."
+    },
+    {
+      "id": "cm-06b",
+      "claim": "Templates: named superbill templates that group codes from the facility's superbill code list.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -190,11 +264,12 @@
           "expect": "present",
           "note": "rate is per unit: the line total multiplies it by units"
         }
-      ]
+      ],
+      "reworded": "dropped the trailing \"Add a code, set the amount, save\" (button names covered by cm-24b)"
     },
     {
       "id": "cm-08",
-      "claim": "When a claim is drafted from a visit, priceClaimLine reads facility_charge_master for each procedure line.",
+      "claim": "When a claim is drafted from a visit, Medipyxis looks up the Charge Master price for each procedure line.",
       "checks": [
         {
           "type": "grep",
@@ -217,7 +292,8 @@
           "paths": ["frontend/src/lib/billing/charge_master.ts"],
           "expect": "present"
         }
-      ]
+      ],
+      "reworded": "reworded to remove internal function and table names; checks unchanged"
     },
     {
       "id": "cm-09",
@@ -288,7 +364,7 @@
     },
     {
       "id": "cm-12",
-      "claim": "If a line has no row in the Charge Master, the price is $0.00 — and the pre-flight guard rejects the whole claim.",
+      "claim": "If a line has no row in the Charge Master, the price is $0.00 — and the check before sending rejects the whole claim.",
       "checks": [
         {
           "type": "grep",
@@ -311,15 +387,47 @@
           "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
           "expect": "present"
         }
-      ]
+      ],
+      "reworded": "\"pre-flight guard\" reworded to plain English; checks unchanged"
     },
     {
       "id": "cm-13",
+      "status": "removed",
       "claim": "Two rules stop a $0.00 claim from ever reaching a payer, and both are named requirements from [billing lead] (2026-08-27).",
-      "checks": [],
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "named requirement (\"no line may have a $0.00 charge\"",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present",
+          "note": "would hold if the per-line rule were also recorded as a named requirement"
+        }
+      ],
       "finding": "Only the claim-total rule is recorded as a named requirement dated 2026-08-27 (backend/supabase/functions/_shared/validateClaimLineCharges.ts:162-166). The per-line rule carries no attribution in code; who asked for it cannot be checked. Name withheld here (zero-PHI/people rule).",
       "proposed_text": "Two rules stop a $0.00 claim from being sent to Stedi.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `No price on file for ${label}${atFacility} — add it in Charge Master.`,",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `Claim total is $${claimTotal.toFixed(2)} — nothing is being billed. Add charges in Charge Master.`,",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Only the claim-total rule carries a dated named requirement in code; the attribution is unverifiable and names a person. Replaced by cm-13b."
+    },
+    {
+      "id": "cm-13b",
+      "claim": "Two rules stop a $0.00 claim from being sent to Stedi.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -427,6 +535,7 @@
     },
     {
       "id": "cm-18",
+      "status": "removed",
       "claim": "This guard exists because on 2026-08-27, right before go-live, the biller-facing pricing path was reading the wrong dollar-amount key on the service line: the 837P builder wrote charge_amount, the reader looked for lineItemChargeAmount, and every claim went through with $0 lines. The whole prod set — 1,134 claims — priced at $0.",
       "checks": [
         {
@@ -455,10 +564,32 @@
           "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
           "expect": "present"
         }
+      ],
+      "reason": "The guard record says 85 of 85 service lines carried no readable charge key on 2026-08-26; there was no charge_amount vs lineItemChargeAmount mismatch and 1,134 is not a count of $0 claims. Replaced by cm-18b."
+    },
+    {
+      "id": "cm-18b",
+      "claim": "This guard exists because, checked on 2026-08-26 just before go-live, all 85 service lines on production carried no charge in a form the claim builder could read, so every line defaulted to $0.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Verified on prod tcwxvrioheyubxmrmlij 2026-08-26: 85 of 85 service lines",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "carried no charge key at any spelling the transforms read",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-19",
+      "status": "removed",
       "claim": "The guard is now permanent, on both the electronic path AND the manual paths (Mark as Submitted, Fix & Resubmit, Send Fax).",
       "checks": [
         {
@@ -495,7 +626,67 @@
           "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
           "expect": {"count": 2}
         }
+      ],
+      "reason": "The manual paths run only the coding-fact check, not the $0.00 guard. Replaced by cm-19b, cm-19c."
+    },
+    {
+      "id": "cm-19b",
+      "claim": "The guard runs on every electronic submission to Stedi, including Submit to Stedi and a submission a biller makes on the practice's behalf.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "import \\{ submitToStedi \\} from ['\"]\\.\\./_shared/submitToStedi\\.ts['\"];",
+          "paths": ["backend/supabase/functions/submit-to-stedi/index.ts", "backend/supabase/functions/submit-claim/index.ts", "backend/supabase/functions/biller-submit-claim-onbehalf/index.ts"],
+          "expect": {"count": 3}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
       ]
+    },
+    {
+      "id": "cm-19c",
+      "claim": "The manual paths — Mark as Submitted, Fix & Resubmit and Send Fax — do not run the $0.00 guard today. They run the coding check only (unit limits and place of service), so a claim with a $0 line can still be faxed or marked submitted. A fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validateClaimLineCharges",
+          "paths": ["frontend/src", "backend/supabase/functions/mark-claim-submitted"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const issues = checkClaimCodingFacts(claim);",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "CMS MUE of 0",
+          "paths": ["backend/supabase/functions/_shared/validateCodingFacts.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "correct the place of service",
+          "paths": ["backend/supabase/functions/_shared/validateCodingFacts.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cm-19e",
+      "claim": "Until then, confirm every line has a price before you fax a claim or mark it submitted.",
+      "kind": "advice"
     },
     {
       "id": "cm-20",
@@ -546,6 +737,7 @@
     },
     {
       "id": "cm-22",
+      "status": "removed",
       "claim": "It now reads: Claim Not Submitted — Claim cannot be submitted — No price on file for CPT 97597 at <facility> — add it in Charge Master.",
       "checks": [
         {
@@ -567,6 +759,34 @@
       "finding": "The toast body is stediResult.errors joined one per line (frontend/src/pages/NewBillingSubmitPage.tsx:5103-5108); the errors are the individual messages, without the \"Claim cannot be submitted —\" summary prefix (that prefix lives only on result.message, submitToStedi.ts:375).",
       "proposed_text": "It now reads: Claim Not Submitted — No price on file for CPT 97597 at <facility> — add it in Charge Master.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error('Claim Not Submitted', {",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? stediResult.errors.join('\\n')",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors: validationErrors,",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The toast body is the list of individual messages without the \"Claim cannot be submitted —\" prefix. Replaced by cm-22b."
+    },
+    {
+      "id": "cm-22b",
+      "claim": "It now reads: Claim Not Submitted — No price on file for CPT 97597 at [facility] — add it in Charge Master.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -620,6 +840,7 @@
     },
     {
       "id": "cm-24",
+      "status": "removed",
       "claim": "Click Add code → enter the CPT/HCPCS → enter the per-unit dollar amount → Save.",
       "checks": [
         {
@@ -647,10 +868,52 @@
           "paths": ["frontend/src/components/billing/ChargeEditDialog.tsx"],
           "expect": "present"
         }
+      ],
+      "reason": "The button is \"Add Charge\" and the new-charge dialog confirms with \"Create\". Replaced by cm-24b."
+    },
+    {
+      "id": "cm-24b",
+      "claim": "Click Add Charge → enter the CPT/HCPCS code → enter the per-unit dollar amount → Create.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Charge",
+          "paths": ["frontend/src/components/billing/ChargeRateTable.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isNew ? \"Create\" : \"Save\"}",
+          "paths": ["frontend/src/components/billing/ChargeEditDialog.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cm-24c",
+      "claim": "Open Charge Master → Insurance Charges (or Self-Pay Charges if the patient has no active insurance on file).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "priority first) → 'insurance'; no such row → 'self_pay'.",
+          "paths": ["frontend/src/utils/billing/financialClass.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return insurance ? 'insurance' : 'self_pay';",
+          "paths": ["frontend/src/utils/billing/financialClass.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-25",
+      "status": "removed",
       "claim": "Return to the claim in New Claim or the Coding Review drawer. Refresh the claim (or click Save & Next and come back). The price now hydrates onto the line, and the Expected Total is a real number.",
       "checks": [
         {
@@ -686,10 +949,52 @@
           "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
           "expect": "present"
         }
+      ],
+      "reason": "The Coding Review drawer never re-reads the Charge Master; only New Claim prices unpriced lines when a visit is selected. Replaced by cm-25b, cm-25c."
+    },
+    {
+      "id": "cm-25b",
+      "claim": "Return to the claim in New Claim and select the visit again: lines with no charge are priced from the Charge Master.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((row.codeType !== 'CPT' && row.codeType !== 'HCPCS') || row.charge != null) continue;",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cm-25c",
+      "claim": "The Coding Review drawer shows the charge saved on the claim and does not re-read the Charge Master. Type the per-unit price into the line's charge box and click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "priceClaimLine|getCharge|facility_charge_master",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx", "frontend/src/utils/billing/resolveClaimCodes.ts", "backend/supabase/functions/update-claim-codes"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onUpdate(code.id, 'charge', e.target.value)}",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{saving ? \"Saving...\" : \"Save\"}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-26",
+      "status": "removed",
       "claim": "The Templates tab is not a pricing surface — it holds superbill templates: fixed lists of CPT/HCPCS/ICD-10 codes you attach to visit types so a clinician sees the right code menu on the wizard. Templates carry no dollar amounts; those still come from Insurance Charges and Self-Pay Charges.",
       "checks": [
         {
@@ -733,10 +1038,73 @@
           "paths": ["frontend/src/lib/billing/charge_master.ts"],
           "expect": "present"
         }
+      ],
+      "reason": "Templates have no visit-type link and are not read by the wizard; superbill codes can carry a default charge. Replaced by cm-26b."
+    },
+    {
+      "id": "cm-26b",
+      "claim": "The Templates tab groups the facility's superbill codes into named templates for the billing code picker. A superbill code can carry a default charge that the picker offers; automatic claim pricing comes from Insurance Charges and Self-Pay Charges.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (s.default_charge != null && onDefaultChargeAvailable) {",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"facility_charge_master\")",
+          "paths": ["frontend/src/lib/billing/charge_master.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "q = q.eq('superbill_config_id', superbillConfigId);",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cm-26c",
+      "claim": "Every claim sent to Stedi has a positive charge on every line and a positive total.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!(claimTotal > 0)) {",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-27",
+      "status": "removed",
       "claim": "Any missing price surfaces immediately, in the biller's words, on the exact line that lacks a rate. When a biller adds the price, the same claim goes through on the next attempt with no code changes needed.",
       "checks": [
         {
@@ -758,6 +1126,27 @@
       "finding": "Adding a Charge Master row does not re-price a claim that is already saved: the submit core is a pure payload check with no DB read (submitToStedi.ts, validateClaimLineCharges.ts:52-60), and neither the drawer nor update-claim-codes reads the Charge Master. The line's charge must be put on the claim (re-select the visit in New Claim, or type it in) before the next attempt passes.",
       "proposed_text": "Any missing price surfaces before the claim is sent, in the biller's words, naming each code that lacks a rate. After the biller adds the price and puts it on the line (re-select the visit in New Claim, or type it into the line), the next attempt goes through.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `No price on file for ${label}${atFacility} — add it in Charge Master.`,",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((row.codeType !== 'CPT' && row.codeType !== 'HCPCS') || row.charge != null) continue;",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Adding a Charge Master row does not re-price a saved claim; the charge must be put on the line first. Replaced by cm-27b."
+    },
+    {
+      "id": "cm-27b",
+      "claim": "Any missing price surfaces before the claim is sent, in the biller's words, naming each code that lacks a rate. After the biller adds the price and puts it on the line (select the visit again in New Claim, or type it into the line), the next attempt goes through.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -797,6 +1186,7 @@
     },
     {
       "id": "cm-29",
+      "status": "removed",
       "claim": "Troubleshooting: Rate is set but the claim still rejects with $0.00 — The rate exists in the wrong tab (self-pay vs. insurance) for this patient — Confirm the patient's payment method on the claim; add the rate in the matching tab.",
       "checks": [
         {
@@ -824,10 +1214,32 @@
           "paths": ["frontend/src/lib/billing/charge_master.ts"],
           "expect": "present"
         }
+      ],
+      "reason": "There is no payment method on the claim; the financial class comes from whether the patient has active insurance. Replaced by cm-29b."
+    },
+    {
+      "id": "cm-29b",
+      "claim": "Rate is set but the claim still rejects with $0.00 — the rate is in the other tab. A patient with active insurance on file is priced from Insurance Charges; a patient with none is priced from Self-Pay Charges. Add the rate in the matching tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "priority first) → 'insurance'; no such row → 'self_pay'.",
+          "paths": ["frontend/src/utils/billing/financialClass.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "query = query.eq(\"financial_class\", financial_class);",
+          "paths": ["frontend/src/lib/billing/charge_master.ts"],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "cm-30",
+      "status": "removed",
       "claim": "Troubleshooting: Rate is set correctly but the line still shows $0.00 in the drawer — The claim was drafted before you added the rate — Re-open the claim; the Expected Total re-hydrates from Charge Master on load. Or open Edit in Full Form and save once.",
       "checks": [
         {
@@ -856,6 +1268,34 @@
           "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
           "expect": "present"
         }
+      ],
+      "reason": "The drawer sums the stored line charges and never reads the Charge Master. Replaced by cm-30b."
+    },
+    {
+      "id": "cm-30b",
+      "claim": "Rate is set correctly but the line still shows $0.00 in the drawer — the claim was drafted before you added the rate, and the drawer shows the charge saved on the claim. Type the price into the line and click Save, or open Edit in Full Form and select the visit again.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "priceClaimLine|getCharge|facility_charge_master",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx", "frontend/src/utils/billing/resolveClaimCodes.ts"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sum, c) => sum + (c.charge ?? 0) * (c.units ?? 1),",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Edit in Full Form",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -880,6 +1320,7 @@
     },
     {
       "id": "cm-32",
+      "status": "removed",
       "claim": "Troubleshooting: A biller wants to submit a legitimately $0 line (e.g. no-charge follow-up) — There is no escape hatch — by design. Do not attempt to bypass the guard. Book the encounter as non-billable in the Work Queue instead, or contact the payer directly.",
       "checks": [
         {
@@ -920,6 +1361,48 @@
           "fixed": true,
           "pattern": "{ value: 'void', label: 'Void' },",
           "paths": ["frontend/src/components/billing/statusDropdownHelpers.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The Work Queue has no non-billable action or status. Replaced by cm-32b."
+    },
+    {
+      "id": "cm-32b",
+      "claim": "A biller wants to submit a legitimately $0 line — there is no escape hatch, by design. Do not bill it. Set the claim to Hold, Write-Off or Void in the Work Queue, or contact the payer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "There is deliberately no override flag",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'write_off', label: 'Write-Off' },",
+          "paths": ["frontend/src/components/billing/statusDropdownHelpers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'void', label: 'Void' },",
+          "paths": ["frontend/src/components/billing/statusDropdownHelpers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'hold', label: 'Hold' },",
+          "paths": ["frontend/src/components/billing/statusDropdownHelpers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<StatusDropdown",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
           "expect": "present"
         }
       ]
