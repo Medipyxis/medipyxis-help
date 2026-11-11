@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-start-a-visit
@@ -19,110 +19,87 @@ related:
   - visit-wizard-ehr-work-offline
   - visit-wizard-ehr-sign-off
   - visit-wizard-ehr-medication-dosespot
-tags: [visit-wizard, EHR, LCD, Medicare, autosave, AI-drafting, ABI]
+tags: [visit-wizard, EHR, LCD, Medicare, autosave, customization, charting, templates]
 ---
 
 # Visit Wizard overview
 
-The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **17 sections** — from consent to provider attestation — supporting documentation completeness, real-time LCD compliance, and clean billing-code generation before a note is signed.
+The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **17 sections** — from consent to provider attestation — so the note is complete, meets Medicare LCD documentation needs, and produces billing codes for review before it is signed.
 
-![Visit Wizard section navigator and patient header](../../assets/visit-wizard/03_visit_wizard_overview.png)
-
-*The Visit Wizard section navigator. Completed sections display a checkmark, and the active section is highlighted.*
+For a section-by-section walkthrough, see [Walk through a visit in the Visit Wizard](./start-a-visit.md).
 
 ---
 
-## How the Visit Wizard fits into the workflow
+## Where to open it
 
-The Visit Wizard opens from the **Fleet Calendar** (tap the appointment, then **Start Visit**), from the **Wound Cockpit**, or from the Patient Chart's Appointment Management card. All three behave the same way, so a live draft is resumed no matter which surface you came from. When opened, the wizard locks to the selected patient, wound, and date of service. See [How the Visit Wizard opens](./how-the-wizard-opens.md) for the route-on-arrival behavior.
+You can open a visit from:
 
-Fleet Calendar uses **specialty routing**: **Start Visit** sends primary-care patients to the Primary Care Cockpit and wound-care patients into the Visit Wizard.
+- **Fleet Calendar** — tap the appointment, then **Start Visit**.
+- **Patient Management (My Clinical Day)** — open the scheduled visit.
+- **All Patients → Appointment Management** — select the visit date, then click **Open Visit**.
+- **Wound Cockpit** — choose a visit from **Pick a visit or start a new one** in the upper-right corner, then click **Open**.
+
+When opened, the wizard is tied to the selected patient and appointment. See [How the Visit Wizard opens](./how-the-wizard-opens.md).
 
 ---
 
-## How the Visit Wizard is structured
+## How it works
 
-The Visit Wizard uses **17 sections** that mirror the structure auditors expect. Notable behaviors:
-
-- **Continuous autosave** — each field is saved as you complete it, so drafts survive network drops and device switches. There is no separate offline mode in the web app.
-- **Warn-and-proceed** — sections with incomplete fields surface a **soft warning** and let you continue, recording a review flag rather than stopping documentation. (One exception: if the service date does not match the appointment date, a soft-block prompt at close-out asks for a reason.)
-- **Clinical history carry-forward** — comorbidities, allergies, prior treatments, and historic measurements pre-populate from the prior visit; a **Pull from History** action can bring forward documented sections on demand.
-- **LCD Navigator ambient badge** — real-time Medicare compliance status, always visible at the top. See [LCD Navigator](./lcd-navigator.md).
-- **ABI documentation for compression** — the wizard flags a compression order that lacks a documented ankle-brachial index.
-- **AI-assisted drafting** — generate section text from structured data, with guardrails and a one-time AI Disclaimer acknowledgment.
-- **Medical necessity in your own words** — the note prints the necessity narrative you wrote, and prompts you for one when it is missing. It is not generated for you. See [How your progress note is written](./progress-note.md).
-- **Deterministic CPT autocode** with **AI fallback** when the deterministic engine finds no matching codes; **Pull Codes** can auto-populate billing codes from the documentation.
-- **LCD audit on save** — every save runs a compliance audit that updates the ambient badge.
+- **Mark as Complete** — finish each section with **Mark as Complete**. In the section navigator, completed sections are green with a checkmark, and sections that still need documentation or review are red.
+- **Continuous autosave** — each field is saved as you complete it, so drafts survive network drops and device switches. The web app is online-only.
+- **Warnings, not blocks** — most missing items raise a warning and let you continue. Before signing, a final review lists open gaps so you can resolve them or continue anyway.
+- **Carry-forward** — information from earlier visits carries into sections such as Review of Systems, and **Pull Migration Data** brings forward data from a previous Medipyxis visit you choose.
+- **Per-wound documentation** — interventions, care plans, procedures, and billing are documented separately for each active wound.
+- **LCD support** — the [LCD Navigator](./lcd-navigator.md) tracks Medicare LCD documentation requirements as you work, and Section 16 shows any remaining gaps.
+- **Drafting help** — **Summarize prior treatments**, **Generate Procedure Note**, **Generate Draft** (care plan), and **Generate Compliance Note** create starting text from what you documented. You review and edit it; you can also keep your own procedure wording with **Use My Exact Procedure Note**.
+- **Billing codes from documentation** — **Pull Codes** suggests ICD-10-CM, CPT, HCPCS, and E/M codes from your documentation for review before signing.
 
 ---
 
 ## The 17 sections
 
-| # | Section | Key fields / notes |
+| # | Section | What it covers |
 |---|---|---|
-| 1 | **Consent & Attestation** | HIPAA notice, telehealth consent toggle, patient e-signature. |
-| 2 | **Patient Context / Demographics** | Reason for visit, visit type, allergies. Insurance is shown here; the **secondary payer is read-only** — edit insurance on the **Insurance** tab. |
-| 3 | **Review of Systems** | Body-system checklist; carries forward from prior visit. |
-| 4 | **Objective Assessment** | Vitals: **BP**, **HR**, **Temp**, **SpO₂**, **Respirations**, **Weight**, **Height**, **BMI**. |
-| 5 | **Comorbidities / Risk Factors** | DM, PAD, CVI, CHF, lymphedema, smoking status. Feeds the billing engine and stage-aware ICD-10 selection. |
-| 6 | **Functional Status & ADLs** | Ambulation, ADL independence, fall risk. |
-| 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, anatomical location, exudate, pain, infection signs, photo upload. Each wound carries a **Treating / Monitoring** status. See [Wound Assessment](./wound-assessment.md). |
-| 8 | **Previous Treatment** | Prior interventions (offloading, compression, debridement history, prior grafts). |
-| 9 | **Treatment / Intervention** | Debridement type, dressing selection, ultrasonic therapy (MIST / Arobella), AI-assisted draft available. |
-| 10 | **Care Plan** | Goals, frequency, next-visit interval, plan-of-care dates. |
-| 11 | **Procedures & Supplies** | Graft SKU + UIN, wastage calculation, **Generate Procedure Note**, auto-mapped to billing codes. |
-| 12 | **Orders & DME** | Clinical orders and DME. DME is a vendor-fulfilled order — there is **no product picker** here; clinicians order and the item is fulfilled downstream. |
-| 13 | **Medication Management** | Medications and **DoseSpot** e-prescribing (pharmacy selection and prescription handled in the DoseSpot modal). |
-| 14 | **Billing** | Deterministic CPT autocode with AI fallback, E/M level, modifiers, POS code, medical necessity narrative. Billing lines can be dragged to reorder. Staging codes here opens the documentation checklist — see [How your progress note is written](./progress-note.md). |
-| 15 | **Patient Education** | Handout selection and teach-back. |
-| 16 | **LCD Audit & Review** | LCD Navigator final review — see [LCD Navigator](./lcd-navigator.md). |
-| 17 | **Provider Attestation** | ESIGN/UETA/CMS/HIPAA attestation and **Sign & Lock**. See [Sign Off](./sign-off.md). |
+| 1 | **Consent & Attestation** | Patient consent: electronic signature, signed paper consent, or verbal consent. Consent can also be collected beforehand from the patient chart. |
+| 2 | **Patient Context / Demographics** | Visit type, chief complaint, and insurance (read-only here — edit it on the **Insurance** tab). |
+| 2B | **Clinical History Review** | Allergies and medical history. |
+| 3 | **Review of Systems** | Body-system review; carries forward from earlier visits. |
+| 4 | **Objective Assessment** | Vitals, vascular and perfusion exam, edema and circumference measurements, ABI/TBI, vascular studies, HbA1c, vascular follow-up plan. |
+| 5 | **Functional Status & ADLs** | Mobility, daily activities, fall risk. |
+| 6 | **Comorbidities & Risk Factors** | Conditions that contribute to the wound or slow healing. |
+| 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and **Treating / Monitoring** status. See [Wound Assessment](./wound-assessment.md). |
+| 8 | **Previous Treatments** | Prior wound care, chronicity, medical necessity statement, supporting documents. |
+| 9 | **Interventions & Treatments** | Interventions performed per wound, procedure note, contributing factors. |
+| 10 | **Care Planning** | Per-wound follow-up interval, next visit date, treatment plan narrative. |
+| 11 | **Orders & DME** | DME, labs, imaging, referrals, and home health orders, sent by fax or email. |
+| 12 | **Patient Education** | Education library, care bundles, topics covered, patient understanding, next-visit goals. |
+| 13 | **Procedures & Supplies** | Final review of the procedures from Section 9, missing fields, procedure and compliance notes, supplies. |
+| 14 | **Current Medication** | Active prescriptions, medication status, allergies, reconciliation, **DoseSpot** e-prescribing. See [Prescribe with DoseSpot](./medication-dosespot.md). |
+| 15 | **Billing & Documentation** | Per-wound and visit-level codes, modifiers, and the CMS-1500 claim preview. |
+| 16 | **LCD Audit & Review** | Documentation gaps against the applicable LCD. See [LCD Navigator](./lcd-navigator.md). |
+| 17 | **Provider Attestation** | Attestation, E/M time, final review, progress note preview, and **Sign & Lock**. See [Sign Off](./sign-off.md). |
+
+---
+
+## Can I customize the charting?
+
+Not per practice. The Visit Wizard's sections, fields, and templates are the same for every organization, so documentation follows one clinical structure.
+
+If your practice needs a field or a change to support a clinical workflow, documentation quality, or compliance, send the request to your Medipyxis contact. Requests are reviewed, and changes that fit the clinical documentation structure can be added for everyone.
 
 ---
 
 ## Autosave and drafts
 
-The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. Draft visits appear on the **Fleet Calendar** with a draft status and can be resumed on any device.
+The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. A visit you leave before **Sign & Lock** stays an unsigned draft that you can resume on any device. To stop a visit you won't finish, cancel or delete the appointment — see [Stop or cancel a visit you started](./start-a-visit.md#stop-or-cancel-a-visit-you-started).
+
+Always review carried-forward and pulled values — they are a starting point, not a substitute for re-assessment.
 
 ---
 
-## Clinical history carry-forward
+## Sign & Lock
 
-When you open a follow-up visit, the wizard pre-populates from the prior visit: Review of Systems, Comorbidities, Allergies, Previous treatments, Historic measurements (used to compute % area change), and the care plan. A **Pull from History** action lets you bring specific sections forward on demand, with a preview before applying.
-
-Always review pre-populated values — carry-forward is a starting point, not a substitute for re-assessment.
-
----
-
-## LCD Navigator (ambient)
-
-The LCD ambient badge is visible at the top of every section and refreshes on every save:
-
-- **Green** — all checks pass.
-- **Amber** — at least one item needs clinician action.
-- **Red** — a flagged item; resolve it before **Sign & Lock**.
-
-Click the badge to open **Dojo tiles** with intervention guidance and the **copy bank** of pre-written compliance statements for NPWT, Compression, and Offloading. Full guide: [LCD Navigator](./lcd-navigator.md).
-
----
-
-## AI-assisted drafting
-
-Several sections expose an **AI-assisted draft** button. The model drafts a clinical narrative from the structured data you have entered. You must read the draft, edit anything inaccurate, and acknowledge the **AI Disclaimer** the first time you use AI drafting in a visit.
-
-Anything left in an AI draft becomes part of your signed note, so review it carefully before attestation. The progress note itself prints only what you documented: where a field is blank it says "Not documented." rather than supplying a sentence. See [How your progress note is written](./progress-note.md).
-
----
-
-## Procedures & Supplies
-
-The Procedures & Supplies section records what was done and what was used. From this section you can add procedures, enter graft SKUs/UINs and quantities (wastage is calculated automatically), and click **Generate Procedure Note**. Inventory is deducted and a **tissue log** entry is written on save; anything documented here flows into the billing codes engine.
-
----
-
-## Provider Attestation and Sign & Lock
-
-The final section captures the rendering provider's electronic signature under the ESIGN Act, UETA, CMS, and HIPAA disclosure standards. Complete the visit with **Sign & Lock**; a **Go to Billing** prompt then appears. After sign-off, the note is locked and changes require an **Addendum** with a documented reason. See [Sign Off](./sign-off.md).
+Section 17 records the rendering provider's attestation and electronic signature. After a final review and a preview of the progress note PDF, **Sign & Lock** finalizes the note. Later changes require an **Addendum** with a documented reason. The signed PDF is saved to the patient's **Progress Notes**, and the billing information goes to Billing Operations as a pre-filled CMS-1500 claim. See [Sign Off](./sign-off.md).
 
 <Compliance>
 CMS requires that the rendering provider be physically present at the place of service for in-person procedure codes. The encounter record is part of the audit trail and may be requested during a Medicare audit.
@@ -132,19 +109,18 @@ CMS requires that the rendering provider be physically present at the place of s
 
 ## Offline documentation
 
-The web Visit Wizard is online-only and saves continuously to the server; there is no Work Offline toggle. See [Document a visit offline](./work-offline.md) for what this means for field visits.
+The web Visit Wizard is online-only and saves continuously to the server. See [Document a visit offline](./work-offline.md) for what this means for field visits.
 
 ---
 
 ## Related modules
 
-- [Wound Cockpit](./wound-cockpit.md) — the canonical wound screen and between-visit hub.
-- [How the Visit Wizard opens](./how-the-wizard-opens.md) — route-on-arrival: draft resume, fresh start, and signed-note protection.
+- [Wound Cockpit](./wound-cockpit.md) — the wound screen and between-visit hub.
+- [How the Visit Wizard opens](./how-the-wizard-opens.md) — what the wizard shows when you open a visit.
 - [Note honesty guardrails](./note-honesty-guardrails.md) — what Medipyxis will and will not add to your signed note.
-- [LCD Navigator](./lcd-navigator.md) — ambient compliance badge, Dojo tiles, and copy bank.
+- [LCD Navigator](./lcd-navigator.md) — LCD documentation requirements as you work.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
 - [How your progress note is written](./progress-note.md) — what the note prints, and the documentation checklist before it.
-- [Document a visit offline](./work-offline.md) — how offline field visits are handled.
 
 ## Related
 

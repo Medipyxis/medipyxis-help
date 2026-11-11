@@ -5,8 +5,8 @@ module: visit-wizard-ehr
 audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
-estimated_minutes: 4
-last_reviewed: 2026-10-29
+estimated_minutes: 6
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -17,12 +17,12 @@ related:
   - visit-wizard-ehr-progress-note
 prerequisites:
   - visit-wizard-ehr-lcd-navigator
-tags: [attestation, e-signature, ESIGN, UETA, CMS, HIPAA, sign-off, addendum, provider]
+tags: [attestation, e-signature, sign-and-lock, E/M-time, progress-note-preview, sign-off, addendum, provider]
 ---
 
 # Sign off on a visit with Provider Attestation (step 17)
 
-Complete step 17 of the Visit Wizard by reading the attestation statement, applying your electronic signature, and locking the encounter note; use the Addendum process for any corrections after signing.
+Complete step 17 of the Visit Wizard: attest and sign, record E/M time if you code by time, review any remaining gaps, preview the progress note, and finish with **Sign & Lock**. Use an addendum for any correction after signing.
 
 ## Before you start
 
@@ -36,48 +36,58 @@ Under CMS documentation requirements, the rendering provider — not a scribe or
 
 ## Steps
 
-### Review and sign
+### 1. Complete the attestation
 
-1. **Reach step 17.** Complete all 16 preceding steps. Click **Provider Attestation** in the step navigator or click **Next** from step 16.
+1. Open **Step 17 — Provider Attestation** in the Visit Wizard.
+2. Check the provider information that fills in automatically: your full name and **NPI**.
+3. Select your **Professional Title**.
+4. Read the attestation statement, which confirms the documentation is accurate and complete.
+5. Check the **Provider Attestation Acknowledgment** box.
+6. Select the electronic signature option to sign.
 
-   ![Provider Attestation screen — top section showing the attestation statement and legal disclosure](../../assets/visit-wizard/15_provider_attestation_top.png)
+Your electronic signature is your attestation that the assessment, treatments, procedures, and findings in the note reflect the care you provided.
 
-   *The top of the Provider Attestation screen. The attestation statement and legal disclosure appear before the signature field.*
+### 2. Enter Total E/M Time (when applicable)
 
-2. **Read the attestation statement.** The statement reads in full:
+If you are choosing the E/M level by total time rather than medical decision-making, enter **Total E/M Time (Minutes)**: the qualifying time you personally spent on the date of service. This can include reviewing records, evaluating the patient and wound, educating the patient or caregiver, coordinating care, planning treatment, and documenting.
 
-   > "I, the rendering provider, attest that the information contained in this encounter note is accurate and complete to the best of my knowledge and that the services documented were medically necessary and performed as described."
+Exclude time spent performing separately billed procedures. Entering time supports time-based coding; it does not by itself make an E/M service separately billable.
 
-3. **Read the legal disclosure.** The disclosure references:
+### 3. Finish the section
 
-   - **ESIGN Act** (Electronic Signatures in Global and National Commerce Act)
-   - **UETA** (Uniform Electronic Transactions Act)
-   - **CMS** documentation and signature requirements
-   - **HIPAA** privacy and security standards
+1. Confirm your professional title, signature, acknowledgment, and E/M time.
+2. Click **Complete Provider Attestation**.
+3. Click **Mark as Complete**. Step 17 shows as completed.
 
-   Scroll to the bottom of the disclosure to activate the signature field.
+### 4. Run the final review
 
-   ![Provider Attestation screen — bottom section showing the e-signature pad and Submit button](../../assets/visit-wizard/14_provider_attestation_bottom.png)
+1. In the section navigator, check that every section that applies is marked complete.
+2. Click **Continue Review**. Medipyxis checks the documentation and lists any remaining gaps in a window.
+3. For each gap, choose:
+   - **Resolve This** — go to the section, complete or correct it, then click **Continue Review** again.
+   - **Continue Anyway** — proceed when you have decided the open items don't prevent finalizing, for example when follow-up is planned for the next visit.
 
-   *The e-signature area. Sign with a stylus, finger, or mouse. The **Sign & Lock** button activates only after a signature is drawn.*
+**Continue Anyway** does not make the documentation meet medical necessity, billing, or LCD requirements. You decide whether a gap must be fixed before signing.
 
-4. **Apply your electronic signature.** Draw your signature in the signature pad. To clear and redraw, click **Clear**.
+### 5. Preview the progress note
 
-5. **Click Sign & Lock.** Medipyxis locks the encounter note, records the date/time stamp and your user identity, and updates the appointment status on the **Fleet Calendar** to `Visit Completed`. A **Go to Billing** prompt appears so you can move the completed encounter into the billing workflow.
+The **Wound Care Progress Note Preview** shows the note as a PDF, exactly as it will be finalized. Check the patient and encounter details, chief complaint and history, review of systems and objective assessment, wound findings and measurements, previous treatments and medical necessity, interventions and procedure notes, the treatment plan, education and medications, billing documentation, and your attestation.
 
-   <Note>
-   If the visit's service date does not match the scheduled appointment date, a soft-block prompt appears at **Sign & Lock** asking you to confirm a reason before the note locks.
-   </Note>
+If anything needs correcting, go back to that section before you sign.
 
-   ![Consent and attestation confirmation screen showing the locked note status](../../assets/visit-wizard/13_consent_attestation.png)
+### 6. Sign & Lock
 
-   *Confirmation that the attestation is recorded and the note is locked. The encounter is now read-only.*
+1. Click **Continue**.
+2. Review the final signing options.
+3. Click **Sign & Lock**.
+
+The signed note becomes the finalized clinical record for the visit.
 
 ---
 
 ## Result
 
-The encounter note is locked and marked `Visit Completed`. The signed note is available in the patient's chart and, depending on your billing workflow, is queued for claim generation in the **Billing & Documentation** module. The rendering provider's name, credential, signature, and timestamp appear on the note header.
+The note is signed and locked. Medipyxis generates the finalized wound care progress note PDF and saves it to the patient's record — open the patient's chart, go to **Progress Notes**, and open the visit to view it. The visit's billing information goes to Billing Operations as a pre-filled CMS-1500 claim for your biller to review.
 
 <Note>
 If your facility uses a co-signature workflow (for example, an NP supervised by an MD), the note may enter a `Pending Co-Signature` state. The supervising provider receives an in-app notification and must also complete their attestation step.
@@ -111,7 +121,8 @@ Addendum content is permanently appended to the encounter record and is visible 
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **Sign & Lock** button disabled | Signature pad is empty | Draw your signature in the pad before submitting |
+| **Complete Provider Attestation** doesn't finish the step | Professional title, acknowledgment, or signature is missing | Select your title, check the acknowledgment, and sign |
+| A window lists documentation gaps after **Continue Review** | Sections still have missing or incomplete items | Click **Resolve This** for each, or **Continue Anyway** if you have decided they don't prevent finalizing |
 | **Provider Attestation** step is not accessible | Your account is not a rendering provider | Ask the rendering provider to sign in and complete step 17 |
 | Appointment still shows `Draft Saved` after signing | Browser did not sync the status update | Refresh the Fleet Calendar |
 | Addendum reason dropdown is empty | Organization has not configured addendum reasons | Contact your administrator to configure addendum reason codes |

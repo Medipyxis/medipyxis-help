@@ -6,7 +6,7 @@ audience: [clinician, clinical_manager]
 roles: [clinician, medical_director, clinical_manager]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
@@ -19,7 +19,7 @@ tags: [wound-cockpit, wound-cases, compliance-pills, IVR-status]
 
 # Wound Cockpit overview
 
-The Wound Cockpit is the patient-level wound management page in Medipyxis. It lists every wound case for the selected patient on one screen so you can see status, compliance, and measurements at a glance, and start or continue a visit from any wound.
+The Wound Cockpit is the patient-level wound management page in Medipyxis. It lists every wound case for the selected patient on one screen so you can see status, compliance, and measurements at a glance, review a wound's last visit, and start or resume a visit.
 
 ---
 
@@ -33,9 +33,6 @@ The Wound Cockpit is the patient-level wound management page in Medipyxis. It li
 ## Page layout
 
 Open the Wound Cockpit from the patient chart. The page shows:
-
-![Wound Cockpit — patient-level wound case list with KPIs and compliance pills](../../assets/visit-wizard/02_wound_cockpit.png)
-*The Wound Cockpit. The top banner summarizes medications, allergies, and vitals; metric counters show case volume; each wound is a card with compliance pills and measurements.*
 
 ### Patient summary banner
 
@@ -81,13 +78,27 @@ Each wound appears as a card showing:
 
 ---
 
-## Starting a visit from a wound card
+## Start or resume a visit
 
-Click **Add Visit** on a wound card to start a new encounter for that wound. The Visit Wizard opens with that wound selected in the Wound Assessment step (step 7).
+Use the **Visit Selector** in the upper-right corner of the Wound Cockpit:
 
-<Note>
-If a draft already exists for today, continue from the existing draft instead of starting a new one. Drafts autosave continuously — each field is saved as you complete it. See [Visit Wizard overview](./overview.md).
-</Note>
+1. Click the dropdown **Pick a visit or start a new one**.
+2. Select the scheduled visit, or choose to start a new one.
+3. Click **Open**. The Visit Wizard opens, ready to begin or resume documentation.
+
+If a draft already exists, pick it in the Visit Selector to continue where you left off instead of starting a new visit. Drafts autosave continuously. See [Walk through a visit in the Visit Wizard](./start-a-visit.md).
+
+---
+
+## Review a wound's last visit
+
+Before a follow-up visit, review where the wound stands:
+
+1. Find the wound case card for the wound.
+2. Click **Details**.
+3. Review the overview of the most recent visit — the wound's status and documented progress.
+
+Do this for each wound you will treat, so you know what carries forward into the new visit.
 
 ---
 

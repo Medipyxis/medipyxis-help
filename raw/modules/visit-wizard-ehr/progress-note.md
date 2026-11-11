@@ -6,7 +6,7 @@ audience: [clinician, billing, admin]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 7
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-sign-off
@@ -51,7 +51,7 @@ The note cites only the two verified wound-care policies.
 | **Same-day visit and procedure** | "Separate E/M evaluation: Not documented." — unless you answer the checklist item |
 | **Medical necessity** | The findings themselves, for example "Devitalized tissue present: Yes — slough 20% on left heel" |
 | **Home visits** | Nothing, unless you typed a homebound justification — which prints exactly as you wrote it |
-| **Patient education** | "Not documented." for the teaching method. There is no field in which to record a method |
+| **Patient education** | What you write in **Education Topics Covered Today** and **Patient Understanding Assessment** (Section 12). Describe how you taught — for example teach-back or a return demonstration — in the understanding assessment; otherwise the teaching method prints "Not documented." |
 
 The debridement section does not include **Pathology sent**, **Tissue present pre**, or **Post-procedure dressing**, because no screen in Medipyxis asks for them.
 
@@ -79,9 +79,17 @@ The question is **not** asked per wound. If a wound's necessity note is word-for
 
 ---
 
+## Your procedure note wording
+
+In Section 9 — Interventions & Treatments, **Generate Procedure Note** builds a procedure narrative from the intervention details you entered. To use your own wording instead, type it in the intervention's **Notes** field and check **Use My Exact Procedure Note** — it is kept exactly as written and carried into Section 13 — Procedures & Supplies.
+
+In Section 13 you can also click **Generate Compliance Note** for an additional structured narrative. It is optional: leave it blank if your procedure note already documents the procedure fully.
+
+---
+
 ## Preview before you sign
 
-The review screen shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](./sign-off.md) for the attestation step itself.
+After you click **Continue Review** in step 17, the **Wound Care Progress Note Preview** shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](./sign-off.md) for the attestation step itself.
 
 ---
 

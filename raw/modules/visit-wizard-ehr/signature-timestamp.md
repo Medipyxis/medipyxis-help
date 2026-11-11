@@ -6,7 +6,7 @@ audience: [clinician, admin, billing]
 roles: [clinician, medical_director, admin, biller]
 type: reference
 estimated_minutes: 5
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-sign-off
@@ -57,7 +57,7 @@ If a Home Health agency, auditor, or payer questions why two copies of the same 
 
 There is nothing to reconcile in the underlying data.
 
-<Note>The signature timestamp is written when the provider clicks Sign in step 17 of the Visit Wizard. If you sign a note and the timestamp does not appear on the PDF, check that the note is actually signed — a locked note is not the same as a signed note. See the Provider Attestation reference for the exact behavior.</Note>
+<Note>The signature timestamp is written when the provider clicks **Sign & Lock** in step 17 of the Visit Wizard. If a note shows `Not recorded`, it has not been signed yet — open the visit and complete step 17. See [Sign Off](./sign-off.md).</Note>
 
 ## Related
 
