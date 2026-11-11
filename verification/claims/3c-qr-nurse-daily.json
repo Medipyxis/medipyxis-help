@@ -1,0 +1,934 @@
+{
+  "title": "Nurse daily cheat sheet",
+  "source": "quick-reference/nurse-daily",
+  "url": "https://help.medipyxis.com/quick-reference/nurse-daily/",
+  "claims": [
+    {
+      "id": "qrn-20",
+      "claim": "One page. Print it or keep it pinned.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrn-21",
+      "claim": "See today's appointments in Fleet Calendar (opens in Day view); preview the week with the Week view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setViewMode(\"week\")}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-pressed={viewMode === \"week\"}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-22",
+      "claim": "Check your credentials: Dashboard → My Credentials & Compliance.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"My Credentials & Compliance\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/hr-credential-tracker\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-23",
+      "claim": "Start the visit: Fleet Calendar → tap the appointment → Start Visit (or Continue Visit / Resume Visit for a note in progress).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<div className=\"text-sm font-medium text-gray-500\">Date</div>",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<div className=\"text-sm font-medium text-gray-500\">Time</div>",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Resume Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Start Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/visit-wizard?${params.toString()}`);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-24",
+      "claim": "Move between steps: open the section you want from the wizard's list (Step 1 to Step 17, plus Step 2b).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [activeAccordionSection, setActiveAccordionSection] =",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "params.set(\"visitAction\", \"resume\");",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Step 17",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Step 2b",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Clinical History Review",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qrn-25",
+      "claim": "Record a graft or product: Interventions & Treatments (Step 9) → pick the product and its lot.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "conservativeCare: \"Interventions & Treatments\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Step 9$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "count": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select Lot",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Qty Available:",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dateA - dateB;",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (daysUntilExpiry <= 30) {",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Confirm Selection",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Quantity",
+          "paths": [
+            "frontend/src/components/shared/LotSelectionFromBatches.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { LotSelectionFromBatches } from \"@/components/shared/LotSelectionFromBatches\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-26",
+      "claim": "Record the box UID/UIN of a graft: Procedure Supplies (Step 13) → type it from the package.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Box UID/UIN <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tissue ID / Lot #",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>Box UID/UIN is required</li>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter Box UID/UIN\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "procedureSupplies: \"Procedures & Supplies\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-27",
+      "claim": "Fill billing codes: Billing & Documentation (Step 15) → Pull Codes (rule-based, no AI), then review every line.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aiCodeFallbackService",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "VITE_BRAIN_INVOCATION_ENABLED",
+          "paths": [
+            ".github/workflows/deploy-prod.yml"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "qrn-28",
+      "claim": "Sign & lock: tick the attestation box and click Complete Provider Attestation (Step 17), then Continue to Review → Sign & Lock (then Go to Billing).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Complete Provider Attestation",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `Electronically Signed By: ${attestation.provider_name}${",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Professional Title *",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "signature ?pad|SignatureCanvas|react-signature",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Continue to Review$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Looks Good, Continue →",
+          "paths": [
+            "frontend/src/components/ProgressNotePreview.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onContinue={openSignReview}",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<MultiWoundReviewModal",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Sign & Lock$",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "action: { label: \"Go to Billing\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-29",
+      "claim": "The wizard autosaves continuously as you complete each field, so you rarely need to save by hand. The web app is online-only; there is no separate offline mode or manual sync.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const DEFAULT_DEBOUNCE_MS = 1_000;",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} = useWizardAutoSave({",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "offline: true",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent",
+          "note": "the save path never reports an offline save"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Work Offline",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "recoveryOptions",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "expect": "absent",
+          "note": "timeoutErrorHandler's unused 'Work Offline' option is never rendered"
+        },
+        {
+          "type": "pr",
+          "number": 2711,
+          "titleMatch": "online-only web app"
+        }
+      ]
+    },
+    {
+      "id": "qrn-30",
+      "claim": "If you leave before Sign & Lock, the visit stays an unsigned draft. Drafts show on the Fleet Calendar and can be resumed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const isAutosave = sectionId === '__autosave__';",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useWizardAutoSave({",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "kind: \"draft\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"draft_saved\":",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-31",
+      "claim": "⌘K / Ctrl+K opens Quick Jump — search pages, features or actions and go there.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search pages, features, or actions...\"",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-32",
+      "claim": "Message your manager or team in Team Chat (New Conversation or New Group Chat); for one patient, use the Team Chat tab on that patient's chart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Conversation",
+          "paths": [
+            "frontend/src/components/CreateOneToOneConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Group Chat",
+          "paths": [
+            "frontend/src/components/CreateMultipleParticipantConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PatientTeamChat",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-33",
+      "claim": "All visits signed? Check the Fleet Calendar for visits still in draft.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"draft_saved\":",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-34",
+      "claim": "Mileage & Expenses is not switched on yet: its page shows a Coming Soon banner.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Mileage & Expenses\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"font-medium\">Coming Soon!</span>",
+          "paths": [
+            "frontend/src/pages/MileageExpensesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrn-01",
+      "claim": "See today's stops: Patient Management → today's list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Today's Stops",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Today's appointments are on the Fleet Calendar Day view. Replaced by qrn-21."
+    },
+    {
+      "id": "qrn-02",
+      "claim": "Check action items: Dashboard → right panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277)",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Dashboard's Action Items panel was removed."
+    },
+    {
+      "id": "qrn-03",
+      "claim": "Clock in to duty: Header → On Duty toggle. At end of day flip On Duty to Off Duty.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Off Duty",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "On Duty is a static badge on the Dashboard; there is no toggle."
+    },
+    {
+      "id": "qrn-04",
+      "claim": "Start visit: Patient card → Start Visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Start Visit",
+          "paths": [
+            "frontend/src/components/PatientCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Start Visit is on the Fleet Calendar appointment details (and Wound Cockpit). Replaced by qrn-23."
+    },
+    {
+      "id": "qrn-05",
+      "claim": "Jump between wizard steps with the left wizard rail and the ← / → keys.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ArrowRight",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The wizard has no arrow-key step navigation. Replaced by qrn-24."
+    },
+    {
+      "id": "qrn-06",
+      "claim": "Add wound photo: Wound Assessment step → camera icon.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add wound photo",
+          "paths": [
+            "frontend/src/components/visit-wizard"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Not confirmed against the wizard's photo controls; removed from the card."
+    },
+    {
+      "id": "qrn-07",
+      "claim": "Scan graft UIN: Procedures & Supplies → Scan.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Scan<",
+          "paths": [
+            "frontend/src/components/visit-wizard"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The UIN is typed from the package; there is no Scan button. Replaced by qrn-26."
+    },
+    {
+      "id": "qrn-08",
+      "claim": "Save draft: manual save top-right, ⌘S / Ctrl+S. Shortcuts ⌘↵ submits the current wizard step; ⌘/ opens help for the current page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "e.key === \"s\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"/\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Only ⌘K (Quick Jump) is a global shortcut; ⌘S and ⌘↵ work only in the billing Coding Review drawer. Replaced by qrn-29/31."
+    },
+    {
+      "id": "qrn-09",
+      "claim": "Quick Jump finds a patient, visit, or page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"patient\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Quick Jump searches pages, features and actions only. Replaced by qrn-31."
+    },
+    {
+      "id": "qrn-10",
+      "claim": "App bug: Team Chat → #support. Clinical question: Team Chat → #clinical.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "#support",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Team Chat has no channels. Replaced by qrn-32."
+    },
+    {
+      "id": "qrn-11",
+      "claim": "Credential about to expire: already alerted — Dashboard → My Credentials.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"My Credentials\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tile is My Credentials & Compliance. Replaced by qrn-22."
+    },
+    {
+      "id": "qrn-12",
+      "claim": "End of day: all visits signed? Check Action Items is empty.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277)",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Action Items panel. Replaced by qrn-33."
+    }
+  ]
+}

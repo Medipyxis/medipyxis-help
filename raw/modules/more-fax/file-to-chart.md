@@ -6,68 +6,70 @@ audience: [intake, clinician]
 roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-10-29
-app_route: /facility/{facility_uuid}/received-fax
+last_reviewed: 2026-11-11
+app_route: /facility/{facility_uuid}/received-fax-log
 related:
   - more-fax-overview
   - referral-intake-overview
 tags: [fax, patient chart, triage, HIPAA]
 ---
 
-Every fax that lands in Medipyxis stays in the **Received Fax** queue until you triage it. This how-to covers filing a fax to a specific patient's chart so it stops appearing in the queue and starts appearing on the chart's Documents tab.
+Every fax your clinic receives is listed in **Received Fax Logs**. This how-to covers filing a fax to a patient's chart, so a copy appears on the patient's **Documents** page.
 
 ## Before you start
 
-- You know which patient the fax belongs to (patient name and DOB are enough).
-- The patient already exists in Medipyxis. If not, create the patient in Patient Management or Referral Intake first — the fax cannot be filed to a chart that doesn't exist.
+- You know which patient the fax belongs to.
+- The patient already exists in Medipyxis. If not, create the patient first (for example from Referral Intake). A fax cannot be filed to a chart that does not exist.
+- You have a clinical, billing, admin or referral coordinator role, with access to both the fax's facility and the patient's facility.
 
 ## Steps
 
-1. **Open Received Fax** from **More → Received Fax**.
-2. **Click the fax row.** The triage panel opens on the right with the fax preview, sender number, page count, and received timestamp.
-3. **Search the patient.** Type the patient's name or DOB in the search field. Match on the row that opens — the panel confirms the selected patient with name, DOB, and MRN.
-4. **Rename the file** (optional). By default the fax is filed with its original file name. Enter a custom file name if you want a friendlier label on the chart (for example, `Wound culture result 2026-08-15`).
-5. **Add triage notes** (optional). Notes are stored on the audit trail and visible to anyone reviewing the chart later.
-6. **Click File to Patient Chart.** The document lands on the patient's **Documents** tab under **Faxes** and the fax row leaves the pending queue.
+1. **Open Received Fax Logs.** Click **Fax Center** in the sidebar, then the **Received Fax Logs** tile.
+2. **Open the fax.** Click the fax row, or **Triage & Assign** in the row's Actions. The **Triage Fax** panel opens with the fax details (sender, fax number, pages) and a **View PDF** button.
+3. **Select the patient.** Under **1. Select Patient**, search by name, date of birth or MRN, and pick the patient.
+4. **Rename the file (optional).** Under **File Name (Optional)**, type a name. Leave it empty to keep the fax's file name.
+5. **Add notes (optional).** Notes are saved on the fax and shown on its row in Received Fax Logs.
+6. **Click File to Chart.** The panel shows "Fax successfully filed to patient chart! You can also attach it to an order below."
+
+If the fax already has a patient assigned, you can also click **File to chart** in the row's Actions and confirm. A copy goes into that patient's documents; the fax stays in the list.
 
 ## Result
 
-- The fax appears on the patient's **Documents** tab, with the file name you chose and a link back to the original queue entry.
-- The **Received Fax** queue removes the row from the pending list. Search **All faxes** or **Filed faxes** to find it again.
-- The audit log records who filed the fax, when, and the triage notes you added.
+- A copy of the fax is on the patient's **Documents** page, with the document type **Received Fax** and the file name you chose.
+- The fax's status in Received Fax Logs becomes **Completed**, unless it is attached to an order.
+- The fax's audit log records that it was filed to the chart, and by whom.
 
-<Note>
-You can only file a fax to patients in the facility that received it, so you won't accidentally attach a fax to a chart in another practice.
-</Note>
+You can file a fax only when you have access to both the fax's facility and the patient's facility. A fax already on one patient's chart cannot be filed to another patient's chart.
 
 ## Re-file the same fax
 
-Filing the exact same fax to the same patient a second time is safe:
+Filing the same fax to the same patient again is safe:
 
-- The chart is not duplicated. The system recognizes that the fax is already filed to that patient.
-- The queue re-attempts the routing step if it failed the first time. Use this to recover a fax that filed to the chart but stayed pending in the queue (see troubleshooting).
+- The chart does not get a second copy. Medipyxis shows "This fax was already on the patient chart."
+- If the fax was filed but could not be marked as routed, filing it again retries that step.
 
-## Also attach to a lab order
+## Also attach to an order
 
-If the fax is a lab result, you can attach it to a specific lab order in addition to filing it to the chart:
+If the fax is a result for one of the patient's orders, you can attach it to that order as well:
 
-1. After filing to chart, the triage panel loads the patient's open lab orders.
-2. Pick the matching order.
-3. Click **Attach to Lab Order.** The fax appears as a result on that order in **Orders & DME**.
+1. With the patient selected, look under **Attach to an Order**. It lists the patient's orders: lab, DME, imaging, home health or specialist referral.
+2. Pick the order. The order number tells similar orders apart.
+3. Click **Attach to Order.** The fax is listed with that order on the patient's Orders & DME page.
 
-Both actions can be done from the same triage session — you do not need to reopen the fax.
+You can file to the chart and attach to an order in the same panel.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| "Document filed, but this fax could not be marked as routed" | The fax was filed to the chart, but the queue did not update | Click **File to Patient Chart** again — filing again retries the queue update |
-| "You do not have access to this fax" | Fax belongs to another facility in your organization | Switch to that facility from the Organization Selector, then reopen the fax |
-| Patient search returns no results | Patient not created yet, or you are looking in the wrong facility | Create the patient in Patient Management or Referral Intake first |
-| No PDF preview shown | The fax file did not finish uploading from the fax vendor | Wait 30 seconds and reload. If it persists, contact support with the fax ID |
-| Filed fax not visible on chart | The chart has not refreshed | Open the patient's Documents tab and pull to refresh, or reload the browser |
+| "Document filed to the patient chart, but this fax could not be marked as routed" | The copy is on the chart, but the fax's status did not update | File it again. Filing again retries that step. |
+| "You do not have access to this fax's facility." or "You do not have access to this patient's facility." | Your role does not cover that facility | Ask an administrator to check your facility access |
+| "This fax is attached to an order for … It can only be filed to that patient's chart." | The fax is on another patient's order | File it to that patient's chart |
+| Patient search returns no results | The patient has not been created yet | Create the patient first, then file the fax |
+| "Unable to open fax — no viewable document available" | No stored document for this fax | Contact support with the fax's received time and sender |
+| Filed fax not visible on the chart | The page has not refreshed | Reload the patient's Documents page |
 
 ## Related
 
-- **[Received Fax overview](./overview.md)** — the full queue workflow, sender allowlists, and archive actions.
-- **[Referral intake](../referral-intake/overview.md)** — inbound faxes that create a new referral instead of filing to an existing chart.
+- **[More (Fax) overview](/modules/more-fax/overview/)** — the Fax Center tiles and how incoming faxes are handled.
+- **[Review the Fax Review Queue](/modules/referral-intake/fax-queue-review/)** — turn an incoming fax into a new patient instead of filing it to an existing chart.

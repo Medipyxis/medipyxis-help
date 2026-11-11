@@ -1,0 +1,765 @@
+{
+  "title": "Biller cheat sheet",
+  "source": "quick-reference/biller",
+  "url": "https://help.medipyxis.com/quick-reference/biller/",
+  "claims": [
+    {
+      "id": "qrb-20",
+      "claim": "Your daily loop: work the Work Queue, submit claims, match the ERA lines that did not post automatically, and work denials. Clinicians fill codes with Pull Codes in the Visit Wizard; you review them before the claim goes out.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Calendar-synced encounters with documentation & billing readiness",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextRows: WorkQueueRow[] = appts.map((a) => {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".gte(\"start_at\", startAt.toISOString())",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { type EraEventResult, eraDuplicates, eraLogFields, importEraEvent } from '../_shared/stediEraImport.ts';",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setDrawerRow(r)}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-21",
+      "claim": "The Work Queue's Claim Status is a working status set on the claim by the billing team. Values: Eligibility Needed · Ready · In Progress · Flag Clinical · Hold · Billed · Paid · Denied · Appealed · Corrected · Partial Pay · Patient Responsibility · Write-Off · Void · Needs Coding.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  \\{ value: '[a-z_]+', label: '[^']+' \\},$",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 15
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "label: '(Eligibility Needed|Ready|In Progress|Flag Clinical|Hold|Billed|Paid|Denied|Appealed|Corrected|Partial Pay|Patient Responsibility|Write-Off|Void|Needs Coding)' \\},$",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 15
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (r.claim_manual_status !== manualStatusFilter) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.functions.invoke('batch-claim-status-update', { body });",
+          "paths": [
+            "frontend/src/services/manualStatusService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BulkActionToolbar",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-22",
+      "claim": "Users with the Biller role currently cannot change the Claim Status, from the row or with bulk actions: the change fails with an error. A fix is being tracked. Until then, ask a billing lead or admin to set it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "^\\s+\"status_write\",$",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await assertBillingAccess(supabase, user, facilityId, \"status_write\");",
+          "paths": [
+            "backend/supabase/functions/batch-claim-status-update/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err?.message ?? 'Failed to update claim status. Please try again.',",
+          "paths": [
+            "frontend/src/components/billing/StatusDropdown.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(err?.message ?? 'Batch update failed. Please try again.');",
+          "paths": [
+            "frontend/src/components/billing/BulkActionToolbar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-23",
+      "claim": "In the Visit Wizard's billing step, Pull Codes fills billing codes from the documentation with a rule-based mapper. There is no AI code fallback.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aiCodeFallbackService",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "VITE_BRAIN_INVOCATION_ENABLED",
+          "paths": [
+            ".github/workflows/deploy-prod.yml"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "qrb-24",
+      "claim": "The clinician reviews and edits every line, and checks the E/M level, modifiers (25, 59, KX, JW, JZ) and place of service code.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Modifiers (optional, comma-separated)",
+          "paths": [
+            "frontend/src/components/billing/ManualCodeEntryDialog.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import { determinePlaceOfService } from \"@/utils/placeOfService\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "isNewForEmBilling",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qrb-25",
+      "claim": "Open Review on a Work Queue row to check the codes in the Coding Review drawer before submitting.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setDrawerRow(r)}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-26",
+      "claim": "Daily targets: Ready preset cleared within 72 hours of visit signature; zero clearinghouse rejections older than 7 days; every unmatched ERA line matched within 24 hours; every denial triaged within 48 hours.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrb-27",
+      "claim": "Matched ERA lines post automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "so there is no manual \"sync\" action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cron\\.schedule.*(stedi|era|835)",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent",
+          "note": "no scheduled ERA polling job"
+        }
+      ]
+    },
+    {
+      "id": "qrb-28",
+      "claim": "⌘K / Ctrl+K (Quick Jump), then type the page name, goes to a page such as Billing Operations, ERA/EOB or A/R Aging.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"ERA/EOB\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"A/R Aging\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-29",
+      "claim": "In the Coding Review drawer, ⌘S / Ctrl+S saves and ⌘↵ / Ctrl+Enter saves and goes to the next claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Ctrl/Cmd+S = save",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Ctrl/Cmd+Enter = save + advance",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handleSaveAndNext();",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-30",
+      "claim": "See only claims ready to bill: Work Queue → Ready preset.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Ready|Pending Doc|Pending Sig|No Show|Not Seen)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{bucketCounts\\.(ready|pendingDoc|pendingSig)\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{rows\\.filter\\(\\(r\\) => r\\.visit_status === \"(No Show|Not Seen)\"\\)\\.length\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "qrb-31",
+      "claim": "CARC meanings: CO-50 not medically necessary; CO-197 precertification/authorization absent; CO-16 missing information; CO-29 time limit for filing has expired; CO-45 charge exceeds fee schedule (a contractual adjustment).",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "qrb-32",
+      "claim": "Denial fixes: appeal CO-50 with an addendum documenting the missing LCD item; obtain retro-auth for CO-197; correct and resubmit CO-16; appeal CO-29 only for a system error; CO-45 usually needs no fix.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrb-33",
+      "claim": "A signed note is changed only by an addendum.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Procedure tolerance was a template default\",",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "APPOINTMENT_ALREADY_FINALIZED",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrb-34",
+      "claim": "Track appeals on the Denials tab of Billing Operations. A denial record shows its current appeal status and the notes billers add; earlier statuses are not kept. Medipyxis does not yet create denial records from payer denials automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denials\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Denial Management</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "appeal_status: appealStatus,",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management_notes",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "note": "the denial-record writer is never called",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "note": "no server function writes denial records"
+        }
+      ]
+    },
+    {
+      "id": "qrb-35",
+      "claim": "When appealing, reference the claim number, date of service and denial CARC.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrb-01",
+      "claim": "The Claim Status dropdown is set by the biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['biller',",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Users with the Biller role cannot set Claim Status today (fix tracked). Replaced by qrb-21/22."
+    },
+    {
+      "id": "qrb-02",
+      "claim": "Medipyxis does the coding prep; you're the safety net (posting ERAs is a daily step).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "VITE_BRAIN_INVOCATION_ENABLED",
+          "paths": [
+            ".github/workflows/deploy-prod.yml"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Codes come from the clinician's Pull Codes (deterministic) and ERAs post automatically. Replaced by qrb-20."
+    },
+    {
+      "id": "qrb-03",
+      "claim": "ICD-10 comes from Wound Assessment + History of Present Illness.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "runningHpi|running_hpi|hpi_text|hpi_narrative",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Pull Codes maps ICD-10 from the wound etiology and location and from comorbidities, not from the HPI. Replaced by qrb-23."
+    },
+    {
+      "id": "qrb-04",
+      "claim": "CPT/HCPCS come from Procedures & Supplies + graft UIN applied.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "\\buin\\b",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The code mapper does not use the UIN. Replaced by qrb-23."
+    },
+    {
+      "id": "qrb-05",
+      "claim": "Modifiers come from the rule engine: LT/RT from wound location, 25 from E/M + procedure same day, 59 when bundling conflict.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"RT\"",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"LT\"",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Pull Codes does not add LT/RT, 25 or 59; the clinician checks modifiers. Replaced by qrb-24."
+    },
+    {
+      "id": "qrb-06",
+      "claim": "Place of service: facility default, overridden by visit location.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Defaults to '12' (Home) when the context doesn't",
+          "paths": [
+            "frontend/src/utils/placeOfService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "POS is looked up from the visit setting and defaults to 12 (Home). Replaced by qrb-24."
+    },
+    {
+      "id": "qrb-07",
+      "claim": "Units: graft size in cm² (auto-calculated from L × W measurements).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "length.*\\*.*width",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The mapper derives add-on units from the documented debrided area, not wound L × W. Removed."
+    },
+    {
+      "id": "qrb-08",
+      "claim": "Jump to a claim: ⌘K + claim number.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claim_number",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Quick Jump searches pages only. Replaced by qrb-28."
+    },
+    {
+      "id": "qrb-09",
+      "claim": "Copy a fixed claim for resubmit: claim detail → ⌘D. Open ERA quickly: G then E. Add a note to a claim: N on claim detail.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "e.key === \"d\"",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "e.key === \"n\"",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "These shortcuts do not exist. Replaced by qrb-28/29."
+    },
+    {
+      "id": "qrb-10",
+      "claim": "PR-45 (charge exceeds allowed): charge out of date — update the facility Charge Master.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "PR-45",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "CARC 45 is normally a contractual (CO) adjustment, and raising the charge does not change it. Replaced by qrb-31/32."
+    },
+    {
+      "id": "qrb-11",
+      "claim": "Each claim and denial keeps a full activity trail.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_status_history",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Denial records keep only the current status and notes. Replaced by qrb-34."
+    }
+  ]
+}

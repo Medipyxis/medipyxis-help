@@ -6,66 +6,55 @@ audience: [billing]
 roles: [biller]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/billing/work-queue
 tags: [quick-reference, billing, claims, era]
 ---
 
 # Biller cheat sheet
 
-Your daily loop: work the Work Queue → submit → post ERAs → work denials. Medipyxis does the coding prep; you're the safety net.
+Your daily loop: work the Work Queue, submit claims, match the ERA lines that did not post automatically, and work denials. Clinicians fill codes with Pull Codes in the Visit Wizard; you review them before the claim goes out.
 
-## Claim Status glossary
+## Claim Status values
 
-The Work Queue's **Claim Status** dropdown (set by the biller) uses these values:
+The Work Queue's **Claim Status** is a working status set on the claim by the billing team. Its values are: Eligibility Needed · Ready · In Progress · Flag Clinical · Hold · Billed · Paid · Denied · Appealed · Corrected · Partial Pay · Patient Responsibility · Write-Off · Void · Needs Coding.
 
-| Status | Meaning |
-|---|---|
-| **Needs Coding** / **Eligibility Needed** | Not ready to submit yet |
-| **Ready** | Reviewed and ready to submit |
-| **In Progress** / **Hold** / **Flag Clinical** | Working it / paused / sent back to the clinician |
-| **Billed** | Submitted to the payer |
-| **Paid** / **Partial Pay** | Payment posted (fully / partially) |
-| **Denied** | Payer denied; work it in Denial Management |
-| **Appealed** / **Corrected** | Appeal filed / claim corrected and resubmitted |
-| **Patient Responsibility** / **Write-Off** / **Void** | Closed outcomes |
+Users with the **Biller** role currently cannot change the Claim Status, from the row or with bulk actions: the change fails with an error. A fix is being tracked. Until then, ask a billing lead or admin to set it.
 
-## Auto-coding sources of truth
+## Where the codes come from
 
-| Code type | Comes from |
-|---|---|
-| **ICD-10** | Wound Assessment + History of Present Illness |
-| **CPT/HCPCS** | Procedures & Supplies + graft UIN applied |
-| **Modifiers** | Rule engine: LT/RT from wound location, 25 from E/M + procedure same day, 59 when bundling conflict |
-| **Place of service** | Facility default, overridden by visit location |
-| **Units** | Graft size in cm² (auto-calculated from L × W measurements) |
+- In the Visit Wizard's billing step, **Pull Codes** fills billing codes from the documentation with a rule-based mapper. There is no AI code fallback.
+- The clinician reviews and edits every line, and checks the E/M level, modifiers (25, 59, KX, JW, JZ) and place of service code.
+- Open **Review** on a Work Queue row to check the codes in the Coding Review drawer before submitting.
 
 ## Daily targets
 
 - **Work Queue "Ready" preset cleared within 72 hours** of visit signature.
-- **Zero clearinghouse rejections > 7 days old**.
-- **Every unmatched ERA reconciled within 24 hours** (matched ERAs auto-post).
+- **Zero clearinghouse rejections older than 7 days**.
+- **Every unmatched ERA line matched within 24 hours**. Matched ERA lines post automatically.
 - **Every denial triaged within 48 hours**.
 
 ## Speed tips
 
 | Task | Shortcut |
 |---|---|
-| Jump to a claim | `⌘K` + claim number |
-| Copy a fixed claim for resubmit | Claim detail → `⌘D` |
-| Open ERA quickly | `G` then `E` |
-| Add a note to a claim | `N` on claim detail |
+| Go to a page (Billing Operations, ERA/EOB, A/R Aging) | `⌘K` / `Ctrl+K` (Quick Jump), then type the page name |
+| Save in the Coding Review drawer | `⌘S` / `Ctrl+S` |
+| Save and go to the next claim in the Coding Review drawer | `⌘↵` / `Ctrl+Enter` |
+| See only claims ready to bill | Work Queue → **Ready** preset |
 
 ## Denial reason playbook
 
 | CARC / RARC | Likely root cause | Fix |
 |---|---|---|
-| CO-50 (not medically necessary) | Missing LCD element | Add an addendum to the visit note that resolves the LCD item |
-| CO-197 (precert missing) | No auth on file | Obtain retro-auth; if denied, appeal with clinical docs |
-| CO-16 (missing information) | Modifier or ID missing | Correct on the claim form and resubmit |
-| CO-29 (past timely filing) | Late submission | Check root cause; appeal only if system error |
-| PR-45 (charge exceeds allowed) | Charge out of date | Update the facility **Charge Master** |
+| CO-50 (not medically necessary) | Missing LCD element | Have the provider add an addendum to the signed note that documents the missing LCD item, then appeal |
+| CO-197 (precertification / authorization absent) | No auth on file | Obtain retro-auth; if denied, appeal with clinical docs |
+| CO-16 (missing information) | Modifier or ID missing | Correct the claim and resubmit |
+| CO-29 (time limit for filing has expired) | Late submission | Check root cause; appeal only if system error |
+| CO-45 (charge exceeds fee schedule) | Contractual adjustment | Usually nothing to fix: the difference is written off under your contract |
 
-## Denial evidence
+## Denial records
 
-Each claim and denial keeps a full activity trail. When appealing, reference the claim number, DOS, and denial CARC — see [Denial Management](../modules/billing/denial-management.md).
+Track appeals on the **Denials** tab of Billing Operations. A denial record shows its current appeal status and the notes billers add; earlier statuses are not kept, so note each change. Medipyxis does not yet create denial records from payer denials automatically. See [Denial Management](/modules/billing/denial-management/).
+
+When appealing, reference the claim number, date of service and denial CARC.
