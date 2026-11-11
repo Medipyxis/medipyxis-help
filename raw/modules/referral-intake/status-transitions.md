@@ -5,7 +5,7 @@ module: referral-intake
 audience: [intake, admin]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-04-24
+last_reviewed: 2026-11-11
 related:
   - referral-intake-overview
 tags: [referrals, status]
@@ -13,43 +13,24 @@ tags: [referrals, status]
 
 # Referral status transitions (reference)
 
-Use this as the authoritative map of what a referral can do next and who can do it.
+Use this as a map of the six referral columns on the Patient Intake board. Creating a patient (from **Add New Referral** or from the Fax Review Queue) always places the referral in **New Referrals**. You move cards between columns by dragging them on the board.
 
-## State diagram (text form)
+## The six columns
 
-```
-Fax Queue
-   ↓ (OCR auto-create OR manual convert)
-New Referrals
-   ↓                       ↘
-Info Needed ←────→ Financial
-   ↓                        ↓
-Ready for Assignment  ← (IVR Approved)
-   ↓
-Assigned  → (creates patient record, exits Intake → Fleet Calendar)
-   
-Any column → Non-Admit (terminal, with reason)
-```
+- **New Referrals** — where every new referral starts.
+- **Info Needed** and **Financial** — the team is still collecting information, or is working insurance.
+- **Ready for Assignment** — ready for a clinician to be assigned.
+- **Assigned** — a provider is assigned; schedule the first visit from the card or from Fleet Calendar.
+- **Non-Admit** — any card can be dragged here when the referral will not be admitted.
 
-## Transition rules
+## What each move means
 
-| From → To | Who can trigger | Validations |
-|---|---|---|
-| Fax Queue → New Referrals | intake_coordinator, admin | Fax converted to referral with required demographics |
-| New Referrals → Info Needed | intake_coordinator | Missing-fields checklist noted in Chat |
-| Info Needed → New Referrals | intake_coordinator | All requested fields now present |
-| New Referrals → Financial | intake_coordinator, admin | Insurance captured |
-| Financial → Ready for Assignment | biller, intake_coordinator | IVR status ≥ Approved |
-| Financial → Non-Admit | admin, intake_coordinator | IVR Declined or patient out-of-network |
-| Ready for Assignment → Assigned | clinical_manager, admin | Clinician + Facility assigned |
-| Assigned → Non-Admit | admin | Rarely; requires supervisor note |
+- **— → New Referrals** — click **Create Patient** on the Add New Patient form, or **Approve & Create Patient** on a fax. The patient record is created (Active) and the referral starts on the board.
+- **New Referrals → Info Needed or Financial** — drag the card. The team is still collecting information, or is working insurance.
+- **Financial or Info Needed → Ready for Assignment** — drag the card. The referral is ready for a clinician to be assigned.
+- **Ready for Assignment → Assigned** — drag the card to Assigned (a provider dialog opens and a toast asks you to select a provider), or click **Assign** on a Ready for Assignment card. If you close the dialog without choosing a provider, the card goes back to its previous column.
+- **Any column → Non-Admit** — drag the card. The referral will not be admitted.
 
-## Non-Admit reasons
+Assigning does not create the patient. The card stays in Assigned; book the first visit with **Schedule** on the card or from **Fleet Calendar**. Once that booked visit is more than 7 days in the past, the card drops off the board.
 
-- Coverage (insurance doesn't pay for wound care)
-- Geography (outside our service area)
-- Clinical (unsuitable candidate — e.g., unstageable with sepsis referral to ER instead)
-- Patient declined
-- Deceased
-- Duplicate of existing patient
-- Other (free-text required)
+The Fax Review Queue is a separate page, not a column or a status on this board. There is no separate intake coordinator role — the intake-oriented role in Medipyxis is **Referral Coordinator**.

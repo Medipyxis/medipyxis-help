@@ -54,7 +54,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Nothing in the app links to Recall Lookup. Replaced by inv-rc-08."
     },
     {
       "id": "inv-rc-03",
@@ -83,7 +85,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The page needs the Inventory feature and the search allows a wider role list. Replaced by inv-rc-09."
     },
     {
       "id": "inv-rc-04",
@@ -129,7 +133,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The search matches the lot number only. Replaced by inv-rc-10."
     },
     {
       "id": "inv-rc-05",
@@ -328,7 +334,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The on-screen table shows fewer columns; the rest are only in the CSV. Replaced by inv-rc-11."
     },
     {
       "id": "inv-rc-06",
@@ -377,6 +385,223 @@
           "fixed": true
         }
       ]
+    },
+    {
+      "id": "inv-rc-08",
+      "claim": "The lookup has no menu link or hub tile yet; open it at /inventory-management/recall-lookup. A fix to add a menu link is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/recall-lookup\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "recall-lookup",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx",
+            "frontend/src/components/AppShell.tsx",
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "absent",
+          "note": "no tile, sidebar, quick-jump or nav entry"
+        }
+      ],
+      "reason": "Fix tracked internally (MEDA-387)."
+    },
+    {
+      "id": "inv-rc-09",
+      "claim": "Your role needs the Inventory feature to open the page. The search works for the admin, vendor coordinator, clinical manager, medical director, clinician, provider, biller, and finance AP roles, and results cover only the facilities you have access to.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Inventory\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...ROLE_PERMISSIONS.INVENTORY_ACCESS,",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"biller\",",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"finance_ap\",",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "INVENTORY_ACCESS: ['admin', 'vendor_coordinator', 'clinical_manager', 'medical_director', 'clinician', 'provider'] as string[],",
+          "paths": [
+            "backend/supabase/functions/_shared/auth-helpers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "query = query.in(\"facility_id\", facilityIds);",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-10",
+      "claim": "The lookup searches by lot number only, and the lot must match exactly. Enter it in Enter lot number... and click Search (or press Enter).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"lot_number\", lotNumber)",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter lot number...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onKeyDown={(e) => e.key === \"Enter\" && handleSearch()}",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{loading ? \"Searching...\" : \"Search\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-11",
+      "claim": "The results table lists every application of the lot, newest first, with Patient, MRN, DOB, Visit Date, Clinician, Wound Case, HCPCS, and Size. The CSV export also includes quantity, Q code, tissue ID, distinct identification code, batch expiration, and application timestamp.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".order(\"application_date\", { ascending: false });",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +<TableHead>(Patient|MRN|DOB|Visit Date|Clinician|Wound Case|HCPCS|Size)</TableHead>$",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": {
+            "count": 8
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Quantity\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Q Code\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Tissue ID\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Distinct ID Code\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Batch Expiration\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Application Timestamp\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-12",
+      "claim": "FDA 21 CFR Part 1271 requires HCT/P products to be traceable from donor to recipient.",
+      "checks": [],
+      "kind": "external"
     }
   ]
 }

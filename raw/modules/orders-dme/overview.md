@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [clinician, medical_director, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/patients/{patient_uuid}/orders-dme
 related:
   - orders-dme-create-dme-order
@@ -17,31 +17,27 @@ tags: [orders, DME, laboratory, imaging, referrals, home-health]
 
 Orders & DME is the per-patient hub for generating and tracking clinical orders that flow out of a visit — from durable medical equipment to outbound referrals. It opens from a patient's chart.
 
-![Orders & DME page showing the order-type tabs](../../assets/orders-dme/hub.png)
-
-*Orders & DME — order types run as tabs across the top.*
+_Orders & DME — order types run as tabs across the top._
 
 ## Order types (tabs)
 
-| Tab | Purpose |
-|---|---|
-| **DME** | Prescriptions for durable medical equipment: wound-care supplies, compression devices, mobility aids, and similar items. |
-| **Labs** | Lab requisitions and specimen tracking. |
-| **Imaging** | X-ray, MRI, ultrasound, and other imaging studies. |
-| **Referrals** | Outbound referral orders to specialists (vascular, podiatry, wound care, etc.). |
-| **Home Health** | Home health agency referrals and certifications. |
+- **DME** — durable medical equipment and wound-care supply orders.
+- **Labs** — lab orders.
+- **Imaging** — imaging orders.
+- **Referrals** — referral orders to specialists.
+- **Home Health** — orders to home health agencies.
 
 ## How an order is placed and routed
 
-For each order you pick a **vendor** from the enabled-vendor list for that order type (vendors are scoped per clinic), optionally choose the vendor's custom form, then **send it by fax or email** to the vendor. Orders can be saved as a **Draft** first.
+For each order you pick a recipient from your clinic's enabled vendors and home health agencies. It is the same list on every tab. Then you choose an order form — the vendor's own form or a shared one — and fill it in. Orders can be saved as a **Draft** first.
 
-Each order carries a status: **Draft**, **Submitted**, **Received**, **Provisioned**, **Rejected**, **Canceled**, or **Needs Info**. When results come back, use **Upload Results** on the order.
+To send the order, use **Send Fax**: the order moves to **Submitted** once the fax is accepted. Send Fax appears only for organizations that have the Referral Intake feature. **Send Email** emails the form to the vendor but does not save the order or change its status, so an emailed order leaves no record here. A fix is being tracked.
+
+Each order carries a status: **Draft**, **Submitted**, **Received**, **Provisioned**, **Rejected**, **Canceled**, or **Needs Info**. Provisioned orders show an **Upload Results** button, but it does not upload anything yet; a fix is being tracked.
+
+See [Create a DME order](/modules/orders-dme/create-dme-order/) for the step-by-step flow.
 
 ## How orders connect to visits
 
-- **During a visit** — the **Orders & DME** section (section 12) of the Visit Wizard opens this surface with the patient context attached.
+- **During a visit** — the **Orders & DME** step (Step 11) of the Visit Wizard lets you place orders for that patient without leaving the wizard.
 - **Standalone** — open a patient's chart and go to Orders & DME to place or track orders outside a visit.
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.

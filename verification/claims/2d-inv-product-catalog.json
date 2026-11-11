@@ -31,7 +31,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "No role check guards the catalog; the Inventory feature is enough. Replaced by inv-pc-21."
     },
     {
       "id": "inv-pc-02",
@@ -129,7 +131,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The headers are Product Name, Brand, SKU, Lot No. Suffix, Category, Product Type, HCPCS, Status, Actions. Replaced by inv-pc-23."
     },
     {
       "id": "inv-pc-04",
@@ -169,7 +173,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Search matches only product name, brand and HCPCS. Replaced by inv-pc-22."
     },
     {
       "id": "inv-pc-05",
@@ -227,7 +233,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Uniqueness is per SKU plus Lot No. Suffix within a category. Replaced by inv-pc-28."
     },
     {
       "id": "inv-pc-06",
@@ -256,7 +264,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Receiving does not validate lots against the suffix. Replaced by inv-pc-24."
     },
     {
       "id": "inv-pc-07",
@@ -416,7 +426,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "HCPCS is optional on the product for every category. Replaced by inv-pc-25."
     },
     {
       "id": "inv-pc-10",
@@ -454,7 +466,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Inactive products are still offered in Manual Receive and IVR requests. Replaced by inv-pc-26."
     },
     {
       "id": "inv-pc-11",
@@ -503,7 +517,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The first step is a set of category cards, not a dropdown. Replaced by inv-pc-27."
     },
     {
       "id": "inv-pc-12",
@@ -588,7 +604,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The suffix rule is a dash plus three digits for Amniotic/Biologics; Vendor is also required. Replaced by inv-pc-27."
     },
     {
       "id": "inv-pc-13",
@@ -616,7 +634,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The button reads Save Product (Update Product when editing). Replaced by inv-pc-27."
     },
     {
       "id": "inv-pc-14",
@@ -672,17 +692,32 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Free-form bulk upload is only for Conservative, PRP and UM; Amniotic and Biologics are tied to an order. Replaced by inv-pc-29."
     },
     {
       "id": "inv-pc-15",
       "claim": "An Active product is immediately available in the receiving workflow and in the Visit Wizard product selector.",
-      "checks": [],
-      "finding": "Not checkable as written: neither the Manual Receive catalog list nor the IVR product list filters on is_active (see inv-pc-10), so availability does not depend on Active."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "note": "an Active-only receiving list would filter on is_active"
+        }
+      ],
+      "finding": "Not checkable as written: neither the Manual Receive catalog list nor the IVR product list filters on is_active (see inv-pc-10), so availability does not depend on Active.",
+      "status": "removed",
+      "reason": "Availability does not depend on Active: receiving and IVR product lists do not filter on it. Deleted; see inv-pc-26."
     },
     {
       "id": "inv-pc-16",
-      "claim": "Previously received units retain the HCPCS that was active at the time of receiving.",
+      "claim": "A lot keeps the HCPCS code it was received with; changing the product's HCPCS later does not change lots already received.",
       "checks": [
         {
           "type": "grep",
@@ -699,8 +734,21 @@
     {
       "id": "inv-pc-17",
       "claim": "Changing a product's HCPCS code after units have been received affects future claims only.",
-      "checks": [],
-      "finding": "No code path ties catalog or unit HCPCS to claim lines (see inv-mi-10); cannot be confirmed."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "inventory_product_batches_v2",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present",
+          "note": "a claims effect would need claim building to read the lot's HCPCS"
+        }
+      ],
+      "finding": "No code path ties catalog or unit HCPCS to claim lines (see inv-mi-10); cannot be confirmed.",
+      "status": "removed",
+      "reason": "No code carries a product's HCPCS into claims, so a claims effect cannot be stated. Replaced by the reworded inv-pc-16."
     },
     {
       "id": "inv-pc-18",
@@ -740,11 +788,13 @@
           },
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Save Product is disabled only while saving; errors show on submit. Replaced by inv-pc-30."
     },
     {
       "id": "inv-pc-19",
-      "claim": "Troubleshooting: a duplicate SKU error appears on save when another product already uses that SKU.",
+      "claim": "Troubleshooting: \"This SKU and Lot No. Suffix combination already exists\" — another product in the same category at your facility uses that SKU and suffix.",
       "checks": [
         {
           "type": "grep",
@@ -777,7 +827,557 @@
         }
       ],
       "finding": "The HCPCS Code field is in the shared Product Information block for all categories (AddEditProduct.tsx:1344-1366); it is not hidden for Conservative.",
-      "proposed_text": "Remove this row."
+      "proposed_text": "Remove this row.",
+      "status": "removed",
+      "reason": "The HCPCS Code field is shown for every category. Row deleted."
+    },
+    {
+      "id": "inv-pc-21",
+      "claim": "Anyone whose role has the Inventory feature can open the Product Catalog and add or edit products; every product needs a vendor.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/product-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ProductCatalog />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "useRole|currentRole|isAdmin\\(|hasRole",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx",
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx",
+            "frontend/src/pages/inventory-management/product-catalog/ProductCatalog.tsx"
+          ],
+          "expect": "absent",
+          "note": "no role check on the catalog pages"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".min(1, \"Vendor is required\")",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-22",
+      "claim": "Use Search products... to find products by name, brand, or HCPCS code. Filter by category (All Categories or one category) and status (All Status, Active, Inactive).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search products...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`product_name.ilike.%${debouncedSearch}%,brand.ilike.%${debouncedSearch}%,hcpcs_code.ilike.%${debouncedSearch}%`",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Categories</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Status</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"inactive\">Inactive</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-23",
+      "claim": "Columns: Product Name, Brand, SKU, Lot No. Suffix, Category, Product Type, HCPCS, Status, and Actions (Edit Product and Delete Product). A Conservative Care product shows a red Par Level Reached icon by its name when your facility has fewer available, unexpired lots than its PAR level (10 if none is set).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +(Product Name|Brand|SKU|Lot No\\. Suffix|Category|Product Type|HCPCS|Status|Actions)$",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": {
+            "min": 9
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit Product\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Delete Product\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-24",
+      "claim": "Lot No. Suffix — for Amniotic and Biologics, a dash and three digits (for example -001). When a product has a suffix, bulk receiving requires a lot number for it. Receiving does not check lot numbers against the suffix.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Lot No. Suffix must start with '-' followed by exactly three digits\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-25",
+      "claim": "HCPCS is optional on the product for every category; when entered it must be one letter and four digits (for example A6402). Amniotic and biologic lots need an HCPCS/Q code when received.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"HCPCS code must be 1 letter followed by 4 digits (e.g., A6402)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`HCPCS/Q Code is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-26",
+      "claim": "Status — Active or Inactive. Inactive products stay in the catalog for history, and can still be picked in Manual Receive and in IVR requests.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{product.is_active !== false ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only is_active filter in the IVR form is on the wound list, not the product list"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, product_name, brand, sku, lot_number, hcpcs_code, category, vendor_id, unit_width, unit_height, unit_size_description\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-27",
+      "claim": "Click Add Product; the Select Product Category screen (\"Choose the category for your new product\") opens. Click Create Product on a category card; ← Change Category goes back. Required: Product Name, Brand, Product Type (not asked for PRP and UM), SKU (letters, numbers and dashes only), Vendor, and for Amniotic and Biologics a Lot No. Suffix of a dash and three digits (optional digits-only for Conservative Care, PRP and UM). Optional: HCPCS Code, Vendor Cost, Par Level (Conservative Care, PRP, UM), Active Product. Click Save Product (Update Product when editing).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select Product Category",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Choose the category for your new product",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Product{\" \"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "← Change Category",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Product Name <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Brand <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Product Type - PRP and UM have none yet */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"SKU can contain only letters, numbers and dashes\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const SKU_PATTERN = /^[a-zA-Z0-9-]+$/;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/catalogProduct.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".min(1, \"Vendor is required\")",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Lot number must contain only numbers, with an optional leading dash (-)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "HCPCS Code",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Cost",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Par Level - Only for Conservative, PRP and UM */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Active Product",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Update Product\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Save Product\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-28",
+      "claim": "The SKU and Lot No. Suffix combination must be unique within a category at your facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sku: \"This SKU and Lot No. Suffix combination already exists\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "already exists in ${categoryName} for this facility.`,",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-29",
+      "claim": "Bulk Upload Inventory on a category tile: for Conservative Care, PRP and UM it accepts a free-form spreadsheet with no purchase order; for Amniotic and Biologics the upload is tied to an order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk Upload Inventory",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Stock new inventory directly — no purchase order required.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadInventoryFreeFormModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "isConservativeStyleCategory(categoryEnum) ? (",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Amniotic and Biologics still use the order-tethered modal",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-30",
+      "claim": "Troubleshooting: Save Product shows errors when a required field is empty or invalid; fix the fields marked in red. \"No active vendors found\" means you must add or enable the vendor first.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No active vendors found. Please add a vendor",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setValidationErrors(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-31",
+      "claim": "Delete Product asks you to confirm and warns that \"This action cannot be undone.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Are you sure you want to delete{\" \"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? This action cannot be undone.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".delete()",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-pc-32",
+      "claim": "To retire a product you have used, turn off Active Product rather than deleting it.",
+      "checks": [],
+      "kind": "advice"
     }
   ]
 }

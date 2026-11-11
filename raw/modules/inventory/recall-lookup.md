@@ -6,7 +6,7 @@ audience: [admin]
 roles: [vendor_coordinator, admin]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-07-10
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/inventory-management/recall-lookup
 related:
   - inventory-overview
@@ -16,27 +16,20 @@ tags: [inventory, FDA, recall, HCT/P, lot, traceability, chain-of-custody]
 
 # Look up FDA HCT/P recalls
 
-When a manufacturer or the FDA recalls a tissue product (HCT/P) lot, use the **Recall Lookup** tool to find every unit of that lot your facility applied — and to whom — so you can act quickly. Open it at `/inventory-management/recall-lookup`.
+When a manufacturer or the FDA recalls a tissue product (HCT/P) lot, use the **FDA HCT/P Recall Lookup** to find every application of that lot at your facilities — and to whom — so you can act quickly.
 
 ## Before you start
 
-- You have the lot number (or distinct identification code) named in the recall notice.
-- You have the `vendor_coordinator` or `admin` role.
+- The lookup has no menu link or hub tile yet. Open it by going to `/inventory-management/recall-lookup` in your Medipyxis web address. A fix to add a menu link is being tracked.
+- Your role needs the **Inventory** feature to open the page. The search itself works for the admin, vendor coordinator, clinical manager, medical director, clinician, provider, biller, and finance AP roles.
+- Results cover only the facilities you have access to.
+- Have the lot number named in the recall notice. The lookup searches by lot number only, and the lot must match exactly.
 
 ## Look up an affected lot
 
-1. Open **Recall Lookup** from Inventory Management.
-2. **Enter the lot number** and search.
-3. The results table lists every application of that lot, with:
-   - Patient (name, MRN, DOB) and the clinician who applied it
-   - Visit date and application timestamp, quantity, and wound case
-   - HCPCS / Q-code, size, tissue ID, distinct identification code, and batch expiration
-4. **Export to CSV** to hand off to your compliance team or to document the recall response.
+1. Open the recall lookup page.
+2. **Enter the lot number** in **Enter lot number...** and click **Search** (or press Enter).
+3. The results table lists every application of that lot, newest first, with: Patient, MRN, DOB, Visit Date, Clinician, Wound Case, HCPCS, and Size.
+4. Click **Export CSV** to hand the list to your compliance team or to document the recall response. The CSV also includes the quantity, Q code, tissue ID, distinct identification code, batch expiration, and application timestamp.
 
-<Compliance>
-FDA 21 CFR Part 1271 requires HCT/P products to be traceable from donor to recipient. This lookup is the recall/adverse-event side of that chain of custody — it resolves an affected lot to the specific patients and visits it touched. Keep the exported record with your recall documentation.
-</Compliance>
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+FDA 21 CFR Part 1271 requires HCT/P products to be traceable from donor to recipient. This lookup resolves an affected lot to the specific patients and visits it touched. Keep the exported record with your recall documentation.

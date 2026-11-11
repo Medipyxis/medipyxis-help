@@ -47,13 +47,16 @@
       "proposed_checks": [
         { "type": "grep", "pattern": "^  \"(admin|clinical_manager|medical_director|clinician|referral_coordinator|bd_rep|bd_manager|finance_ap|vendor_coordinator|biller)\",$", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": { "count": 10 } },
         { "type": "grep", "fixed": true, "pattern": "{role.replace(/_/g, \" \")}", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Organization Role Config lists its own ten role keys (medical director, not clinical director) printed as system names. Replaced by ri-su-11."
     },
     {
       "id": "ri-su-06",
-      "claim": "There is no role named intake_coordinator.",
+      "claim": "There is no separate intake coordinator role; intake staff use referral coordinator.",
       "checks": [
-        { "type": "grep", "fixed": true, "pattern": "intake_coordinator", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent" }
+        { "type": "grep", "fixed": true, "pattern": "intake_coordinator", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent" },
+        { "type": "grep", "fixed": true, "pattern": "\"referral_coordinator\",", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": "present" }
       ]
     },
     {
@@ -78,7 +81,9 @@
         { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There is no Fax Review Queue sidebar item. Replaced by ri-su-12."
     },
     {
       "id": "ri-su-09",
@@ -94,6 +99,26 @@
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present", "note": "sidebar items are filtered by feature access" },
         { "type": "grep", "pattern": "Intake SLAs|Referral Rules|Request add", "paths": ["frontend/src"], "excludeTests": true, "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-su-11",
+      "claim": "The page lists ten roles, shown by their system names: admin, clinical manager, medical director, clinician, referral coordinator, bd rep, bd manager, finance ap, vendor coordinator, and biller.",
+      "checks": [
+        { "type": "grep", "pattern": "^  \"(admin|clinical_manager|medical_director|clinician|referral_coordinator|bd_rep|bd_manager|finance_ap|vendor_coordinator|biller)\",$", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": { "count": 10 } },
+        { "type": "grep", "fixed": true, "pattern": "{role.replace(/_/g, \" \")}", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"clinical_director\",", "paths": ["frontend/src/pages/administrator/OrgRoleConfigPage.tsx"], "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-su-12",
+      "claim": "The Fax Queue button on the board, the Fax Review Queue tile under Fax Center in the sidebar, and ⌘K \"fax review queue\" all open the fax review page.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/fax-review-queue`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "path: \"/fax-review-queue\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
       ]
     }
   ]

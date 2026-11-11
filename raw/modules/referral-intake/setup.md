@@ -6,7 +6,7 @@ audience: [admin]
 roles: [practice_admin, super_admin]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-04-24
+last_reviewed: 2026-11-11
 related:
   - referral-intake-overview
   - admin-facility-setup
@@ -15,35 +15,17 @@ tags: [admin, setup, SLA, fax]
 
 # Configure Referral Intake for your facility
 
-This page is for admins turning Referral Intake on — or adjusting SLAs, fax numbers, and OCR thresholds.
+Most of Referral Intake does not have a separate setup wizard. What you can configure is which roles can see the feature.
 
-## 1. Set your inbound fax number
+## Who can open Referral Intake
 
-1. Open **Administrator → Organization Role Config** (the admin surface, not the facility sidebar).
-2. Under **Facility Settings → Fax**, enter the eFax number your clearinghouse provisioned.
-3. Save. Test by having your clearinghouse send a 1-page fax — it should appear in the Fax Review Queue within 2 minutes.
+Open **Organization Role Config** from the Administrator hub. That page turns features on or off per role for an organization. It does not set fax numbers, SLA timers, OCR thresholds, payer catalogs, or auto-assignment rules.
 
-## 2. Tune SLA timers
+The page lists ten roles, shown by their system names: admin, clinical manager, medical director, clinician, **referral coordinator**, bd rep (business development representative), bd manager (business development manager), finance ap (finance / accounts payable), vendor coordinator, and biller. There is no separate intake coordinator role; intake staff use referral coordinator.
 
-Defaults are 4 hours / 1 day / 2 days / same-day. Override per facility under **Facility Settings → Intake SLAs**.
+## Opening the queues
 
-## 3. OCR confidence thresholds
+- **Referral Intake** in the sidebar opens the Patient Intake board.
+- The **Fax Queue** button on the board, the **Fax Review Queue** tile under **Fax Center** in the sidebar, and ⌘K "fax review queue" all open the fax review page. Inbound faxes appear there once they have been received.
 
-- **Auto-Create threshold** — default 85. Above this, the system creates a draft referral automatically. Lower this if your fax quality is poor; raise it if too many incorrect drafts are being created.
-- **Manual-Only threshold** — default 60. Below this, the page goes to Review without auto-creating.
-
-## 4. Seed payers
-
-Medipyxis ships with 4,118+ US payers. If a local payer is missing, submit **Administrator → Payers → Request add**. Turnaround is 1 business day.
-
-## 5. Assign coordinators
-
-In **HR & Compliance → Facility Users**, assign the `intake_coordinator` role to the people who will own the queue. Only users with this role (or `admin`) can convert faxes.
-
-## 6. Set auto-assignment rules (optional)
-
-**Administrator → Referral Rules** supports rules like "If payer = Medicare and urgency = Routine, default Assigned Clinician = Dr. X". Order matters — first matching rule wins.
-
-<Note>
-Auto-assignment fills in Assigned Clinician on the card but does not skip the **Ready for Assignment** column. A human still confirms before the patient drops into Fleet Calendar.
-</Note>
+If a role cannot see Referral Intake, check that role's feature access in Organization Role Config rather than looking for Facility Settings → Fax, Intake SLAs, Payers → Request add, or Referral Rules — those screens are not part of this flow.

@@ -42,7 +42,9 @@
         { "type": "grep", "fixed": true, "pattern": "// If moving to ASSIGNED, open assignment dialog", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "\"Provider assignment cancelled - reverting to previous status\"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Dragging to Assigned opens the provider dialog itself; Assign shows only on Ready for Assignment cards. Replaced by ri-st-08."
     },
     {
       "id": "ri-st-05",
@@ -57,7 +59,9 @@
         { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "onClick={handleScheduleClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The card drops off the board once the booked visit is more than 7 days past, and Assigned cards have their own Schedule button. Replaced by ri-st-09."
     },
     {
       "id": "ri-st-06",
@@ -69,10 +73,30 @@
     },
     {
       "id": "ri-st-07",
-      "claim": "There is no intake_coordinator role — the intake-oriented role in Medipyxis is Referral Coordinator.",
+      "claim": "There is no separate intake coordinator role — the intake-oriented role in Medipyxis is Referral Coordinator.",
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "intake_coordinator", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent" },
         { "type": "grep", "fixed": true, "pattern": "{ value: 'referral_coordinator', label: 'Referral Coordinator' },", "paths": ["frontend/src/constants/roles.ts"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-st-08",
+      "claim": "Ready for Assignment → Assigned: drag the card to Assigned (a provider dialog opens and a toast asks you to select a provider), or click Assign on a Ready for Assignment card. If you close the dialog without choosing a provider, the card goes back to its previous column.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "// If moving to ASSIGNED, open assignment dialog", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "toast.info(\"Please select a provider to complete assignment\");", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Provider assignment cancelled - reverting to previous status\"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-st-09",
+      "claim": "Assigning does not create the patient. The card stays in Assigned; book the first visit with Schedule on the card or from Fleet Calendar. Once that booked visit is more than 7 days in the past, the card drops off the board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleScheduleClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
       ]
     }
   ]

@@ -6,7 +6,7 @@ audience: [intake, admin]
 roles: [intake_coordinator, referral_coordinator, practice_admin]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/referrals
 related:
   - referral-intake-new-referral
@@ -18,40 +18,21 @@ tags: [referrals, intake, kanban]
 
 # Referral Intake — overview
 
-Referral Intake is where every patient starts. Faxes, emails, and phone referrals all funnel into a single kanban, move through triage columns, and exit either as an **Assigned** patient ready for a visit or a **Non-Admit**.
+Referral Intake is where every patient starts. Open it from the **Referral Intake** item in the sidebar. The page heading is **Patient Intake**, with the line “Manage incoming patient referrals through the intake workflow.”
 
-![Referral Intake kanban](../../assets/referral-intake/kanban.png)
+From the header you can open the **Fax Queue** (it goes to the Fax Review Queue — it is a button, not a kanban column), **Fleet Calendar**, or **Add New Referral**.
 
 ## The kanban columns
 
-| Column | What belongs here |
-|---|---|
-| **Fax Queue** | Raw inbound faxes not yet mapped to a patient. OCR parses pages; high-confidence pages auto-create draft referrals. |
-| **New Referrals** | Patient created but not yet triaged. |
-| **Info Needed** | Waiting on demographics, PCP info, or clinical notes. |
-| **Financial** | Insurance verification (IVR) in progress. |
-| **Ready for Assignment** | Insurance cleared; awaiting clinician + facility assignment. |
-| **Assigned** | Clinician + facility set. The patient drops out of Referral Intake and appears in **Fleet Calendar** scheduling. |
-| **Non-Admit** | Declined referrals with reason (coverage, geography, clinical). Terminal. |
+- **New Referrals** — A newly created patient/referral. Creating a patient with **Create Patient** or **Approve & Create Patient** always starts the referral here.
+- **Info Needed** — Waiting on information the team still has to collect.
+- **Financial** — Insurance or financial follow-up. Cards are moved here by the team; they are not auto-routed just because insurance was entered on the form.
+- **Ready for Assignment** — Ready for a clinician to be assigned.
+- **Assigned** — The team is assigning, or has assigned, a clinician. Click **Assign** on a Ready for Assignment card, or drag the card here, and pick a provider. The patient record already exists from create — Assigned does not create it. Schedule the first visit with **Schedule** on the card or from **Fleet Calendar**. The card stays in the Assigned column, including after the first visit is booked. When that booked visit is more than 7 days in the past, the card drops off the board.
+- **Non-Admit** — The referral will not be admitted. Drag the card into this column.
 
 ## Key surfaces
 
-- **New Referral form** — manual entry. [How to create a new referral](./new-referral.md).
-- **Fax Review Queue** (`/fax-review-queue`) — OCR triage with SLA breach timer. [Review the Fax Queue](./fax-queue-review.md).
-- **Detail panel** — right-drawer on any card. Six tabs: Details · Documents · Chat · Precharting · History · Notes. [Using the detail panel](./detail-panel.md).
-
-## SLA expectations
-
-By default:
-
-- **Fax Queue → New Referrals:** 4 business hours.
-- **Info Needed:** 1 business day per touch.
-- **Financial (IVR):** 2 business days.
-- **Ready for Assignment → Assigned:** same day.
-
-SLA timers turn red when breached and surface on the Dashboard. Admins tune thresholds in **Administrator → Organization Role Config**.
-
-## Related
-
-- [Status transitions reference](./status-transitions.md)
-- [Intake coordinator cheat sheet](../../quick-reference/intake-coordinator.md)
+- **Add New Patient form** — opened by **Add New Referral**. See [Add a new patient from Referral Intake](/modules/referral-intake/new-referral/) and the [section-by-section walkthrough](/modules/referral-intake/intake-wizard/).
+- **Fax Review Queue** — open it with the **Fax Queue** button on this board, from the **Fax Review Queue** tile under **Fax Center** in the sidebar, or by pressing ⌘K and typing "fax review queue". See [Review the Fax Review Queue](/modules/referral-intake/fax-queue-review/).
+- **Detail panel** — click any card to open the right-hand drawer. Six tabs: Details · Documents · Chat · Precharting · History · Notes. See [Use the referral detail panel](/modules/referral-intake/detail-panel/).

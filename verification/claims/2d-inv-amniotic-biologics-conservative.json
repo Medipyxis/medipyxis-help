@@ -48,12 +48,25 @@
     {
       "id": "inv-abc-02",
       "claim": "On demo and production, the legacy category tables already hold zero rows.",
-      "checks": [],
-      "finding": "A database row count, not a code fact; the code check runner cannot query demo or prod. Needs a count(*) against amniotic_inventory_items / biologics_inventory_items (and the conservative legacy table) on both projects."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const tableName = 'biologics_inventory_items';",
+          "paths": [
+            "frontend/src/components/inventory/biologics/ActiveInventoryTable.tsx"
+          ],
+          "expect": "absent",
+          "note": "a retired legacy table would have no reader left in the release"
+        }
+      ],
+      "finding": "A database row count, not a code fact; the code check runner cannot query demo or prod. Needs a count(*) against amniotic_inventory_items / biologics_inventory_items (and the conservative legacy table) on both projects.",
+      "status": "removed",
+      "reason": "Database row counts are not product behaviour, and legacy-table code is still in the release; the migration note was removed. Deleted."
     },
     {
       "id": "inv-abc-03",
-      "claim": "Today's specialty products flow through the new unified catalog under the hood; the tiles are a compatibility surface.",
+      "claim": "Products for every category come from the Product Catalog; each tile opens that category's Product Batches Management page.",
       "checks": [
         {
           "type": "grep",
@@ -115,7 +128,9 @@
           },
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Active Inventory has no UIN column. Replaced by inv-abc-17."
     },
     {
       "id": "inv-abc-05",
@@ -237,7 +252,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Receiving does not check the lot against the suffix. Replaced by inv-abc-18."
     },
     {
       "id": "inv-abc-08",
@@ -281,7 +298,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Receiving creates lot records with a quantity, not per-unit UINs. Replaced by inv-abc-21."
     },
     {
       "id": "inv-abc-10",
@@ -328,7 +347,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Receiving checks only that the HCPCS/Q code is filled in, not that it is valid. Replaced by inv-abc-19."
     },
     {
       "id": "inv-abc-11",
@@ -358,11 +379,13 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "No lot-format check exists at receiving. Deleted."
     },
     {
       "id": "inv-abc-12",
-      "claim": "Use IVR Tracking to confirm payer authorization is in place before scheduling the procedure.",
+      "claim": "Use IVR Tracking to follow each graft's IVR request and the vendor's response before the procedure.",
       "checks": [
         {
           "type": "grep",
@@ -515,7 +538,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "No PAR alert in a Main Inventory view: the Low Stock count is hard-coded to 0; only a catalog icon exists. Replaced by inv-abc-22."
     },
     {
       "id": "inv-abc-16",
@@ -560,7 +585,449 @@
           "expect": "present",
           "fixed": true
         }
+      ],
+      "status": "removed",
+      "reason": "Procedures & Supplies has no scan or inventory lookup; lots are picked in Interventions & Treatments. Replaced by inv-abc-23."
+    },
+    {
+      "id": "inv-abc-17",
+      "claim": "Amniotic / Advance Treatment tile — lots listed with lot number, tissue ID, and expiration date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Lot #",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tissue ID",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Exp Date",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "UIN",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "absent"
+        }
       ]
+    },
+    {
+      "id": "inv-abc-18",
+      "claim": "Receiving asks for Lot #, Exp Date, Qty Received, and for Amniotic and Biologics also Tissue ID, Size, and HCPCS/Q Code, all required; HCPCS/Q Code is filled in from the Product Catalog entry and is editable.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`Lot number is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`Expiration date is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Qty Received",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.size_label?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product_code: catalogItem.hcpcs_code || \"\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"HCPCS/Q code\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "absent",
+          "note": "no lot-to-suffix check"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-19",
+      "claim": "Biologics receiving asks for the same fields as Amniotic. Medipyxis checks that the HCPCS/Q code is filled in but not that it is valid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "categoryEnum === ProductCategoryEnum.Biologics;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "[A-Z]\\d{4}|\\^\\[A-Z\\]",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "note": "no HCPCS format check at receiving"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-20",
+      "claim": "Graft requests to a vendor are made as IVR requests from the patient's wound in the Wound Cockpit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import(\"@/pages/inventory-management/ivr/IVRInventoryRequestModal\")",
+          "paths": [
+            "frontend/src/pages/WoundCockpitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Proceed with IVR Request",
+          "paths": [
+            "frontend/src/components/wound-cockpit/IVRReadinessModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-21",
+      "claim": "Open the category's Receiving History tab and click Manual Receive; choose Receive Against Purchase Order (then Select Order) or Direct to Main Stock; click Add Line for each lot; click Create Receive. The receipt is stocked straight away or created as Pending Approval, which you approve with Resolve & Stock Remaining or turn down with Decline on Receiving History. Each line becomes an inventory record for that lot on Active Inventory; stock is tracked by lot, not by unit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{activeTab === TabTypes.RECEIVING && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Receive",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Receive Against Purchase Order",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select Order",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Direct to Main Stock",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Add Line</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Create Receive</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Pending Approval\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `Manual receive stocked into Main Inventory. Status: ${statusLabel}.`",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Resolve & Stock Remaining\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ImportBatchesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Decline\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ImportBatchesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Approve & Stock Receiving",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ApproveReceivingModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk Upload Inventory",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-22",
+      "claim": "Conservative Care: Tissue ID is not collected and size and HCPCS/Q code are not required at receiving. You can set a Par Level; the Product Catalog shows a red Par Level Reached icon when fewer available, unexpired lots remain than that level (10 if none is set). No other low-stock alert fires today; a fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Par Level - Only for Conservative, PRP and UM */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lowStock: 0,",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lowStock:",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ],
+      "reason": "Fix tracked internally (MEDA-387)."
+    },
+    {
+      "id": "inv-abc-23",
+      "claim": "In the Visit Wizard, clinicians pick the product and lot in the Interventions & Treatments step. For a skin-substitute application, Procedures & Supplies also requires the Box UID/UIN, typed from the package.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "conservativeCare: \"Interventions & Treatments\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { LotSelectionFromBatches } from \"@/components/shared/LotSelectionFromBatches\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>Box UID/UIN is required</li>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter Box UID/UIN\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-24",
+      "claim": "FDA 21 CFR Part 1271 requires tissue products to be traceable from donor to recipient.",
+      "checks": [],
+      "kind": "external"
+    },
+    {
+      "id": "inv-abc-25",
+      "claim": "Enter the Tissue ID exactly as printed on the tissue bank's packing slip. Do not leave it blank or enter a placeholder.",
+      "checks": [],
+      "kind": "advice"
     }
   ]
 }

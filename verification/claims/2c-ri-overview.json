@@ -65,10 +65,12 @@
     },
     {
       "id": "ri-ov-07",
-      "claim": "Assigned: use the Assign action on the card.",
+      "claim": "Assigned: click Assign on a Ready for Assignment card, or drag the card to Assigned, and pick a provider.",
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Assign</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
-        { "type": "grep", "fixed": true, "pattern": "onClick={handleAssignClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleAssignClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "// If moving to ASSIGNED, open assignment dialog", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
       ]
     },
     {
@@ -82,7 +84,9 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "// ASSIGNED column also shows currently-SCHEDULED (within-window) referrals.", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Cards drop off the board once the booked first visit is more than 7 days past. Replaced by ri-ov-15."
     },
     {
       "id": "ri-ov-09",
@@ -94,9 +98,10 @@
     },
     {
       "id": "ri-ov-10",
-      "claim": "Schedule the first visit from Fleet Calendar.",
+      "claim": "Schedule the first visit with Schedule on the card or from Fleet Calendar.",
       "checks": [
-        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleScheduleClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
       ],
       "reason": "True as written. Note: Assigned cards also carry a Schedule button that opens a booking dialog on the board (Referrals.tsx:556-580, :2874)."
     },
@@ -129,7 +134,9 @@
         { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There is no Fax Review Queue sidebar item. Replaced by ri-ov-16."
     },
     {
       "id": "ri-ov-14",
@@ -140,6 +147,25 @@
         { "type": "grep", "fixed": true, "pattern": "fixed inset-y-0 right-0", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" },
         { "type": "grep", "pattern": "\\{ name: \"(details|documents|chat|precharting|history|notes)\", label: \"(Details|Documents|Chat|Precharting|History|Notes)\"", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": { "count": 6 } },
         { "type": "grep", "fixed": true, "pattern": "<TabsList className=\"grid grid-cols-6", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-15",
+      "claim": "The card stays in the Assigned column, including after the first visit is booked. When that booked visit is more than 7 days in the past, the card drops off the board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "// ASSIGNED column also shows currently-SCHEDULED (within-window) referrals.", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-16",
+      "claim": "Fax Review Queue — open it with the Fax Queue button on this board, from the Fax Review Queue tile under Fax Center in the sidebar, or by pressing ⌘K and typing \"fax review queue\".",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/fax-review-queue`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
       ]
     }
   ]

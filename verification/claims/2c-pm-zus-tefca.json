@@ -32,7 +32,9 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "<ZusProvenanceBadge source={", "paths": ["frontend/src/components/patient/ZusHealthDataSection.tsx"], "expect": { "min": 5 } },
         { "type": "grep", "fixed": true, "pattern": "<ZusProvenanceBadge source=\"manual\" />", "paths": ["frontend/src/components/patient/ZusHealthDataSection.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Conditions always show a Manual badge, so the badges do not tell sources apart on every row. Replaced by pm-zus-09."
     },
     {
       "id": "pm-zus-04",
@@ -54,7 +56,7 @@
     },
     {
       "id": "pm-zus-06",
-      "claim": "Provenance badges mark what came from ZusHealth; the last-sync pill shows the sync time.",
+      "claim": "Source badges mark what came from ZusHealth (except on conditions); the last-sync pill shows the sync time.",
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "const label = source === \"zus-health\" ? \"Zus\"", "paths": ["frontend/src/components/patient/ZusProvenanceBadge.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "Last sync: today", "paths": ["frontend/src/components/patient/ZusLastSyncPill.tsx"], "expect": "present" }
@@ -62,7 +64,7 @@
     },
     {
       "id": "pm-zus-07",
-      "claim": "When you finalize a visit (Sign & Lock), Medipyxis contributes the visit back to the patient's external record via ZusHealth automatically — there is no extra step.",
+      "claim": "When you finalize a visit (Sign & Lock), Medipyxis sends the visit to ZusHealth automatically — there is no extra step.",
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "const zusContribUrl = Deno.env.get('SUPABASE_URL') + '/functions/v1/zus-contribute-visit';", "paths": ["backend/supabase/functions/save-visit-data/index.ts"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "if (involvesSec17 && !is_draft) {", "paths": ["backend/supabase/functions/save-visit-data/index.ts"], "expect": "present" },
@@ -82,7 +84,33 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "if (involvesSec17 && !is_draft) {", "paths": ["backend/supabase/functions/save-visit-data/index.ts"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "This is a GIVE-to-GET contribution: we share our clinical encounter data", "paths": ["backend/supabase/functions/zus-contribute-visit/index.ts"], "expect": "present" }
+      ],
+      "status": "removed",
+      "reason": "Medipyxis code only sends the visit to the Zus API; reaching a nationwide TEFCA record is not visible in the product. TEFCA wording removed; pm-zus-07 covers the automatic send."
+    },
+    {
+      "id": "pm-zus-09",
+      "claim": "Medications, allergies, lab results, surgeries, and vaccinations show a source badge on each row: Zus for imported rows, Manual for rows entered in Medipyxis. Conditions currently show Manual on every row, including conditions imported from ZusHealth.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "<ZusProvenanceBadge source={", "paths": ["frontend/src/components/patient/ZusHealthDataSection.tsx"], "expect": { "count": 5 } },
+        { "type": "grep", "fixed": true, "pattern": "const label = source === \"zus-health\" ? \"Zus\"", "paths": ["frontend/src/components/patient/ZusProvenanceBadge.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": ": source === \"manual\" ? \"Manual\"", "paths": ["frontend/src/components/patient/ZusProvenanceBadge.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<ZusProvenanceBadge source=\"manual\" />", "paths": ["frontend/src/components/patient/ZusHealthDataSection.tsx"], "expect": { "count": 1 }, "note": "ConditionItem hardcodes the Manual badge" }
       ]
+    },
+    {
+      "id": "pm-zus-10",
+      "claim": "The automatic send happens only for patients who are linked to ZusHealth, at facilities that are connected to ZusHealth.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "reason: 'patient_not_on_zus'", "paths": ["backend/supabase/functions/zus-contribute-visit/index.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const message = ceErr instanceof ZusNotConfiguredError", "paths": ["backend/supabase/functions/zus-contribute-visit/index.ts"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-zus-11",
+      "kind": "advice",
+      "claim": "Always review imported data before relying on it clinically — external records can be incomplete or out of date.",
+      "checks": []
     }
   ]
 }

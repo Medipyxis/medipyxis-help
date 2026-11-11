@@ -25,7 +25,9 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "dateOfBirth: z.string().min(1, \"Date of Birth is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "\"Subscriber Date of Birth is required for insurance plans where the subscriber is not the patient. Please complete the Insurance section.\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Insurance rows add more required input (Subscriber Date of Birth for a non-self subscriber; Subscriber Relationship when the name does not match). Replaced by ri-nr-27."
     },
     {
       "id": "ri-nr-03",
@@ -56,7 +58,9 @@
         { "type": "grep", "fixed": true, "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "const quickJumpItems = visibleNavItems", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "label: \"Referral Intake\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The ⌘K command bar has no New Referrals item. Replaced by ri-nr-28."
     },
     {
       "id": "ri-nr-06",
@@ -243,6 +247,35 @@
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "toast.success(\"Referral saved offline\", {", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "description: \"Will sync when connection is restored\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-27",
+      "claim": "First Name, Last Name, and Date of Birth are always required. If you add insurance where the subscriber is not the patient, Subscriber Date of Birth is required too, and a subscriber name that does not match the patient needs a Subscriber Relationship.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "firstName: z.string().min(1, \"First Name is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "lastName: z.string().min(1, \"Last Name is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "dateOfBirth: z.string().min(1, \"Date of Birth is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Subscriber Date of Birth is required for insurance plans where the subscriber is not the patient. Please complete the Insurance section.\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Subscriber Date of Birth *", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"The subscriber name on this insurance does not match the patient. Either correct the spelling, or set the Subscriber Relationship — choose Self if this IS the patient.\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-28",
+      "claim": "You can also press ⌘K (Windows: Ctrl+K), type \"referral\", and choose Referral Intake to open the board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const quickJumpItems = visibleNavItems", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "label: \"Referral Intake\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-29",
+      "claim": "Troubleshooting: \"Subscriber Date of Birth is required…\" — an insurance row has a subscriber who is not the patient and no subscriber date of birth. Enter Subscriber Date of Birth, or set Subscriber Relationship to Self if the subscriber is the patient.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "(ins) => !isSelfSubscriber(ins.subscriberRelationship) && !ins.subscriberDob", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Subscriber Date of Birth *", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
       ]
     }
   ]

@@ -24,7 +24,9 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "chat_type: \"referral\",", "paths": ["frontend/src/services/teamChatService.ts"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "await teamChatService.findOrCreateReferralConversation(", "paths": ["frontend/src/components/ReferralChatWidget.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The Chat tab creates a Team Chat conversation that Team Chat also lists, so it is not separate. Replaced by ri-dp-08."
     },
     {
       "id": "ri-dp-03",
@@ -64,6 +66,17 @@
       "checks": [
         { "type": "grep", "fixed": true, "pattern": "{isFaceSheetGenerating ? \"Generating…\" : \"Face Sheet\"}", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "onClick={handleDownloadFaceSheet}", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-dp-08",
+      "claim": "Chat: a conversation about this referral. It is a Team Chat conversation, so it also appears in Team Chat.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "chat_type: \"referral\",", "paths": ["frontend/src/services/teamChatService.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "await teamChatService.findOrCreateReferralConversation(", "paths": ["frontend/src/components/ReferralChatWidget.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "await teamChatService.loadConversations(", "paths": ["frontend/src/pages/TeamChat.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": ".eq(\"chat_type\", \"referral\")", "paths": ["frontend/src/services/teamChatService.ts"], "expect": "absent", "note": "loadConversations would need to exclude referral chats for them to stay out of Team Chat" },
+        { "type": "grep", "fixed": true, "pattern": ".neq(\"chat_type\"", "paths": ["frontend/src/services/teamChatService.ts"], "expect": "absent" }
       ]
     }
   ]

@@ -59,7 +59,9 @@
           },
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Nothing in the app links to the Bulk page; there is no Inventory Management → Bulk menu path. Replaced by inv-bo-18 and inv-bo-19."
     },
     {
       "id": "inv-bo-02",
@@ -91,7 +93,9 @@
           },
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There is no inventory_manager role and no role check on the page; the Inventory feature is enough. Replaced by inv-bo-20."
     },
     {
       "id": "inv-bo-03",
@@ -119,7 +123,7 @@
     },
     {
       "id": "inv-bo-04",
-      "claim": "The four cards are Upload Shipment (from vendor), Upload Receiving (from vendor) — matched lines auto-stock into In Stock, Manual Receive (no CSV), and Bulk Assign to Provider.",
+      "claim": "The four cards are Upload Shipment (from vendor), Upload Receiving (from vendor) — matched lines auto-stock into the category's Active Inventory — Manual Receive (no CSV), and Bulk Assign to Provider.",
       "checks": [
         {
           "type": "grep",
@@ -212,20 +216,31 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Templates have no ship date or tracking columns. Replaced by inv-bo-22."
     },
     {
       "id": "inv-bo-06",
-      "claim": "Upload Shipment: confirm, and the order status flips to Shipped.",
+      "claim": "Upload Shipment: the summary reads \"Shipment recorded: N item(s) marked as shipped\"; the items are now Shipped and show up in receiving once the vendor delivers.",
       "checks": [
         {
           "type": "grep",
+          "fixed": true,
           "pattern": "These items are now Shipped and will show up in Receiving workflows once the vendor delivers.",
           "paths": [
             "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
           ],
-          "expect": "present",
-          "fixed": true
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `Shipment recorded: ${uploadSummary.matched} item(s) marked as shipped`",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
         }
       ]
     },
@@ -256,7 +271,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The modal's template has fixed sample rows; the order-filled template comes from the Orders tab. Replaced by inv-bo-23."
     },
     {
       "id": "inv-bo-08",
@@ -305,7 +322,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There are no Perfect matches / Needs review labels; the summary shows matched, partial/missing and exception counts. Replaced by inv-bo-24."
     },
     {
       "id": "inv-bo-09",
@@ -352,7 +371,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The card only opens the category page (on the Products tab); Manual Receive is a button on Receiving History and also offers Direct to Main Stock. Replaced by inv-bo-21 and inv-bo-25."
     },
     {
       "id": "inv-bo-10",
@@ -381,7 +402,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "A manual receive is stocked only if it auto-matches; otherwise it waits for approval. Replaced by inv-bo-25."
     },
     {
       "id": "inv-bo-11",
@@ -428,7 +451,9 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The card does not open an assign panel; assignment is from the Active Inventory tab with a searchable provider list. Replaced by inv-bo-21 and inv-bo-26."
     },
     {
       "id": "inv-bo-12",
@@ -457,11 +482,13 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Only conservative items have a Received action in My Inventory. Replaced by inv-bo-26."
     },
     {
       "id": "inv-bo-13",
-      "claim": "Bulk Assign to Provider operates on stock already in In Stock.",
+      "claim": "Bulk Assign to Provider works on stock that is already in Active Inventory, whichever receiving flow put it there.",
       "checks": [
         {
           "type": "grep",
@@ -509,7 +536,7 @@
     },
     {
       "id": "inv-bo-15",
-      "claim": "Conservative receiving uses a category-neutral shipment/receiving template.",
+      "claim": "Conservative templates are order_sent_sample.xlsx for shipments and order_received_sample.xlsx for receiving.",
       "checks": [
         {
           "type": "grep",
@@ -557,13 +584,572 @@
           "expect": "present",
           "fixed": true
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The real message is \"Validation failed: N product(s) not found in order.\" Replaced by inv-bo-27."
     },
     {
       "id": "inv-bo-17",
-      "claim": "Leave a row's quantity as zero if that item did not arrive.",
-      "checks": [],
+      "claim": "A row with quantity 0 adds nothing; items you did not receive count as partial or missing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return Array.from({ length: mappedRow.Quantity }, (_, idx) => ({",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present",
+          "note": "each row expands to Quantity records, so 0 adds none"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"over\" | \"under\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "partial/missing",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
       "finding": "Not verified: the receiving parser's handling of zero quantities was not traced to a definitive line."
+    },
+    {
+      "id": "inv-bo-18",
+      "claim": "Bulk Inventory has no menu link yet. Open it at /inventory-management/bulk/amniotic, /inventory-management/bulk/biologics, or /inventory-management/bulk/conservative. A fix to add a menu link is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/bulk/:category\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (category === \"amniotic\") return ProductCategoryEnum.Amniotic;",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "inventory-management/bulk",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx",
+            "frontend/src/components/AppShell.tsx",
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "absent",
+          "note": "no tile, sidebar, quick-jump or nav entry"
+        }
+      ],
+      "reason": "Fix tracked internally (MEDA-387)."
+    },
+    {
+      "id": "inv-bo-19",
+      "claim": "At /inventory-management/bulk with no category, Upload Shipment and Upload Receiving stay off.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/bulk\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={categoryEnum == null}",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Upload Shipment and Upload Receiving stay off until you open bulk",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-20",
+      "claim": "Anyone whose role has the Inventory feature can open Bulk Inventory.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BulkOperationsPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "useRole|currentRole|isAdmin\\(|hasRole",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "absent",
+          "note": "no role check on the page"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-21",
+      "claim": "The Manual Receive and Bulk Assign to Provider cards currently open the category page on its Products tab, not on the tab they name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(productBatchesPath + \"?tab=receiving\")}",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(productBatchesPath + \"?tab=active\")}",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "searchParams",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "absent",
+          "note": "the category page never reads ?tab="
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facilityConfig.inventorySetupRequired ? TabTypes.RECEIVING : TabTypes.ALL",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-22",
+      "claim": "Upload Shipment: pick the order (pending or partially shipped orders are listed), download the Sample Template, fill in SKU, lot number, expiration date and quantity per shipped line (amniotic and biologics also need order ID, tissue ID, size and HCPCS/Q code), then Choose File.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// For Sent: Show Pending and PartialShipped orders",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sample Template",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Download</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "filename: \"order_sent_sample.xlsx\",",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Expiration Date\": \"2026-03-10\",",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"HCPCS/Q Code\": hcpcs,",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Tissue ID\": \"TIS-2026-0001\",",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Order ID\": orderId,",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Choose File\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-23",
+      "claim": "Upload Receiving: pick the order (shipped or partially shipped orders are listed); download the sample template from the modal, or the order's pre-filled template with Download Purchase Order Template on the category's Orders tab. Fill in SKU, lot number and quantity (amniotic and biologics also need order ID, tissue ID, expiration date, size and HCPCS/Q code).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// For Received: Show Shipped and PartialShipped orders",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDownloadSample = () => {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Purchase Order Template",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/OrdersList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "filename: \"order_received_sample.xlsx\",",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SKU: \"CONSERV-001\",",
+          "paths": [
+            "frontend/src/utils/bulkTemplates.ts"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-24",
+      "claim": "After upload the summary reads \"Received and stocked: N item(s) now in In Stock\" or \"Received with issues\" with matched, partial/missing and exception counts. Matched items are stocked at once; partial and exception items wait on Receiving History, where you use Resolve Exceptions. Expired items are treated as exceptions.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `Received and stocked: ${uploadSummary.matched} item(s) now in In Stock`",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": `Received with issues — ${uploadSummary.matched} matched, ${uploadSummary.mismatched} partial/missing, ${uploadSummary.exceptions} exception(s)`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Matched items have already been stocked. Partial/exception items are waiting for operator review in Receiving History.\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Resolve Exceptions\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ImportBatchesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Expired items are routed to exceptions for review, not auto-stocked.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-25",
+      "claim": "Manual Receive: on the category's Receiving History tab click Manual Receive, choose Receive Against Purchase Order (shipped or partially shipped orders) or Direct to Main Stock, Add Line, enter lot, expiration and quantity received, then Create Receive. A matched receipt is stocked at once; otherwise it waits as Pending Approval on Receiving History.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{activeTab === TabTypes.RECEIVING && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Receive Against Purchase Order",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Direct to Main Stock",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"status\", [OrderStatusEnum.Shipped, OrderStatusEnum.PartialShipped])",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Add Line</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Create Receive</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Pending Approval\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Go to Receiving tab to approve.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-26",
+      "claim": "Bulk Assign to Provider: on the Active Inventory tab select lots (only unassigned Available or Unused facility stock qualifies), click Assign to Provider, search providers, and confirm. Assigned conservative items appear in the provider's My Inventory, where they accept them with Received.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "!batch.provider_id &&",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(batch.status === ProductStatusEnum.Available || batch.status === ProductStatusEnum.Unused);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Assign to Provider",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Assign to Provider",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/AssignToProviderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search providers...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/AssignToProviderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Conservative: Received button for Transferred and Shipped",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isAdminOrManager ? 'Provider Inventory' : 'My Inventory'}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-27",
+      "claim": "Troubleshooting: \"Validation failed: N product(s) not found in order.\" means a SKU in the file isn't on the order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Validation failed: ${validation.missingProducts.length} product${",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "not found in order",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-bo-28",
+      "claim": "Troubleshooting: Upload Shipment and Upload Receiving are greyed out when Bulk Inventory is opened without a category.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={categoryEnum == null}",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
     }
   ]
 }

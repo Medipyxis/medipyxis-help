@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [vendor_coordinator, admin]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/inventory-management
 related:
   - inventory-overview
@@ -19,86 +19,64 @@ tags: [inventory, product catalog, SKU, HCPCS, add product]
 
 # Manage products in the Product Catalog
 
-Add new products to your organization's master catalog and understand the column data displayed for existing products.
+Add new products to your organization's catalog and understand the columns shown for existing products.
 
 ## Before you start
 
-- You must have the `vendor_coordinator` or `admin` role to add or edit products.
-- Confirm the product's HCPCS code with your billing team before saving, as it drives claim generation downstream.
-- For biologics and matrix products, have the manufacturer's lot format on hand — the form enforces it.
+- Anyone whose role has the **Inventory** feature can open the Product Catalog and add or edit products.
+- Confirm the product's HCPCS code with your billing team before saving.
+- The product's vendor must already be set up, because every product needs a vendor.
 
 ## Products and Vendors tabs
 
-The Product Catalog has two tabs: **Products** (the SKU catalog described below) and **Vendors** (the inventory vendors you buy from, with their categories). Switch between them at the top of the catalog.
+The Product Catalog has two tabs: **Products** (the catalog described below) and **Vendors** (the inventory vendors you buy from, with their categories). Switch between them at the top of the catalog.
 
 ## Product Catalog columns
 
 From the **Inventory Management** hub, select **Product Catalog** and stay on the **Products** tab to open the catalog table.
 
-![The Product Catalog table showing columns NAME, BRAND, SKU, LOT SUFFIX, CATEGORY, TYPE, HCPCS, and STATUS with sample product rows.](../../assets/inventory/product_catalog.png)
+_Product Catalog table. Search by name, brand, or HCPCS code, and filter by category and status._
 
-*Product Catalog table. Use the search bar above the table to filter by any column value.*
+Use **Search products...** to find products by name, brand, or HCPCS code. Use the dropdowns to filter by category (All Categories or one category) and status (All Status, Active, or Inactive).
 
-| Column | Description |
-|---|---|
-| **NAME** | The full commercial product name as it appears on the manufacturer label. |
-| **BRAND** | The manufacturer or brand that markets the product. |
-| **SKU** | Stock Keeping Unit — your organization's internal identifier for this product. Must be unique within your facility. |
-| **LOT SUFFIX** | The suffix pattern appended to manufacturer lot numbers for this product (used during receiving to validate lot strings). |
-| **CATEGORY** | The inventory category: `Amniotic / Advance Treatment`, `Biologics / Matrix`, `Conservative Care Products`, `PRP`, or `Ultrasonic Mist (UM)`. Determines which receiving tile accepts this product. |
-| **TYPE** | A subcategory within the category (for conservative care this includes items like Foam Dressing, Collagen Matrix, Compression Stocking, and supply types such as **Surgical Instrument**, **PPE**, and **General Supply**). PRP and UM do not have sub-types. |
-| **HCPCS** | The Healthcare Common Procedure Coding System code billed when this product is applied. Required for biologics and amniotic products. |
-| **STATUS** | `Active` — available for ordering and use. `Inactive` — hidden from clinician views and the receiving workflow but retained for historical records. |
+- **Product Name** — the commercial product name. A Conservative Care product shows a red **Par Level Reached** icon here when your facility has fewer available, unexpired lots of it than its PAR level (10 if none is set).
+- **Brand** — the manufacturer or brand that markets the product.
+- **SKU** — your organization's identifier for this product.
+- **Lot No. Suffix** — for Amniotic and Biologics, a dash and three digits (for example `-001`). When a product has a suffix, bulk receiving requires a lot number for it. Receiving does not check lot numbers against the suffix.
+- **Category** — `Amniotic / Advance Treatment`, `Biologics / Matrix`, `Conservative Care Products`, `PRP`, or `Ultrasonic Mist (UM)`. Determines which receiving tile accepts this product.
+- **Product Type** — a subcategory within the category (for conservative care this includes items like Foam Dressing, Collagen Matrix, Compression Stocking, and supply types such as **Surgical Instrument**, **PPE**, and **General Supply**). PRP and UM do not have sub-types.
+- **HCPCS** — optional on the product for every category. When entered it must be one letter and four digits (for example A6402). Amniotic and biologic lots need an HCPCS/Q code when they are received.
+- **Status** — Active or Inactive. Inactive products stay in the catalog for history. Inactive products can still be picked in Manual Receive and in IVR requests.
+- **Actions** — **Edit Product** and **Delete Product**.
 
 ## Add a product
 
-![The Add Product modal showing a Category dropdown as the first required selection.](../../assets/inventory/add_product_modal.png)
+1. **Click Add Product.** The first screen is **Select Product Category** — "Choose the category for your new product".
+2. **Pick a category.** Click **Create Product** on the category's card. The form for that category opens; **← Change Category** takes you back.
+3. **Complete the required fields** (marked with a red asterisk):
+  - **Product Name** and **Brand**.
+  - **Product Type** — not asked for PRP and UM.
+  - **SKU** — letters, numbers, and dashes only.
+  - **Vendor**.
+  - **Lot No. Suffix** — required for Amniotic and Biologics, as a dash and three digits (for example `-001`). Optional for Conservative Care, PRP, and UM, where it is digits only.
 
-*Add Product modal. Category must be selected before the category-specific form fields appear.*
+4. **Set the optional fields** you need, such as **HCPCS Code**, **Vendor Cost**, and (for Conservative Care, PRP, and UM) **Par Level**. Leave **Active Product** on to make the product active.
+5. **Click Save Product** (**Update Product** when editing). The new product appears in the Product Catalog table.
 
-1. **Open the Add Product modal.** From the **Product Catalog** table, click **Add Product** in the upper-right corner. The modal opens with a single **Category** dropdown.
+The SKU and Lot No. Suffix combination must be unique within a category at your facility.
 
-2. **Select a category.** Choose one of `Amniotic / Advance Treatment`, `Biologics / Matrix`, `Conservative Care Products`, `PRP`, or `Ultrasonic Mist (UM)`. The form expands to show the fields required for that category.
-
-    ![The Add Product form after a category is selected, showing fields for Name, Brand, SKU, LOT Suffix, Type, HCPCS, and Status.](../../assets/inventory/add_product_form.png)
-
-    *Add Product form — fields vary by category. Biologics require a valid HCPCS code and a manufacturer lot format.*
-
-3. **Complete the required fields.** At minimum, provide:
-   - **Name** — commercial product name.
-   - **Brand** — manufacturer name.
-   - **SKU** — your organization's internal code (no spaces).
-   - **LOT Suffix** — the suffix pattern printed on the manufacturer's lot label (e.g., `A1`, `RF`).
-   - **Type** — select from the available subcategory options for the chosen category.
-   - **HCPCS** — required for `Amniotic / Advance Treatment` and `Biologics / Matrix`; optional for `Conservative Care Products`.
-   - **Status** — set to `Active` to make the product immediately available, or `Inactive` to hold it for future use.
-
-4. **Save the product.** Click **Save**. The new product appears in the **Product Catalog** table with `Active` or `Inactive` status.
-
-<Tip>
-To load many products or inventory records at once, use the **bulk upload** flow rather than adding items one by one. Bulk upload accepts a free-form spreadsheet and does not require a purchase order.
-</Tip>
+To load many inventory records at once, use **Bulk Upload Inventory** on a category tile. For Conservative Care, PRP, and UM it accepts a free-form spreadsheet and does not require a purchase order; for Amniotic and Biologics the upload is tied to an order.
 
 ## Result
 
-The product is now part of your organization's master catalog. If you set status to `Active`, it is immediately available in the appropriate receiving workflow (the category tile) and will appear in the Visit Wizard product selector when a clinician chooses a graft or supply item.
+The product is now part of your catalog and can be received through its category tile.
 
-<Warning>
-Changing a product's **HCPCS** code after units have been received affects future claims only. Previously received units retain the HCPCS that was active at the time of receiving. Coordinate with your billing team before editing HCPCS on an in-use product.
-</Warning>
+A lot keeps the HCPCS code it was received with; changing the product's HCPCS later does not change lots already received. Coordinate with your billing team before editing HCPCS on a product in use.
 
-<Note>
-To retire a product that is no longer ordered, set its **STATUS** to `Inactive` rather than deleting it. Inactive products are preserved for historical reporting and audit trails.
-</Note>
+To retire a product you have used, turn off **Active Product** rather than deleting it. **Delete Product** asks you to confirm and warns that "This action cannot be undone."
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| **Save** button remains disabled | A required field is empty or contains an invalid value | Scroll through the form; required fields are marked with a red asterisk |
-| Duplicate SKU error on save | Another product in the catalog already uses that SKU | Use a unique suffix to differentiate (e.g., append the size) |
-| HCPCS field not visible | `Conservative Care Products` category selected | HCPCS is optional for that category; scroll to the optional fields section |
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+- **Save Product shows errors** — a required field is empty or invalid. Fix the fields marked in red; required fields have a red asterisk.
+- **"This SKU and Lot No. Suffix combination already exists"** — another product in the same category at your facility uses that SKU and suffix. Change the SKU or the suffix.
+- **"No active vendors found"** — add or enable the vendor first.

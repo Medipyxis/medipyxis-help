@@ -17,7 +17,9 @@
         { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There is no Fax Review Queue sidebar item. Replaced by ri-fq-17."
     },
     {
       "id": "ri-fq-02",
@@ -44,7 +46,9 @@
       "proposed_text": "Document Type: the fax's subject line, or \"Fax Document\" when the fax has no subject.",
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "{item.fax?.subject || \"Fax Document\"}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Document Type shows the fax subject line, not a classified type. Replaced by ri-fq-18."
     },
     {
       "id": "ri-fq-05",
@@ -67,7 +71,9 @@
       "proposed_checks": [
         { "type": "grep", "pattern": "<SelectItem value=\"(pending|processing|approved|auto_created|rejected|failed)\">(Pending|Processing|Approved|Auto Created|Rejected|Failed)</SelectItem>", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": { "count": 6 } },
         { "type": "grep", "fixed": true, "pattern": "<SelectItem value=\"ready_for_review\">", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The Status column prints the raw stored value (for example 'ready for_review'), not the filter labels. Replaced by ri-fq-19 and ri-fq-20."
     },
     {
       "id": "ri-fq-07",
@@ -104,7 +110,9 @@
       "proposed_checks": [
         { "type": "grep", "fixed": true, "pattern": "onClick={() => handleViewDetails(item.id)}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "disabled={item.queue_status === \"processing\"}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Rows have no click handler; the fax opens from View. Replaced by ri-fq-21."
     },
     {
       "id": "ri-fq-11",
@@ -154,6 +162,50 @@
       "claim": "There is no Convert to Referral, Mark Duplicate, or Open Referral button on this page, and no separate \"Create patient\" chip after insurance is verified.",
       "checks": [
         { "type": "grep", "pattern": "Convert to Referral|Mark Duplicate|Open Referral|>Create patient<", "paths": ["frontend/src/components/idp/FaxReviewDetail.tsx", "frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-fq-17",
+      "claim": "Open it with Fax Queue on the Patient Intake board header, from the Fax Review Queue tile under Fax Center in the sidebar, or by pressing ⌘K (Windows: Ctrl+K) and typing \"fax review queue\". It is not a kanban column.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/fax-review-queue`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Fax Queue</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "path: \"/facility/:facilityId/fax-review-queue\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-fq-18",
+      "claim": "Document Type — the fax's subject line, or \"Fax Document\" when the fax has no subject.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "{item.fax?.subject || \"Fax Document\"}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-fq-19",
+      "claim": "Status — the fax's review status, shown in lower case (for example, pending or approved).",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "{item.queue_status.replace(\"_\", \" \")}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-fq-20",
+      "claim": "The Status filter offers Pending, Processing, Ready for Review, Approved, Auto Created, Rejected, and Failed.",
+      "checks": [
+        { "type": "grep", "pattern": "<SelectItem value=\"(pending|processing|approved|auto_created|rejected|failed)\">(Pending|Processing|Approved|Auto Created|Rejected|Failed)</SelectItem>", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": { "count": 6 } },
+        { "type": "grep", "fixed": true, "pattern": "<SelectItem value=\"ready_for_review\">", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-fq-21",
+      "claim": "Click View in the row's Actions column to open the fax. View is unavailable while the fax is still processing.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "onClick={() => handleViewDetails(item.id)}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "disabled={item.queue_status === \"processing\"}", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "<TableRow[^>]*onClick", "paths": ["frontend/src/components/idp/FaxReviewQueue.tsx"], "expect": "absent" }
       ]
     }
   ]

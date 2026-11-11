@@ -45,13 +45,16 @@
             "count": 4
           }
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The page is gated by the Inventory feature only; finance_ap/admin gate the write actions. Replaced by inv-ap-26 and inv-ap-27."
     },
     {
       "id": "inv-ap-02",
       "claim": "The products on the invoice should already exist in the Product Catalog and have been received into inventory.",
       "checks": [],
-      "finding": "Advice, not product behaviour. Nothing in the Inbox or Matching code (AccountsPayablePage.tsx, InvoiceLineMatchRow.tsx, ap-match-invoice-line) checks invoice lines against the catalog or against received stock, so no code check can confirm it."
+      "finding": "Advice, not product behaviour. Nothing in the Inbox or Matching code (AccountsPayablePage.tsx, InvoiceLineMatchRow.tsx, ap-match-invoice-line) checks invoice lines against the catalog or against received stock, so no code check can confirm it.",
+      "kind": "advice"
     },
     {
       "id": "inv-ap-03",
@@ -81,7 +84,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "No page checks finance_ap; the role's effect is on the AP write actions. Replaced by inv-ap-27."
     },
     {
       "id": "inv-ap-04",
@@ -118,7 +123,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Any role with the Inventory feature can open AP and see invoices; only the writes are refused. Replaced by inv-ap-26 and inv-ap-27."
     },
     {
       "id": "inv-ap-05",
@@ -164,7 +171,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Organization Role Config sets features per role; it does not assign roles to users. Replaced by inv-ap-28."
     },
     {
       "id": "inv-ap-06",
@@ -225,7 +234,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "There is no facility-scoped AP route; the page is at /inventory/accounts-payable. Route sentence deleted; inv-ap-06 covers the hub tile."
     },
     {
       "id": "inv-ap-08",
@@ -375,7 +386,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Matching never reads shipments; users mark each line Match, Review, or Override. Replaced by inv-ap-29."
     },
     {
       "id": "inv-ap-11",
@@ -491,7 +504,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Disputes resolve with credit issued, invoice voided, or invoice upheld; there is no re-match. Replaced by inv-ap-32."
     },
     {
       "id": "inv-ap-14",
@@ -579,7 +594,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "The Inbox drawer shows invoice details, not lines; lines are on the Matching tab. Replaced by inv-ap-30."
     },
     {
       "id": "inv-ap-17",
@@ -616,7 +633,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Nothing compares quantity or price; lines stay unmatched until someone marks them. Replaced by inv-ap-31."
     },
     {
       "id": "inv-ap-18",
@@ -644,7 +663,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "This workspace has no Approve action; matched invoices go straight to Payments. Replaced by inv-ap-33."
     },
     {
       "id": "inv-ap-19",
@@ -775,7 +796,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Receiving creates lot records, not UINs. Replaced by inv-ap-35."
     },
     {
       "id": "inv-ap-23",
@@ -813,7 +836,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Opening the page depends on the Inventory feature, not finance_ap/admin. Replaced by inv-ap-36."
     },
     {
       "id": "inv-ap-24",
@@ -840,7 +865,9 @@
           ],
           "expect": "present"
         }
-      ]
+      ],
+      "status": "removed",
+      "reason": "No quantity or price comparison exists; lines are unmatched until marked. Replaced by inv-ap-37."
     },
     {
       "id": "inv-ap-25",
@@ -878,7 +905,541 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "Reports shows one aggregate row per vendor, not invoices. Replaced by inv-ap-38."
+    },
+    {
+      "id": "inv-ap-26",
+      "claim": "Anyone whose role has the Inventory feature can open Accounts Payable and see the invoices.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory/accounts-payable\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AccountsPayablePage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "useRole|currentRole|isAdmin\\(|hasRole",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "no role check on the page"
+        }
       ]
+    },
+    {
+      "id": "inv-ap-27",
+      "claim": "Matching lines, recording payments, and opening or resolving disputes need the Finance AP or admin role; other users can look but cannot do these steps.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLOWED_ROLES = [\"admin\", \"finance_ap\", \"superadmin\"];",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts",
+            "backend/supabase/functions/ap-record-payment/index.ts",
+            "backend/supabase/functions/ap-open-dispute/index.ts",
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 4
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!hasRequiredRole(authResult.roles!, ALLOWED_ROLES)) {",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts",
+            "backend/supabase/functions/ap-record-payment/index.ts",
+            "backend/supabase/functions/ap-open-dispute/index.ts",
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-28",
+      "claim": "Give staff who reconcile invoices the Finance AP role on their user record. Administrator → Organization Role Config sets which features each role, including finance ap, can open; it does not assign roles to people.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"finance_ap\", label: \"Finance AP\" },",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-29",
+      "claim": "Inbox lists Received Invoices, with Add Invoice to enter one by hand. Matching lists Unmatched Lines — each line still unmatched, with product, SKU, lot, box UID, quantity, unit cost, line total, patient, and provider — and you mark each Match, Review, or Override. Payments lists Awaiting Payment (matched, approved, and partially paid invoices). Reports shows Vendor Spend Summary (YTD).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Received Invoices ({inboxInvoices.length})",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Plus className=\"w-3.5 h-3.5\" /> Add Invoice",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unmatched Lines ({matchingLines.length})",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"match_status\", \"unmatched\")",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DataField label=\"Box UID\" value={line.box_uid} />",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DataField label=\"Unit Cost\"",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DataField label=\"Line Total\"",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DataField label=\"Patient\" value={patientName} />",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DataField label=\"Provider\" value={providerName} />",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Match\"",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Review\"",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Override\"",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Awaiting Payment ({paymentInvoices.length})",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"status\", [\"matched\", \"Matched\", \"approved\", \"Approved\", \"partially_paid\", \"Partially Paid\"])",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Spend Summary (YTD)",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-30",
+      "claim": "In the Inbox, review each incoming invoice — vendor, invoice number, date, line count, and amount. Open it to see its details (invoice number, status, invoice and due dates, total), then click Begin Matching.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>{inv.vendor_invoice_lines?.[0]?.count ?? 0} lines</span>",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"Invoice #\" value={selectedInvoice.invoice_number} />",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"Due Date\" value={selectedInvoice.due_date} />",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Begin Matching",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-31",
+      "claim": "Medipyxis does not compare quantities or prices; a line stays on Unmatched Lines until someone marks it, and a line marked Review leaves the list the next time it loads. When every line is matched or overridden, the invoice becomes matched.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (statuses.every((s: string) => s === \"matched\" || s === \"overridden\")) {",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "unit_cost|quantity",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts"
+          ],
+          "expect": "absent",
+          "note": "the match action never reads quantity or cost"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"match_status\", \"unmatched\")",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handleAction(\"needs_review\")",
+          "paths": [
+            "frontend/src/components/ap/InvoiceLineMatchRow.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-32",
+      "claim": "Open Dispute asks for a reason and makes the invoice disputed. On the Disputes tab, resolve with credit issued or invoice voided (the invoice is cancelled) or invoice upheld (the invoice returns to matched).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Brief reason for dispute...\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ status: \"disputed\", updated_at: new Date().toISOString() })",
+          "paths": [
+            "backend/supabase/functions/ap-open-dispute/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{[\"credit_issued\", \"invoice_voided\", \"invoice_upheld\"].map((outcome) => (",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "newInvoiceStatus = \"cancelled\";",
+          "paths": [
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "newInvoiceStatus = \"matched\";",
+          "paths": [
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-33",
+      "claim": "Matched invoices appear on the Payments tab. Record Payment asks for payment date, amount, method (ACH, Check, Wire, Credit, or Other), and reference. A payment smaller than the total leaves the invoice partially paid.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Approve( Invoice)?\"|>\\s*Approve\\s*<|^\\s+Approve$|handleApprove",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "no approve action in this workspace"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payment Date *",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Amount *",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"wire\">Wire</option>",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Check #, ACH ID...\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const newStatus = totalPaid >= invoiceTotal && invoiceTotal > 0 ? \"paid\" : \"partially_paid\";",
+          "paths": [
+            "backend/supabase/functions/ap-record-payment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-35",
+      "claim": "Receiving a shipment through a category tile creates the inventory records (lots) in stock; Accounts Payable reconciles and pays the vendor invoice for them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lotNumber: item.lot_number.trim(),",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/accounts-payable\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-36",
+      "claim": "Troubleshooting: if Accounts Payable is not accessible, your role does not have the Inventory feature; you see Access Denied with Restricted: Inventory.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Access Denied",
+          "paths": [
+            "frontend/src/components/FeatureAccess.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Restricted: {feature}",
+          "paths": [
+            "frontend/src/components/FeatureAccess.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Inventory\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-37",
+      "claim": "Troubleshooting: an invoice still has unmatched lines until someone marks each line Match or Override on the Matching tab; Match, Record Payment, or Open Dispute fail for roles other than Finance AP or admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (statuses.every((s: string) => s === \"matched\" || s === \"overridden\")) {",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLOWED_ROLES = [\"admin\", \"finance_ap\", \"superadmin\"];",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts",
+            "backend/supabase/functions/ap-record-payment/index.ts",
+            "backend/supabase/functions/ap-open-dispute/index.ts",
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-ap-38",
+      "claim": "Troubleshooting: if a vendor's match rate looks low on Reports, review that vendor's invoices on the Inbox and Matching tabs and follow up with the vendor.",
+      "checks": [],
+      "kind": "advice"
     }
   ]
 }

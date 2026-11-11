@@ -17,7 +17,9 @@
         { "type": "grep", "fixed": true, "pattern": "<NeedsSchedulingAccordion", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "<OverdueVisitsCard", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "import PmClinicianDashboard from \"./pages/PmClinicianDashboard.tsx\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "Patient Management opens My Clinical Day, a day schedule, not a patient roster. Replaced by pm-ov-08."
     },
     {
       "id": "pm-ov-02",
@@ -58,7 +60,9 @@
         { "type": "grep", "fixed": true, "pattern": "{patient.wound_count || 0}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "patientChartPath(", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "? `Referral created successfully! MRN: ${patientMrn}`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
-      ]
+      ],
+      "status": "removed",
+      "reason": "All Patients is a grid of cards with no MRN or DOB and the chart opens from View. Replaced by pm-ov-09 and pm-ov-10."
     },
     {
       "id": "pm-ov-06",
@@ -75,6 +79,38 @@
       "checks": [
         { "type": "grep", "fixed": true, "pattern": ".update({ deleted_at: null, updated_at: now, patient_status: \"ACTIVE\" })", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
         { "type": "grep", "fixed": true, "pattern": "title=\"Unarchive patient\"", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-08",
+      "claim": "Patient Management opens My Clinical Day: your schedule for the day, patients who need scheduling, and overdue visits. Open it from the Patient Management sidebar item.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Patient Management\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "path: \"/pm-clinician-dashboard\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "import PmClinicianDashboard from \"./pages/PmClinicianDashboard.tsx\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "My Clinical Day", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<NeedsSchedulingAccordion", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<OverdueVisitsCard", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-09",
+      "claim": "All Patients shows one card per patient with name, status (ACTIVE, ON HOLD, DISCHARGED, or ARCHIVED), age, number of wounds, and number of visits. The MRN is not on the card; it appears in the success message after Create Patient when available.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": ".toUpperCase()}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{patient.age}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{patient.wound_count || 0}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{visitCountFor(patient.id) ?? \"—\"}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "ignoreCase": true, "pattern": "patient\\.(mrn|dob|date_of_birth)", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "absent", "note": "no MRN or DOB on the card" },
+        { "type": "grep", "fixed": true, "pattern": "? `Referral created successfully! MRN: ${patientMrn}`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-10",
+      "claim": "Click View on a patient's card to open the chart.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "patientChartPath(", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<Eye size={11} className=\"mr-1\" />", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
       ]
     }
   ]
