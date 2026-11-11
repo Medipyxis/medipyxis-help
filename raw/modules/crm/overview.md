@@ -6,7 +6,7 @@ audience: [bd, admin]
 roles: [bd_rep, bd_manager, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-07-01
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/crm
 related:
   - crm-practice-detail
@@ -17,9 +17,9 @@ tags: [CRM, practices, contacts, referrals]
 
 # CRM overview
 
-The CRM module is the central directory of referring practices and contacts. It tracks relationships, organizes outreach history, and feeds data to the Business Development dashboard.
+The CRM module is the directory of referring practices and contacts. It tracks relationships, keeps the outreach history logged from the Business Development dashboard, and feeds the BD dashboard's suggestions.
 
-A **Practices / Vendors** toggle switches the directory between referring **practices** and the **vendors** hub. On the Vendors side, **+ Add Vendor** registers a vendor and you can enable it at specific clinics; practices and vendors are managed as separate lists.
+A **Practices / Vendors** toggle switches the directory between referring **practices** and the **vendors** hub. On the Vendors side, **Add Vendor** registers a vendor, and you can enable it at specific clinics; practices and vendors are managed as separate lists.
 
 <div class="video-embed">
   <iframe src="https://www.youtube-nocookie.com/embed/8bJ02pgQcZE"
@@ -31,7 +31,7 @@ A **Practices / Vendors** toggle switches the directory between referring **prac
 
 ![CRM practices list showing tabs and practice cards](../../assets/crm/practices.png)
 
-*CRM practices list. Tabs across the top filter by relationship type or assignment.*
+_CRM practices list. Tabs across the top filter by practice type or assignment._
 
 ## Practice list tabs
 
@@ -39,27 +39,34 @@ Use the tabs across the top of the CRM to segment your practice list:
 
 | Tab | Shows |
 |---|---|
-| **All** | Every practice in your organization's CRM. |
-| **Assigned** | Practices assigned to the logged-in BD rep. |
-| **Favorites** | Practices the rep has starred for quick access. |
-| **PCP** | Primary care physician practices only. |
+| **All** | Every practice that is not archived. |
+| **Assigned** | Practices that have a BD rep assigned. A practice assigned to you shows a **Me** badge. |
+| **Favorites** | Practices you have starred. |
+| **PCP** | Practices marked as primary care. |
 | **Home Health** | Home health agencies. |
-| **Facility** | Skilled nursing facilities, hospitals, and other institutional referral sources. |
-| **Archived** | Practices that are no longer active — hidden from route suggestions and searches unless this tab is selected. |
+| **Facility** | Practices marked as facilities. |
+| **Archived** | Archived practices. Archived practices are left out of the other tabs and of AI Route Suggestions. |
+
+You can also filter by BD rep, grade, specialty, status and whether a practice has contacts, and use the **Total Practices**, **Overdue** and **No Contact** counters.
 
 ## Relationship to the Business Development module
 
-Every call, visit, and spend entry logged from the BD dashboard writes back to the practice's activity record in the CRM. The CRM is the system of record; the BD dashboard is the action layer.
+Calls, visits, spend and voice notes logged from the BD dashboard are saved against the practice and show in the practice's **Activity** tab in the CRM.
 
-When a practice's referral volume or engagement metrics change, the **Next Best Action** and **AI Route Suggestions** widgets on the BD dashboard pick up the change on their next refresh — both recompute on demand (with a short cache), not on an overnight batch.
+The BD dashboard's **AI Route Suggestions** are recalculated in the app with a 5-minute cache, and **Next Best Action** is worked out when the dashboard loads — neither waits for an overnight batch.
 
 ## Adding practices
 
 New practices can be added:
-- Directly in the CRM using **+ New Practice** (top-right).
-- Inline during referral creation in Referral Intake by clicking **+ Add new practice** in the Practice & PCP section.
 
-Both methods create the same CRM record.
+- In the CRM, with the **Add New Practice** button.
+- While creating a referral in Referral Intake, with **Add New Practice**.
+
+Both open the same **Add New Practice** form and create the same CRM record.
+
+## Archive or restore a practice
+
+Open the **⋮** menu on a practice card and choose **Archive**. The practice moves to the **Archived** tab; its activity history and contacts are kept. To bring it back, open the same menu on the archived practice and choose **Restore**.
 
 ## Related
 

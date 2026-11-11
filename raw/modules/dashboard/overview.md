@@ -5,7 +5,7 @@ module: dashboard
 audience: [clinician, intake, admin, billing, bd]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/dashboard
 related:
   - getting-started-your-dashboard
@@ -16,30 +16,22 @@ tags: [dashboard, home, widgets]
 
 # The Dashboard at a glance
 
-Your Dashboard is the first screen you see after login. It summarizes the work waiting for you today and deep-links into every module.
+Your Dashboard is the first screen you see after login. It greets you, links to your main work areas, and gathers HR self-service, announcements, recent activity and reference material in one place.
 
 ## What you see
 
 ![Dashboard home](../../assets/dashboard/home.png)
 
-- **Welcome Back banner.** Shows your name, current facility, and an **On Duty** pill. The **HIPAA** badge next to your profile confirms your session is audit-logged.
-- **Action tiles** — dynamic cards for referrals needing review, visits scheduled today, denials needing appeal, and credentials expiring.
-- **Sidebar** (left) — module links. Your visible items depend on your role; a biller will not see Fleet Calendar, a BD rep will not see Billing Operations.
-- **Top bar** — Organization Selector, Quick Jump (⌘K), Notifications bell, Profile menu.
-
-## How tiles are prioritized
-
-Tiles surface by urgency, not by module. A STAT referral from 20 minutes ago beats a routine visit scheduled for next week.
-
-- **Red border** — SLA breach or today-blocker.
-- **Yellow** — due today.
-- **Grey** — informational / caught up.
-
-## Personalize
-
-Click the **gear** in any tile header to hide or pin it. Click **Reset** in the profile menu to restore defaults.
+- **Welcome Back banner.** Shows your name, job title and role, with an **On Duty** pill and a **HIPAA** badge.
+- **Your Work Cockpits.** Cards that open **Patient Management**, **Clinical Workflow** and **Mileage & Expenses**.
+- **HR Self-Service.** **Time Off Requests** and **My Credentials & Compliance**.
+- **Electronic Prescribing Setup.** Set up DoseSpot e-prescribing and EPCS access.
+- **Announcements.** **View Announcements & Kudos** opens Company Announcements.
+- **Recent Activity**, and **Knowledge Base & Resources** with links to Policies, Training Materials and Industry News.
+- **Sidebar** (left) — module links. You see only the modules your role can open.
+- **Top bar** — **Quick jump** search (⌘K or Ctrl+K), the notifications bell, and your profile menu with **Sign Out**.
 
 ## Related
 
-- [Your dashboard walkthrough (Getting Started)](../../getting-started/your-dashboard.md)
-- [Role-based first hour — clinician](../../getting-started/by-role/clinician.md)
+- [Your dashboard walkthrough (Getting Started)](/getting-started/your-dashboard/)
+- [Role-based first hour — clinician](/getting-started/by-role/clinician/)

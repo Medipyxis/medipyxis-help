@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, clinical_manager]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-07-01
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/hr
 related:
   - hr-compliance-new-employee
@@ -16,29 +16,29 @@ tags: [HR, compliance, onboarding, credentials, employees]
 
 # HR & Compliance overview
 
-HR & Compliance centralizes employee onboarding, credential monitoring, facility user management, and clinical education — all in one module accessible to administrators.
+HR & Compliance brings together employee onboarding, credential monitoring, facility user management, activity logs, and staff training in one module. The module opens on the **Human Resources Hub**.
 
 ![HR & Compliance hub showing the section tiles](../../assets/hr/hub.png)
 
-*HR & Compliance hub. Each tile leads to a dedicated workflow.*
+_Human Resources Hub. Each tile leads to a dedicated workflow._
 
 ## Nine sections
 
 | Section | Purpose |
 |---|---|
-| **Announcements** | Post organization-wide or facility-level messages visible to all users on their dashboard. See [Announcements](./announcements.md) for details. |
-| **Credential Tracker** | Monitor license and certification expiry dates for clinical staff. See [Credential Tracker](./credential-tracker.md) for details. |
-| **Activity Logs** | Audit trail of user actions across modules — logins, edits, exports, and sign-offs. |
-| **New Employee Onboarding** | Add a new employee and set up their access on a single form. See [Add a new employee](./new-employee.md). |
-| **Bulk Employee Upload** | Import multiple employee records at once via a CSV template. |
-| **Facility Users** | View and manage all users active at a specific facility — adjust roles, deactivate accounts, or reassign facilities. |
-| **Pharmacy Management** | Configure the approved pharmacy list for medication orders and prescriptions. |
-| **Education Bundle Management** | Create, assign, and track completion of training modules and required competency courses. |
-| **Training Materials** | Publish reference and training documents for staff. |
+| **Announcements** | View active and past announcements, search and filter them, and post new ones. See [Announcements](/modules/hr-compliance/announcements/) for details. |
+| **Credential Tracker** | Monitor employee certifications, licenses, and training compliance. See [Credential Tracker](/modules/hr-compliance/credential-tracker/) for details. |
+| **Activity Logs** | The **HR Activity Logs** page lists HR events such as logins, role changes, policy acknowledgments, training updates, user edits, announcement reads and file uploads. Filter by action, date range and user. |
+| **New Employee Onboarding** | Add a new employee and set up their access on a single form. See [Add a new employee](/modules/hr-compliance/new-employee/). |
+| **Bulk Employee Upload** | Import several employees at once from a CSV file. Click **Download Sample CSV** for the template. |
+| **Facility Users** | See the users at this facility. Edit a user's name, job title, phone and status (for example Active or Inactive), or resend their welcome email. |
+| **Pharmacy Management** | Manage pharmacy partners: add a pharmacy, keep its contact details, and filter by whether e-prescribing is enabled. |
+| **Education Bundle Management** | Create and manage bundles of _patient_ education material for common clinical scenarios. These are for patients, not staff training. |
+| **Training Materials** | Your clinic's staff training library: add documents, videos and assessments, assign required trainings, and review completion. Trainings you add belong to your facility. Medipyxis also includes a few baseline trainings, for example purposes only; you cannot edit them, but an administrator can hide one from your facility's list. |
 
 ## Who can access this module
 
-HR & Compliance is available to administrators (`admin`) and to roles granted HR access such as `clinical_manager`. Clinicians see announcements and their own assigned education on the dashboard but do not open the module directly.
+Administrators can always open HR & Compliance. For other roles it depends on your organization's role settings; when those are not set, clinical managers and BD managers have it and clinicians do not.
 
 ## Related
 

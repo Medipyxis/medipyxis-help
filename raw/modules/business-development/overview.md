@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: concept
 estimated_minutes: 4
-last_reviewed: 2026-07-01
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - business-development-log-call-and-visit
@@ -17,24 +17,24 @@ tags: [business-development, dashboard, routing, spend]
 
 # Business Development overview
 
-The Business Development dashboard centralizes your outreach activity, spend tracking, and AI-generated route suggestions in a single screen.
+The Business Development dashboard brings together your outreach activity, spend tracking, today's route and route suggestions in a single screen.
 
 ![Business Development dashboard showing widgets and the quick-add strip](../../assets/bd/dashboard.png)
 
-*Business Development dashboard. Widgets occupy the main canvas; the quick-add strip provides one-tap shortcuts to the most common tasks.*
+_Business Development dashboard. Widgets occupy the main canvas; the quick-add strip provides one-tap shortcuts to the most common tasks._
 
 ## Rep-scoped by default
 
-The dashboard is **scoped to you** — reps see their own practices, patients, and activity. Managers and admins get a **rep filter** to view a specific rep's dashboard (or unassigned records). Manager-level tools live in the separate **BD Management** surface (team dashboards, coaching, practice assignment, mileage).
+For a BD rep, the dashboard shows their own assigned practices and activity. Administrators and BD managers get a BD rep filter (**All BD Reps**, **Unassigned**, or one rep) to see a specific rep's view or unassigned practices.
 
 ## Dashboard widgets
 
 | Widget | Purpose |
 |---|---|
-| **Monthly Spend** | Summarizes marketing and entertainment spend for the current month. Links to the full spend log. |
-| **New Patients Queue** | Lists recently converted referrals attributed to your outreach. |
-| **Next Best Action** | Your daily outreach queue from a round-robin cycle across your practices — it shows progress as "X of Y practices contacted" so you work through your book evenly. |
-| **AI Route Suggestions** | Proposes practices worth visiting today. See [AI Route Suggestions](./ai-route-suggestions.md). |
+| **Monthly Spend Reports** | Opens spend reports, which you can export to Excel. |
+| **New Patients Queue** | Shows how many new patients are waiting and opens the queue. |
+| **Next Best Action** | Your daily outreach suggestion from a round-robin cycle across your practices. It shows progress as “X of Y this cycle” so you work through your book evenly. |
+| **AI Route Suggestions** | Proposes practices worth visiting today, using fixed rules. See [AI Route Suggestions](/modules/business-development/ai-route-suggestions/). |
 | **Today's Route** | The practices you've added to today's route. |
 
 ## Quick-add strip
@@ -43,12 +43,12 @@ The quick-add strip provides one-tap shortcuts to the most common BD workflows:
 
 | Action | What it opens |
 |---|---|
-| **Log Call** | Phone call logging form — practice, contact, outcome, next steps. |
-| **Add Spend** | Spend entry form — category, amount, associated practice, receipt upload. |
-| **New Visit** | In-person visit log form — date, practice, contact, visit notes. |
-| **New Contact** | Adds a physician, office manager, or referral coordinator to a practice. |
+| **Log Call** | Call form — practice, call subject, duration, outcome and call notes. |
+| **Add Spend** | Spend form — practice, amount, category, vendor or restaurant, notes and an optional document such as a receipt. |
+| **New Visit** | Visit form — practice, visit purpose, duration, outcome and visit notes. |
+| **New Contact** | Adds a contact (for example a physician or referral coordinator) to a practice. |
 
-A **voice recording** option lets you capture a call or visit by voice instead of typing; the recording is attached to the activity.
+The microphone button (**Record Voice Note**) records a voice note for a practice you choose. It is saved as its own **Voice Note** activity on that practice, not attached to a call or visit.
 
 ## Related
 

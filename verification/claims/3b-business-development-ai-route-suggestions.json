@@ -1,0 +1,479 @@
+{
+  "title": "AI Route Suggestions",
+  "source": "modules/business-development/ai-route-suggestions",
+  "url": "https://help.medipyxis.com/modules/business-development/ai-route-suggestions/",
+  "claims": [
+    {
+      "id": "bai-01",
+      "claim": "The AI Route Suggestions panel on the Business Development dashboard proposes up to seven practices. Despite the name, it does not use an AI model: it applies fixed rules to referral counts, activity and 30-day ROI.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/bd-dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AiSuggestionsAccordion",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onAddToRoute={addAiSuggestionToRoute}",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const suggestionPromise = generateIntelligentRoute(",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "openai",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "functions.invoke",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const needed = 7 - suggestedPractices.length;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-02",
+      "claim": "The widget prioritizes accounts most likely to yield referrals given current engagement patterns.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "likel",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no likelihood model; the rules pick declining-referral, new and high-ROI practices."
+    },
+    {
+      "id": "bai-03",
+      "claim": "Suggestions are worked out in the app when the dashboard loads and kept for about 5 minutes. Reloading the page clears that cache; there is no overnight run.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Simple cache for route suggestions",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Step 6: Load AI suggestions last (optional, can fail without breaking dashboard)",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "bd-daily-suggestions",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-04",
+      "claim": "The algorithm looks only at practices assigned to you.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "userIdForFilter = undefined;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Only for BD reps; an administrator sees all assigned practices, or those of the rep chosen in the BD rep filter, or unassigned ones."
+    },
+    {
+      "id": "bai-05",
+      "claim": "Suggestions draw from practices with a BD rep assigned: a BD rep sees their own practices, and an administrator sees all assigned practices or the rep picked in the BD rep filter.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if (userIsBdRep && user?.id) {",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "userIdForFilter = selectedBdRepFilter;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practicesQuery = practicesQuery.not(\"assigned_user_id\", \"is\", null);",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practicesQuery = practicesQuery.eq(\"assigned_user_id\", userId);",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-06",
+      "claim": "Mix: 3 Declining referrals (fewer this month than last, worst first), 2 New practice (no logged activity), 2 High ROI (30-day ROI over $5,000, highest first).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "...decliningPractices.slice(0, 3), // 3 declining practices",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "...newPractices.slice(0, 2), // 2 new practices",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "...highRoiPractices.slice(0, 2), // 2 high ROI practices",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "previousReferrals > 0 && currentReferrals < previousReferrals;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const isNew = !practice.last_activity_date;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const hasHighRoi = (practice.roi_30_day || 0) > 5000; // $5K+ ROI threshold",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "processedPractice.routeReason = \"Declining referrals\";",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "processedPractice.routeReason = \"New practice\";",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "processedPractice.routeReason = \"High ROI\";",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-07",
+      "claim": "High ROI: practices with the highest 30-day ROI.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const hasHighRoi = (practice.roi_30_day || 0) > 5000; // $5K+ ROI threshold",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Only practices above a $5,000 30-day ROI qualify for the High ROI slots."
+    },
+    {
+      "id": "bai-08",
+      "claim": "Unfilled places are filled by proximity (or by ROI without location), badged Proximity-based.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "routeReason: \"Proximity-based\",",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "remainingPractices.sort((a, b) => b.roi30Day - a.roi30Day);",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-09",
+      "claim": "With location denied, suggestions are ordered by ROI instead.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ": suggestedPractices; // Return unoptimized if no location",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Without location the list is returned unreordered (category order); only the leftover fill uses ROI."
+    },
+    {
+      "id": "bai-10",
+      "claim": "With location allowed, practices are put in nearest-next order from your position and each shows a distance. With location denied, they are not reordered by distance and no distance is shown.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "// Geographic route optimization using nearest neighbor algorithm",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? optimizeRouteGeographically(suggestedPractices, userLocation)",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ": suggestedPractices; // Return unoptimized if no location",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "userLocation && suggestion.latitude && suggestion.longitude",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-11",
+      "claim": "Click Add to put a practice on Today's Route; the button changes to Added. There is no accept-the-whole-route step.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add to today's route\"",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>Added</span>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(`${suggestion.name} added to today's route!`);",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Today's Route",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-12",
+      "claim": "If no practices are assigned to you, the panel says No Practices Assigned and offers Go to CRM.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "No Practices Assigned",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Go to CRM",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-13",
+      "claim": "At most 50 assigned practices are considered each time. Distances are straight-line, not driving distance.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".limit(50); // Limit to 50 practices to prevent timeout",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const R = 3959; // Earth's radius in miles",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bai-14",
+      "claim": "Use your navigation app for directions; log calls and visits so the mix stays complete.",
+      "kind": "advice",
+      "checks": []
+    }
+  ]
+}

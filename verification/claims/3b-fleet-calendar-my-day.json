@@ -1,0 +1,404 @@
+{
+  "title": "Manage your day as a clinician",
+  "source": "modules/fleet-calendar/my-day",
+  "url": "https://help.medipyxis.com/modules/fleet-calendar/my-day/",
+  "claims": [
+    {
+      "id": "fmd-01",
+      "claim": "See the visits assigned to you for the day and launch each one from the Fleet Calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-02",
+      "claim": "Before you start: you are logged in as yourself; appointments have been scheduled for you. If nothing appears for today, contact your scheduler.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "fmd-03",
+      "claim": "Click My Calendar in the sidebar to see the appointments assigned to you.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"My Calendar\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "My Calendar is not in the sidebar; it opens from the Calendar button on the Patient Management page."
+    },
+    {
+      "id": "fmd-04",
+      "claim": "Open the Fleet Calendar and use the All Providers filter to show only your own column. You can also open My Calendar with the Calendar button on the Patient Management page; it lists only your appointments, but it has no Start Visit button.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "? \"All Providers\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "`/facility/${currentFacility.id}/my-calendar`",
+          "paths": [
+            "frontend/src/pages/PmClinicianDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/my-calendar\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(apt) => apt.clinician_id === clinicianId",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "My Calendar",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Start Visit",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "openVisitWizard",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-05",
+      "claim": "Each appointment card shows the patient, scheduled time, visit type, and status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "visit.visitType",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The day card shows patient, time, duration and status; visit type is not on the card."
+    },
+    {
+      "id": "fmd-06",
+      "claim": "Each appointment card shows the patient, the time, and the status. Click a card to open Appointment Details, which shows the purpose, notes and route notes the scheduler added.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{calendarLabelForVisit(visit.statusKey, visit.patient)}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{timeRangeStr}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{visibleStatusName}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{appointment.purpose}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{appointment.route_notes}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<h3 className=\"text-sm font-semibold text-gray-900\">Notes</h3>",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-07",
+      "claim": "Start Visit uses specialty routing: wound-care patients open in the Wound Cockpit, then the Visit Wizard; primary-care patients open in the Primary Care Cockpit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Primary Care Cockpit",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "/wound-cockpit",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Primary Care Cockpit and no specialty routing; Start Visit always opens the Visit Wizard."
+    },
+    {
+      "id": "fmd-08",
+      "claim": "Click the appointment to open Appointment Details. Click Start Visit; the Visit Wizard opens for that patient and appointment, so you do not have to search for the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Start Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "appointmentId: appointment.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patientId: appointment.patient.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/visit-wizard?${params.toString()}`);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-09",
+      "claim": "Finish with Sign & Lock — see Sign Off.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Sign & Lock",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<MultiWoundReviewModal",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-10",
+      "claim": "The appointment status updates on the calendar: Progress Note In Progress once you open the wizard and start editing, then Visit Completed once the note is signed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": " *   - notifyOpened      -> note_in_progress (wizard mounted + first edit)",
+          "paths": [
+            "frontend/src/hooks/useAppointmentStatusSync.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": " *   - notifySigned      -> visit_completed  (attestation signed)",
+          "paths": [
+            "frontend/src/hooks/useAppointmentStatusSync.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Progress Note In Progress\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fmd-11",
+      "claim": "Resuming a draft: choose Continue Visit to return to where you left off — the wizard autosaves continuously.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "autosaves continuously",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Overstated. A background autosave exists for some fields (VisitWizardV4.tsx:1592-1599) and drafts are also saved with Save as Draft; 'continuously' is not shown in code. The resume label is Continue Visit or Resume Visit depending on status. Sentence dropped."
+    },
+    {
+      "id": "fmd-12",
+      "claim": "Resuming a draft: click the same appointment. The button reads Continue Visit or Resume Visit and takes you back to the visit in progress.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Resume Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "case \"draft_saved\":",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// (patientId, appointmentId, visitTypeKey, and — only when",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

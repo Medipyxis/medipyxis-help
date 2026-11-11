@@ -1,0 +1,790 @@
+{
+  "title": "Add a new employee",
+  "source": "modules/hr-compliance/new-employee",
+  "url": "https://help.medipyxis.com/modules/hr-compliance/new-employee/",
+  "claims": [
+    {
+      "id": "hrn-01",
+      "claim": "Create a user account and set up access from a single Create New User form. Provider fields appear automatically when you pick a role that can see patients.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{userId ? \"Edit User Profile\" : \"Create New User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<HRNewUserPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!!r && !(NON_CLINICAL_EXCLUDED_ROLES as readonly string[]).includes(r.toLowerCase());",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-02",
+      "claim": "Before you start: have the employee's legal name, email, phone, role, facilities, and for providers their credentialing details (NPI, license, DEA, taxonomy).",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "hrn-03",
+      "claim": "Click HR & Compliance in the sidebar, then New Employee Onboarding. The form opens as a single page — there is no multi-step wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"HR & Compliance\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "currentStep",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-04",
+      "claim": "Basic Info includes Manager, Status, Onboarding Date and NPI (for providers) alongside the name, email and phone; the form has a Basic Info section.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Basic Info",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The form's sections are Personal Information, Role & Assignment, Contact Information, provider sections and Onboarding & Training; there is no Basic Info section. Reworded section by section."
+    },
+    {
+      "id": "hrn-05",
+      "claim": "Personal Information: First Name, Middle Initial, Last Name, Job Title, Gender, Email Address, Phone Number, Date of Birth, Preferred Language and Timezone. Email, phone and time zone are required.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Personal Information",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Middle Initial",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select job title\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Gender\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Email Address <span className=\"ml-1 text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"(555) 123-4567\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Date of Birth",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select language\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select timezone\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-06",
+      "claim": "Pick from the real role set: admin, clinical_manager, medical_director, clinician, referral_coordinator, bd_rep, bd_manager, finance_ap, or vendor_coordinator.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The list also includes Biller, and the form shows display names, not codes."
+    },
+    {
+      "id": "hrn-07",
+      "claim": "Role choices: Administrator, Clinical Manager, Medical Director, Clinician, Referral Coordinator, Business Development Representative, Business Development Manager, Finance/Accounts Payable, Vendor Coordinator, or Biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: \"admin\", label: \"Administrator\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Business Development Representative\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Business Development Manager\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: \"finance_ap\", label: \"Finance/Accounts Payable\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Vendor Coordinator\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-08",
+      "claim": "Under Facility Assignment (required), select one or more facilities; access is scoped to the facilities you assign. Optionally pick a Manager and set the Status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Facility Assignment{\" \"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "selected={formData.facilityIds}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select manager\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select status\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "user_facility_role row is created per id. Duplicates ignored. */",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-09",
+      "claim": "Provider Details appear only for clinical roles (clinician / medical_director).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "  \"admin\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"clinical_manager\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Provider fields show for every role not on the non-clinical list, so Administrator and Clinical Manager also get them."
+    },
+    {
+      "id": "hrn-10",
+      "claim": "For Administrator, Clinical Manager, Medical Director and Clinician, provider fields appear; they are hidden for Referral Coordinator, Business Development, Finance/Accounts Payable, Vendor Coordinator and Biller roles.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "export const NON_CLINICAL_EXCLUDED_ROLES = [",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"bd_rep\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"biller\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"referral_coordinator\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"vendor_coordinator\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": " * Clinical roles that are always included without requiring an NPI.",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-11",
+      "claim": "Provider fields: Profession Title (NP / APRN, PA, MD, DO, DPM, RN, LPN, LVN), Print Name, Initials, NPI Number for titles that need one; Contact Information and Primary Service Location; Speciality, Speciality Code, Group NPI, UPIN, State License; DEA Number with active and termination dates; Tax ID, Tax ID Type, Organization Type, Taxonomy Code, Billing Facility Name, Network Affiliation; Is Resident / Is Care Manager; Provider Signature.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: \"NP\", label: \"NP / APRN (Nurse Practitioner)\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: \"LVN\", label: \"LVN (Licensed Vocational Nurse)\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isProvider && isNpiBearing &&",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Primary Service Location",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Speciality Code",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Group NPI",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "UPIN",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "State License",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "DEA Termination Date",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Tax ID Type",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Taxonomy Code",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Billing Facility Name",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Network Affiliation",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Is Care Manager",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Provider Signature",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-12",
+      "claim": "Onboarding & Training: set the Onboarding Date and Training Status (Not Started, In Progress, Completed). Welcome Call Completed is on by default.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Onboarding & Training",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Onboarding Date",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: \"In Progress\", label: \"In Progress\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Welcome Call Completed",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  welcomeCall: true,",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": {
+            "min": 2
+          },
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-13",
+      "claim": "There is no automated pre-start welcome email — use the Welcome Call Completed toggle to record onboarding contact.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const sent = await sendWelcomeEmail(supabaseClient, {",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "On create, Medipyxis sends a branded welcome email with a set-password link."
+    },
+    {
+      "id": "hrn-14",
+      "claim": "Click Create User. The account is created with a role at each facility you assigned, and Medipyxis emails the new user a welcome message with a link to set their password.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await supabaseClient.functions.invoke(\"admin-create-user\", {",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// ── Insert user_facility_role rows (one per facility) via service",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const sent = await sendWelcomeEmail(supabaseClient, {",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-15",
+      "claim": "Save creates the account via the admin user-creation service with a user_facility_role for each facility; assign training in Education Bundle Management.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Create and manage pre-configured patient education material bundles for clinical scenarios.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Education Bundle Management is for patient education bundles; staff training is in Training Materials. Internal table names removed from customer text."
+    },
+    {
+      "id": "hrn-16",
+      "claim": "The new employee appears in Facility Users for each assigned facility. Track licenses in the Credential Tracker and assign staff training in Training Materials.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility-users\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"Manage the staff training library: add documents, videos, and assessments; assign required trainings; review completion.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-17",
+      "claim": "If the welcome email cannot be sent, Medipyxis says so after the user is created; use Resend welcome email on Facility Users.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"User created, but the welcome email failed to send. Use Resend welcome email on Facility Users.\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"Resend welcome email\"",
+          "paths": [
+            "frontend/src/components/hr/ResendWelcomeEmailButton.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ResendWelcomeEmailButton",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-18",
+      "claim": "Email already in use: use Facility Users to add the existing user to this facility instead of creating a new record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Add to facility",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Facility Users has no add-to-facility action; it edits name, job title, phone and status only."
+    },
+    {
+      "id": "hrn-19",
+      "claim": "If the email already belongs to a user, Medipyxis stops with “A user with email … already exists.” Do not create a second account.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "error: `A user with email ${email} already exists.`,",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hrn-20",
+      "claim": "Save fails when a required field is empty or invalid; Medipyxis names the field in the message.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.error(Object.values(err)[0] || \"Please fix the errors below\");",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

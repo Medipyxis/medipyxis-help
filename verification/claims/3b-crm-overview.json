@@ -1,0 +1,526 @@
+{
+  "title": "CRM overview",
+  "source": "modules/crm/overview",
+  "url": "https://help.medipyxis.com/modules/crm/overview/",
+  "claims": [
+    {
+      "id": "cro-01",
+      "claim": "The CRM module is the directory of referring practices and contacts; it keeps the outreach history logged from the BD dashboard and feeds the BD dashboard's suggestions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/crm\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"practice\")",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-02",
+      "claim": "A Practices / Vendors toggle switches between practices and the vendors hub. On the Vendors side, Add Vendor registers a vendor, and you can enable it at specific clinics.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [crmView, setCrmView] = useState<\"practices\" | \"vendors\">(\"practices\");",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<Plus className=\"w-3.5 h-3.5\" /> Add Vendor",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Enable this vendor at:",
+          "paths": [
+            "frontend/src/components/crm/AddVendorModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-03",
+      "claim": "Tabs: All (not archived), Assigned (practices with a BD rep; yours show a Me badge), Favorites, PCP (marked primary care), Home Health, Facility (marked facilities), Archived.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label=\"Assigned\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"Favorites\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"PCP\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"Home Health\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"Facility\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "mode=\"archived\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(viewMode === \"all\" && !isInactivePractice) ||",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practice.assignedUserId &&",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? \"Me\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(viewMode === \"pcp\" && practice.is_pcp && !isInactivePractice) ||",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practice.is_facility === true &&",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-04",
+      "claim": "Assigned shows practices assigned to the logged-in BD rep.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "practice.assignedUserId === currentUserId",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The Assigned tab shows every practice with any BD rep assigned."
+    },
+    {
+      "id": "cro-05",
+      "claim": "Facility shows skilled nursing facilities, hospitals, and other institutional referral sources.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "practice.practice_type === \"hospital\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The tab filters on the is_facility flag only; the institution types listed are not checked."
+    },
+    {
+      "id": "cro-06",
+      "claim": "Archived practices are left out of the other tabs and of AI Route Suggestions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Boolean(practice.deleted_at) || practice.archived === true;",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Deno.test(\"archive sets archived and deleted_at\", async () => {",
+          "paths": [
+            "backend/supabase/functions/practice-archive/__tests__/handler.test.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-08",
+      "claim": "Filter by BD rep, grade, specialty, status and whether a practice has contacts; Total Practices, Overdue and No Contact counters.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"all\">All Grades</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"all\">All Specialties</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"follow-up-due\">Follow-up Due</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"with\">With Contacts</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Total Practices\",",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Overdue\",",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"No Contact\",",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-09",
+      "claim": "Calls, visits, spend and voice notes logged from the BD dashboard are saved against the practice and show in the practice's Activity tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "voice: \"Voice Notes\",",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"spend\">Spend</option>",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"visit\">Visits</option>",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"visit\",",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-10",
+      "claim": "AI Route Suggestions are recalculated in the app with a 5-minute cache, and Next Best Action is worked out when the dashboard loads — no overnight batch.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "'bd-daily-suggestions',",
+          "paths": [
+            "frontend/src/hooks/useDailySuggestions.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Daily \"Next Best Action\" queue from the bd-daily-suggestions edge function.",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-11",
+      "claim": "New practices can be added with + New Practice (top-right) or inline in Referral Intake with + Add new practice in the Practice & PCP section.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "+ New Practice",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "+ Add new practice",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Both buttons are labelled Add New Practice."
+    },
+    {
+      "id": "cro-12",
+      "claim": "Add New Practice in the CRM, or Add New Practice while creating a referral in Referral Intake; both open the same Add New Practice form.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AddPracticeModal",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import { AddPracticeModal } from \"components/crm/AddPracticeModal\";",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>Add New Practice</span>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Practice\" : \"Add New Practice\"}",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "cro-13",
+      "claim": "Open the ⋮ menu on a practice card and choose Archive; the practice moves to the Archived tab and its activity history and contacts are kept. Restore brings it back.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<MoreVertical",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<Archive className=\"w-4 h-4\" /> Archive",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ArchiveRestore className=\"w-4 h-4\" /> Restore",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const { data, error } = await supabase.functions.invoke(\"practice-archive\", {",
+          "paths": [
+            "frontend/src/services/practiceService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(\"Practice restored from archive\");",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

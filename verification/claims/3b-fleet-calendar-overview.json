@@ -1,0 +1,721 @@
+{
+  "title": "Fleet Calendar overview",
+  "source": "modules/fleet-calendar/overview",
+  "url": "https://help.medipyxis.com/modules/fleet-calendar/overview/",
+  "claims": [
+    {
+      "id": "fco-01",
+      "claim": "The Fleet Calendar is the multi-provider scheduling and routing screen. It shows the appointments at your facility, with one column per provider for the chosen day.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/ops/fleet-calendar\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<FleetCalendarCanvas />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Provider Columns Section */}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Fleet scheduling & route planning\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-02",
+      "claim": "Fleet Calendar — Day view. Each horizontal lane represents one provider (swim lanes per provider).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "swim",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Day view draws one vertical column per provider; there are no swim lanes. Caption and Views table reworded."
+    },
+    {
+      "id": "fco-03",
+      "claim": "Day: one column per provider for a single date. Week: seven days, Sunday to Saturday, with the appointments on each day. With exactly one provider selected, you can drag a visit to another day. Month: a tile per day with the number of appointments.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Week starts Sunday (match MonthGrid / US calendar convention).",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "selectedProviderIds.length === 1 && weekProviderForFull ? (",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onDayDrop={handleWeekDayDrop}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const count = weekCounts[cell.iso] || 0;",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-04",
+      "claim": "Switch views with the Day / Week / Month buttons in the toolbar. The calendar opens in Day view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => setViewMode(\"week\")}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => setViewMode(\"month\")}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-05",
+      "claim": "Use the All Providers filter in the toolbar to show only some providers; your choice is remembered for the facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "? \"All Providers\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "`fleet_calendar_provider_filter_${currentFacility.id}`",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Persist provider filter per facility",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-06",
+      "claim": "Colors and labels are configured for your organization, so the exact list can vary.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "No facility scoping — this is shared reference data",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The status list and colors come from one shared reference table with no facility or organization scoping."
+    },
+    {
+      "id": "fco-07",
+      "claim": "Each appointment card shows its status and is tinted with that status's color. The status list is the same for every clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"canonical_key, name, color_code, deprecated, is_billable_ready, category, display_order\"",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "No facility scoping — this is shared reference data",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Status-driven card tint + left stripe so the status is readable at a",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "aria-label={`Status: ${visibleStatusName}`}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-08",
+      "claim": "Statuses: Scheduled (booked, not yet started); Seen (seen, note not started); Progress Note In Progress (Visit Wizard opened, note being written); Draft Saved (saved as draft, not signed); Visit Completed (signed, visit complete); Rescheduled (moved to a new appointment); Canceled; No Show; Not Seen (did not happen, reason recorded).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "description: \"Seen but note not yet started.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Progress Note In Progress\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Draft note saved but not signed.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Note signed and visit complete.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Moved to a new appointment.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Visit did not occur; reason captured.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"No Show\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Canceled\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"All scheduled\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": " *   - notifyOpened      -> note_in_progress (wizard mounted + first edit)",
+          "paths": [
+            "frontend/src/hooks/useAppointmentStatusSync.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"not_seen_reason_lookup\")",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-09",
+      "claim": "Under Review: waiting on documentation or review after the visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "SET name = 'Under Review'",
+          "paths": [
+            "backend/supabase/migrations/20260615120000_wizard_review_routing.sql"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "WHERE canonical_key = 'awaiting_documentation'",
+          "paths": [
+            "backend/supabase/migrations/20260615120000_wizard_review_routing.sql"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"awaiting_documentation\",",
+          "paths": [
+            "frontend/src/utils/appointmentStatusCatalog.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-10",
+      "claim": "Draft Saved means the appointment form was saved but not confirmed; Seen means visit documentation is underway.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "description: \"Draft note saved but not signed.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Seen but note not yet started.\"",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Draft Saved is a draft progress note, not an appointment form; Seen means the note has not started."
+    },
+    {
+      "id": "fco-11",
+      "claim": "No Show: patient did not answer or was unavailable at the door. Not Seen: clinician arrived but could not complete the visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "arrived",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "at the door",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The product does not define these as door/arrival outcomes; reworded to the product's own descriptions."
+    },
+    {
+      "id": "fco-12",
+      "claim": "When a referral card moves into the Assigned column in Referral Intake, it becomes eligible for scheduling, and the referral data pre-populates the Appointment Type and provider fields.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "referral",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The Fleet Calendar create form has no referral link; the patient search lists the facility's patients and the form starts empty."
+    },
+    {
+      "id": "fco-13",
+      "claim": "The Patient search when you create an appointment lists the patients at your facility. The appointment form does not copy anything from the referral; choose the visit type and provider yourself.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search for a patient by name or MRN...\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"facility_id\", this.facilityId)",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "referral",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "visitTypeKey: \"\",",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "clinicianId: \"\",",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-14",
+      "claim": "Start Visit routes by the patient's care specialty: wound care patients land in the Wound Cockpit, then the Visit Wizard; primary care patients land in the Primary Care Cockpit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Primary Care Cockpit",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "/wound-cockpit",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Primary Care Cockpit and no specialty routing. Start Visit always opens the Visit Wizard (openVisitWizard)."
+    },
+    {
+      "id": "fco-15",
+      "claim": "Click an appointment to open Appointment Details, then click Start Visit (it reads Continue Visit or Resume Visit when a note is already in progress). The Visit Wizard opens for that patient and appointment, whatever the patient's specialty.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Start Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Resume Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/visit-wizard?${params.toString()}`);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "specialty",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "fco-16",
+      "claim": "Provider filters live in the Fleet Calendar toolbar, and a View Map action opens the facility route map for the selected day.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "navigate(`/facility/${facilityId}/ops/fleet-map?date=",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "View Map opens the Route Map without passing the date, so it starts on today."
+    },
+    {
+      "id": "fco-17",
+      "claim": "The View Map button opens the Route Map, which starts on today's date; pick another date on the map page.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<span className=\"hidden sm:inline\">View Map</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/facility/${facilityId}/ops/fleet-map`)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<h1 className=\"text-2xl font-bold text-gray-900\">Route Map</h1>",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return formatDateInputValue(getTodayLocalDate());",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "value={selectedDateISO}",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fco-18",
+      "claim": "Month view — click any date tile to open that day in Day view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<MonthGrid",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onDaySelect={(iso) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setViewMode(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}
