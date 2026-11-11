@@ -1,0 +1,337 @@
+{
+  "title": "Medipyxis Help Center (home)",
+  "source": "",
+  "url": "https://help.medipyxis.com/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "home-01",
+      "claim": "Documentation for the All-In-One Mobile Wound Care OS — guides, references, and release notes for every role on your team.",
+      "kind": "advice"
+    },
+    {
+      "id": "home-02",
+      "claim": "Search 112 articles.",
+      "kind": "advice",
+      "finding": "Help-site defect: search-index.json in this repo holds 120 entries, not 112.",
+      "proposed_text": "Search the documentation."
+    },
+    {
+      "id": "home-03",
+      "claim": "Topic chips: Get started, Modules, Billing, Visit wizard, Inventory, Admin & billing, Quick reference, Release notes.",
+      "kind": "advice",
+      "link_check": "All 8 chip links resolve to existing pages in this repo."
+    },
+    {
+      "id": "home-04",
+      "claim": "Card: Welcome to Medipyxis — Start here: what Medipyxis replaces and how the OS fits together.",
+      "kind": "advice",
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo. (/getting-started/)"
+    },
+    {
+      "id": "home-05",
+      "claim": "Card: Visit wizard / EHR — Drive a visit end-to-end: ROS, wound assessment, LCD checks, attestation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ros: \"Review of Systems (ROS)\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "woundAssessment: \"Wound Assessment & Documentation\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<LCDAuditReviewVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ProviderAttestationVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo."
+    },
+    {
+      "id": "home-06",
+      "claim": "Card: Billing — Run the revenue cycle: superbills, claims, denials, ERAs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DownloadPatientSuperbillButton,",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={exportDenialsCSV}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const data = await read({ action: 'list', facility_id: facilityId });",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo."
+    },
+    {
+      "id": "home-07",
+      "claim": "Card: Inventory — Track grafts and DME from receiving to consumption with full traceability.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Receive",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ProductCategoryEnum.DME",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "note": "DME would be an inventory product category"
+        }
+      ],
+      "finding": "Inventory receives and tracks grafts and supplies, but DME is not an inventory category: the categories are Amniotic, Biologics, Conservative, PRP and UM (pages/inventory-management/commons/Enums.ts:564); DME lives in Orders & DME.",
+      "proposed_text": "Inventory — Track grafts and wound-care supplies from receiving to use.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Amniotic / Advance Treatment\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Biologics / Matrix\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Conservative Care Products\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/product-batches/:category\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Receive",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo."
+    },
+    {
+      "id": "home-08",
+      "claim": "Card: Fleet calendar — Schedule, route, and dispatch your mobile clinics.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/ops/fleet-calendar\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<FleetCalendarCanvas />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Provider Columns Section */}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "description: \"Fleet scheduling & route planning\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span className=\"hidden sm:inline\">View Map</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/facility/${facilityId}/ops/fleet-map`)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo."
+    },
+    {
+      "id": "home-09",
+      "claim": "Card: Admin & billing — Configure facilities, roles, security, imports, and clearinghouse credentials.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Customers do not configure clearinghouse credentials: the Stedi key lives only in edge-function secrets (functions/_shared/__tests__/eraPdfHandler.test.ts:20) and no screen takes one. Facilities, roles, security and imports are real.",
+      "proposed_text": "Admin & billing — Configure facilities, roles, security, imports, and payer enrollment.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "backend/supabase/functions/_shared"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "[Aa]pi [Kk]ey",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${resolvedFacilityId}/billing/enrollment`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link_check": "Link checked 2026-11-11: resolves to an existing page in this repo."
+    },
+    {
+      "id": "home-10",
+      "claim": "By role: Clinician, Practice admin, Billing, BD / CRM, Graft vendor, Intake coordinator.",
+      "kind": "advice",
+      "link_check": "All 6 role-card links resolve to existing pages in this repo."
+    },
+    {
+      "id": "home-11",
+      "claim": "Still stuck? Search returned nothing useful? Reach the support team directly — Contact support.",
+      "kind": "advice",
+      "finding": "Help-site defect: the Contact support button links to https://medipyxis.com/book-a-demo, a sales demo-booking page, not a support channel."
+    },
+    {
+      "id": "home-12",
+      "claim": "What's new: September 2026 release notes are live — see what shipped this month. New in video: rounding at a nursing facility, start to finish.",
+      "kind": "advice",
+      "finding": "Stale help-site text: \"this month\" says September 2026; no October or November 2026 release notes exist in this repo.",
+      "link_check": "/release-notes/ and /whats-new/snf-rounding/ resolve; release-notes/2026-09 is the newest month folder."
+    }
+  ]
+}

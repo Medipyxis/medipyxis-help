@@ -1,0 +1,749 @@
+{
+  "title": "Intake coordinator cheat sheet",
+  "source": "quick-reference/intake-coordinator",
+  "url": "https://help.medipyxis.com/quick-reference/intake-coordinator/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "qic-01",
+      "claim": "Your daily loop: add or approve new patients, finish missing information on the Patient Intake board, then assign a clinician and schedule the first visit from Fleet Calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient Intake",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage incoming patient referrals through the intake",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Assign</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleAssignClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// If moving to ASSIGNED, open assignment dialog",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleScheduleClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-02",
+      "claim": "By phone, email, or paper: open Referral Intake → Add New Referral → complete the Add New Patient form → Create Patient. Only First Name, Last Name, and Date of Birth are required.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Referral Intake\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Referral",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Patient",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Patient",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!isOnline ? \"Save Offline\" : \"Create Patient\"}",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "* Required fields: First Name, Last Name, Date of Birth",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-03",
+      "claim": "By fax: open Fax Review Queue (sidebar, or the Fax Queue button on the board) → open the row → Approve & Create Patient, or Save Changes / Reject as needed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Review Queue\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Fax Queue</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Fleet Calendar</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Referral",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "absent",
+          "note": "no kanban column is titled Fax..."
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleViewDetails(item.id)}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={item.queue_status === \"processing\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableRow[^>]*onClick",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleSave}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Save Changes$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Approve & Create Patient\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await createPatientFromFax(",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const referralRecordsResult = await createReferralRecordsForPatient(",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleReject}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Reject$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-04",
+      "claim": "Either way, the new card appears in the New Referrals column. The patient record already exists at that point.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await referralApi.createReferral(",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "          status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/referralApi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await createPatientFromFax(",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"NEW\" as ReferralStatus,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present",
+          "note": "NEW is the New Referrals column"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"ASSIGNED\" as any,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present",
+          "note": "assignment updates the existing patient row"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".insert(patientInsertPayload)",
+          "paths": [
+            "frontend/src/services/referralApi.ts"
+          ],
+          "expect": "present",
+          "note": "the patient row is inserted at create"
+        }
+      ]
+    },
+    {
+      "id": "qic-05",
+      "claim": "Drag cards through Info Needed, Financial, Ready for Assignment, and Assigned as the work proceeds. Use Assign on the card to pick a clinician.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Referrals\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Info Needed\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Financial\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Ready for Assignment\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Assigned\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Non-Admit\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    title: \"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "count": 6
+          },
+          "note": "exactly six column titles in the columns array"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDragEnd = async (event: DragEndEvent) => {",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onDragEnd={handleDragEnd}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Assign</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Please select a provider to complete assignment\");",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setIsAssignmentDialogOpen(true);",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "qic-06",
+      "claim": "Schedule the first visit from Fleet Calendar (also a button on the board header).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleScheduleClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Fax Queue</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Fleet Calendar</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Referral",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "absent",
+          "note": "no kanban column is titled Fax..."
+        }
+      ]
+    },
+    {
+      "id": "qic-07",
+      "claim": "If the patient will not be admitted, drag the card to Non-Admit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"NON_ADMIT\" as ReferralStatus,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isOverColumn = columns.some((col) => col.id === overId);",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-08",
+      "claim": "Press ⌘K (Windows: Ctrl+K) and type to jump to Referral Intake, New Referrals (the Add New Patient form), or Fax Review Queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const quickJumpItems = visibleNavItems",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Referral Intake\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ title: \"New Referrals\", category: \"Referral Intake\", path: \"/referrals-new-page\" },",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ title: \"Fax Review Queue\", category: \"Referral Intake\", path: \"/fax-review-queue\" },",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/referrals-new-page\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-09",
+      "claim": "Troubleshooting: Create Patient does not complete — First Name, Last Name, or Date of Birth is missing; fill those three fields.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Please complete the following required fields:",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{getAllValidationErrors().map((error, index) => (",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-10",
+      "claim": "Troubleshooting: A phone number is rejected — format is not (xxx) xxx-xxxx; correct the format, or leave the field blank.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: \"Please enter a valid phone number\",",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Required format: (xxx) xxx-xxxx",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!value || value.trim() === \"\") return true;",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qic-11",
+      "claim": "Troubleshooting: You cannot see Referral Intake — the role does not have the Referral Intake feature; ask an administrator to review Organization Role Config. The intake-oriented role is Referral Coordinator.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "note": "sidebar items are filtered by feature access"
+        },
+        {
+          "type": "grep",
+          "pattern": "Intake SLAs|Referral Rules|Request add",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "intake_coordinator",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"referral_coordinator\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

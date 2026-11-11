@@ -1,0 +1,762 @@
+{
+  "title": "Team Chat overview",
+  "source": "modules/team-chat/overview",
+  "url": "https://help.medipyxis.com/modules/team-chat/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "tco-01",
+      "claim": "Team Chat is Medipyxis's internal messaging surface for real-time communication across your facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Team Chat\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Internal team communication for {currentFacility?.name}",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Team discussions and direct messages only",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useFacilityUsers",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-02",
+      "claim": "Team Chat is separate from the patient-context Chat tab in Referral Intake.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"chat_type\", \"referral\")",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Referral chats are Team Chat conversations (teamChatService.ts frontend/src/services/teamChatService.ts:990; ReferralChatWidget calls findOrCreateReferralConversation) and Team Chat's loadConversations does not filter them out.",
+      "proposed_text": "The Chat tab in a Referral Intake card is a conversation about that referral. It is a Team Chat conversation, so it also appears in Team Chat.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ name: \"chat\", label: \"Chat\", icon: MessageSquare },",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chat_type: \"referral\",",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await teamChatService.findOrCreateReferralConversation(",
+          "paths": [
+            "frontend/src/components/ReferralChatWidget.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await teamChatService.loadConversations(",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"chat_type\", \"referral\")",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "absent",
+          "note": "loadConversations would need to exclude referral chats for them to stay out of Team Chat"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".neq(\"chat_type\"",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "tco-03",
+      "claim": "Image caption: Conversations tab on left, thread view on right.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Conversations</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TeamChatSidebar",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ChatWindow",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-04",
+      "claim": "Conversations tab: your direct and group message threads. Use for focused, ad-hoc conversations.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{conversations.some((conv) => conv.unread_count > 0) && (",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Conversations</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"md:hidden\">Chats</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CreateMultipleParticipantConversationDialog",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-05",
+      "claim": "Users tab: the facility roster — pick one or more people to start a direct or group conversation. Online presence is shown here.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Users</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The second tab is Team (frontend/src/components/teamChat/TeamChatSidebar.tsx:182); clicking a person starts a direct chat (one person). It filters Online/Offline.",
+      "proposed_text": "Team tab: the people at your facility. Search, filter by role and by Online or Offline, and sort A-Z. Click a person to start a direct chat.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Team</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Search team members...\"",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All roles</option>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"online\">Online</option>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"offline\">Offline</option>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "A-Z",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onStartChat(teamMember)}",
+          "paths": [
+            "frontend/src/components/teamChat/TeamMemberCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onStartDirectChat={handleStartDirectChat}",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-06",
+      "claim": "Click a conversation in the left rail to open the thread view on the right.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onSelectConversation={(id) => {",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ChatWindow",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-07",
+      "claim": "Recognition messages appear as Kudos threads.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chat_type: \"kudos\"",
+          "paths": [
+            "frontend/src/services"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Kudos is a badge on conversations linked to an HR announcement (ConversationCard.tsx frontend/src/components/teamChat/ConversationCard.tsx:76); there is no kudos chat type.",
+      "proposed_text": "A conversation linked to a visit, a claim or a referral shows a Visit, Billing or Referral badge. The discussion of an HR announcement shows a Kudos badge.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (meta.appointment_id) return { icon: \"\\u{1F4CB}\", label: \"Visit\", color: \"bg-blue-100 text-blue-700\" };",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (meta.claim_id) return { icon: \"\\u{1F4B0}\", label: \"Billing\", color: \"bg-green-100 text-green-700\" };",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (meta.referral_id) return { icon: \"\\u{1F517}\", label: \"Referral\", color: \"bg-purple-100 text-purple-700\" };",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (meta.announcement_id) return { icon: \"\\u{1F389}\", label: \"Kudos\", color: \"bg-amber-100 text-amber-700\" };",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-08",
+      "claim": "Sending a message: click the conversation or team channel where you want to post.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "channel",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx",
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Team Chat has direct conversations and group chats only; there are no team channels (no 'channel' in TeamChatSidebar.tsx or ConversationCard.tsx; TeamChat.tsx shows \"Team discussions and direct messages only\").",
+      "proposed_text": "Click the conversation where you want to post.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onSelectConversation={(id) => {",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Team discussions and direct messages only",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-09",
+      "claim": "Type your message in the input field at the bottom of the thread.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "isUrgent ? \"Type urgent message...\" : \"Type your message...\"",
+          "paths": [
+            "frontend/src/components/teamChat/ChatWindow.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-10",
+      "claim": "@mention a colleague by typing @ followed by their name — they receive a notification badge in the app and, if configured, an email alert.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mention",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Team Chat has no @mentions (no 'mention' anywhere in components/teamChat); every participant gets an in-app notification (frontend/src/hooks/useTeamChatNotifications.ts:29).",
+      "proposed_text": "The other people in the conversation get an in-app notification (\"New message from …\", or \"Urgent message from …\") with an Open Chat link. Team Chat messages are text and emoji. You cannot attach files or @mention people.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `Urgent message from ${senderInfo.sender_name}`",
+          "paths": [
+            "frontend/src/hooks/useTeamChatNotifications.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": `New message from ${senderInfo.sender_name}`;",
+          "paths": [
+            "frontend/src/hooks/useTeamChatNotifications.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "action_label: 'Open Chat',",
+          "paths": [
+            "frontend/src/hooks/useTeamChatNotifications.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createNotificationsForParticipants,",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Paperclip",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "type=\"file\"",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mention",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "tco-11",
+      "claim": "Attach a file by clicking the paperclip icon next to the message input. Supported types: PDF, images (PNG, JPG), and common document formats. Files are stored within Medipyxis.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Paperclip",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Team Chat has no file attachments: no Paperclip icon and no file input in components/teamChat.",
+      "proposed_text": "Team Chat messages are text and emoji. You cannot attach files or @mention people.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Paperclip",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "type=\"file\"",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mention",
+          "paths": [
+            "frontend/src/components/teamChat"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "tco-12",
+      "kind": "advice",
+      "claim": "Do not attach PHI-containing documents through personal email or external services."
+    },
+    {
+      "id": "tco-13",
+      "claim": "Press Enter (or click Send) to post.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (e.key === \"Enter\" && !e.shiftKey) {",
+          "paths": [
+            "frontend/src/components/teamChat/ChatWindow.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-14",
+      "claim": "Starting a new conversation: click the + icon at the top of the Conversations tab, search for or select one or more teammates, type your first message and press Enter. The thread opens immediately and appears in both participants' Conversations lists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Plus",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "New chats start from New Conversation or New Group Chat at the top of Team Chat (TeamChat.tsx frontend/src/pages/TeamChat.tsx:853) with a title and Create Conversation, or by clicking a person on the Team tab; there is no + icon in the sidebar.",
+      "proposed_text": "Click New Conversation (one person) or New Group Chat (several people) at the top of Team Chat. You can also click a person on the Team tab. Enter a title and pick the people, then click Create Conversation.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CreateOneToOneConversationDialog",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CreateMultipleParticipantConversationDialog",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Conversation",
+          "paths": [
+            "frontend/src/components/CreateOneToOneConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Group Chat",
+          "paths": [
+            "frontend/src/components/CreateMultipleParticipantConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter conversation title...\"",
+          "paths": [
+            "frontend/src/components/CreateMultipleParticipantConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Conversation",
+          "paths": [
+            "frontend/src/components/CreateOneToOneConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Conversation",
+          "paths": [
+            "frontend/src/components/CreateMultipleParticipantConversationDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-15",
+      "claim": "The Chat tab inside a Referral Intake detail panel is scoped to that referral — messages there appear in the referral's audit history and are visible to anyone with access to that referral. Team Chat is a general-purpose messaging tool with no patient-record linkage.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "PatientTeamChat",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Team Chat includes patient-linked conversations: the chart has a Team Chat tab (PatientOverviewPage.tsx frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx:4799) and referral chats are Team Chat conversations.",
+      "proposed_text": "The Chat tab in a Referral Intake card is a conversation about that referral. It is a Team Chat conversation, so it also appears in Team Chat. A patient's chart has its own Team Chat tab for conversations about that patient. It reminds you that \"all messages are part of the patient record\".",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ name: \"chat\", label: \"Chat\", icon: MessageSquare },",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chat_type: \"referral\",",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await teamChatService.findOrCreateReferralConversation(",
+          "paths": [
+            "frontend/src/components/ReferralChatWidget.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await teamChatService.loadConversations(",
+          "paths": [
+            "frontend/src/pages/TeamChat.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"chat_type\", \"referral\")",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "absent",
+          "note": "loadConversations would need to exclude referral chats for them to stay out of Team Chat"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".neq(\"chat_type\"",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"team-chat\"",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PatientTeamChat",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Remember: all messages are part of the patient record",
+          "paths": [
+            "frontend/src/components/PatientTeamChat.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tco-16",
+      "kind": "advice",
+      "claim": "Warning: do not include patient names, dates of birth, or other protected health information in Team Chat messages. Use the Referral Intake Chat tab for patient-specific communication so it stays in the audit trail."
+    }
+  ]
+}

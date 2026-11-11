@@ -1,0 +1,1841 @@
+{
+  "title": "Vendor rep cheat sheet",
+  "source": "quick-reference/vendor-rep",
+  "url": "https://help.medipyxis.com/quick-reference/vendor-rep/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "qvr-01",
+      "claim": "Your daily loop: check the IVR queue, keep the product catalog current, respond to restock requests, track A/P status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Inventory Management\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Vendor users work in the separate Vendor Portal (VendorShell.tsx frontend/src/components/app-shell/VendorShell.tsx:45); Inventory Management, IVR Tracking, Reorder Requests and Accounts Payable are clinic pages.",
+      "proposed_text": "Vendor companies use the separate Vendor Portal, with its own menu (Catalog, Orders, Shipments, Requests, Verifications, Invoices and more). Clinic staff who work with vendors use Inventory Management in the clinic app.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Catalog\", path: \"/vendor/catalog\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Orders\", path: \"/vendor/orders\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Shipments\", path: \"/vendor/shipments\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Verifications\", path: \"/vendor/verifications\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Invoices\", path: \"/vendor/invoices\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "element: <VendorShell />,",
+          "paths": [
+            "frontend/src/router.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Inventory Management\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Inventory Management\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "feature: \"Inventory\" as Feature,",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Inventory\">",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Inventory\",",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLOWED_ROLES = [\"admin\", \"finance_ap\", \"superadmin\"];",
+          "paths": [
+            "backend/supabase/functions/ap-match-invoice-line/index.ts",
+            "backend/supabase/functions/ap-record-payment/index.ts",
+            "backend/supabase/functions/ap-open-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "qvr-02",
+      "claim": "Start of day: check open IVR requests — Inventory Management → IVR Tracking.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qvr-03",
+      "claim": "Review restock requests from facilities: Inventory Management → Main Inventory → filter by your brand.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Filter by brand",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Main Inventory opens Reorder Requests (InventoryManagement.tsx frontend/src/pages/InventoryManagement.tsx:249), which has category and status filters but no brand filter.",
+      "proposed_text": "Review restock requests from clinicians: Inventory Management → Main Inventory (opens Reorder Requests).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/reorder-requests\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ReorderRequestsPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Provider-initiated requests for restocking below-PAR or expiring items",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(['Amniotic', 'Biologics', 'Conservative'] as Category[]).map(category => (",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Request",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^              <SelectItem value=\"(All|Pending|Approved|Denied|Completed|Cancelled)\">",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Approve Selected",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deny Selected",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Enter rejection reason for selected requests (required):",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-04",
+      "claim": "Verify no A/P invoices are past due: Inventory Management → Accounts Payable → Inbox / Disputes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Accounts Payable\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/accounts-payable\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory/accounts-payable\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"inbox\", label: \"Inbox\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"matching\", label: \"Matching\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"payments\", label: \"Payments\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"disputes\", label: \"Disputes\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"activity\", label: \"Activity\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"reports\", label: \"Reports\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-05",
+      "claim": "Confirm vendor order forms are scoped to the correct facility: Orders / DME → vendor form selection.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Check for vendor custom forms by form type (after vendor select).",
+          "paths": [
+            "frontend/src/components/intake/OrdersDMEIntake.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await VendorFormService.getVendorFormsByFormType(",
+          "paths": [
+            "frontend/src/components/intake/OrdersDMEIntake.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!facilityIds.includes(facilityId)) {",
+          "paths": [
+            "backend/supabase/functions/vendor-forms-list/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-06",
+      "claim": "Tip: ⌘K / Ctrl+K opens Quick Jump — type a SKU, UIN, or facility name to navigate without the sidebar.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sku",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Quick Jump searches pages, features and actions only (CommandBar.tsx frontend/src/components/app-shell/CommandBar.tsx:124); inventory is tracked by lot, with no UINs.",
+      "proposed_text": "⌘K / Ctrl+K opens Quick Jump: type a page name, such as Product Catalog, to go there without the sidebar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Product Catalog\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-07",
+      "claim": "IVR statuses: Submitted (facility initiated an IVR — confirm product and lot details), Pending, Approved, Declined, Agreed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Submitted'",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The statuses are Pending, Incomplete, Agreed, Approved and Declined (IVRStatusUpdateModal.tsx frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx:63); there is no Submitted status. IVRs are created from the Wound Cockpit.",
+      "proposed_text": "IVRs are created from the wound's card in the Wound Cockpit and tracked in IVR Tracking. An IVR is Pending until someone records an outcome with Update Status; the statuses are Pending, Incomplete, Agreed, Approved and Declined.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "data-testid=\"ivr-submit-button\"",
+          "paths": [
+            "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!ivrButtonState.show) return null;",
+          "paths": [
+            "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const READY_LABEL = 'Ready for next step';",
+          "paths": [
+            "frontend/src/utils/compressNextAction.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "needs_documentation: () => 'Review LCD Gaps',",
+          "paths": [
+            "frontend/src/utils/compressNextAction.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Proceed with IVR Request",
+          "paths": [
+            "frontend/src/components/wound-cockpit/IVRReadinessModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<IVRInventoryRequestModal",
+          "paths": [
+            "frontend/src/pages/WoundCockpitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^  '(pending|incomplete|agreed|approved|declined)',$",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending: 'Pending',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "incomplete: 'Incomplete',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'IVR_STATUS_TRANSITION_INVALID: transition from \"%\" to \"%\" is not allowed.',",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(message);",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-08",
+      "claim": "Pending: awaiting payer or facility confirmation (wait; follow up if > 24 h). Declined: payer or facility rejected the request (contact the facility; log reason).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  '(pending|incomplete|agreed|approved|declined)',$",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending: 'Pending',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Outcome Notes",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-09",
+      "claim": "Approved: IVR cleared — prepare shipment or confirm allocation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "-- On approval, auto-create the inventory order AND a Draft receiving.",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "IF v_next_status = 'approved' THEN",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{request.fulfillment.totalStocked} of {request.fulfillment.totalOrdered} stocked",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fulfillment",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-10",
+      "claim": "Agreed: both sides confirmed; order is live — proceed to fulfillment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "IF v_next_status = 'agreed' THEN",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Only Approved creates the inventory order and draft receiving (migration 20261021120100 backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql:1457); Agreed creates no order.",
+      "proposed_text": "Setting Approved automatically creates an inventory order and a draft receiving for the requested products.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "-- On approval, auto-create the inventory order AND a Draft receiving.",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "IF v_next_status = 'approved' THEN",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{request.fulfillment.totalStocked} of {request.fulfillment.totalOrdered} stocked",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fulfillment",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-11",
+      "claim": "Updating the product catalog: go to Inventory Management → Product Catalog. To add a product: click + Add Product → select Category → complete the category-specific form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory-management/product-catalog\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{editMode ? \"Edit Product\" : \"Add Product\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select Product Category",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Choose the category for your new product",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Product{\" \"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "← Change Category",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-12",
+      "claim": "Biologics require HCPCS + manufacturer lot format.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "manufacturer lot format",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "HCPCS is optional on the product (format-checked only when entered, AddEditProduct.tsx frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx:83); there is no manufacturer lot-format field. Amniotic and biologic lots need an HCPCS/Q code when received.",
+      "proposed_text": "HCPCS is optional on the product; amniotic and biologic lots need an HCPCS/Q code when received, and a lot keeps the code it was received with.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"HCPCS code must be 1 letter followed by 4 digits (e.g., A6402)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`HCPCS/Q Code is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "hcpcs_code: plan.hcpcsSnapshot,",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches/manual-receive.ts"
+          ],
+          "expect": "present",
+          "note": "receiving snapshots HCPCS onto the unit"
+        }
+      ]
+    },
+    {
+      "id": "qvr-13",
+      "claim": "To edit an existing product: find the row by SKU or NAME → click Actions → Edit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Search by SKU",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Search covers product name, brand and HCPCS (not SKU), and the row action is Edit Product (Products.tsx).",
+      "proposed_text": "Find a product with Search products... (name, brand or HCPCS code), then use Edit Product in the Actions column.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search products...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`product_name.ilike.%${debouncedSearch}%,brand.ilike.%${debouncedSearch}%,hcpcs_code.ilike.%${debouncedSearch}%`",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Categories</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Status</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"inactive\">Inactive</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +(Product Name|Brand|SKU|Lot No\\. Suffix|Category|Product Type|HCPCS|Status|Actions)$",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": {
+            "min": 9
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit Product\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Delete Product\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-14",
+      "claim": "Confirm STATUS is set to Active before saving; inactive products do not appear in facility ordering flows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Inactive products can still be picked in Manual Receive (no is_active filter in ManualReceiveModal.tsx) and in IVR requests.",
+      "proposed_text": "Status is Active or Inactive. Inactive products stay in the catalog for history, and can still be picked in Manual Receive and in IVR requests.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{product.is_active !== false ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only is_active filter in the IVR form is on the wound list, not the product list"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, product_name, brand, sku, lot_number, hcpcs_code, category, vendor_id, unit_width, unit_height, unit_size_description\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-15",
+      "claim": "Warning: HCPCS codes on biological and amniotic products feed directly into claim coding.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product_catalog",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Pull Codes (pullCodesMapper.ts) does not read the product catalog; a received lot keeps a snapshot of its HCPCS code.",
+      "proposed_text": "HCPCS is optional on the product; amniotic and biologic lots need an HCPCS/Q code when received, and a lot keeps the code it was received with.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"HCPCS code must be 1 letter followed by 4 digits (e.g., A6402)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`HCPCS/Q Code is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "hcpcs_code: plan.hcpcsSnapshot,",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches/manual-receive.ts"
+          ],
+          "expect": "present",
+          "note": "receiving snapshots HCPCS onto the unit"
+        }
+      ]
+    },
+    {
+      "id": "qvr-16",
+      "kind": "advice",
+      "claim": "Verify HCPCS codes against the current Medicare HCPCS quarterly update before adding or changing them."
+    },
+    {
+      "id": "qvr-17",
+      "claim": "Restock step 1: identify the low-PAR item — Main Inventory → items flagged below PAR level appear highlighted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "belowPar|below_par|isBelowPar",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Main Inventory opens Reorder Requests; the PAR flag (Par Level Reached) is in the Product Catalog (Products.tsx frontend/src/pages/inventory-management/product-catalog/Products.tsx:631).",
+      "proposed_text": "Check PAR levels on conservative care products: Inventory Management → Product Catalog (red Par Level Reached icon).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Par Level - Only for Conservative, PRP and UM */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product.category === ProductCategoryEnum.Conservative &&",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".or(`expiration_date.gte.${today},expiration_date.is.null`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"id\", { count: \"exact\", head: true })",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present",
+          "note": "counts lot rows, not quantity"
+        }
+      ]
+    },
+    {
+      "id": "qvr-18",
+      "claim": "Restock step 2: confirm available lot and expiry — Active Inventory → columns: UIN · LOT # · EXP DATE · SIZE · HCPCS · SKU.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product.uin",
+          "paths": [
+            "frontend/src/components/inventory/amniotic/ActiveInventoryTable.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">SIZE<",
+          "paths": [
+            "frontend/src/components/inventory/amniotic/ActiveInventoryTable.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Stock is tracked by lot with no per-unit number; ActiveInventoryTable.tsx has no product UIN or Size column.",
+      "proposed_text": "Check lots on hand on the category tile's Active Inventory tab (listed by lot).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: TabTypes.ACTIVE_INVENTORY, label: 'Active Inventory', icon: Activity },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Lot #",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "qvr-19",
+      "claim": "Restock step 3: submit or confirm a receiving upload — Inventory Management → Amniotic / Advance Treatment or Biologics / Matrix → Receiving.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Amniotic / Advance Treatment\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Biologics / Matrix\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: TabTypes.RECEIVING, label: 'Receiving History', icon: PackageCheck },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Receive",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-20",
+      "claim": "Restock step 4: verify the upload moves to Active Inventory — refresh Main Inventory; status should leave \"Sent\" and enter Active.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.Active",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Receiving status goes Sent → Received/Matched/Pending Approval → Stocked (Enums.ts frontend/src/pages/inventory-management/commons/Enums.ts:795); there is no Active status, and Main Inventory opens Reorder Requests, not receivings.",
+      "proposed_text": "Check the receiving on the category tile's Receiving History tab: it moves from Sent to Stocked, and the lots then show on Active Inventory. A receiving in Pending Approval is waiting for approval.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.Sent, label: \"Sent\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.Stocked, label: \"Stocked\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.PendingApproval, label: \"Pending Approval\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: TabTypes.RECEIVING, label: 'Receiving History', icon: PackageCheck },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-21",
+      "claim": "Note: if a receiving upload stays stuck in Sent, the approval/transfer workflow may require a facility admin to confirm receipt. Ping the facility admin via Team Chat with the UIN and lot number. (MED-1629)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Receivings are lot-based; the receiving code has no UIN (no 'uin' in inventory-import-batches or ManualReceiveModal.tsx). A Pending Approval receiving status does exist.",
+      "proposed_text": "If a receiving stays in Pending Approval, ask the facility admin to approve it. Give the product and lot number.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.PendingApproval, label: \"Pending Approval\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-22",
+      "claim": "Accounts Payable is a tabbed workspace: Inbox, Matching, Payments, Disputes, plus Activity and Reports. Invoices move through states like matched, approved, partially paid, paid, and disputed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"inbox\", label: \"Inbox\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"matching\", label: \"Matching\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"payments\", label: \"Payments\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"disputes\", label: \"Disputes\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"activity\", label: \"Activity\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"reports\", label: \"Reports\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "matched: \"bg-green-100 text-green-700\",",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "approved: \"bg-teal-100 text-teal-700\",",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "partially_paid: \"bg-yellow-100 text-yellow-800\",",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid: \"bg-green-100 text-green-800\",",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disputed: \"bg-red-100 text-red-700\",",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/inventory/accounts-payable/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "qvr-23",
+      "kind": "advice",
+      "claim": "Target: no aging unpaid invoices. Watch the Disputes tab for anything a facility has flagged, and follow up with your account manager."
+    },
+    {
+      "id": "qvr-24",
+      "claim": "Custom vendor forms are visible only to the facility that created them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"facility_id\", facilityId);",
+          "paths": [
+            "backend/supabase/functions/vendor-forms-list/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "1. the clinic's OWN forms in `vendor_forms` (facility_id = the caller's facility)",
+          "paths": [
+            "backend/supabase/functions/vendor-forms-list/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-25",
+      "claim": "If a form is absent, confirm the facility context in the header pill matches the facility that owns the form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility pill",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The header control is a Switch Facility button (AppShell.tsx frontend/src/components/AppShell.tsx:1706), not a pill.",
+      "proposed_text": "Check that the facility selected with Switch Facility in the header is the one that owns the form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AppShell from \"./AppShell\";",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-26",
+      "kind": "advice",
+      "claim": "If the form was created in a different facility, request the facility admin to duplicate it for the current facility."
+    },
+    {
+      "id": "qvr-27",
+      "claim": "Shortcut: jump to a product by SKU — ⌘K + SKU.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sku",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Quick Jump searches pages only; CommandBar.tsx has no SKU search.",
+      "proposed_text": "⌘K / Ctrl+K opens Quick Jump: type a page name, such as Product Catalog, to go there without the sidebar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Product Catalog\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-28",
+      "claim": "Shortcut: find a facility — ⌘K + facility name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"facility\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Quick Jump searches pages only; facilities are switched with Switch Facility and its search box (AppShell.tsx frontend/src/components/AppShell.tsx:1756).",
+      "proposed_text": "Switch facility: header → Switch Facility → search or pick a facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AppShell from \"./AppShell\";",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-29",
+      "claim": "Shortcut: help for the current screen — ⌘/ / Ctrl+/.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"/\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "AppShell.tsx has no '/' key handler.",
+      "proposed_text": "(Remove: there is no ⌘/ shortcut.) ⌘K / Ctrl+K opens Quick Jump: type a page name, such as Product Catalog, to go there without the sidebar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Product Catalog\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-30",
+      "kind": "advice",
+      "claim": "Troubleshooting: IVR stays in Pending > 24 h — payer delay or missing lot detail; call payer; confirm lot/UIN with facility.",
+      "reason": "Guidance. Inventory is tracked by lot; there is no UIN to confirm."
+    },
+    {
+      "id": "qvr-31",
+      "claim": "Troubleshooting: product not visible in facility ordering — status set to Inactive; Product Catalog → find SKU → Edit → set Status: Active.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Inactive products remain pickable in Manual Receive and IVR requests, and catalog search does not cover SKU.",
+      "proposed_text": "Status is Active or Inactive. Inactive products stay in the catalog for history, and can still be picked in Manual Receive and in IVR requests.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{product.is_active !== false ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"is_active\", true)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only is_active filter in the IVR form is on the wound list, not the product list"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, product_name, brand, sku, lot_number, hcpcs_code, category, vendor_id, unit_width, unit_height, unit_size_description\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-32",
+      "claim": "Troubleshooting: receiving upload stuck in Sent — approval step not completed by facility; ping facility admin in Team Chat with UIN and lot number.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Receivings are lot-based with no UIN; the approval state is Pending Approval, not Sent.",
+      "proposed_text": "A receiving in Pending Approval is waiting for a facility admin. Message them with the product and lot number.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches",
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductBatchStatusEnum.PendingApproval, label: \"Pending Approval\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-33",
+      "claim": "Troubleshooting: custom form visible to wrong facility — form not scoped correctly (pre-April 2026 forms); ask facility admin to delete and recreate the form after the MED-1665 fix.",
+      "checks": [],
+      "finding": "No product evidence for mis-scoped pre-April 2026 forms or for a MED-1665 fix could be checked; vendor-forms-list returns only the caller facility's own forms plus the Medipyxis standard library (vendor-forms-list/index.ts backend/supabase/functions/vendor-forms-list/index.ts:88).",
+      "proposed_text": "(Remove this row: Medipyxis shows each facility only its own forms plus the Medipyxis standard order forms.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"facility_id\", facilityId);",
+          "paths": [
+            "backend/supabase/functions/vendor-forms-list/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".is(\"facility_id\", null);",
+          "paths": [
+            "backend/supabase/functions/vendor-forms-list/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-34",
+      "claim": "Troubleshooting: A/P invoice shows Disputed — amount or line-item mismatch; contact your facility account manager directly; document resolution in Activity notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activity_note",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Disputes are worked on the Disputes tab and resolved as credit issued, invoice voided or invoice upheld (AccountsPayablePage.tsx); there are no Activity notes.",
+      "proposed_text": "Troubleshooting: invoice shows disputed — someone opened a dispute; work it on the Disputes tab: resolve with credit issued, invoice voided, or invoice upheld. IVR Pending > 24 h — record the answer with Update Status.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Brief reason for dispute...\"",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ status: \"disputed\", updated_at: new Date().toISOString() })",
+          "paths": [
+            "backend/supabase/functions/ap-open-dispute/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{[\"credit_issued\", \"invoice_voided\", \"invoice_upheld\"].map((outcome) => (",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "newInvoiceStatus = \"cancelled\";",
+          "paths": [
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "newInvoiceStatus = \"matched\";",
+          "paths": [
+            "backend/supabase/functions/ap-resolve-dispute/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qvr-35",
+      "claim": "Related articles: Biller cheat sheet, Practice admin cheat sheet, April 2026 release notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Inventory Management\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": [
+        {
+          "href": "/quick-reference/biller/",
+          "resolves": true
+        },
+        {
+          "href": "/quick-reference/practice-admin/",
+          "resolves": true
+        },
+        {
+          "href": "/release-notes/2026-04/",
+          "resolves": true
+        }
+      ]
+    }
+  ]
+}

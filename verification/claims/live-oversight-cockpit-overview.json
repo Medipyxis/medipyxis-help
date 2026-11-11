@@ -1,0 +1,893 @@
+{
+  "title": "Oversight Cockpit overview",
+  "source": "modules/oversight-cockpit/overview",
+  "url": "https://help.medipyxis.com/modules/oversight-cockpit/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "oco-01",
+      "claim": "The Oversight Cockpit is Medipyxis's operational-intelligence surface for administrators, medical directors, and clinical managers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Who sees it is set per role in Organization Role Config; clinical_manager has it in the fallback baseline."
+    },
+    {
+      "id": "oco-02",
+      "claim": "It is a geographic heat map: it plots your operation on a map so you can see where patients and clinicians are, and where revenue is coming from.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Operations KPIs\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Oversight Cockpit sidebar item opens the Analytics & Tools Cockpit, a page of six tiles (Analytics.tsx frontend/src/pages/Analytics.tsx:124); Heat Map is one tile (frontend/src/pages/Analytics.tsx:23). Its money view plots dollars billed, not revenue received.",
+      "proposed_text": "The Oversight Cockpit item in the sidebar opens the Analytics & Tools Cockpit, a page of tiles for administrators and managers. Access is gated by the Oversight Cockpit feature permission. Heat Map tile: your patients, clinicians and billing on a map. Operations KPIs: patients per day, billing per provider, cancelled and rescheduled visits, referral sources, and CPT / procedure codes, for a date range you choose. Users who can see every facility can switch the page to All facilities. Referral Network Health: referral patterns, conversion rates and network performance, for This Week, This Month or This Quarter. Download data: referrals received in a date range, with every visit and wound assessment for those patients, as one Excel file. A Read Me tab defines every column and status.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/analytics\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Analytics & Tools Cockpit",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/oversight/heat-map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/oversight/heat-map\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Operations KPIs\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/otkpi-operations\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Patients per day\"",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/PatientsPerDaySection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Billing per provider\"",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/BillingPerProviderSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Cancelled & rescheduled visits\"",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/CancelledRescheduledSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Referral sources\"",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/ReferralSourcesSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"CPT / procedure codes\"",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/CptCodesSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OperationsFilterBar",
+          "paths": [
+            "frontend/src/pages/OtkpiOperations.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Custom'",
+          "paths": [
+            "frontend/src/pages/otkpi-operations/OperationsFilterBar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const canRollUp = useCanSeeAllFacilities();",
+          "paths": [
+            "frontend/src/pages/OtkpiOperations.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "All facilities",
+          "paths": [
+            "frontend/src/pages/OtkpiOperations.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Referral Network Health\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/otkpi-referral-health\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Monitor referral patterns, conversion rates, and network performance.",
+          "paths": [
+            "frontend/src/pages/OtkpiReferralHealth.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"week\">This Week</option>",
+          "paths": [
+            "frontend/src/pages/OtkpiReferralHealth.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"month\">This Month</option>",
+          "paths": [
+            "frontend/src/pages/OtkpiReferralHealth.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"quarter\">This Quarter</option>",
+          "paths": [
+            "frontend/src/pages/OtkpiReferralHealth.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fetchReferralSummary",
+          "paths": [
+            "frontend/src/pages/OtkpiReferralHealth.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Download data\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/oversight/download\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals received in a date range, with every visit and wound assessment for those patients, as one",
+          "paths": [
+            "frontend/src/pages/oversight/OversightDownloadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Excel file. A Read Me tab defines every column and status.",
+          "paths": [
+            "frontend/src/pages/oversight/OversightDownloadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{busy ? 'Preparing…' : 'Download Excel'}",
+          "paths": [
+            "frontend/src/pages/oversight/OversightDownloadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-03",
+      "claim": "Open it from the Analytics menu; the map lives at /oversight/heat-map.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Analytics\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Analytics menu; the sidebar item is Oversight Cockpit (navigation.ts frontend/src/constants/navigation.ts:117, path /analytics). The map route /oversight/heat-map is correct (frontend/src/user-routes.tsx:469).",
+      "proposed_text": "Click Oversight Cockpit in the sidebar, then the Heat Map tile (the map lives at /oversight/heat-map).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/analytics\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Analytics & Tools Cockpit",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/oversight/heat-map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/oversight/heat-map\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-04",
+      "claim": "Access is gated by the Oversight Cockpit feature permission.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-05",
+      "claim": "Image caption: a metric selector chooses what the map plots; a date-range selector scopes the data.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<MetricSelector value={metric} onChange={setMetric} />",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{metric === 'revenue_by_zip' && (",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-06",
+      "claim": "A selector at the top switches what the map shows. Two views are live today.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<MetricSelector value={metric} onChange={setMetric} />",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "implemented: true,",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "oco-07",
+      "claim": "Patients vs Employees: patient density as clustered markers, with clinician home locations as pins. A status strip shows the patient count, clinician (employee) count, and how many records were excluded because they couldn't be geocoded.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Patients vs Employees',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Red clusters<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Blue home pins<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Where clinicians live<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "active patients mapped",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "employees mapped",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "coordinates (excluded)",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ungeocodedPatientCount",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ungeocodedEmployeeCount",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-08",
+      "kind": "advice",
+      "claim": "Use Patients vs Employees to spot coverage gaps and balance territories."
+    },
+    {
+      "id": "oco-09",
+      "claim": "Revenue by Zip: insurance payments received, aggregated by ZIP code and drawn as color- and size-scaled bubbles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Revenue by Zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown: payment posting isn&apos;t connected yet.",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The view is labelled Billed by zip (frontend/src/services/heatMapDataService.ts:46) and plots dollars billed on claims sent to payers; the page states payments received are not shown (frontend/src/pages/oversight/HeatMapOversightPage.tsx:491).",
+      "proposed_text": "Billed by zip: dollars billed on claims sent to payers, grouped by the patient's ZIP code and drawn as bubbles.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: 'Dollars billed on claims sent to payers, by patient zip.',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "One bubble per zip. Size + color scale to dollars billed on claims sent to",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-10",
+      "claim": "Additional metric options appear in the selector marked as coming soon.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Drive-time dead zones',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Clinician workload',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "implemented: false,",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!m.implemented}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(m.implemented ? '' : ' (coming soon)')",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-11",
+      "claim": "The Revenue by Zip view includes a date-range selector — Last 30 days, 90 days, 180 days, this year, or year-to-date — so you can compare recent revenue geography against a longer window.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'This year'",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Revenue by Zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown: payment posting isn&apos;t connected yet.",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The selector is on the Billed by zip view and its options are Last 30d, Last 90d (default), Last 180d, Last year (365 days, not this calendar year) and YTD (frontend/src/pages/oversight/HeatMapOversightPage.tsx:285).",
+      "proposed_text": "The Billed by zip view has a date-range selector: Last 30d, Last 90d (the default), Last 180d, Last year, and YTD.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '30d', label: 'Last 30d' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '90d', label: 'Last 90d' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '180d', label: 'Last 180d' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '365d', label: 'Last year' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: 'ytd', label: 'YTD' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useState<RevenueDateRange>('90d');",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{metric === 'revenue_by_zip' && (",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-12",
+      "claim": "Note: the map depends on geocoded addresses. Patients or claims without a resolvable address are counted in the excluded/ungeocoded tally shown in the status strip rather than plotted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "coordinates (excluded)",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ungeocodedPatientCount",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ungeocodedEmployeeCount",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.ungeocodedClaimCount > 0 && (",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.ungeocodedClaimCount} claims missing zip/coords",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!patient || !patient.zip) {",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (patient.lat == null || patient.lng == null) {",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oco-13",
+      "claim": "Related: Financial Performance section reference.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/oversight-cockpit/financial-performance/",
+        "resolves": true
+      }
+    }
+  ]
+}

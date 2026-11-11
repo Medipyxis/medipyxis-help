@@ -1,0 +1,112 @@
+{
+  "title": "What's new, in video",
+  "source": "whats-new",
+  "url": "https://help.medipyxis.com/whats-new/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "wnx-00",
+      "kind": "advice",
+      "claim": "Short silent videos of what's new in Medipyxis, each with a description of what's on screen, why it matters, and a text description of the video.",
+      "reason": "Help-content description."
+    },
+    {
+      "id": "wnx-01",
+      "claim": "Medipyxis runs wound care rounding at skilled nursing and assisted living facilities from start to finish: set up the facility as a building, book every resident's visit for the day, see each resident, bill the visit with the facility on the claim, and send the facility its signed notes. (5 short videos)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Residential buildings (SNF/ALF) get Providers (who covers it, SNF Phase 2b), Residents and Clinical Notes (SNF Phase 7). */",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Book facility day</DialogTitle>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Service Facility */}",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Download notes (.zip)\"}",
+          "paths": [
+            "frontend/src/components/crm/PracticeClinicalNotesTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnx-02",
+      "claim": "Practice Onboarding imports your patient records from your old EHR system, one spreadsheet (CSV file) at a time: patients first, then insurance, medications, allergies, conditions, emergency contacts, wounds and past visits. You see every row before it is saved, rows with problems are left out with a reason, and a results file tells you exactly what was imported.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Skip all {errorCount} error rows",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Module list is verified in live-whats-new-practice-data-import.json."
+    },
+    {
+      "id": "wnx-03",
+      "claim": "Eleven short videos walk through Medipyxis: finding your way around, HR and staff onboarding, the referral CRM, adding a patient, assigning and booking them, documenting and signing the visit, orders and DME, Fleet Calendar, the Oversight Cockpit and Team Chat. Each video has on-screen captions and a full text transcript below it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Team Chat\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Per-module statements are verified in live-whats-new-medipyxis-training.json."
+    },
+    {
+      "id": "wnx-04",
+      "kind": "advice",
+      "claim": "For the full list of changes, see the release notes.",
+      "reason": "Cross-link; the release notes are not a full list (see live-release-notes-*.json)."
+    }
+  ]
+}

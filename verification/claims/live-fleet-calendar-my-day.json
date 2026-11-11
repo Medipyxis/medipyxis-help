@@ -1,0 +1,478 @@
+{
+  "title": "Manage your day as a clinician",
+  "source": "modules/fleet-calendar/my-day",
+  "url": "https://help.medipyxis.com/modules/fleet-calendar/my-day/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lmd-01",
+      "claim": "See the visits assigned to you for the day and launch each one from your calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-02",
+      "claim": "Before you start: you are logged in as yourself; appointments have been scheduled for you on the Fleet Calendar. If nothing appears for today, contact your scheduler.",
+      "kind": "advice"
+    },
+    {
+      "id": "lmd-03",
+      "claim": "Open My Calendar. Click My Calendar in the sidebar to see the appointments assigned to you.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"My Calendar\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "My Calendar is not a sidebar item; it is routed at /facility/:facilityId/my-calendar (frontend/src/user-routes.tsx:718) and opened from the Calendar button on the Patient Management page (frontend/src/pages/PmClinicianDashboard.tsx:163). It has no Start Visit button.",
+      "proposed_text": "Open the Fleet Calendar and use the All Providers filter to show only your own column. You can also open My Calendar with the Calendar button on the Patient Management page; it lists only your appointments, but it has no Start Visit button.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "? \"All Providers\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "`/facility/${currentFacility.id}/my-calendar`",
+          "paths": [
+            "frontend/src/pages/PmClinicianDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/my-calendar\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(apt) => apt.clinician_id === clinicianId",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "My Calendar",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Start Visit",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "openVisitWizard",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-04",
+      "claim": "Or open the Fleet Calendar and use the provider filter to focus your own lane.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "? \"All Providers\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "`fleet_calendar_provider_filter_${currentFacility.id}`",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-05",
+      "claim": "Each appointment card shows the patient, scheduled time, visit type, and status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "visit.visitType",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The Day view card shows the patient label, time range and status (frontend/src/pages/ops/FleetCalendarCanvas.tsx:608, frontend/src/pages/ops/FleetCalendarCanvas.tsx:636); visit type is not rendered on the card.",
+      "proposed_text": "Each appointment card shows the patient, the time, and the status.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{calendarLabelForVisit(visit.statusKey, visit.patient)}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{timeRangeStr}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{visibleStatusName}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-06",
+      "claim": "Any Notes / Purpose or Route Notes the scheduler added appear on the appointment's detail view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{appointment.purpose}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{appointment.route_notes}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "note": "True for route notes added with Edit Appointment; route notes typed in the create dialog are dropped (see live-fleet-calendar-create-appointment lca-14)."
+    },
+    {
+      "id": "lmd-07",
+      "claim": "Click the appointment to open its details.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-08",
+      "claim": "Click Start Visit. Fleet Calendar uses specialty routing: wound-care patients open in the Wound Cockpit, then the Visit Wizard; primary-care patients open in the Primary Care Cockpit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Primary Care Cockpit",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "/wound-cockpit",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "No Primary Care Cockpit exists and Start Visit does no specialty routing; it always opens the Visit Wizard (frontend/src/utils/openVisitWizard.ts:230).",
+      "proposed_text": "Click the appointment to open Appointment Details. Click Start Visit; the Visit Wizard opens for that patient and appointment, so you do not have to search for the patient.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Start Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "appointmentId: appointment.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patientId: appointment.patient.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/visit-wizard?${params.toString()}`);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-09",
+      "claim": "The patient and appointment data pre-populate, so you do not have to search.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "appointmentId: appointment.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patientId: appointment.patient.id,",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-10",
+      "claim": "Document and sign. Work the visit end to end and finish with Sign & Lock — see Sign Off.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Sign & Lock",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<MultiWoundReviewModal",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-11",
+      "claim": "As you work, each appointment's status updates on the calendar — Progress Note In Progress while you document, then Visit Completed once you Sign & Lock.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": " *   - notifyOpened      -> note_in_progress (wizard mounted + first edit)",
+          "paths": [
+            "frontend/src/hooks/useAppointmentStatusSync.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": " *   - notifySigned      -> visit_completed  (attestation signed)",
+          "paths": [
+            "frontend/src/hooks/useAppointmentStatusSync.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Progress Note In Progress\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-12",
+      "claim": "Resuming a draft? Click the same appointment and choose Continue Visit to return to where you left off.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return \"Continue Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "case \"draft_saved\":",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lmd-13",
+      "claim": "The wizard autosaves continuously.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const DEFAULT_DEBOUNCE_MS = 1_000;",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const DEFAULT_HEARTBEAT_MS = 30_000;",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useWizardAutoSave({",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "note": "Re-verified: the earlier pass (fmd-11) marked this false, but useWizardAutoSave saves about 1 second after each field change plus a 30-second heartbeat. Confirmed."
+    }
+  ]
+}

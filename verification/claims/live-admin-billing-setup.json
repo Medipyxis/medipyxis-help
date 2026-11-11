@@ -1,0 +1,1158 @@
+{
+  "title": "Set up billing and the Stedi clearinghouse",
+  "source": "admin/billing-setup",
+  "url": "https://help.medipyxis.com/admin/billing-setup/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "bs-f01",
+      "claim": "Use this guide to get your facility ready to submit claims through Medipyxis. You will configure the Code Library, Fee Schedule, and Superbill templates, enroll your providers with each payer through Stedi, and set how ERAs are posted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Code Library",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fee Schedule",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Code Library, Fee Schedule or ERA-posting setting in the product (no \"Code Library\"/\"Fee Schedule\" string in frontend/src). Prices live in the Charge Master (pages/ChargeMasterPage.tsx:61); the Superbill Config route redirects there; ERAs post automatically. Enrollment through Stedi is real (StediEnrollmentPage.tsx).",
+      "proposed_text": "There is no separate billing setup screen; prices are in the Charge Master and enrollment is on Payer Enrollment, both reached from Billing Operations. There is nothing to switch on: ERAs from Stedi arrive automatically and matched payment lines post to the claim's ledger automatically; unmatched lines wait on the ERA / EOB page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "element: <Navigate to=\"../charge-master\" relative=\"path\" replace />,",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/billing/charge-master`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing Setup",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Auto-Post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "bs-02",
+      "claim": "Medipyxis uses Stedi as the clearinghouse for electronic claims (837P), eligibility checks (270/271), claim status (276/277), and remittance advice (835).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/change/medicalnetwork/eligibility/v3",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.277",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "StediClaimStatusRequest",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": {
+            "min": 2
+          },
+          "note": "a 276 claim-status inquiry would use the request type outside its definition"
+        }
+      ],
+      "finding": "837P, 270/271 and 835 are wired, and 277CA acknowledgments are imported (stediAckImport.ts). No 276 claim-status inquiry is ever sent: StediClaimStatusRequest is only declared (functions/_shared/stediTypes.ts:336) and never used.",
+      "proposed_text": "Medipyxis uses Stedi as the clearinghouse for electronic claims (837P), eligibility checks (270/271), claim acknowledgments (277CA), and remittance advice (835).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/change/medicalnetwork/eligibility/v3",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.277",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-03",
+      "claim": "Stedi replaced ClaimMD in May 2026.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/submit-to-claimmd",
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "svc.claim.md",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "bs-04",
+      "claim": "You do not need to configure Stedi yourself — Medipyxis handles the connection.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "backend/supabase/functions/_shared"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "[Aa]pi [Kk]ey",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "bs-04b",
+      "claim": "Your job is to enroll your providers with each payer and keep your codes, fees, and templates up to date.",
+      "kind": "advice"
+    },
+    {
+      "id": "bs-f02",
+      "claim": "Before you start: You have the practice_admin, super_admin, or biller role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "practice_admin",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ],
+      "finding": "No such role names exist in the app (no \"practice_admin\" in frontend/src). The billing screens are gated by the Billing Operations feature: user-routes.tsx:956.",
+      "proposed_text": "You have access to Billing Operations.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Billing Operations\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f03",
+      "claim": "Your facility's NPI and Tax ID are entered in Admin → Facility Setup. These travel on every claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Setup",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Admin → Facility Setup screen (no \"Facility Setup\" string in frontend/src). NPI Code and Tax Number are on the facility form opened from Facilities → Edit (components/FacilityAddEditModal.tsx:746).",
+      "proposed_text": "The facility's NPI Code, Tax Number and Legal / Billing Name are entered on the facility (Facilities → Edit).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "NPI Code",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Legal / Billing Name",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-07",
+      "claim": "You know which payers your providers will bill. For each payer, you'll need to confirm enrollment for claims, ERA, and (optionally) eligibility.",
+      "kind": "advice"
+    },
+    {
+      "id": "bs-26",
+      "claim": "For Medicare patients, the patient's MBI is on file — claims for Medicare are blocked at submission if the MBI is missing or invalid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Medicare MBI required + format-checked for Medicare payers",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validationErrors.push('Subscriber MBI is required for Medicare payers');",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f05",
+      "claim": "The Code Library is your master list of CPT, HCPCS, and ICD-10 codes. Go to Billing → Superbill Config → Code Library. Click Add Code. Enter the code, description, default units, and whether a modifier is required (25, 59, KX, JW, JZ). Click Save. Codes you add here appear in the CPT picker inside Visit Wizard (section 13 — Billing & Documentation) and on the New Claim form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Code",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Code Library",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Superbill Config route redirects to the Charge Master (user-routes.tsx:1027). There is no Code Library and no Add Code button; prices are added with Add Charge on the Charge Master (components/billing/ChargeRateTable.tsx:233).",
+      "proposed_text": "Click Billing Operations, then Charge Master. On Insurance Charges (and Self-Pay Charges), click Add Charge, enter the CPT/HCPCS code and per-unit price, and click Create.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/billing/charge-master`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DollarSign className=\"h-4 w-4\" /> Insurance Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Users className=\"h-4 w-4\" /> Self-Pay Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Charge",
+          "paths": [
+            "frontend/src/components/billing/ChargeRateTable.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isNew ? \"Create\" : \"Save\"}",
+          "paths": [
+            "frontend/src/components/billing/ChargeEditDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f06",
+      "claim": "HCPCS codes for skin substitutes must match the product's HCPCS in the Inventory Product Catalog. Mismatches are flagged by the LCD Navigator.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "catalog HCPCS mismatch",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No LCD Navigator rule compares a claim HCPCS with the Product Catalog HCPCS (no such rule text in frontend/src). Not confirmed; drop the sentence.",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "bs-f07",
+      "claim": "The Fee Schedule sets your allowed and charge amounts per payer or payer class. Go to Billing → Superbill Config → Fee Schedule. Click Add Schedule. Pick the payer or payer class (Medicare, Medicaid, Commercial). For each code, enter the Allowed Amount and the Charge Amount. Click Save Schedule. The charge amount is what appears on the claim. The allowed amount drives A/R aging and your net collection rate reports.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Schedule",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Allowed Amount",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Fee Schedule, Add Schedule or Allowed Amount entry. The Charge Master has Insurance Charges and Self-Pay Charges tabs with one per-unit price per code (pages/ChargeMasterPage.tsx:61).",
+      "proposed_text": "On Insurance Charges (and Self-Pay Charges), click Add Charge, enter the CPT/HCPCS code and per-unit price, and click Create. A claim line with no price is priced at $0.00, and a claim with a $0.00 line cannot be sent to Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DollarSign className=\"h-4 w-4\" /> Insurance Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Users className=\"h-4 w-4\" /> Self-Pay Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Charge",
+          "paths": [
+            "frontend/src/components/billing/ChargeRateTable.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isNew ? \"Create\" : \"Save\"}",
+          "paths": [
+            "frontend/src/components/billing/ChargeEditDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"needs_pricing\",",
+          "paths": [
+            "frontend/src/lib/billing/charge_master.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": [
+            "backend/supabase/functions/_shared/validateClaimLineCharges.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validationErrors.push(...chargeCheck.issues.map(i => i.message));",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f08",
+      "claim": "Templates bundle codes that typically appear together for a given visit type. Go to Billing → Superbill Config → Templates. Click New Template and give it a name. Add codes from the Code Library. Set a default POS code and Diagnosis pointer for each line. Mark one template as the Facility Default — it pre-populates every new claim at this facility. Click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Default",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Templates are a tab on the Charge Master (pages/ChargeMasterPage.tsx:61) and feed the billing code picker. There is no Facility Default and no per-line POS or diagnosis pointer (no \"Facility Default\" in frontend/src).",
+      "proposed_text": "Use the Templates tab to group codes into named superbill templates for the billing code picker.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<LayoutTemplate className=\"h-4 w-4\" /> Templates",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ChargeMasterPage — 3 tabs: Insurance Charges, Self-Pay Charges, Templates",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f09",
+      "claim": "In the Facility Default template, set the Default Rendering Provider dropdown to the NPI for this facility. This NPI lands on box 24J of the CMS-1500 for every claim, and can be overridden on an individual claim if needed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Default Rendering Provider",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No Default Rendering Provider setting exists anywhere in frontend/src.",
+      "proposed_text": "(remove the section)"
+    },
+    {
+      "id": "bs-12",
+      "claim": "Before Stedi can submit a claim for a payer, each rendering provider must be enrolled with that payer for the transactions you want to use. Do this once per payer, per provider.",
+      "kind": "advice"
+    },
+    {
+      "id": "bs-f10",
+      "claim": "Go to Billing → Enrollment. Confirm the Provider card (pre-filled from your facility settings). Pick the transactions: Professional Claims (837P) required for every payer; ERA / Remittance (835) required to use ERA auto-post; Eligibility (270/271) optional but recommended. Select the payers (several at once). Click Submit; each payer shows a result row with a green check or a red X. Come back later to refresh; most payers update from Submitted to Active automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA auto-post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The page is reached from the Payer Enrollment card on Billing Operations; the button reads \"Enroll with N Payers\" (pages/StediEnrollmentPage.tsx:659); ERA is off by default and there is no ERA auto-post (components/billing/stedi/EnrollmentTypesCard.tsx:18); status updates come from Refresh from Stedi.",
+      "proposed_text": "Click Billing Operations, then the Payer Enrollment card. Provider Information holds Organization / Provider Name, NPI, Tax ID, PTAN (optional) and address, filled in from the facility. Enrollment Types: Professional Claims (837P) and Eligibility (270/271) on by default; ERA / Remittance (835) off by default because enrolling moves the payer's ERAs away from your current clearinghouse. Choose the Payers (several at once) and click Enroll with N Payers. The Current Enrollments panel shows each payer and transaction with its status; Refresh from Stedi updates it. Rejections and tasks also appear in the Stedi Actions inbox.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${resolvedFacilityId}/billing/enrollment`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Provider Information</CardTitle>",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization / Provider Name",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PayerPtanFields",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardDescription>Auto-populated from facility billing settings</CardDescription>",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerName: creds.provider_name || row?.name || \"\",",
+          "paths": [
+            "frontend/src/components/billing/stedi/useFacilityEnrollmentDefaults.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"claims\", label: \"Professional Claims (837P)\" },",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"eligibility\", label: \"Eligibility (270/271)\" },",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"era\", label: \"ERA / Remittance (835)\" },",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const DEFAULT_ENROLLMENT_TYPES: string[] = [\"claims\", \"eligibility\"];",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA is off by default: turning it on moves remittances away from your current clearinghouse.",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Payers</CardTitle>",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [selectedPayerIds, setSelectedPayerIds] = useState<string[]>([]);",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Enroll with {selectedPayerIds.length} Payer{selectedPayerIds.length !== 1 ? \"s\" : \"\"}",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Current Enrollments</CardTitle>",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{loadingEnrollments ? \"Syncing…\" : \"Refresh from Stedi\"}",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Stedi Actions",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'enrollment.rejected',",
+          "paths": [
+            "backend/supabase/functions/stedi-action-count/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-r11c",
+      "claim": "How long enrollment takes: Medicare 5–10 business days; Medicaid (most states) 1–3 weeks; Commercial same day to 4 weeks, varies by payer.",
+      "kind": "external",
+      "note": "Payer processing time, not a product fact. It conflicts with the PTAN page, which gives Medicare 4–8 weeks; reconcile the two pages."
+    },
+    {
+      "id": "bs-19",
+      "claim": "Do not submit a real production claim to a payer until that payer's enrollment row shows Active.",
+      "kind": "advice"
+    },
+    {
+      "id": "bs-18",
+      "claim": "The system does not currently block submissions on enrollment status — confirming Active is your responsibility.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "enrollment",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "bs-f12",
+      "claim": "When ERA auto-post is on, Medipyxis automatically applies remittance advice (835) from Stedi to matching claims without manual review. Go to Billing → Settings → Clearinghouse, find the ERA Auto-Post toggle, turn it on or leave it off, click Save. Auto-post only applies when the ERA amount exactly matches the claim's expected payment; partial payments, payer adjustments, and denials always route to the Payments (ERA) tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA Auto-Post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no ERA Auto-Post toggle or Clearinghouse settings page (no \"Auto-Post\" in frontend/src). Matched ERA lines post automatically (functions/_shared/stediEraImport.ts:486), matched by the claim's patient control number, not by amount; unmatched lines wait on the ERA / EOB page.",
+      "proposed_text": "There is nothing to switch on: ERAs from Stedi arrive automatically and matched payment lines post to the claim's ledger automatically; unmatched lines wait on the ERA / EOB page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Auto-Post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "bs-f13",
+      "claim": "Claim statuses: Pending — created from a completed visit, not yet approved; Needs Info — failed validation, fix in the Work Queue; Approved — will be submitted on the next export cycle; Exported — sent to Stedi; Submitted — Stedi confirms delivery to the payer; Paid — the payer adjudicated and an ERA has posted; Denied — manage in Denial Management.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export cycle",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Exported means exported as a PDF or JSON file, not sent (pages/BillingDashboard.tsx:1256); there is no export cycle; a claim goes to Stedi when a biller clicks Submit Claim; Paid and Denied are set by a person.",
+      "proposed_text": "Exported means the claim was exported as a PDF or JSON file; it has not been sent anywhere. A claim goes to Stedi when a biller clicks Submit Claim on the claim form. If the payer's acknowledgment (277CA) rejects the claim, Medipyxis sets it to Rejected automatically. Paid and Denied are set by someone on the billing team.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.rpc('apply_stedi_277_ack', {",
+          "paths": [
+            "backend/supabase/functions/_shared/stediAckImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rejected: \"Rejected\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"paid\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "(SET|set) +status *= *'(paid|denied)'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "bs-f14",
+      "claim": "Status updates flow in automatically — you do not need to refresh or poll.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "postgres_changes",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Payments (ERA) list has no realtime subscription (no postgres_changes in useERAs.ts); the Work Queue refreshes on a timer or on Refresh. Drop the sentence.",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "bs-res",
+      "claim": "Result: your Code Library, Fee Schedule, and default template are configured; ERA auto-post is set to your preference; claims will move through the statuses above automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Code Library",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA Auto-Post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Restates bs-r01/bs-r12: no Code Library, Fee Schedule, default template or ERA auto-post setting exists.",
+      "proposed_text": "Prices are in the Charge Master and your providers are enrolled with each payer for the transactions you need. Matched ERA payments post automatically.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DollarSign className=\"h-4 w-4\" /> Insurance Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-ts1",
+      "claim": "Troubleshooting: Enrollment row stays at Submitted for days — the payer is still processing; if well past the typical window, contact Medipyxis support.",
+      "kind": "advice"
+    },
+    {
+      "id": "bs-25",
+      "claim": "Troubleshooting: Enrollment failed with a red X — verify the provider NPI and Tax ID under Admin → Facility Setup, fix typos and resubmit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Setup",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The NPI and Tax Number are on the facility form under Facilities → Edit; there is no Admin → Facility Setup.",
+      "proposed_text": "Troubleshooting: an enrollment error → check the NPI and Tax Number on the facility, fix typos, resubmit; a claim at Exported → open it and click Submit Claim; No price on file → add it in Charge Master.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "NPI Code",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Legal / Billing Name",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bs-f15",
+      "claim": "Troubleshooting: New claim stuck at Exported — payer not yet Active for 837P; Claims rejecting on MBI — update the MBI under Patients → Insurance; Codes not appearing in CPT picker — add via Superbill Config → Code Library; ERA posted to the wrong claim — turn auto-post off; Default rendering provider blank — re-open the template and set it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Code Library",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA Auto-Post",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Exported is a file export, not a send (pages/BillingDashboard.tsx:1256); Code Library, auto-post and a default rendering provider do not exist.",
+      "proposed_text": "Troubleshooting: an enrollment pending for days → Refresh from Stedi and check the Stedi Actions inbox for a task. Exported means the claim was exported as a PDF or JSON file; it has not been sent anywhere. A claim goes to Stedi when a biller clicks Submit Claim on the claim form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{loadingEnrollments ? \"Syncing…\" : \"Refresh from Stedi\"}",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'enrollment.task.assigned',",
+          "paths": [
+            "backend/supabase/functions/stedi-action-count/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

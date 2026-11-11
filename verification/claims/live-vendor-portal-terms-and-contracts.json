@@ -1,0 +1,1040 @@
+{
+  "title": "Terms and contracts",
+  "source": "vendor-portal/terms-and-contracts",
+  "url": "https://help.medipyxis.com/vendor-portal/terms-and-contracts/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "vpt-01",
+      "claim": "Terms are your commercial contract with each clinic — billing model, cadence, and pricing — and they drive every downstream invoice. Set them once per clinic (per SKU class when needed), and the auto-invoice engine takes over from there.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Billing model\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Invoice cadence\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Auto-invoice\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label={t.sku_class || 'Default'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "a nightly run inside the 02:00-02:59 UTC drafting window",
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Automatic drafting does not run in v1.1.345: the job is scheduled at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (invoice-draft-run/index.ts:328-351; migrations/20260727130100_invoice_draft_and_webhook_cron.sql:28).",
+      "proposed_text": "Terms record your billing model, invoice cadence, auto-invoice setting and pricing notes with each clinic. You can keep default terms plus terms for a SKU class. Automatic drafting is not producing drafts in the current release.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Billing model\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Invoice cadence\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Auto-invoice\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label={t.sku_class || 'Default'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'schedule', '10 6 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return hour >= 2 && hour < 3;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hour = now.getUTCHours();",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-02",
+      "claim": "You are signed in as vendor_admin. Only vendor_admin can create or change terms. vendor_user and vendor_sales see terms read-only.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/clinics/:id/terms\" element={<VendorAdminOnly><VendorTermsPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Auth: vendor_admin only (terms are vendor-controlled).",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<VendorAdminOnly><VendorTermsPage />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The terms page is admin-only; vendor_user and vendor_sales cannot open it at all (VendorRoutes.tsx <VendorAdminOnly><VendorTermsPage />).",
+      "proposed_text": "Only an Admin can open and change terms.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/clinics/:id/terms\" element={<VendorAdminOnly><VendorTermsPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Auth: vendor_admin only (terms are vendor-controlled).",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-03",
+      "claim": "Your company has an approved tether with the clinic. The terms upsert refuses to save if there is no approved relationship.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"No approved relationship with this clinic\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-04",
+      "claim": "Open Clinics (/vendor/clinics); click a row and choose Terms — the page opens at /vendor/clinics/{clinic_facility_id}/terms. Switch clinic in the header jumps back to the clinics list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Link to={`/vendor/clinics/${c.clinic_facility_id}/terms`}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate('/vendor/clinics')}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-05",
+      "claim": "Billing model values: consignment_use (bill only when applied on a patient), net30 (title transfers on ship; bill on ship with 30-day terms), prepaid, custom.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consignment_use: 'Consignment — bill on use',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "net30: 'Purchase — Net 30',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prepaid: 'Prepaid',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "custom: 'Custom',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The four values are checked; the title-transfer and bill-on-ship meanings are not enforced in code."
+    },
+    {
+      "id": "vpt-06",
+      "claim": "Consignment lines are strictly billed on documented use; a consignment lot with no use event will not draft an invoice and cannot be forced through this surface.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"product_use_events\")",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The drafter builds lines only from product use events."
+    },
+    {
+      "id": "vpt-06b",
+      "kind": "external",
+      "claim": "Medipyxis' AKS safe-harbor posture is flat annual vendor fees only — the platform never takes title, never touches consignment stock, and does not price your product for you.",
+      "reason": "Business/legal posture; not checkable in product code."
+    },
+    {
+      "id": "vpt-07",
+      "claim": "Cadence table: per_use every night, Net 45; weekly every Monday, 30 days; monthly 1st of each month, 45 days; net_30 every night (accumulating), 30 days; custom_day every night, 30 days.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "per_use: 'Per use',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "weekly: 'Weekly',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "monthly: 'Monthly',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "net_30: 'Net 30',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "custom_day: 'Custom day',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return hour >= 2 && hour < 3;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hour = now.getUTCHours();",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "a nightly run inside the 02:00-02:59 UTC drafting window",
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The cadence and due-date rules match the code, but Automatic drafting does not run in v1.1.345: the job is scheduled at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (invoice-draft-run/index.ts:328-351; migrations/20260727130100_invoice_draft_and_webhook_cron.sql:28).",
+      "proposed_text": "In the current release, automatic drafting is not producing drafts.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'schedule', '10 6 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return hour >= 2 && hour < 3;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hour = now.getUTCHours();",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-08",
+      "kind": "advice",
+      "claim": "Cadence is independent of billing model. consignment_use + weekly is a legitimate combination."
+    },
+    {
+      "id": "vpt-09",
+      "claim": "Auto-invoice is the on/off switch. When off, no draft appears until someone clicks Run cadence now on the invoices page or you compose an invoice by hand. Leave this on for the nightly job.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "auto_invoice: boolean;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "function shouldFireCadence(cadence: string, autoInvoice: boolean): boolean {",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={runCadence",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Run cadence now has no action, and the nightly job does not draft. Automatic drafting does not run in v1.1.345: the job is scheduled at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (invoice-draft-run/index.ts:328-351; migrations/20260727130100_invoice_draft_and_webhook_cron.sql:28).",
+      "proposed_text": "Auto-invoice on includes the clinic in automatic drafting (not producing drafts in the current release). You can always send an invoice from New invoice.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "auto_invoice: boolean;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "function shouldFireCadence(cadence: string, autoInvoice: boolean): boolean {",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New invoice",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-10",
+      "claim": "Pricing tier metadata: tier_name, discount_pct, payment_terms, title_transfer, expired_stock_policy, return_window.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Pricing tier name\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Discount %\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Payment terms\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Title transfer\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Expired stock policy\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Return window\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-11",
+      "claim": "None of these fields drive pricing math on their own — the auto-invoice engine bills at the price on the product record.",
+      "checks": [
+        {
+          "type": "grep",
+          "note": "the drafter would read a product price",
+          "pattern": "list_price|unit_price",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The drafter prices each line from the terms pricing_tier map keyed by HCPCS (resolveUnitCost: pricingTier[hcpcs] ?? pricingTier['default'] ?? 0, invoice-draft-run/index.ts:381-387), not from the product record; with no tier entry the line is $0.",
+      "proposed_text": "(Remove. Pricing for automatic drafts is not described until drafting works.)"
+    },
+    {
+      "id": "vpt-12",
+      "claim": "Set a SKU class when you need different terms for a product family. The invoice engine picks the most specific matching row, falling back to the default.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "most specific",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The drafter keeps the latest version per (vendor, clinic, sku_class) but does not filter use events by SKU class; each terms row would take all of the vendor's unbilled events at that clinic (invoice-draft-run/index.ts:77-80, :140-158).",
+      "proposed_text": "SKU class is optional; leave it blank for default terms.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Leave blank for default terms\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-13",
+      "claim": "Editing a terms row does not overwrite the old one. Every save creates a new version per (vendor_id, clinic_facility_id, sku_class); older versions stay visible in History; invoices keep the terms they were generated under.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Append-version insert into vendor_clinic_terms.",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextVersion = (maxRow?.version ?? 0) + 1;",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Version history</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "terms_version: terms.version,",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-14",
+      "claim": "The clinic is notified in-app when terms change. This is enforced by the platform, not by you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fireAndForgetNotification",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "vendor-terms-upsert sends no notification; the page banner says the clinic is notified (VendorTermsPage.tsx:199), which is false.",
+      "proposed_text": "Tell the clinic yourself when terms change.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "The clinic is notified in-app when terms change.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Notification",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpt-15",
+      "claim": "The page's amber banner (\"Append-version model — changes create a new version …\") is a reminder of this contract.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<strong>Append-version model:</strong> changes create a new version",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-16",
+      "claim": "Create the first terms record: click New terms; optionally enter a SKU class; fill in fields; click Save new version. The row appears with version: 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowNewForm(true)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No button opens the new-terms form (setShowNewForm(true) is never called), and Save new version stays disabled until you edit an existing card (VendorTermsPage.tsx). A vendor cannot create the first terms record from the page.",
+      "proposed_text": "If a clinic has no terms yet, contact Medipyxis support.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowNewForm(true)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isUpserting || (editingClass === null && !showNewForm)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-17",
+      "claim": "The auto-invoice engine will start drafting against it on the next cadence run.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "a nightly run inside the 02:00-02:59 UTC drafting window",
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Automatic drafting does not run in v1.1.345: the job is scheduled at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (invoice-draft-run/index.ts:328-351; migrations/20260727130100_invoice_draft_and_webhook_cron.sql:28).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpt-18",
+      "claim": "Update terms: click an existing row to Edit; change any field; the version indicator shows v{current + 1}; click Save new version; the old version drops into History.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<button onClick={onEdit} className=\"text-xs text-blue-600 hover:underline\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save new version",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Append-version insert into vendor_clinic_terms.",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextVersion = (maxRow?.version ?? 0) + 1;",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Version history</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "terms_version: terms.version,",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-19",
+      "claim": "The clinic AP contact is notified in-app.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fireAndForgetNotification",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No notification is sent on a terms save.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpt-20",
+      "kind": "advice",
+      "claim": "Practical rule: version freely. There is no \"effective date\" field — the append point is the effective date."
+    },
+    {
+      "id": "vpt-21",
+      "claim": "SKU-class patterns: default net30 + a graft_ctp row on consignment_use / per_use; the engine reads the most specific matching row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "most specific",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The drafter does not match use events to SKU classes (see vpt-12).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpt-22",
+      "claim": "Terms do not control product pricing — that lives on the catalog SKU / product record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "list_price|unit_price",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Automatic drafts take prices from the terms pricing_tier map, not the product record (see vpt-11).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpt-23",
+      "claim": "BAA state is a separate row on crm_vendors; terms cannot be saved without an approved tether, but the BAA itself is managed on the tether. Shipment behavior and claim context are independent of terms.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"No approved relationship with this clinic\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Only the tether requirement is checked."
+    },
+    {
+      "id": "vpt-24",
+      "claim": "Troubleshooting: save button greyed out — not vendor_admin, or no approved tether.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/clinics/:id/terms\" element={<VendorAdminOnly><VendorTermsPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Auth: vendor_admin only (terms are vendor-controlled).",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowNewForm(true)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isUpserting || (editingClass === null && !showNewForm)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Non-admins cannot open the page at all; Save is disabled until a card is being edited."
+    },
+    {
+      "id": "vpt-25",
+      "claim": "Troubleshooting: \"No approved relationship with this clinic\" on save — tether pending, suspended, or terminated.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"No approved relationship with this clinic\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-26",
+      "claim": "Troubleshooting: auto-drafts not appearing — auto_invoice is off on the latest version; set it on and save a new version.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "a nightly run inside the 02:00-02:59 UTC drafting window",
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Automatic drafting does not run in v1.1.345: the job is scheduled at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (invoice-draft-run/index.ts:328-351; migrations/20260727130100_invoice_draft_and_webhook_cron.sql:28).",
+      "proposed_text": "Automatic drafting is not producing drafts in the current release; use New invoice on the Invoices page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'schedule', '10 6 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return hour >= 2 && hour < 3;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hour = now.getUTCHours();",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New invoice",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-27",
+      "claim": "Troubleshooting: wrong product family billed under default terms — add a SKU-class row; the engine picks it up.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "most specific",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "SKU-class rows are not used to route use events.",
+      "proposed_text": "(Remove this row.)"
+    },
+    {
+      "id": "vpt-28",
+      "claim": "Troubleshooting: historic invoice priced differently — append-version; issue a credit line if the deal changed retroactively.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Append-version insert into vendor_clinic_terms.",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextVersion = (maxRow?.version ?? 0) + 1;",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Version history</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "terms_version: terms.version,",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Credit lines are not available on invoices (see live-vendor-portal-invoices-and-payment.json vpi-12)."
+    },
+    {
+      "id": "vpt-29",
+      "kind": "advice",
+      "claim": "Related: Auto-rendered from related: in frontmatter.",
+      "reason": "Page-template placeholder text leaked into the live page; remove it."
+    }
+  ]
+}

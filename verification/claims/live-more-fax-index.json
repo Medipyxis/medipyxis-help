@@ -1,0 +1,98 @@
+{
+  "title": "More & fax",
+  "source": "modules/more-fax",
+  "url": "https://help.medipyxis.com/modules/more-fax/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "immf-00",
+      "kind": "advice",
+      "claim": "3 articles in this module (3 cards; each link resolves to a page in this repo whose H1 matches the card).",
+      "note": "Help-site structure, not a product claim. Checked by script 2026-11-11: count matches=True, all links resolve=True, all H1s match=True. Breadcrumb links / and /modules/ resolve. Targets read at 5d93bb5 (live main)."
+    },
+    {
+      "id": "immf-01",
+      "claim": "Card: Compose and send an outbound fax (how-to · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Enter a 10-digit US fax number.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"pending\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/more-fax/send-fax/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "immf-02",
+      "claim": "Card: File a received fax to a patient chart (how-to · 3 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return jsonResponse({ error: \"Patient not found\" }, 404, cors);",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by name, DOB, or MRN...\"",
+          "paths": [
+            "frontend/src/components/PatientSearch.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/more-fax/file-to-chart/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "immf-03",
+      "claim": "Card: More (Fax) overview (how-to · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage outgoing and incoming fax activity.",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/more-fax/overview/",
+        "resolves": true
+      }
+    }
+  ]
+}

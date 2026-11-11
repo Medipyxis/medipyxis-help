@@ -1,0 +1,845 @@
+{
+  "title": "Note honesty guardrails",
+  "source": "modules/visit-wizard-ehr/note-honesty-guardrails",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/note-honesty-guardrails/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "nhl-01",
+      "claim": "Your progress note prints only what you documented in the Visit Wizard. Where you did not enter a value, the note says so. It does not fill in clinical details for you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Pull Codes suggests type-specific ICD-10 codes when the type or stage was left blank: Type 2 diabetes for a foot or leg wound (comorbidityMappingService.ts frontend/src/services/comorbidityMappingService.ts:52), moderate protein-calorie malnutrition (frontend/src/services/comorbidityMappingService.ts:158) and end-stage renal disease (frontend/src/services/comorbidityMappingService.ts:187). A kept code prints in the note's diagnosis table (frontend/src/services/perfectNote/perfectNoteRenderer.ts:616).",
+      "proposed_text": "This page covers two places where the progress note used to fill in clinical details you had not entered: the post-debridement wound area, and the type or stage of a condition. In both places the note now prints only what you documented. One gap remains, in the note's diagnosis codes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure = preMeasure",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only remaining hit is the comment that records the removed line"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  pre-debridement\", deb.measure_pre_cm2 != null ? `${deb.measure_pre_cm2} cm²` : \"Not measured\"]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  post-debridement\", deb.measure_post_cm2 != null",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dt ? `Diabetes mellitus (${dt})` : \"Diabetes mellitus\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return kt ? `Chronic kidney disease (${kt})` : \"Chronic kidney disease\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return clean ? `${clean} malnutrition` : \"Malnutrition\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.622\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"E44.0\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { COMORBIDITY_ICD10_RULES } from \"@/services/comorbidityMappingService\";",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "note": "the rules feed Pull codes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "function collectICD10Codes",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "billingStaging",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sectionBanner(ctx, \"Diagnosis with ICD-10 Codes\", 22);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "renderDiagnosisTable(ctx, ctx.note.diagnoses.diagnosis_rows);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-02",
+      "claim": "For the rest of the printed note, see How your progress note is written.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "renderLegalDefenseNote",
+          "paths": [
+            "frontend/src/services/perfectNote/buildVisitNotePdf.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "from ['\"].*perfectNote/buildVisitNotePdf['\"]|buildVisitNotePdf\\(",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/progress-note/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "nhl-03",
+      "kind": "advice",
+      "claim": "Before you start: you document wound-care visits in the Visit Wizard. Compliance or billing staff can use this page to see what a signed note will and will not contain."
+    },
+    {
+      "id": "nhl-04",
+      "claim": "If you recorded a pre-debridement wound area, that number prints. If you did not record a post-debridement area, the note prints Not measured for the post-debridement row. The note does not copy the pre-debridement area into the post-debridement row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure = preMeasure",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only remaining hit is the comment that records the removed line"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  pre-debridement\", deb.measure_pre_cm2 != null ? `${deb.measure_pre_cm2} cm²` : \"Not measured\"]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  post-debridement\", deb.measure_post_cm2 != null",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-05",
+      "claim": "There is no change to how you document the visit. If you did not take a post-debridement measurement, the note will not claim that you did.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure = preMeasure",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only remaining hit is the comment that records the removed line"
+        },
+        {
+          "type": "grep",
+          "pattern": "auto: baseline|auto: this visit",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "nhl-06",
+      "claim": "If you recorded a condition but did not specify its type or stage, the note names the condition only — for example, “diabetes mellitus”, “Chronic kidney disease”, or “Malnutrition”. It does not add a type or stage that you did not enter.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dt ? `Diabetes mellitus (${dt})` : \"Diabetes mellitus\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return kt ? `Chronic kidney disease (${kt})` : \"Chronic kidney disease\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return clean ? `${clean} malnutrition` : \"Malnutrition\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "True for the comorbidity list. Diagnosis codes kept from Pull Codes are covered by nhl-01 and nhl-10."
+    },
+    {
+      "id": "nhl-07",
+      "kind": "advice",
+      "claim": "If the type or stage matters for coding, document it."
+    },
+    {
+      "id": "nhl-08",
+      "claim": "When you leave it blank, the diagnosis-code validation drawer flags the matching ICD-10 gap so the coder is not left guessing.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "diabetes_type|kidney_disease_type|malnutrition_type",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts",
+            "frontend/src/components/claims"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "No check reads the documented diabetes type, kidney disease stage or malnutrition type: claimValidationService.ts, components/claims, documentationAssist and gapGates.ts never reference diabetes_type / kidney_disease_type / malnutrition_type; the validator only tests whether a code is billable.",
+      "proposed_text": "Medipyxis does not currently flag a missing diabetes type, kidney disease stage, or malnutrition type. Check the diagnosis codes before you sign: codes suggested by Pull Codes can still be type-specific when you left the type blank.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "diabetes_type|kidney_disease_type|malnutrition_type",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts",
+            "frontend/src/components/claims",
+            "frontend/src/services/documentationAssist",
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.622\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"E44.0\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { COMORBIDITY_ICD10_RULES } from \"@/services/comorbidityMappingService\";",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "note": "the rules feed Pull codes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-09",
+      "claim": "One rule covers these cases: the printed note states a clinical fact only when you entered it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Pull Codes suggests type-specific ICD-10 codes when the type or stage was left blank: Type 2 diabetes for a foot or leg wound (comorbidityMappingService.ts frontend/src/services/comorbidityMappingService.ts:52), moderate protein-calorie malnutrition (frontend/src/services/comorbidityMappingService.ts:158) and end-stage renal disease (frontend/src/services/comorbidityMappingService.ts:187). A kept code prints in the note's diagnosis table (frontend/src/services/perfectNote/perfectNoteRenderer.ts:616).",
+      "proposed_text": "In the two places this page covers, the printed note states a clinical fact only when you entered it. Diagnosis codes you keep from Pull Codes are the exception.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure = preMeasure",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only remaining hit is the comment that records the removed line"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dt ? `Diabetes mellitus (${dt})` : \"Diabetes mellitus\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.622\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"E44.0\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { COMORBIDITY_ICD10_RULES } from \"@/services/comorbidityMappingService\";",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "note": "the rules feed Pull codes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "function collectICD10Codes",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "billingStaging",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sectionBanner(ctx, \"Diagnosis with ICD-10 Codes\", 22);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "renderDiagnosisTable(ctx, ctx.note.diagnoses.diagnosis_rows);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-10",
+      "claim": "Measurements — pre-treatment, post-treatment, and derived numbers print only when you captured them. Otherwise the note prints “Not measured.”",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  pre-debridement\", deb.measure_pre_cm2 != null ? `${deb.measure_pre_cm2} cm²` : \"Not measured\"]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  post-debridement\", deb.measure_post_cm2 != null",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const NOT_MEASURED_AT_THIS_VISIT = \"Not measured at this visit\";",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Not measured at this visit — no baseline yet\")",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-11",
+      "claim": "Condition types and stages — printed only when you documented them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Pull Codes suggests type-specific ICD-10 codes when the type or stage was left blank: Type 2 diabetes for a foot or leg wound (comorbidityMappingService.ts frontend/src/services/comorbidityMappingService.ts:52), moderate protein-calorie malnutrition (frontend/src/services/comorbidityMappingService.ts:158) and end-stage renal disease (frontend/src/services/comorbidityMappingService.ts:187). A kept code prints in the note's diagnosis table (frontend/src/services/perfectNote/perfectNoteRenderer.ts:616).",
+      "proposed_text": "Condition types and stages in the comorbidity list — printed only when you documented them. Diagnosis codes you keep from Pull Codes can still state a type or stage; remove any that you did not document.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dt ? `Diabetes mellitus (${dt})` : \"Diabetes mellitus\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return kt ? `Chronic kidney disease (${kt})` : \"Chronic kidney disease\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return clean ? `${clean} malnutrition` : \"Malnutrition\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.622\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"E44.0\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { COMORBIDITY_ICD10_RULES } from \"@/services/comorbidityMappingService\";",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "note": "the rules feed Pull codes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "function collectICD10Codes",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "billingStaging",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sectionBanner(ctx, \"Diagnosis with ICD-10 Codes\", 22);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "renderDiagnosisTable(ctx, ctx.note.diagnoses.diagnosis_rows);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-12",
+      "claim": "If you later need to correct a signed note, use an addendum and record the nature of the amendment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (typeof body.nature_of_amendment !== \"string\")",
+          "paths": [
+            "backend/supabase/functions/create-progress-note-addendum/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhl-13",
+      "kind": "advice",
+      "claim": "These rules do not replace clinician review: read the note before you sign (anything in the signed note is yours); if a measurement or a type/stage is clinically true, enter it in the Visit Wizard so it can print."
+    },
+    {
+      "id": "nhl-14",
+      "claim": "Related articles: Visit Wizard overview, Sign off (step 17), Wound Assessment (section 7), ICD-10 diagnosis code validation, APRN credential, signature timestamp.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "renderLegalDefenseNote",
+          "paths": [
+            "frontend/src/services/perfectNote/buildVisitNotePdf.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "from ['\"].*perfectNote/buildVisitNotePdf['\"]|buildVisitNotePdf\\(",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "link": [
+        {
+          "href": "/modules/visit-wizard-ehr/overview/",
+          "resolves": true
+        },
+        {
+          "href": "/modules/visit-wizard-ehr/sign-off/",
+          "resolves": true
+        },
+        {
+          "href": "/modules/visit-wizard-ehr/wound-assessment/",
+          "resolves": true
+        },
+        {
+          "href": "/modules/billing/diagnosis-code-validation/",
+          "resolves": true
+        },
+        {
+          "href": "/modules/visit-wizard-ehr/aprn-credential/",
+          "resolves": true
+        },
+        {
+          "href": "/modules/visit-wizard-ehr/signature-timestamp/",
+          "resolves": true
+        }
+      ]
+    }
+  ]
+}

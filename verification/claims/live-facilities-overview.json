@@ -1,0 +1,606 @@
+{
+  "title": "Facilities reference",
+  "source": "modules/facilities/overview",
+  "url": "https://help.medipyxis.com/modules/facilities/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lfac-01",
+      "claim": "The Facilities module lists every facility registered under your organization and provides controls to activate, deactivate, and manage each location. Each row represents one facility location.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Facility Management",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Manage healthcare facilities and locations across your organization",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleToggleStatus(facility)}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-02",
+      "claim": "FACILITY column: facility name and address.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{facility.name}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "NPI: {facility.npi_code}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-03",
+      "claim": "Clicking the facility name opens the facility detail panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleViewFacility(facility)}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"View Details\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<button onClick={() => handleViewFacility(facility)}>{facility.name}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "the name itself would be a button"
+        }
+      ],
+      "finding": "The name is plain text (frontend/src/pages/FacilityDashboard.tsx:919); details open from the View Details action in the row (frontend/src/pages/FacilityDashboard.tsx:1023).",
+      "proposed_text": "Click View Details in the row to see a facility's details.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"View Details\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleViewFacility(facility)}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-04",
+      "claim": "CONTACT column: primary contact name and phone number for the facility. STATS column: active providers, total patients, and visits in the current month. ACTIONS: context menu (⋯) with Edit, Deactivate / Reactivate, View Users.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "View Users",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "monthly_visit_count",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "CONTACT shows phone, email or fax (\"No contact\" otherwise); STATS shows users, patients and inventory items (frontend/src/pages/FacilityDashboard.tsx:997); ACTIONS are row buttons (open page, view details, edit, deactivate/reactivate) with no View Users.",
+      "proposed_text": "Columns: FACILITY (name, NPI, address), CONTACT (phone, email, fax or No contact), STATS (users, patients, inventory items), STATUS (Active/Inactive), ACTIONS (open page, view details, edit, deactivate/reactivate).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "NPI: {facility.npi_code}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "No contact",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{facility.user_count || 0}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{facility.patient_count || 0}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{facility.inventory_count || 0}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"View detailed page\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"View Details\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-05",
+      "claim": "STATUS column: Active or Inactive.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-06",
+      "claim": "Active: the facility appears in provider assignment and patient assignment; users can be assigned to it. Inactive: hidden from operational dropdowns and user assignment; existing data is preserved.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".in(\"id\", facilityIds)",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"active\", true);",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".update({ active: !currentStatus })",
+          "paths": [
+            "frontend/src/services/facilityService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (facility.active === false) return false;",
+          "paths": [
+            "frontend/src/utils/facilityAssignmentPicker.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-07",
+      "claim": "Inactive: no new activity can be logged against it.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "FACILITY_INACTIVE",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a server-side write guard would reject activity for an inactive facility"
+        }
+      ],
+      "finding": "No write path checks facility status: no edge function in v1.1.345 rejects writes for an inactive facility (no FACILITY_INACTIVE or equivalent guard found). The verified effect is that the facility drops out of users' facility lists (frontend/src/contexts/FacilityContext.tsx:388).",
+      "proposed_text": "Inactive: the facility no longer appears in anyone's facility list; its data is kept.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".in(\"id\", facilityIds)",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"active\", true);",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".update({ active: !currentStatus })",
+          "paths": [
+            "frontend/src/services/facilityService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-08",
+      "claim": "Users assigned only to this facility lose login access until reassigned. Deactivating a facility immediately prevents any providers assigned exclusively to that facility from logging in.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "facility.active",
+          "paths": [
+            "frontend/src/utils/authStore.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "no_active_facility",
+          "paths": [
+            "frontend/src/utils/authStore.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Sign-in does not check facility status (no facility.active check in authStore.ts); only an inactive user profile blocks login (frontend/src/utils/authStore.ts:884). A user assigned only to an inactive facility can still sign in but has no facility to work in.",
+      "proposed_text": "Active: the facility appears in users' facility lists. Inactive: it no longer appears in anyone's facility list and its data is kept; a user assigned only to it has no facility to work in.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".in(\"id\", facilityIds)",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"active\", true);",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".update({ active: !currentStatus })",
+          "paths": [
+            "frontend/src/services/facilityService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-09",
+      "claim": "Demo environment counts: 28 total · 11 active · 17 inactive.",
+      "kind": "advice",
+      "note": "Snapshot of demo data shown in the screenshot; not a product claim and not checkable in code."
+    },
+    {
+      "id": "lfac-10",
+      "claim": "Open the Facilities module from the sidebar and use the search bar to filter by name or city.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-11",
+      "claim": "Click the Actions menu (⋯) in the row and select Deactivate. A confirmation dialog explains the downstream effects (users, scheduling, routing). Confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Are you sure",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Deactivate is a row button that acts at once, with no confirmation (frontend/src/pages/FacilityDashboard.tsx:480).",
+      "proposed_text": "Click Deactivate in the row's actions; there is no confirmation step. It moves to Deactivated Facilities. Reactivate from Deactivated Facilities.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await toggleFacilityStatus(facility.id, facility.active);",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? \"Facility deactivated successfully\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "confirm(",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-12",
+      "claim": "The STATUS column updates to Inactive immediately. To reactivate, repeat the steps and select Reactivate.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "? \"Facility deactivated successfully\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-13",
+      "claim": "Reassign affected users in HR & Compliance → Facility Users before deactivating.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "facility_id: e.target.value",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "reassigning a user's facility would be an edit on Facility Users"
+        }
+      ],
+      "finding": "Facility Users cannot change a user's facilities; it edits name, job title, phone and status (frontend/src/pages/FacilityUsersPage.tsx:1292). Facilities are assigned on the user's profile form (Facility Assignment, frontend/src/pages/HRNewUserPage.tsx:2567).",
+      "proposed_text": "Before you deactivate a facility, give anyone who works only there access to another facility (Facility Assignment on their user profile).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Facility Assignment{\" \"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{userId ? \"Edit User Profile\" : \"Create New User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lfac-14",
+      "claim": "Click Edit from the Actions menu to update the facility name, address, NPI, contact, or billing information. Changes take effect immediately across all modules.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Legal / Billing Name",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "NPI Code",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Tax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Fax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Timezone <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "note": "\"Immediately across all modules\" is not separately checkable; the edit form fields are confirmed."
+    }
+  ]
+}

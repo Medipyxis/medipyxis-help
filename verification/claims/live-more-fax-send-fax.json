@@ -1,0 +1,982 @@
+{
+  "title": "Compose and send an outbound fax",
+  "source": "modules/more-fax/send-fax",
+  "url": "https://help.medipyxis.com/modules/more-fax/send-fax/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "sfl-01",
+      "claim": "Send a fax directly from Medipyxis and track its delivery status from the Send Fax Logs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send Fax Logs",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The outbound log is titled Outgoing Fax Logs (MorePage.tsx frontend/src/pages/MorePage.tsx:97; FaxLogsPage.tsx frontend/src/pages/FaxLogsPage.tsx:403); no page says Send Fax Logs.",
+      "proposed_text": "Send a fax from Medipyxis and track its delivery in Outgoing Fax Logs.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send faxes and track delivery status.",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Outgoing Fax Logs",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-02",
+      "claim": "Before you start: you have the recipient's fax number.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Enter a 10-digit US fax number.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-03",
+      "claim": "The document you want to fax is either stored in Medipyxis (attached to a referral or patient record) or available as a PDF on your device.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "referral",
+          "paths": [
+            "frontend/src/components/fax/ChartDocumentPicker.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const ACCEPTED_FAX_EXTENSIONS = \".pdf\";",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Chart documents come from the patient's chart only (progress notes and documents, ChartDocumentPicker.tsx frontend/src/components/fax/ChartDocumentPicker.tsx:22); local files may be PDF, JPG, PNG, DOC or DOCX (frontend/src/utils/fax/faxPartsPlan.ts:65).",
+      "proposed_text": "Before you start: you have the recipient's fax number, a 10-digit US number; the documents are on your device (PDF, JPG, PNG, DOC or DOCX), or on the patient's chart in Medipyxis.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Enter a 10-digit US fax number.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const ACCEPTED_FAX_EXTENSIONS = \".pdf,.jpg,.jpeg,.png,.doc,.docx\";",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ChartDocumentPicker",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-04",
+      "claim": "Steps 1–2: Open the Fax Center. Click New Fax (top-right).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Fax",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "New Fax is on the Outgoing Fax Logs page (FaxLogsPage.tsx frontend/src/pages/FaxLogsPage.tsx:439), not on the Fax Center page (MorePage.tsx has no New Fax button).",
+      "proposed_text": "Open Outgoing Fax Logs: click Fax Center in the sidebar, then the Outgoing Fax Logs tile. Click New Fax (top-right).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Outgoing Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setShowNewFaxModal(true)}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-05",
+      "claim": "Enter the recipient fax number. Type or paste the 10-digit number. Include area code; do not use dashes or parentheses.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const d = raw.replace(/\\D/g, \"\");",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Formatting characters are stripped before validation (faxPartsPlan.ts frontend/src/utils/fax/faxPartsPlan.ts:111), so dashes and brackets are fine; a number the clinic faxed before can be picked.",
+      "proposed_text": "Enter the recipient under To: type the fax number, or pick a number your clinic has faxed before. Spaces, dashes and brackets are fine.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "To <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FaxRecipientPicker",
+          "paths": [
+            "frontend/src/components/fax/new-fax/RecipientList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Numbers this facility has successfully faxed, for the recipient picker.",
+          "paths": [
+            "frontend/src/services/faxTrackingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const d = raw.replace(/\\D/g, \"\");",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-06",
+      "claim": "Select or upload the document. From Medipyxis: click Browse Documents to search documents attached to referrals or patient records. From your device: click Upload File and select a PDF (maximum 25 MB, 100 pages).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Browse Documents",
+          "paths": [
+            "frontend/src/components/fax"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Upload File",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The New Fax window has Attach Files (frontend/src/components/fax/NewFaxModal.tsx:329) accepting PDF/JPG/PNG/DOC/DOCX up to 25 MB each and 50 MB total (frontend/src/utils/fax/faxPartsPlan.ts:52), and a Patient picker for chart documents; no Browse Documents or Upload File button, and no 100-page limit.",
+      "proposed_text": "Under Attach Files, click to upload or drag and drop. Each file can be up to 25 MB, and one fax up to 50 MB in total. Search for the Patient by name or MRN, then tick documents under Include other documents from the patient's chart. Signed progress notes are listed as Progress note. One fax can carry up to 10 documents.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Attach Files",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Click to upload</span> or drag and drop files",
+          "paths": [
+            "frontend/src/components/fax/new-fax/LocalFileList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_FILE_BYTES = 25 * 1024 * 1024;",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_TOTAL_FAX_BYTES = 50 * 1024 * 1024;",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by name or MRN (optional)\"",
+          "paths": [
+            "frontend/src/components/fax/new-fax/FaxPatientPicker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Include other documents from {patient}'s chart",
+          "paths": [
+            "frontend/src/components/fax/ChartDocumentPicker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "progress_note: \"Progress note\",",
+          "paths": [
+            "frontend/src/components/fax/ChartDocumentPicker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_FAX_DOCUMENTS = 10;",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-07",
+      "claim": "Add a cover sheet (optional). Toggle Include Cover Sheet on. Fill in To (recipient name and organization), From (your name and facility, pre-populated from your profile), Re (subject line) and Notes (free-text message body on the cover sheet).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Include Cover Sheet",
+          "paths": [
+            "frontend/src/components/fax"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Every fax gets the clinic's cover page built from Fax Settings (frontend/src/components/fax/NewFaxModal.tsx:170); there is no toggle or To/From/Re fields. Notes (max 500) print on the cover (frontend/src/components/fax/NewFaxModal.tsx:382). From is the clinic fax number, read-only.",
+      "proposed_text": "Type up to 500 characters in Notes. They print on the cover page. Medipyxis adds a cover page to every fax. It uses your clinic's Fax Settings (logo, practice name, return numbers) and lists the documents in the fax. From shows your clinic's fax number and cannot be changed here.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "maxLength={500}",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "notes: notes.trim() || undefined,",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "generateCoverPagePdf(coverSettings, {",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const cover = await deps.buildCover(toNumber, names);",
+          "paths": [
+            "frontend/src/components/fax/new-fax/sendNewFax.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const coverSettings = await loadCoverPageSettings(facilityId);",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "documentList: documentNames,",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Customize your fax cover page, upload logo, and configure sender information.\"",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "The sending number is your clinic's fax number.",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Facility fax number (auto-populated)\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-08",
+      "claim": "Review the page count. The page count shown includes the cover sheet if you toggled it on. Confirm it matches expectations before sending.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "page count",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "NewFaxModal.tsx shows no page count anywhere (case-insensitive 'page count' has no hit).",
+      "proposed_text": "(Remove this step: the New Fax window does not show a page count.) Medipyxis adds a cover page to every fax. It uses your clinic's Fax Settings (logo, practice name, return numbers) and lists the documents in the fax.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const cover = await deps.buildCover(toNumber, names);",
+          "paths": [
+            "frontend/src/components/fax/new-fax/sendNewFax.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const coverSettings = await loadCoverPageSettings(facilityId);",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "documentList: documentNames,",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Customize your fax cover page, upload logo, and configure sender information.\"",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-09",
+      "claim": "Click Send Fax. The system queues the fax immediately.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send Fax",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button is Send Now (NewFaxModal.tsx frontend/src/components/fax/NewFaxModal.tsx:410).",
+      "proposed_text": "Click Send Now. A message confirms \"Fax submitted. Delivery shows in Fax Logs.\" The fax appears in Outgoing Fax Logs, and its status changes as the fax service reports back.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send Now",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Fax submitted. Delivery shows in Fax Logs.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-10",
+      "claim": "Result: the fax appears in the Fax Center with pending status. The fax service updates the status as it progresses.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Fax",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Sent faxes are listed on Outgoing Fax Logs (FaxLogsPage.tsx), not on the Fax Center page; the confirmation reads \"Fax submitted. Delivery shows in Fax Logs.\" (frontend/src/components/fax/NewFaxModal.tsx:214).",
+      "proposed_text": "A message confirms \"Fax submitted. Delivery shows in Fax Logs.\" The fax appears in Outgoing Fax Logs, and its status changes as the fax service reports back.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Fax submitted. Delivery shows in Fax Logs.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-11",
+      "claim": "Status pending / sending: queued or in transmission. sent / delivered: transmitted and confirmed by the fax service. cancelled: you cancelled the fax before it sent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"pending\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"sending\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"sent\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"delivered\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"cancelled\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(log.status === \"pending\" || log.status === \"draft\") && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-12",
+      "claim": "Status failed: delivery failed after retry attempts; the log shows the failure reason.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "log.status === \"failed\" && log.error_message",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "auto.?retry|scheduleRetry|retryAt|next_retry",
+          "paths": [
+            "backend/supabase/functions/send-fax",
+            "backend/supabase/functions/fax-center"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The failure reason is shown on hover (frontend/src/pages/FaxLogsPage.tsx:691), but Medipyxis does not retry automatically: retry is a manual Retry button, capped at 3 (backend/supabase/functions/fax-center/index.ts:438).",
+      "proposed_text": "Failed: the fax did not go through. Hover over the status to see the error, then click Retry (up to 3 retries).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "log.status === \"failed\" && log.error_message",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{log.status === \"failed\" && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={(log.retry_count || 0) >= 3}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (currentRetry >= 3) {",
+          "paths": [
+            "backend/supabase/functions/fax-center/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-13",
+      "claim": "Track delivery: open the Fax Center and locate your fax row. Click the row to see the detailed status: timestamp of each transmission attempt, error codes (if any), and the recipient number dialed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry.error_code",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry.to_number",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Rows are on Outgoing Fax Logs; clicking a row opens Audit History of actions with time and user (FaxLogsPage.tsx frontend/src/pages/FaxLogsPage.tsx:682), not transmission attempts, error codes or the dialed number.",
+      "proposed_text": "Open Outgoing Fax Logs and find your fax. Click the row (or View audit history in the Actions column) to open its audit history: each action on the fax, with its time and who did it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleViewAuditLog(log.id)}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View audit history\"",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Audit History",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{new Date(entry.created_at).toLocaleString()}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{entry.action.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "by {entry.performed_by_name}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-14",
+      "claim": "If status is Failed: click Retry to resend, or Edit to correct the fax number before retrying.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Edit action on a fax log row; Retry only (FaxLogsPage.tsx frontend/src/pages/FaxLogsPage.tsx:771).",
+      "proposed_text": "If the status is Failed, click Retry to send it again (up to 3 retries). To fix a wrong number, send a new fax.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{log.status === \"failed\" && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={(log.retry_count || 0) >= 3}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (currentRetry >= 3) {",
+          "paths": [
+            "backend/supabase/functions/fax-center/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-15",
+      "kind": "advice",
+      "claim": "Warning: verify the recipient fax number before sending. Misdirected faxes containing patient information are a HIPAA breach. Double-check the number against the practice record in the CRM or the referral's Practice & PCP section."
+    },
+    {
+      "id": "sfl-16",
+      "claim": "Troubleshooting: fax status stuck on Pending for > 30 minutes (carrier delay or recipient machine busy) — wait 10 more minutes, then click Retry.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(log.status === \"failed\" || log.status === \"pending\") && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Retry is shown only for failed faxes (FaxLogsPage.tsx frontend/src/pages/FaxLogsPage.tsx:763); a pending fax can only be cancelled.",
+      "proposed_text": "Troubleshooting: Fax still Pending after 30 minutes — the fax service has not reported back yet. Wait. A pending fax can be cancelled; Retry appears only once a fax has failed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(log.status === \"pending\" || log.status === \"draft\") && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{log.status === \"failed\" && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-17",
+      "claim": "Troubleshooting: upload fails — file exceeds 25 MB or is not PDF format; compress or convert the file before uploading.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const ACCEPTED_FAX_EXTENSIONS = \".pdf\";",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "JPG, PNG, DOC and DOCX are accepted too (frontend/src/utils/fax/faxPartsPlan.ts:65), with a 50 MB total and 10-document cap.",
+      "proposed_text": "Troubleshooting: A file is refused — not PDF, JPG, PNG, DOC or DOCX; over 25 MB; over 50 MB in total; or more than 10 documents.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!ACCEPTED_FAX_MIME_TYPES.includes(file.type)) {",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (file.size > MAX_FILE_BYTES) {",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (current.knownBytes + file.size > MAX_TOTAL_FAX_BYTES) {",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `A fax can include at most ${MAX_FAX_DOCUMENTS} documents.`,",
+          "paths": [
+            "frontend/src/utils/fax/faxPartsPlan.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-18",
+      "claim": "Troubleshooting: Send button disabled — no document selected; select or upload a document before clicking Send Fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isSending || documentCount === 0}",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Send Now stays enabled and shows an error when nothing is attached (NewFaxModal.tsx frontend/src/components/fax/NewFaxModal.tsx:156).",
+      "proposed_text": "Troubleshooting: \"Attach a file or pick a document from the chart before sending.\" — no document attached.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Attach a file or pick a document from the chart before sending.\"",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-19",
+      "claim": "Fax a signed progress note from the patient chart: open the patient's Progress Notes and use Send to Fax. Medipyxis sends the Clinical Progress Note (without the billing sections), plus any addenda, not the stored billing copy.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Send to Fax\"",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "the practice, so it carries the \"Clinical Progress Note\" instead (renderer",
+          "paths": [
+            "frontend/src/services/progressNoteFaxCopy.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { buildNoteWithAddenda } from \"@/services/noteWithAddendaService\";",
+          "paths": [
+            "frontend/src/services/progressNoteFaxCopy.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sfl-20",
+      "claim": "From Fax Center: click New Fax, pick the Patient, then choose chart documents. Progress notes appear as Progress note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ChartDocumentPicker",
+          "paths": [
+            "frontend/src/components/fax/NewFaxModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "progress_note: \"Progress note\",",
+          "paths": [
+            "frontend/src/components/fax/ChartDocumentPicker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setShowNewFaxModal(true)}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

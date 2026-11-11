@@ -1,0 +1,129 @@
+{
+  "title": "February 2026 release notes",
+  "source": "release-notes/2026-02",
+  "url": "https://help.medipyxis.com/release-notes/2026-02/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "rn02-00",
+      "claim": "Changes shipped between 2026-02-01 and 2026-02-28.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "education bundles",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 9 clinical education bundles with full patient & caregiver education text",
+          "paths": [
+            "frontend/src/data/educationBundlesContent.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-01",
+      "claim": "This release contained no user-facing feature changes. Work shipped in February was limited to infrastructure maintenance, dependency updates, and back-end data migrations. No module documentation was affected.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "^(chore|deps|build|ci|infra)\\b|dependenc|maintenance",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "pr",
+          "number": 1456,
+          "titleMatch": "^(chore|deps|build|ci|infra)\\b|dependenc|maintenance",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        }
+      ],
+      "finding": "False. User-facing feature PRs merged in February 2026 and are still in v1.1.345: Nine patient and caregiver education bundles were added, with a preview. (PR #1368, #1376); Future dates are blocked in Historic Measurements. (PR #1456); A pre-charting service reads a patient's external record from ZusHealth. (PR #1345) The check encodes the live sentence: the listed feature PR would have to be a maintenance-only change, and its title is not.",
+      "proposed_text": "Changes merged between 2026-02-01 and 2026-02-28. This is not a complete list: it covers selected user-facing changes that are still in the current release. Nine patient and caregiver education bundles were added, with a preview. (PR #1368, #1376) Future dates are blocked in Historic Measurements. (PR #1456) A pre-charting service reads a patient's external record from ZusHealth. (PR #1345)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "9 education bundles with preview",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "pr",
+          "number": 1376,
+          "titleMatch": "9 standardized patient/caregiver education bundles",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 9 clinical education bundles with full patient & caregiver education text",
+          "paths": [
+            "frontend/src/data/educationBundlesContent.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handlePreviewBundle(bundle)}",
+          "paths": [
+            "frontend/src/pages/EducationBundleManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 1456,
+          "titleMatch": "Block future dates in Historic Measurements",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "max={formatDateInputValue(new Date())}",
+          "paths": [
+            "frontend/src/components/intake/HistoricMeasurementsIntake.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 1345,
+          "titleMatch": "Zus Health FHIR integration - Pre-charting",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/zus-preachart-data",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} from \"@/services/zusImportService\";",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-02",
+      "kind": "advice",
+      "claim": "User-facing changes from subsequent cycles are documented in March 2026 release notes and April 2026 release notes.",
+      "reason": "Cross-link sentence; linked pages exist in this repo (checked locally)."
+    }
+  ]
+}

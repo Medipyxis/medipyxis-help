@@ -1,0 +1,83 @@
+{
+  "title": "Oversight cockpit",
+  "source": "modules/oversight-cockpit",
+  "url": "https://help.medipyxis.com/modules/oversight-cockpit/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "imoc-00",
+      "kind": "advice",
+      "claim": "2 articles in this module (2 cards; each link resolves to a page in this repo whose H1 matches the card).",
+      "note": "Help-site structure, not a product claim. Checked by script 2026-11-11: count matches=True, all links resolve=True, all H1s match=True. Breadcrumb links / and /modules/ resolve. Targets read at 5d93bb5 (live main)."
+    },
+    {
+      "id": "imoc-01",
+      "claim": "Card: Financial Performance section reference (reference · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Financial Performance",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Oversight Cockpit has no Financial Performance section: no page in frontend/src/pages contains that text. Its money view is the Heat Map's Billed by zip metric (frontend/src/services/heatMapDataService.ts:46), which plots dollars billed, not revenue.",
+      "proposed_text": "Card: Billed by zip map reference (the Heat Map's dollars-billed view).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown: payment posting isn&apos;t connected yet.",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/oversight-cockpit/financial-performance/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imoc-02",
+      "claim": "Card: Oversight Cockpit overview (concept · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Oversight Cockpit\">",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/oversight-cockpit/overview/",
+        "resolves": true
+      }
+    }
+  ]
+}
