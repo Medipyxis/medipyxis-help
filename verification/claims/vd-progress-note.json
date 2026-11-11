@@ -1,0 +1,1643 @@
+{
+  "title": "How your progress note is written",
+  "source": "modules/visit-wizard-ehr/progress-note/index.html",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/progress-note/",
+  "commit": "70c2736",
+  "claims": [
+    {
+      "id": "pn-01",
+      "claim": "Your progress note prints what you documented. Where you left a field blank, it says \"Not documented.\" It does not write clinical sentences on your behalf.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const NOT_DOCUMENTED = \"Not documented.\";",
+          "paths": [
+            "frontend/src/services/perfectNote/forbiddenPhrases.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { NOT_DOCUMENTED } from \"./forbiddenPhrases\";",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { renderLegalDefenseNote } from \"@/services/perfectNote/perfectNoteRenderer\";",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-02",
+      "claim": "Before the note is created, Medipyxis shows you a short list of anything a Medicare reviewer would look for, and lets you fix it in a click.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DocumentationAssistModal",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setAssistMode(\"continue\");",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const jumpLabel = `Go to ${SECTION_LABELS[t.jump] ?? t.jump}`;",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-03",
+      "claim": "Nothing blocks you. You can always continue (the documentation checklist).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_HARD_BLOCKS_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "severity: \"BLOCK\"",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue anyway",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Read in context: the sentence follows the description of the documentation checklist. Holds outside the checklist are covered by pn-36."
+    },
+    {
+      "id": "pn-04",
+      "kind": "external",
+      "claim": "Medicare's Program Integrity Manual tells reviewers to judge the service by the clinician's documentation (software-written sentences carry no weight), to be suspicious of template and cloned language, and that an attestation on its own proves nothing."
+    },
+    {
+      "id": "pn-05",
+      "claim": "The note cites only the two verified wound-care policies.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    lcd_id: \"L",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ],
+      "finding": "The note's citation table holds six verified LCDs: debridement for Novitas, WPS and CGS, and skin substitutes for Novitas, First Coast and CGS (lcdReferences.ts at v1.1.345). A note cites only the one for the patient's own Medicare contractor, and none when that contractor has no verified entry.",
+      "proposed_text": "The note cites an LCD only from a short table of verified wound-care LCDs (debridement and skin substitutes), and only the one for the patient's own Medicare contractor.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    lcd_id: \"L",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export type LcdService = \"debridement\" | \"ctp\";",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-06",
+      "claim": "Allergies: \"Not documented.\" on each allergy item, until you record it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else rows.push([\"Drug allergies\", NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rows.push([\"Latex / other\", latexParts.length > 0 ? latexParts.join(\"; \") : NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "this row is hard-wired; nothing can be recorded to fill it",
+          "pattern": "rows.push([\"Reconciled this visit\", NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Drug allergies and Latex / other print \"Not documented.\" until recorded, but the \"Reconciled this visit\" row is hard-wired to \"Not documented.\" on every note (perfectNoteRenderer.ts renderAllergies at v1.1.345); no field fills it.",
+      "proposed_text": "Allergies: \"Not documented.\" for drug allergies and for latex / other until you record them. The \"Reconciled this visit\" row always says \"Not documented.\" — there is no field to record it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else rows.push([\"Drug allergies\", NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rows.push([\"Latex / other\", latexParts.length > 0 ? latexParts.join(\"; \") : NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rows.push([\"Reconciled this visit\", NOT_DOCUMENTED]);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-07",
+      "claim": "Debridement: \"Not documented.\" on each detail you leave blank. The depth is whatever you recorded.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "anesthesia: anesthesia || NOT_DOCUMENTED,",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "tissue_removed_desc: tissueRemoved || NOT_DOCUMENTED,",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient_tolerance: patientTolerance || NOT_DOCUMENTED,",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "deepest_tissue_removed: deepestTissueLevel || undefined,",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Deepest tissue REMOVED\", cleanText(deb.deepest_tissue_removed) || NOT_DOCUMENTED]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-08",
+      "claim": "Pressure-injury risk: \"Prevention plan: Not documented.\" The Braden score and risk band print as documented.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "excludeTests": true,
+          "pattern": "Prevention plan",
+          "paths": [
+            "frontend/src/services/perfectNote"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bradenTotalBox(ctx, `${sc} / 23  -  ${rk} ${dt}`);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No \"Prevention plan\" line prints anywhere. The Braden line prints the score and risk band only (perfectNoteRenderer.ts at v1.1.345); a prevention plan prints under \"Additional Risk Assessment\" only when one was written, and nothing prints when it is blank.",
+      "proposed_text": "Pressure-injury risk: the Braden score and risk band print as documented. A prevention plan prints under Additional Risk Assessment only when you write one; nothing prints in its place when you leave it blank.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bradenTotalBox(ctx, `${sc} / 23  -  ${rk} ${dt}`);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addBold(ctx, \"Additional Risk Assessment\");",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "excludeTests": true,
+          "pattern": "Prevention plan",
+          "paths": [
+            "frontend/src/services/perfectNote"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "pn-09",
+      "claim": "Same-day visit and procedure: \"Separate E/M evaluation: Not documented.\" — unless you answer the checklist item.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? (em.modifier_25_justification || `Separate E/M evaluation: ${NOT_DOCUMENTED}`)",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const justification = (formData.billingStaging?.em_separate_evaluation ?? \"\").trim() || undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s13_emLevel.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "write: () => ({ path: \"billingStaging.em_separate_evaluation\" }),",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-10",
+      "claim": "Medical necessity prints the findings themselves, for example \"Devitalized tissue present: Yes — slough 20% on left heel\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `Devitalized tissue present: Yes -- ${buildDevitalizedEvidence(devitalized)}.`;",
+          "paths": [
+            "frontend/src/services/perfectNote/s07_medicalNecessity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`slough ${sloughWounds[0].slough}% on ${sloughWounds[0].woundTitle}`",
+          "paths": [
+            "frontend/src/services/perfectNote/s07_medicalNecessity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addText(ctx, cleanText(mn.devitalized_statement));",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-11",
+      "claim": "Home visits: nothing prints, unless you typed a homebound justification — which prints exactly as you wrote it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "homebound_basis: (formData as any).homebound_justification?.trim() || undefined,",
+          "paths": [
+            "frontend/src/services/perfectNote/s14_functionalStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!fs.homebound_basis) return;",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-12",
+      "claim": "Patient education prints what you write in Education Topics Covered Today and Patient Understanding Assessment (Section 12).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Education Topics Covered Today",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/EducationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient Understanding Assessment",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/EducationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const t = ctx.fd.educationTopicsCovered || \"\", u = ctx.fd.patientUnderstandingAssessment || \"\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Step 12\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-13",
+      "claim": "Describe how you taught — for example teach-back or a return demonstration — in the understanding assessment; otherwise the teaching method prints \"Not documented.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "excludeTests": true,
+          "note": "a teaching-method row would have to exist in the note",
+          "pattern": "[Tt]each(ing)?[ -]?(method|back)",
+          "paths": [
+            "frontend/src/services/perfectNote"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The education block has no teaching-method row and does not read the understanding text for a method. It prints Topics taught, Materials, Understanding / response and Next-visit education goals, each \"Not documented.\" when blank, or \"Patient education not documented this visit.\" when topics, understanding and goals are all blank (perfectNoteRenderer.ts:1469-1474 at v1.1.345).",
+      "proposed_text": "Each blank education row — topics taught, materials, understanding, next-visit goals — prints \"Not documented.\" If you record none of topics, understanding or goals, the note says \"Patient education not documented this visit.\" Describe how you taught (for example teach-back) in the understanding assessment so it prints.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addText(ctx, \"Patient education not documented this visit.\");",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "kvTable(ctx, [[\"Topics taught\", cleanText(t) || NOT_DOCUMENTED], [\"Materials\", cleanText(mt) || NOT_DOCUMENTED]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Understanding / response\", cleanText(u) || NOT_DOCUMENTED]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-14",
+      "claim": "The debridement section does not include Pathology sent, Tissue present pre, or Post-procedure dressing, because no screen in Medipyxis asks for them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\[\\\"(Pathology sent|Post-procedure dressing)\\\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "excludeTests": true,
+          "pattern": "pathology_sent|pathologySent|Post-procedure dressing",
+          "paths": [
+            "frontend/src/components"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "the page says no tissue-present-pre row prints",
+          "pattern": "[\"Tissue present (pre-procedure)\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Pathology sent and Post-procedure dressing are indeed absent, but the debridement table does print \"Tissue present (pre-procedure)\", from this visit's wound-bed assessment, or \"Not documented.\" when the wound bed was not assessed this visit (perfectNoteRenderer.ts tissuePresentPreRow, s09_debridement.ts at v1.1.345).",
+      "proposed_text": "The debridement section does not include Pathology sent or Post-procedure dressing, because no screen in Medipyxis asks for them. Tissue present (pre-procedure) prints from this visit's wound-bed assessment, or \"Not documented.\" when the wound bed was not assessed this visit.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\\[\\\"(Pathology sent|Post-procedure dressing)\\\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "excludeTests": true,
+          "pattern": "pathology_sent|pathologySent|Post-procedure dressing",
+          "paths": [
+            "frontend/src/components"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Tissue present (pre-procedure)\", cleanText(tissuePresentPreRow(deb, ctx.opts.formatAsOf))]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!documented) return NOT_DOCUMENTED;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-15",
+      "claim": "When you stage billing codes, a line appears — for example \"3 documentation items open — Resolve.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `${n} documentation item${n === 1 ? \"\" : \"s\"} open`;",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/DocumentationOpenGapsStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!hasStagedLines || count === 0) return null;",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/DocumentationOpenGapsStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Resolve$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/DocumentationOpenGapsStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DocumentationOpenGapsStrip",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "computeOpenGaps={computeOpenGaps}",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-16",
+      "claim": "Opening it shows one screen listing each item, what is missing, which wound it concerns, and a button that takes you straight there.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const base = { gap: g, index: i, detail: g.detail };",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const woundName = woundNameFor(g);",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const jumpLabel = `Go to ${SECTION_LABELS[t.jump] ?? t.jump}`;",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-17",
+      "claim": "Items you can answer in a sentence — why the visit was necessary, what you evaluated separately from the procedure, your assessment and decision-making — open a small box that shows the facts already documented, offers an example you can adapt, and reminds you to put it in your own words.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "question: \"Why did this patient need you — not a nurse — today?\",",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "question: \"What problems did you address today, what did you review, and what did you decide?\",",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { buildGapFacts } from \"@/services/documentationAssist/gapFacts\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use this example",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const OWN_WORDS_NOTICE = \"Put this in your own words — a reviewer compares your notes visit to visit.\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-18",
+      "claim": "To dictate instead of typing, press the microphone, speak, and your words are added to the box — word for word, added to whatever is already there (not rewritten).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<VoiceInputButton aria-label=\"Dictate your answer\" onTranscription={handleDictation} />",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { ...s, [index]: current ? `${current} ${spoken}` : spoken };",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-19",
+      "claim": "Items that belong on a form — missing debridement elements, or a billing code not linked to a wound — take you to the right screen, and to the right wound.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "jump: \"conservativeCare\",",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onJump={(id, woundIndex) => {",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "methods.setValue(\"activeWoundIndex\", woundIndex, {",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-20",
+      "claim": "Nothing is required. Continue anyway is always available.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue anyway",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "note": "the window opened from the billing line would have to offer Continue anyway too",
+          "pattern": "mode === \\\"billing\\\" \\? \\(",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Nothing in the checklist is required, but the button differs by where you open it: from the billing line the window offers only Close; Continue anyway appears in the window that opens from Continue to Review (DocumentationAssistModal.tsx:733-745 at v1.1.345).",
+      "proposed_text": "Nothing is required. Opened from the billing line, the list just closes; at Continue to Review, Continue anyway is always available.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "mode === \\\"billing\\\" \\? \\(",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Close$",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Continue anyway$",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_HARD_BLOCKS_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-21",
+      "claim": "If an item affects what can be billed — a debridement missing the elements the policy requires, or a billed code with no documented wound — choosing Continue anyway asks you to tick a box confirming you understand; the decision goes on the record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "I understand this claim is missing {billingGapNames} and I am continuing anyway",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={inFlight || (billingGaps.length > 0 && !acknowledged)}",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "formMethods.setValue(\"billingStaging\", { ...staging, gap_acknowledgments: appended }, { shouldDirty: true });",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingAffecting: true,",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "pn-22",
+      "kind": "external",
+      "claim": "Medicare's rule for home visits is that each visit needs its medical necessity documented, or a reviewer treats it as a social visit."
+    },
+    {
+      "id": "pn-23",
+      "claim": "Medipyxis asks once per visit: \"Why did this patient need you — not a nurse — today?\" The question is not asked per wound.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "question: \"Why did this patient need you — not a nurse — today?\",",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": { path: \"billingStaging.home_visit_necessity\" };",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-24",
+      "claim": "Your answer prints in the note with a small label showing whether you typed it, dictated it, or adapted an example.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "ignoreCase": true,
+          "note": "a dictation label would have to exist",
+          "pattern": "dictated",
+          "paths": [
+            "frontend/src/services/perfectNote/provenanceLabels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Typed and dictated answers get the same stamp (source \"clinician\") and print as \"Clinician-typed\" (provenanceLabels.ts at v1.1.345); only an adapted example prints differently (\"AI-assisted draft, edited and affirmed by provider\").",
+      "proposed_text": "Your answer prints in the note with a small label. Answers you wrote yourself, typed or dictated, are labelled Clinician-typed. An example you adapted is labelled as an AI-assisted draft.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (p.source === \"clinician\") return \"Clinician-typed\";",
+          "paths": [
+            "frontend/src/services/perfectNote/provenanceLabels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"AI-assisted draft, edited and affirmed by provider\"",
+          "paths": [
+            "frontend/src/services/perfectNote/provenanceLabels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addProvenanceLabel(ctx, em.home_visit_necessity_provenance_label);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-25",
+      "claim": "If a wound's necessity note is word-for-word identical to the last visit's, a separate item says so; update it or clear it — either resolves the item.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (priorNote.length > 0 && currentNote.toLowerCase() === priorNote.toLowerCase()) {",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (currentNote.length === 0) return;",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "is identical to that wound's prior-visit note.",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-26",
+      "claim": "In Section 9 — Interventions & Treatments, Generate Procedure Note builds a procedure narrative from the intervention details you entered.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Interventions & Treatments\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s*Generate Procedure Note\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={generateProcedureNote}",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-27",
+      "claim": "To use your own wording instead, type it in the intervention's Notes field and check Use My Exact Procedure Note — it is kept exactly as written and carried into Section 13 — Procedures & Supplies.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "narrative_source: useExact ? \"manual\" : \"summarized\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "woundForVerbatim?.useExactProcedureNote === true &&",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "note": "Step 13's header would have to read Procedures & Supplies",
+          "pattern": "^\\s+Procedures & Supplies\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The checkbox 'Use my exact procedure note (skip AI/template regeneration).' sits under the Procedure Note box that appears below Generate Procedure Note (ConservativeCareInterventionVisit.tsx:3799-3846 at v1.1.345); it uses the Procedure Note text, not an intervention Notes field. The text is copied verbatim into the procedure entries (narrative_source \"manual\", :2779-2795) and kept by Procedure Supplies (ProcedureSuppliesVisit.tsx:974). Step 13's header reads 'Procedure Supplies' (VisitWizardV4.tsx:18355).",
+      "proposed_text": "To use your own wording instead, edit the Procedure Note box under Generate Procedure Note and tick Use my exact procedure note. The text is kept exactly as written and carried into Section 13 — Procedure Supplies.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use my exact procedure note (skip AI/template regeneration).",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Procedure Note\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "narrative_source: useExact ? \"manual\" : \"summarized\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "woundForVerbatim?.useExactProcedureNote === true &&",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Procedure Supplies\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-28",
+      "claim": "In Section 13 you can also click Generate Compliance Note for an additional structured narrative. It is optional: leave it blank if your procedure note already documents the procedure fully.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Generate Compliance Note",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Compliance Narrative\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "an optional box would not be on the required-field list",
+          "pattern": "label: \"Compliance Narrative\"",
+          "paths": [
+            "frontend/src/utils/wizardRequiredFields.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Compliance Narrative box is the procedure's own narrative (procedure.narrative), not an extra one, and it is on Section 13's required-field list for every billable intervention (wizardRequiredFields.ts:614-621 at v1.1.345): left blank, Section 13 lists it as missing (a warning, not a block, since validation does not stop signing). It is filled from your exact procedure note when you ticked Use my exact procedure note, otherwise from the template (ConservativeCareInterventionVisit.tsx:2779-2795; ProcedureSuppliesVisit.tsx:5590-5625).",
+      "proposed_text": "In Section 13, the Compliance Narrative box holds the procedure narrative for each billable intervention. It fills from your procedure note when you ticked Use my exact procedure note, otherwise from a template; click Generate Compliance Note to redraft it. If it is blank, Section 13 lists it as missing — a warning, not a block.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Generate Compliance Note",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Compliance Narrative\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Compliance Narrative\"",
+          "paths": [
+            "frontend/src/utils/wizardRequiredFields.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "narrative_source: useExact ? \"manual\" : \"summarized\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_HARD_BLOCKS_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-30",
+      "claim": "After you click Continue Review in step 17, the Wound Care Progress Note Preview shows the PDF.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue Review",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "excludeTests": true,
+          "pattern": "Wound Care Progress Note Preview",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button is 'Continue to Review' in the wizard footer, outside step 17 (VisitWizardV4.tsx:19062-19086 at v1.1.345); after any documentation-gaps window, the screen headed 'Preview — Review Before Signing' shows the PDF (ProgressNotePreview.tsx:92).",
+      "proposed_text": "After you click Continue to Review at the bottom of the wizard, the Preview — Review Before Signing screen shows the actual PDF that will be stored.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Continue to Review$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WizardLayoutFooter",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Preview — Review Before Signing",
+          "paths": [
+            "frontend/src/components/ProgressNotePreview.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-31",
+      "claim": "The preview shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pdfBlob={reviewPdfBlob}",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Copied before openSignReview clears the React blob. Sign files this copy.",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "throw new Error(\"NOTE_NOT_READY: the progress note PDF is not in memory.\");",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-32",
+      "claim": "Where fields were left blank, the note is shorter, and says so.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const NOT_DOCUMENTED = \"Not documented.\";",
+          "paths": [
+            "frontend/src/services/perfectNote/forbiddenPhrases.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addText(ctx, \"Patient education not documented this visit.\");",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-33",
+      "kind": "advice",
+      "claim": "A shorter honest note defends better than a longer one full of sentences you did not write."
+    },
+    {
+      "id": "pn-34",
+      "claim": "The note you signed is a permanent file, and opening it from the patient's Progress Notes list shows you that exact file, unchanged. The Download Clinical Note action builds a fresh provider copy from the visit's recorded data, so it can read differently from the version you signed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? await progressNotesService.getPdfUrl(note.file_path)",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Download Clinical Note (without billing sections)\"",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "noteMode: \"provider\",",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// This is a different rendering from the stored note \"View\" shows —",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-35",
+      "claim": "For a sentence you did not write, file an addendum naming the kind of sentence; the list covers each kind — for example Procedure tolerance was a template default or LCD citation was wrong (cited policy does not govern this service).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Procedure tolerance was a template default\",",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"LCD citation was wrong (cited policy does not govern this service)\",",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fabricated Statements to Remediate",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundDetailPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The kinds are checkboxes under 'Fabricated Statements to Remediate', shown when the Type of Addendum is Fabrication remediation."
+    },
+    {
+      "id": "pn-36",
+      "claim": "Do I have to answer the checklist? No. Every item is advisory and none of them stop you signing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_HARD_BLOCKS_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "severity: \"BLOCK\"",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue anyway",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-37",
+      "claim": "Where an example is offered, it is built only from facts already documented in that visit and checked before you see it — any draft that invents a number, a cause, or a negation, or uses conclusion language, is discarded. It is never placed in your note automatically; you copy it into a box, edit it, and insert it, and the note records that you did.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const check = checkDraftAgainstFacts(draft, q.facts);",
+          "paths": [
+            "frontend/src/services/documentationAssist/fetchGapExample.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { ok: false, failed: `number ${n} not in facts` };",
+          "paths": [
+            "frontend/src/utils/aiDraftGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (CAUSAL.test(draft)) return { ok: false, failed: \"causal claim\" };",
+          "paths": [
+            "frontend/src/utils/aiDraftGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "failed: \"negation not recorded as absent\"",
+          "paths": [
+            "frontend/src/utils/aiDraftGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "for (const p of FORBIDDEN_NOTE_PHRASES) if (lower.includes(p.toLowerCase())) return { ok: false, failed: `forbidden phrase: ${p}` };",
+          "paths": [
+            "frontend/src/utils/aiDraftGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setUsedExample((s) => ({ ...s, [index]: example.text }));",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "source: \"ai_assisted\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return p.edited",
+          "paths": [
+            "frontend/src/services/perfectNote/provenanceLabels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-38",
+      "claim": "The checklist commonly flags: debridement notes missing elements (tissue removed in particular); home visits without a necessity sentence; visits coded on medical decision-making ask for your assessment narrative.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push(\"tissue type removed\");",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const HOME_POS_CODES = new Set([\"12\", \"13\", \"14\"]);",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (HOME_POS_CODES.has(pos) && !!emLine) {",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const trigger = !!(note.em_level?.staged && note.em_level.em_pathway === \"MDM\");",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "write: () => ({ path: \"billingStaging.mdm_narrative\" }),",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pn-39",
+      "kind": "advice",
+      "claim": "For questions about a checklist item or payer-specific documentation, contact your Medipyxis contact; report a note that looks wrong with the patient and visit date."
+    },
+    {
+      "id": "pn-40",
+      "claim": "Medipyxis is documentation support software. It does not decide coverage, and it never blocks a clinician from signing a note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_HARD_BLOCKS_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "Continue to Review stops when step 17 is not attested",
+          "pattern": "toast.error(\"Provider attestation is incomplete\", {",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "the preview holds Continue until carried-in free text is confirmed",
+          "pattern": "const blockedByNarrative = pendingNarrative != null && !narrativeConfirmed;",
+          "paths": [
+            "frontend/src/components/ProgressNotePreview.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "Continue to Review is disabled while Smart Import warnings are open",
+          "pattern": "isSaveGated: warnings.length > 0,",
+          "paths": [
+            "frontend/src/components/wizard-shared/useImportWarnings.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The documentation checklist never blocks, but three things do hold signing: Continue to Review stops with 'Provider attestation is incomplete' until step 17 is attested (VisitWizardV4.tsx:9465-9497 at v1.1.345); the preview's Looks Good, Continue stays disabled until carried-forward free text is confirmed (ProgressNotePreview.tsx:84, 'The one item here that DOES hold signing'); and Continue to Review is disabled while Smart Import warnings are unresolved (VisitWizardV4.tsx:19063, useImportWarnings.ts).",
+      "proposed_text": "Medipyxis is documentation support software. It does not decide coverage, and the documentation checklist never stops a clinician from signing. To sign, you must complete Provider Attestation (step 17), confirm any carried-forward text the preview asks about, and resolve any Smart Import warnings.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(\"Provider attestation is incomplete\", {",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const blockedByNarrative = pendingNarrative != null && !narrativeConfirmed;",
+          "paths": [
+            "frontend/src/components/ProgressNotePreview.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "isSaveGated: warnings.length > 0,",
+          "paths": [
+            "frontend/src/components/wizard-shared/useImportWarnings.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={_isSaving || !_canSignEffectiveOk || importWarnings.isSaveGated}",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "severity: \"BLOCK\"",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "pn-41",
+      "kind": "external",
+      "claim": "The criteria Medipyxis references come from CMS manuals and your MAC's published policies."
+    }
+  ]
+}
