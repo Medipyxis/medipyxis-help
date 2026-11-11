@@ -6,7 +6,7 @@ audience: [vendor]
 roles: [vendor_admin, vendor_user]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-08-28
+last_reviewed: 2026-11-11
 app_route: /vendor/shipments
 related:
   - vendor-portal-overview
@@ -15,127 +15,54 @@ related:
 tags: [vendor portal, shipment, Excel, XLSX, CSV, lot, tracking, pre-staging]
 ---
 
-Every shipment you send from the vendor portal pre-stages the receiving clinic's inventory queue. When boxes arrive, the clinic side is match-and-confirm — never re-entry. This page covers the two entry paths (bulk Excel upload and manual single shipment), the destination-grouping logic, and how discrepancies flow back to you after check-in.
+A shipment you create in the vendor portal is an advance ship notice: it tells the receiving clinic what is on its way, lot by lot, so the clinic can check it in without typing it again. This page covers the Shipments list, the bulk Excel upload, and what you see after the clinic checks a shipment in.
 
 ## Before you start
 
-- You need the `vendor_admin` or `vendor_user` role.
-- Have your ship-out worksheet ready — one row per lot going out. Columns can be in any order; the mapper handles it.
-- Every destination clinic must be tethered to your company. Untethered clinics show as a hard block on the upload preview.
+- You are signed in to the vendor portal. Every vendor role can open **Shipments**.
+- Every destination clinic must be connected to your company, and every SKU must be in your catalog.
 
-## The shipments page
+## The Shipments page
 
-Open **Shipments** from the vendor sidebar. The page shows every shipment your company has created:
+Open **Shipments** from the vendor sidebar (`/vendor/shipments`).
 
-- **Status column:** `draft`, `shipped`, `in transit`, `received`, `flagged` (has an open discrepancy).
-- **Lines column:** shipment line count and destination clinic.
-- **Actions:** open the detail drawer, download packing slip, or void a draft.
+- **Cards** at the top count shipments **In transit**, **Received (30d)**, and **Open discrepancies**. **Avg transit** does not show a figure yet.
+- **Tabs**: All, In transit, Received, Discrepancy.
+- **Columns**: Shipment, Clinic, Carrier / tracking, Expected, Lines, and Status (`created`, `in transit`, `received`, `discrepancy`, or `cancelled`).
 
-Click any row to open its detail drawer with lines, tracking history, and any exception raised by the clinic.
+Click a row to open the shipment. Shipments are created by the bulk upload below, or when you click **Ship** on a clinic request (see [Respond to clinic requests](/vendor-portal/respond-to-requests/)).
 
 ## Bulk Excel upload
 
-The upload flow (**Create → Upload shipment file**, route `/vendor/shipments/upload`) turns one worksheet into a shipment per destination clinic — matching how most vendor ops teams already work.
+Click **Bulk upload (Excel)** (`/vendor/shipments/upload`). One spreadsheet becomes one shipment per destination clinic.
 
-### Step 1 — Upload the file
+1. **Upload the file.** Drop an `.xlsx`, `.xls`, or `.csv` file on the upload area. **Download template** gives you a starting spreadsheet.
+2. **Check the column mapping.** Each column header is matched to a field by name. The mapping table shows the spreadsheet header, the field it matched, the first row's value, and whether it matched. A column with an unrecognized header is ignored; rename the header in your file and upload it again.
+3. **Review the validation results.** Rows that pass are counted as OK. Rejected rows are listed with a reason: SKU not in your catalog, missing lot number, invalid quantity, missing destination clinic, or a destination that is not a connected clinic. **Download rejected rows** saves them to a spreadsheet.
+4. **Check the grouping preview.** It shows how many lines become how many shipments, one per clinic.
+5. **Check lot and expiry.** The panel flags lots that expire within 90 days and rows that repeat the same lot, SKU, and clinic.
+6. Click **Create shipments**.
 
-Drop your `.xlsx` or `.csv` on the upload zone. The page reads the header row and tries to auto-map each column against a known field.
+Recognized column headers:
 
-Recognized fields and their aliases:
-
-| Field | Common column headers |
+| Field | Example headers |
 |---|---|
-| `sku` | SKU, Item Code, Product Number, Item # |
-| `product_name` | Product Name, Description, Item Description |
-| `lot_number` | Lot, Lot Number, Batch, Batch Number |
-| `expiration_date` | Exp Date, Expiration, Expiry, Expiration Date |
-| `quantity` | Quantity, Qty, Units, Shipped Qty |
-| `destination_clinic` | Ship To, Destination, Clinic, Facility |
-| `external_ref` | PO Ref, PO Number, Reference, Order Ref |
+| SKU (required) | SKU, Item Code, Product Number, Item # |
+| Product name | Product Name, Description, Item Description |
+| Lot number (required) | Lot, Lot Number, Batch, Batch Number |
+| Expiration date | Exp Date, Expiration, Expiry, Expiration Date |
+| Quantity (required) | Quantity, Qty, Units, Shipped Qty |
+| Destination clinic (required) | Ship To, Destination, Clinic, Facility |
+| Reference (optional) | PO Ref, PO Number, Reference, Order Ref |
 
-Required for validation: **SKU, lot_number, quantity, destination_clinic.** Product name and PO ref are optional but strongly recommended.
+The destination clinic must match the clinic's name as it appears on your Clinics page.
 
-### Step 2 — Confirm column mapping
+## What the clinic sees
 
-If a header didn't auto-map, use the dropdown next to each column to pick the right field. The preview shows the first row's value under each column so you can verify at a glance.
+Each shipment you create is staged in the clinic's receiving queue, and the clinic is notified. Its staff check the shipment in from their clinical inventory view. See [Receive a vendor shipment](/vendor-portal/receiving/).
 
-### Step 3 — Review the preview
+## The shipment page
 
-The preview groups rows by destination clinic. For each group, you see:
+A shipment's page shows the clinic, carrier and tracking number, and the number of lines and units. The lines table lists each SKU, product, lot, expiration date, quantity shipped, quantity received, and line status. Expiration dates that are close are shown in red. After the clinic checks the shipment in, **Receiving outcome** shows who received it.
 
-- Clinic name (as it appears in your tether list).
-- Line count and total quantity.
-- Any rows the validator rejected — usually SKU not found, lot format wrong, or destination clinic not tethered.
-
-Rejected rows show a per-row reason. Fix the file and re-upload, or drop the rows and continue.
-
-### Step 4 — Lot integrity check
-
-The preview flags three lot-level integrity issues:
-
-- **New lots** — this is the first time you've shipped this lot to any clinic. The catalog engine registers the lot on confirm.
-- **Expiring soon** — any lot within 30 days of its expiration date. Consignment products under 30 days trigger an extra confirmation.
-- **Duplicate lots in-file** — two rows with the same lot and expiration but different destinations. Legal, but flagged so you can verify it's intentional.
-
-### Step 5 — Confirm the shipment
-
-Click **Create shipments.** One shipment is created per destination clinic. Each shipment:
-
-- Records the outbound lot, expiration, quantity, and destination.
-- Pre-stages an `inventory_orders_v2` row plus `inventory_ordered_products_batches_v2` lines on the clinic side — their receiving queue is ready before your carrier hands off.
-- Sends a notification to both the destination clinic's inventory admin and its assigned providers.
-
-## Manual single shipment
-
-When you're sending a one-off (patient-specific ship-out, urgent replacement), a full Excel upload is overkill.
-
-1. From **Shipments**, click **New shipment (manual)**.
-2. Pick the destination clinic.
-3. Add lines one at a time — SKU, lot, expiration, quantity.
-4. Optional: paste a tracking number and carrier.
-5. **Save & ship.** The record follows the same pre-staging flow as bulk uploads.
-
-## Save a column mapping template
-
-If your ops team runs the same spreadsheet every week, save the mapping so future uploads skip the mapping step:
-
-1. On the mapping page, click **Save mapping as template** and give it a name.
-2. Next upload, pick the template from the dropdown above the mapping table. Every column pre-populates.
-
-## Track a shipment
-
-The shipment detail drawer has five sections:
-
-- **Summary** — status, carrier, tracking number, expected delivery date.
-- **Lines** — every SKU/lot with its shipped and received quantities. Discrepancies show a red bar.
-- **Timeline** — created → shipped → in transit → received / flagged. Each transition shows who and when.
-- **Discrepancies** — any exception the clinic flagged at check-in (short quantity, wrong SKU, damaged lot). Each has a photo and note.
-- **Documents** — packing slip PDF (auto-generated) plus any attachments you or the clinic added.
-
-## Discrepancies
-
-When a clinic marks a discrepancy at receiving, the shipment moves to `flagged` on your side and a notification lands in your **Requests** inbox.
-
-To resolve:
-
-1. Open the shipment detail; read the discrepancy note and view the photo.
-2. Take an action from the drawer:
-   - **Accept and reship** — creates a new draft shipment for the missing quantity.
-   - **Accept as short-ship** — the clinic receives the received quantity; the balance is written off.
-   - **Dispute** — opens a thread in **Messages** with the clinic's inventory admin for reconciliation.
-
-## Draft, void, and rerun
-
-- Shipments in `draft` status can be edited or voided from the row menu.
-- A voided shipment leaves an audit row and removes the pre-staged rows on the clinic side.
-- Rerunning a failed bulk upload does not create duplicates as long as the source file's PO ref / external_ref is unchanged — the upload validator flags any row whose lot has already been shipped to the same destination.
-
-## Troubleshooting
-
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| "Row 4: SKU not in your catalog" | SKU missing from vendor catalog | Add the SKU on the Catalog page first, then re-upload |
-| "Row 12: destination clinic not tethered" | You haven't been onboarded with that clinic | Ask the clinic to send a tether invite, or invite them from Directory |
-| Preview shows 0 valid rows | Header row mis-mapped or file has extra top rows | Re-check the mapping; delete banner rows above the header before saving |
-| Clinic sees "no shipments pending" after upload | Notification delay or clinic filtering to a different tab | Have the clinic refresh **Receiving** and check the **Pending** tab |
-| Duplicate shipment created | Two uploads with different PO refs but same lots | Void one draft before it ships |
+The **Issue credit memo** and **Close discrepancy** buttons on this page do not do anything yet.

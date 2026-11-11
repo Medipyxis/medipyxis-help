@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <!-- seo:start -->
-<meta name="description" content="Every shipment a tethered vendor sends you shows up in your Receiving queue pre-staged with lot, expiration, and quantity — you don't type any of it…">
+<meta name="description" content="When a vendor connected to your clinic creates a shipment in the vendor portal, it arrives in Medipyxis already listed line by line: SKU, lot, expiration…">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://help.medipyxis.com/vendor-portal/receiving/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -17,7 +17,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Medipyxis Help">
 <meta property="og:title" content="Receive a vendor shipment — Medipyxis Help">
-<meta property="og:description" content="Every shipment a tethered vendor sends you shows up in your Receiving queue pre-staged with lot, expiration, and quantity — you don't type any of it…">
+<meta property="og:description" content="When a vendor connected to your clinic creates a shipment in the vendor portal, it arrives in Medipyxis already listed line by line: SKU, lot, expiration…">
 <meta property="og:url" content="https://help.medipyxis.com/vendor-portal/receiving/">
 <meta property="og:image" content="https://medipyxis.com/images/og-default.png">
 <meta property="og:image:width" content="1200">
@@ -25,7 +25,7 @@
 <meta property="og:image:alt" content="Receive a vendor shipment — Medipyxis Help">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Receive a vendor shipment — Medipyxis Help">
-<meta name="twitter:description" content="Every shipment a tethered vendor sends you shows up in your Receiving queue pre-staged with lot, expiration, and quantity — you don't type any of it…">
+<meta name="twitter:description" content="When a vendor connected to your clinic creates a shipment in the vendor portal, it arrives in Medipyxis already listed line by line: SKU, lot, expiration…">
 <meta name="twitter:image" content="https://medipyxis.com/images/og-default.png">
 <!-- seo:end -->
 </head>
@@ -65,150 +65,28 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/vendor-portal/shipments/">Create and track shipments</a><a class="sidebar-item" href="/vendor-portal/invoices-and-payment/">Invoices and AR</a><a class="sidebar-item" href="/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a><a class="sidebar-item" href="/vendor-portal/onboarding-your-company/">Onboard your company on the vendor portal</a><a class="sidebar-item active" href="/vendor-portal/receiving/">Receive a vendor shipment</a><a class="sidebar-item" href="/vendor-portal/respond-to-requests/">Respond to clinic requests</a><a class="sidebar-item" href="/vendor-portal/terms-and-contracts/">Terms and contracts</a><a class="sidebar-item" href="/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/vendor-portal/">Vendor portal</a></p>
       <h1>Receive a vendor shipment</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 5 min read</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-08-28</span></div>
-      <p>Every shipment a tethered vendor sends you shows up in your <strong>Receiving</strong> queue pre-staged with lot, expiration, and quantity — you don't type any of it. Check-in is match-and-confirm, from either the facility's central Receiving page or straight out of a provider's inventory view.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 5 min read</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+      <p>When a vendor connected to your clinic creates a shipment in the vendor portal, it arrives in Medipyxis already listed line by line: SKU, lot, expiration date, and quantity. You check it in by confirming what arrived.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>Any provider at your facility can receive a shipment; you don't need the <code>inventory_manager</code> role.</li>
-<li>Have the physical boxes on hand and a camera ready — discrepancy photos are how you flag exceptions back to the vendor.</li>
+<li>Open <strong>Inventory Management</strong> and choose <strong>Clinician Inventory View</strong>.</li>
+<li>Have the delivered boxes in front of you.</li>
 </ul>
-<h2 id="where-check-in-lives">Where check-in lives</h2>
-<p>Two surfaces write through the same edge function — pick whichever is faster for your workflow.</p>
-<table>
-<thead>
-<tr>
-<th>Surface</th>
-<th>Best for</th>
-<th>Where</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Receiving page</strong> (facility-wide)</td>
-<td>Inventory admins working through the day's arrivals in one place</td>
-<td>Sidebar → Receiving</td>
-</tr>
-<tr>
-<td><strong>Provider inventory view</strong></td>
-<td>Providers checking in a graft that arrived just before their next visit</td>
-<td>Patient Management → Inventory tab, <strong>Pending Vendor Shipments</strong> section</td>
-</tr>
-</tbody>
-</table>
-<p>Both surfaces list the same pending shipments and both save through <code>clinic-receive-shipment</code>. Records are identical — check in from wherever you already are.</p>
-<h2 id="the-receiving-page">The Receiving page</h2>
-<p>Sidebar → <strong>Receiving</strong> opens a facility-scoped view with four KPI tiles across the top:</p>
-<table>
-<thead>
-<tr>
-<th>Tile</th>
-<th>What it counts</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Expected today</strong></td>
-<td>Pending shipments with a delivery date in today's window</td>
-</tr>
-<tr>
-<td><strong>Awaiting check-in</strong></td>
-<td>Any shipment marked shipped or in transit</td>
-</tr>
-<tr>
-<td><strong>Open discrepancies</strong></td>
-<td>Line-level flags raised on prior receipts that the vendor hasn't resolved</td>
-</tr>
-<tr>
-<td><strong>Received this week</strong></td>
-<td>Shipments fully checked in over the last 7 days</td>
-</tr>
-</tbody>
-</table>
-<p>Below the tiles, the <strong>All shipments</strong> table lists every shipment tied to your facility with vendor name, shipment number, line count, expected delivery, and status badge (<code>in transit</code>, <code>checking in</code>, <code>received</code>).</p>
+<h2 id="find-the-shipment">Find the shipment</h2>
+<p>Shipments waiting for you appear in the <strong>Vendor Shipments Awaiting Check-In</strong> panel. Each one shows its shipment number, vendor, number of lines, carrier and tracking number, and expected delivery date. The panel only appears when at least one shipment is waiting.</p>
 <h2 id="check-in-a-shipment">Check in a shipment</h2>
 <ol>
-<li>Open the shipment (click the row on the Receiving page, or <strong>Check in</strong> from the Provider inventory view). The check-in modal opens with:
-   - Vendor name and shipment number.
-   - Every line the vendor shipped — SKU, product name, lot, expiration, and expected quantity.</li>
-<li><strong>Confirm each line.</strong> For each row:
-   - Compare the vendor's expected quantity against the physical count.
-   - If it matches, leave <strong>Received quantity</strong> at the pre-filled value.
-   - If it doesn't, edit the number and check the discrepancy option (short, damaged, wrong SKU, expired).</li>
-<li><strong>Photograph any discrepancy.</strong> The modal accepts one photo per flagged line. This becomes the evidence attached to the exception on the vendor's side.</li>
-<li><strong>Add notes</strong> (optional). Anything the vendor's ops team needs to know to reconcile — "outer box crushed but inner sterile packs intact", "lot A vs lot B mixed".</li>
-<li><strong>Confirm receipt.</strong> The shipment moves to <code>received</code> (perfect match) or <code>flagged</code> (any line has a discrepancy). Line-level status is preserved even for a flagged shipment — the accepted quantities stock immediately, only the flagged units wait.</li>
+<li>Click <strong>Check in</strong> on the shipment. The check-in window lists every line: product, SKU, lot, expiration date, and the quantity the vendor shipped.</li>
+<li>For each line, set the quantity you received with the minus and plus buttons or by typing it. A badge shows <strong>match</strong>, <strong>short</strong>, or <strong>over</strong>.</li>
+<li>If a line has a problem, click <strong>Flag</strong> and type a reason. You can attach a photo to the line.</li>
+<li>Click <strong>Complete receipt</strong>.</li>
 </ol>
-<h2 id="what-lands-in-inventory">What lands in inventory</h2>
+<p><strong>Save draft</strong> in the check-in window does not keep your entries yet. Complete the receipt in one sitting.</p>
+<h2 id="what-happens-when-you-complete-the-receipt">What happens when you complete the receipt</h2>
 <ul>
-<li><strong>Accepted lines</strong> create <code>inventory_product_batches_v2</code> rows and become on-hand stock in <strong>Main Inventory → In Stock</strong> the moment you confirm.</li>
-<li><strong>Flagged lines</strong> land in <strong>Receiving History → Needs review</strong> so an inventory admin can reconcile before those units stock.</li>
-<li><strong>Consignment lots</strong> are stocked with <code>ownership_model = consignment</code> so they show on the vendor's consignment position report but count against your on-hand for wizard availability.</li>
-</ul>
-<h2 id="provider-quick-receive">Provider quick-receive</h2>
-<p>The Provider inventory view (Patient Management → <strong>Inventory</strong> tab) surfaces pending shipments in a <strong>Pending Vendor Shipments</strong> card:</p>
-<ul>
-<li>Shows the same shipment list as the facility Receiving page, filtered to shipments where you are on the delivery list.</li>
-<li><strong>Check in</strong> opens the same modal as the Receiving page — no context switch required.</li>
-<li>Useful when a graft was just-in-time couriered for a patient you're about to see; you receive it 30 seconds before you use it, no walk to the supply room.</li>
-</ul>
-<h2 id="discrepancies-and-the-vendor-response">Discrepancies and the vendor response</h2>
-<p>Once you flag a line, the vendor's shipment moves to <code>flagged</code> on their side and lands in their <strong>Requests</strong> inbox with your photo and note. They resolve one of three ways:</p>
-<ul>
-<li><strong>Reship</strong> — a fresh draft shipment for the missing quantity lands in your queue.</li>
-<li><strong>Short-ship accepted</strong> — the balance is written off; the shipment closes.</li>
-<li><strong>Dispute</strong> — opens a message thread with you for reconciliation.</li>
-</ul>
-<p>You're notified in either the bell or <strong>Messages</strong> whenever the vendor responds.</p>
-<h2 id="aging-and-nudges">Aging and nudges</h2>
-<p>Pending shipments that stay uncheck-in for over 24 hours after their expected delivery date send an escalating nudge:</p>
-<ul>
-<li>Day 1 overdue → notification to the facility inventory admin.</li>
-<li>Day 3 overdue → notification to the vendor plus a red flag on the shipment.</li>
-<li>Day 5 overdue → escalated to your facility admin.</li>
-</ul>
-<p>Overdue shipments do not auto-close; someone has to check in or void them.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Likely cause</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Shipment not in queue</td>
-<td>Vendor hasn't marked it shipped yet</td>
-<td>Confirm the tracking number with the vendor; ask them to update status</td>
-</tr>
-<tr>
-<td>Cannot open the check-in modal</td>
-<td>Another provider is checking in the same shipment</td>
-<td>Refresh the page; if the shipment is now <code>received</code>, someone beat you to it</td>
-</tr>
-<tr>
-<td>Photo won't attach</td>
-<td>File over 10 MB or unsupported format</td>
-<td>Reshoot at lower resolution; PNG/JPG only</td>
-</tr>
-<tr>
-<td>Received quantity doesn't decrement in Main Inventory</td>
-<td>Stocking write failed; line landed in Needs Review</td>
-<td>Open <strong>Receiving History → Needs review</strong> and complete the reconcile</td>
-</tr>
-<tr>
-<td>Provider view doesn't show a shipment</td>
-<td>You are not on the delivery list for that shipment</td>
-<td>Use the facility Receiving page — any provider can check in from there</td>
-</tr>
-</tbody>
-</table>
-<h2 id="related">Related</h2>
-<ul>
-<li><strong><a href="/vendor-portal/shipments/">Create and track shipments</a></strong> — the vendor-side flow that fed this queue.</li>
-<li><strong><a href="/modules/inventory/main-inventory/">Main Inventory</a></strong> — where received stock lands.</li>
-<li><strong><a href="/modules/inventory/bulk-operations/">Bulk inventory workflows</a></strong> — receiving without a vendor shipment (manual receive, non-vendor sources).</li>
+<li>Each received lot is added to your inventory as available stock.</li>
+<li>The shipment is marked received, and the vendor is notified with the expected and received totals and the number of discrepancies.</li>
+<li>Only a shipment the vendor has shipped can be checked in, and a shipment can only be received once.</li>
 </ul>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/vendor-portal/shipments/">Create and track shipments</a></li><li><a href="/modules/inventory/overview/">Inventory Management overview</a></li><li><a href="/modules/inventory/main-inventory/">Main Inventory reference</a></li></ul></div>
       <div class="feedback">
@@ -217,7 +95,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#where-check-in-lives">Where check-in lives</a></li><li><a class="" href="#the-receiving-page">The Receiving page</a></li><li><a class="" href="#check-in-a-shipment">Check in a shipment</a></li><li><a class="" href="#what-lands-in-inventory">What lands in inventory</a></li><li><a class="" href="#provider-quick-receive">Provider quick-receive</a></li><li><a class="" href="#discrepancies-and-the-vendor-response">Discrepancies and the vendor response</a></li><li><a class="" href="#aging-and-nudges">Aging and nudges</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#find-the-shipment">Find the shipment</a></li><li><a class="" href="#check-in-a-shipment">Check in a shipment</a></li><li><a class="" href="#what-happens-when-you-complete-the-receipt">What happens when you complete the receipt</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/receiving.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/vendor-portal/receiving.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

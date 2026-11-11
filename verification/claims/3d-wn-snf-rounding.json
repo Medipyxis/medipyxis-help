@@ -1,0 +1,458 @@
+{
+  "title": "How does Medipyxis handle rounding at a skilled nursing facility?",
+  "source": "whats-new/snf-rounding",
+  "url": "https://help.medipyxis.com/whats-new/snf-rounding/",
+  "claims": [
+    {
+      "id": "wns-01",
+      "claim": "Intro/FAQ: SNF and ALF facilities are set up as a building with the providers who round there, current residents, and signed clinical notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Skilled Nursing Facility\", label: \"Skilled Nursing Facility (SNF)\" },",
+          "paths": [
+            "frontend/src/constants/practiceTypes.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Assisted Living Facility\", label: \"Assisted Living Facility (ALF)\" },",
+          "paths": [
+            "frontend/src/constants/practiceTypes.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Residential buildings (SNF/ALF) get Providers (who covers it, SNF Phase 2b), Residents and Clinical Notes (SNF Phase 7). */",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-02",
+      "claim": "Part 1: Add New Practice takes practice type Skilled Nursing Facility; such a facility gets Providers, Residents and Clinical Notes tabs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isEditMode ? \"Edit Practice\" : \"Add New Practice\"}",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { PRACTICE_TYPE_OPTIONS, RESIDENTIAL_PRACTICE_TYPES } from \"@/constants/practiceTypes\";",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(showProviders ? [{ id: \"providers\", label: \"Providers\", icon: \"🩺\" }] : []),",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"residents\", label: \"Residents\", icon: \"🛏️\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"clinical-notes\", label: \"Clinical Notes\", icon: \"📝\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-03",
+      "claim": "Part 1: Facility prohibits photography checkbox; when ticked, notes state no photographs were taken because of facility policy.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility prohibits photography",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (input.facilityPhotographyProhibited) {",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-04",
+      "claim": "Part 1: Providers tab lists who rounds there (Primary), with backup or cover providers for set dates.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ROLE_LABEL: Record<CoverageRole, string> = { primary: \"Primary\", backup: \"Backup\", substitute: \"Substitute\" };",
+          "paths": [
+            "frontend/src/components/crm/PracticeProvidersTab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { CoverVisitsPanel } from \"./CoverVisitsPanel\";",
+          "paths": [
+            "frontend/src/components/crm/PracticeProvidersTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-05",
+      "claim": "Part 1: Residents tab lists current residents with last signed visit at the building.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Last signed visit here ${formatCalendarDate(r.last_signed_visit_here)}",
+          "paths": [
+            "frontend/src/components/crm/PracticeResidentsTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-06",
+      "claim": "Part 1/4 + FAQ: Clinical Notes tab lists signed visits for a date range; Download notes (.zip) gives each note without billing, amendments as separate files, and an index.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * zip — each note without billing, each amendment as its own PDF, and an",
+          "paths": [
+            "frontend/src/components/crm/PracticeClinicalNotesTab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Download notes (.zip)\"}",
+          "paths": [
+            "frontend/src/components/crm/PracticeClinicalNotesTab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const r = await listFacilityNotes(client, practiceId, from, to);",
+          "paths": [
+            "frontend/src/components/crm/PracticeClinicalNotesTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-07",
+      "claim": "Part 2 + FAQ: Fleet Calendar Book facility day takes facility, date, provider, start time, minutes per resident; books ticked residents back to back; already-booked residents are left alone; result shows booked / already booked / not booked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BookFacilityDayDialog",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Book facility day</DialogTitle>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "className={LABEL}>Facility</label>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "className={LABEL}>Date</label>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "className={LABEL}>Provider</label>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "className={LABEL}>Start time</label>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "className={LABEL}>Minutes per resident</label>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "One visit for each ticked resident, back to back. Residents already booked that day are left alone.",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`${bookedCount} booked · ${alreadyCount} already booked · ${failedCount} not booked`}",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-08",
+      "claim": "Each booked visit records the facility it happens at.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "service_location_practice_id: string | null;",
+          "paths": [
+            "backend/supabase/functions/facility-day/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-09",
+      "claim": "Part 3 (Not switched on yet): My Clinical Day groups residents by building with a Round button; the rounding layout is built but off unless switched on.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { RoundButton } from \"./rounding/RoundButton\";",
+          "paths": [
+            "frontend/src/components/DailySchedule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const roundingOn = isSnfRoundingLayoutEnabled();",
+          "paths": [
+            "frontend/src/components/DailySchedule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * Off unless the deploy sets `VITE_SNF_ROUNDING_LAYOUT=true`. When off, the",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-10",
+      "claim": "Part 3 + FAQ: for place of service 31 or 32, Pull Codes suggests the visit code from the nursing facility code family; the provider reviews codes before signing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const NURSING_FACILITY_POS = new Set(['31', '32', '54', '56']);",
+          "paths": [
+            "frontend/src/utils/billing/emFamily.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pull Codes",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-11",
+      "claim": "Part 4: the claim names the facility in Box 32 (Service Facility card).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Service Facility */}",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// SNF Phase 4c: the stored snapshot — what was sent. Box 32/32a print it",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-12",
+      "claim": "FAQ: the place of service (31 or 32) is recorded on the visit, not derived from the building.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * resident's Part A stay, not by the building (MLN MM13767). The visit records",
+          "paths": [
+            "frontend/src/constants/practiceTypes.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-13",
+      "claim": "Part 5 (Not switched on yet): PointClickCare page with Data Sync and Look up a resident (link to a patient); until PCC is connected a notice says so.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle>Data Sync</CardTitle>",
+          "paths": [
+            "frontend/src/pages/administrator/integrations/pointclickcare/PointClickCareDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle>Look up a resident</CardTitle>",
+          "paths": [
+            "frontend/src/components/pcc/PccResidentLookupPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Link to this patient\"",
+          "paths": [
+            "frontend/src/components/pcc/PccResidentLookupPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PCC_NOT_CONNECTED_TITLE = \"PCC is not connected to this environment yet.\";",
+          "paths": [
+            "frontend/src/components/pcc/PccConnectionBanner.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Look-ups will not return residents until PointClickCare is connected.\";",
+          "paths": [
+            "frontend/src/components/pcc/PccConnectionBanner.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wns-14",
+      "claim": "\"Why it matters\" lines and the video descriptions' demo values (synthetic demo facility and residents) describe the recorded demo, not product rules.",
+      "kind": "advice"
+    },
+    {
+      "id": "wns-old-01",
+      "status": "removed",
+      "claim": "(removed) FAQ: \"each visit records the facility, so the claim carries place of service 31\".",
+      "reason": "The building does not set the place of service; the visit records 31 or 32.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeOfService: \"31\"",
+          "paths": [
+            "backend/supabase/functions/facility-day/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

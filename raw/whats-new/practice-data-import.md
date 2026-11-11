@@ -4,7 +4,7 @@ title: How do I move my practice's patient data into Medipyxis?
 module: admin
 audience: [admin]
 type: whats-new
-last_reviewed: 2026-10-26
+last_reviewed: 2026-11-11
 tags: [whats-new, video, import, onboarding, csv, migration]
 related:
   - whats-new
@@ -50,10 +50,10 @@ For the complete column-by-column specification, accepted values, and default ru
 2. **2. Insurance** (`insurance_import_template.csv`): Payer, subscriber/member ID, policy and group numbers linked to `patient_uid`.
 3. **3. Medications** (`medications_import_template.csv`): Current medications with dose, route, frequency and prescriber linked to `patient_uid`.
 4. **4. Allergies** (`allergies_import_template.csv`): Known allergies with allergy type, severity and reaction linked to `patient_uid`.
-5. **5. Conditions** (`conditions_import_template.csv` — Comorbidities): Medical history and conditions, with ICD-10 codes linked to `patient_uid`.
+5. **5. Conditions** (`comorbidities_import_template.csv` — Comorbidities): Medical history and conditions, with ICD-10 codes linked to `patient_uid`.
 6. **6. Emergency Contacts** (`contacts_import_template.csv`): Name, relationship, phone number and primary contact flag linked to `patient_uid`.
 7. **7. Wounds** (`wounds_import_template.csv`): Historical wounds with anatomical location, wound type, baseline measurements (period-decimal cm) and staging (`wounds_import_results.csv` provides `wound_uid`).
-8. **8. Documents & Historical Wound Photos** (`documents_manifest.csv` / `wound_photos_manifest.csv` + ZIP archive): Clinical PDFs/TIFFs (stored in `patient-documents` under `imported-records/`) and historical wound photos (stored in `wound-images` under `historical/`), linked to `patient_uid` and optionally `wound_uid` / `wound_id`.
+8. **8. Documents & Historical Wound Photos** (`documents_import_template.csv`, plus the files it lists): Clinical PDFs/TIFFs (stored in `patient-documents` under `imported-records/`) and historical wound photos (stored in `wound-images` under `historical/`), linked to `patient_uid` and optionally `wound_uid` / `wound_id`.
 9. **9. Past Visits** (`visit_history_import_template.csv` — Visit history): Past visits, linked to the patient (`patient_uid`) and wounds (`wound_uid` / `wound_id`). Imported as read-only history (`visit_import_history`).
 
 ## What is not imported (and what safeguards apply)?
@@ -77,7 +77,7 @@ For the complete column-by-column specification, accepted values, and default ru
 
 ### What can I import into Medipyxis from my old EHR?
 
-Nine categories in dependency order: (1) Patients, (2) Insurance, (3) Medications, (4) Allergies, (5) Conditions / Comorbidities, (6) Emergency Contacts, (7) Wounds, (8) Documents & Historical Wound Photos (ZIP archive + manifest CSV), and (9) Past Visits (Visit History). Patients go first because every later step links its rows to the `patient_uid` created in Step 1. Wounds go in Step 7 so Step 8 and Step 9 can attach historical photos, wound-linked documents, and past visits to each imported `wound_uid` or `wound_id`.
+Nine categories in dependency order: (1) Patients, (2) Insurance, (3) Medications, (4) Allergies, (5) Conditions / Comorbidities, (6) Emergency Contacts, (7) Wounds, (8) Documents & Historical Wound Photos (a CSV that lists each file, plus the files), and (9) Past Visits (Visit History). Patients go first because every later step links its rows to the `patient_uid` created in Step 1. Wounds go in Step 7 so Step 8 and Step 9 can attach historical photos, wound-linked documents, and past visits to each imported `wound_uid` or `wound_id`.
 
 ### What happens to rows with errors?
 
@@ -97,7 +97,7 @@ The patient is still imported without a provider and listed under Needs Follow-U
 
 ### Are documents and wound photos imported?
 
-Yes, in Step 8 (**Documents & Historical Wound Photos**). Upload a ZIP archive together with `documents_manifest.csv` or `wound_photos_manifest.csv`. Clinical PDFs and TIFFs are stored in the private `patient-documents` bucket under `imported-records/` and indexed in `prior_ehr_record`; historical wound photos (JPEG, PNG, WebP, HEIC) are stored in the private `wound-images` bucket under `historical/` and appended to `wound_import_history.photo_urls` (never mixed into live clinical `wound_assessment` records).
+Yes, in Step 8 (**Documents & Historical Wound Photos**). Upload `documents_import_template.csv`, which lists each file by `file_name`, and attach the files. Clinical documents (PDF, JPEG, PNG, TIFF) are stored in the private `patient-documents` bucket under `imported-records/` and indexed in `prior_ehr_record`; historical wound photos (JPEG, PNG, HEIC) are stored in the private `wound-images` bucket under `historical/` and appended to `wound_import_history.photo_urls` (never mixed into live clinical `wound_assessment` records).
 
 ### Can I edit or bill imported visits?
 

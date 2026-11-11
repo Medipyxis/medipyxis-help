@@ -1,0 +1,690 @@
+{
+  "title": "Onboard your company on the vendor portal",
+  "source": "vendor-portal/onboarding-your-company",
+  "url": "https://help.medipyxis.com/vendor-portal/onboarding-your-company/",
+  "claims": [
+    {
+      "id": "vpb-01",
+      "claim": "A clinic invites your company; the email links to the onboarding wizard at /vendor/onboarding.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// W7: Clinic invites a vendor by email. Creates a vendor_invitations row",
+          "paths": [
+            "backend/supabase/functions/vendor-invite/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/onboarding\" element={<VendorOnboardingPage />} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-02",
+      "claim": "Five steps: Profile, BAA, Modalities, Staff, Catalog push.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const STEPS = ['Profile', 'BAA', 'Modalities', 'Staff', 'Catalog push'] as const;",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-03",
+      "claim": "Each step is saved when you continue, and the same link resumes where you left off.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "body: { step: 0, token, action: 'get_progress' },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setCurrentStep(data.progress?.current_step ?? 1);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-04",
+      "claim": "The invitation link expires 30 days after it was created.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "expires_at            timestamptz not null default (now() + interval '30 days'),",
+          "paths": [
+            "backend/supabase/migrations/20260727000001_vendor_directory_onboarding.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (new Date(data.expires_at) < new Date()) return null;",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-05",
+      "claim": "Steps 4 and 5 require being signed in as an Admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"Authentication required for steps 4-5\" }, 401, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"Only vendor_admin can complete onboarding\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-06",
+      "claim": "Inviting an already-registered company links the invitation to it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// crm_vendors is a global registry, so link the invitation to the existing",
+          "paths": [
+            "backend/supabase/functions/vendor-invite/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor_id: existingVendorId,",
+          "paths": [
+            "backend/supabase/functions/vendor-invite/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-07",
+      "claim": "Side panel shows progress and invitation details: invited by, sent to, expires; Back returns to an earlier step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "% complete · resumable",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<dt className=\"text-gray-500\">Invited by</dt>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<dt className=\"text-gray-500\">Sent to</dt>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<dt className=\"text-gray-500\">Expires</dt>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Back",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-08",
+      "claim": "Profile fields: Company name (required), Legal name, EIN, NPI, Primary contact name, Phone, Street address, City, State, ZIP, Website.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Company name *</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Legal name</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">EIN</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">NPI</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Primary contact name</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Phone</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Street address</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">City</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">State</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ZIP</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Website</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(currentStep === 1 && !profileName)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-09",
+      "claim": "The company is created with status pending_verification and your portal account is attached to it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"pending_verification\",",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Attach the portal account to the company it just described.",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-10",
+      "claim": "BAA: paste a link in BAA document URL (required); the save date is recorded as the signing date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">BAA document URL *</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!baaDocumentUrl) return json({ error: \"baa_document_url is required\" }, 400, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "baa_signed_at: now,",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-11",
+      "claim": "Modalities: eight options, at least one required.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'amniotic', label: 'Amniotic / placental allografts',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'biologics', label: 'Biologics — collagen & ECM',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'prp', label: 'PRP / autologous',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'dme', label: 'DME & offloading',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'npwt', label: 'Negative pressure (NPWT)',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'compression', label: 'Compression & dressings',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'synthetic', label: 'Skin substitutes — synthetic',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'lab', label: 'Lab / diagnostics',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(currentStep === 3 && selectedModalities.size === 0)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-12",
+      "claim": "Staff: Email, First name, Last name, Role (Staff or Admin); + Add another person; each gets an email invitation to set a password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Email</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">First name</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Last name</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_user\">Staff</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_admin\">Admin</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Add another person",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Each person gets an email invite to set their password.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-13",
+      "claim": "Complete onboarding approves the clinic connection and proposes the catalog; the clinic accepts or declines each product.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Complete onboarding'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ status: \"approved\", granted_at: new Date().toISOString() })",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "They can accept or decline each SKU.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-14",
+      "claim": "After onboarding: Admins add/remove users from Staff; push to other clinics from Catalog → Push to clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Invite Staff",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const onRevoke = async (id: string): Promise<void> => {",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/staff\" element={<VendorAdminOnly><VendorStaffPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate('/vendor/catalog/push')",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-old-01",
+      "status": "removed",
+      "claim": "(removed) \"A Medipyxis compliance rep verifies the BAA within one business day; catalog push is blocked until the BAA is approved.\"",
+      "reason": "Saving step 2 records the BAA as signed immediately; step 5 has no BAA check.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "pending_review|approved_by_compliance",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpb-old-02",
+      "status": "removed",
+      "claim": "(removed) \"Modalities, BAA and settings are edited later under Settings → Modalities / Settings → Compliance.\"",
+      "reason": "Vendor Settings only has the API page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/settings/modalities\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-old-03",
+      "status": "removed",
+      "claim": "(removed) \"Sales reps (vendor_sales) can be added later from Staff.\"",
+      "reason": "The Staff invite form offers only vendor_user and vendor_admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_sales\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpb-old-04",
+      "status": "removed",
+      "claim": "(removed) \"Every selected SKU lands in the clinic's inventory_product_catalog_v2 and shows up in their Visit Wizard picker\" at step 5.",
+      "reason": "Step 5 creates proposed links; products reach pickers only after the clinic accepts.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-onboarding-step/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpb-old-05",
+      "status": "removed",
+      "claim": "(removed) Step 5 lets you pick All active products or specific products.",
+      "reason": "Step 5 has no product picker; it proposes the catalog in one action.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select specific products",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,531 @@
+{
+  "title": "How do I move my practice's patient data into Medipyxis?",
+  "source": "whats-new/practice-data-import",
+  "url": "https://help.medipyxis.com/whats-new/practice-data-import/",
+  "claims": [
+    {
+      "id": "wnp-01",
+      "claim": "Practice Onboarding (Administrator → Practice Onboarding) imports records in nine steps; patients first, steps 2-8 after patients, visit history after wounds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: 'Patients',",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dependsOn: ['wounds'],",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dependsOn: ['patients'],",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "helpTitle: '8. Documents & Historical Wound Photos',",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-02",
+      "claim": "Each step has its own CSV template: patient, insurance, medications, allergies, comorbidities, contacts, wounds, documents, visit history.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'patient_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'insurance_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'medications_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'allergies_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'comorbidities_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/ComorbiditiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'contacts_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'wounds_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'documents_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'visit_history_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-03",
+      "claim": "Flow: Download template, Map Columns, Confirm Mapping, review rows, Skip all error rows, Import Complete, Needs Follow-Up, Download Results CSV.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download {config.label} Template",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'mapping', label: 'Map Columns' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Confirm Mapping",
+          "paths": [
+            "frontend/src/components/import/ColumnMappingScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Skip all {errorCount} error rows",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? 'Import Complete'",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Needs Follow-Up ({result.warnings.length})",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-04",
+      "claim": "Dates are read month-first and you are asked to check them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? 'read as month-first (MM/DD/YYYY) and converted to YYYY-MM-DD.'",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-05",
+      "claim": "Preflight: sep= lines stripped; mixed MM/DD and DD/MM dates and impossible dates blocked; decimal commas blocked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * Excel/Google-Sheets `sep=<delim>` directive line if present at the top of a",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * unambiguous DD/MM/YYYY (first part > 12) and unambiguous MM/DD/YYYY",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/shared.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'Invalid number — use a period for decimals (e.g. 2.5)';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: 'Mixed Date Format & Impossible Calendar Date Rejection',",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-06",
+      "claim": "Same name + DOB with conflicting subscriber_id, mrn, ssn_last4, phone, address or email is held as PATIENT_IDENTITY_COLLISION; disambiguate with patient_uid, force_distinct_patient, or duplicate_decision.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PATIENT_IDENTITY_COLLISION_CODE = 'PATIENT_IDENTITY_COLLISION' as const;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  | 'subscriber_id'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  | 'ssn_last4'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  | 'address'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  | 'email';",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "forceDistinctPatient: trimOrNull(m.force_distinct_patient),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// external_id), or when a person says so in the `duplicate_decision` column.",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-07",
+      "claim": "Imported visits are read-only history (visit_import_history), not active visits.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ── visit_history → visit_import_history (two-pane glass, NOT visit_data_v2) ────",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-08",
+      "claim": "Step 8: documents_import_template.csv lists each file by file_name and you attach the files; documents (PDF, JPEG, PNG, TIFF) go to private patient-documents under imported-records/ (prior_ehr_record); historical photos (JPEG, PNG, HEIC) go to wound-images under historical/ on wound_import_history.photo_urls, never live wound records.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'file_name',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Attach source files below so each row uploads directly to private Storage before its record is committed.",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " *   1. Prior-EHR patient documents (PDF, JPEG, PNG, TIFF ≤ 25 MB)",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " *   2. Historical wound photos (JPEG, PNG, HEIC ≤ 15 MB, when `wound_uid` is provided)",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " *      → `wound_import_history.photo_urls` (two-pane glass — NEVER `wound_data` or `wound_metrics`)",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " *      → private bucket `patient-documents` at `${patientId}/imported-records/${batchId}/${sha256}.${ext}`",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   document_commit              → verify upload & write `documents` row (`prior_ehr_record`)",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-09",
+      "claim": "Results file is your rows plus patient_uid; wounds step produces wounds_import_results.csv; can be re-downloaded from the step card.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const filename = `${batch.import_type}_import_results.csv`;",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "importType: 'wounds',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download results CSV",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-10",
+      "claim": "Consent columns gate on consent_on_file; yes records an external_attested consent under the importing admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!normalizeBool(m.consent_on_file)) return null;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_attested",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-11",
+      "claim": "\"Why it matters\", \"Only attest consent_on_file = yes when your practice holds its own signed consent form\", and the video's synthetic demo rows (made-up test patients).",
+      "kind": "advice"
+    },
+    {
+      "id": "wnp-old-01",
+      "status": "removed",
+      "claim": "(removed) Step 5 template conditions_import_template.csv.",
+      "reason": "The template is comorbidities_import_template.csv.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "templateFilename: 'conditions_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules/ComorbiditiesImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnp-old-02",
+      "status": "removed",
+      "claim": "(removed) Step 8 uses a ZIP archive with documents_manifest.csv / wound_photos_manifest.csv; photos may be WebP.",
+      "reason": "Step 8 takes documents_import_template.csv plus attached files; photos are JPEG, PNG, HEIC.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "zip",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "webp",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    }
+  ]
+}

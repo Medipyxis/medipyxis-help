@@ -6,7 +6,7 @@ audience: [vendor]
 roles: [vendor_admin, vendor_user]
 type: reference
 estimated_minutes: 4
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 related:
   - vendor-portal-overview
   - vendor-portal-manage-orders
@@ -23,49 +23,49 @@ Answers to the questions vendor staff ask most often about the vendor portal (`/
 
 **1. Can I see patient-level data?**
 
-No. The portal does not expose PHI. Where a patient is referenced — for example on the **Use Events** page — you see only minimal, de-identified detail such as the patient's initials and year of birth, never a name, full date of birth, or diagnosis.
+Only limited detail. Where a patient is referenced, on the **Use Events** page and on invoice lines, you see the patient's initials and year of birth.
 
 ---
 
-**2. What are the two vendor roles?**
+**2. What are the vendor roles?**
 
-- **vendor_admin** — full access, including the **Staff** page to invite and manage colleagues.
-- **vendor_user** — everything except Staff (Orders, Use Events, Catalog, Invoices, Clinics).
+- **Admin** (`vendor_admin`) — every page, plus **Staff** (invite and manage colleagues), **API** (API keys and webhooks), and editing each clinic's terms.
+- **Staff** (`vendor_user`) and **Sales** (`vendor_sales`) — every page except Staff, API, and clinic terms.
 
-See [Sign in and manage staff](./onboarding-your-company.md).
+The Staff page invites people as Admin or Staff. See [Onboard your company on the vendor portal](/vendor-portal/onboarding-your-company/).
 
 ---
 
 **3. How do orders reach me and how do I fulfill them?**
 
-Clinics place orders that appear on your **Orders** page as **Pending**. You accept them (In Progress), ship with a **tracking number** (Shipped), and they complete as **Delivered**. See [Manage orders](./manage-orders.md). There is no UIN/receiving step on the vendor side.
+Orders clinics place with your company appear on your **Orders** page as **Pending**. You accept them, ship them with a **tracking number**, and mark them **Delivered**. See [Manage orders](/vendor-portal/manage-orders/). Orders a clinic raises from a product request appear on **Requests**; see [Respond to clinic requests](/vendor-portal/respond-to-requests/).
 
 ---
 
 **4. How do I add or change a product?**
 
-Manage your SKUs on the **Catalog** page — click **New SKU** or edit an existing one. Changes take effect directly; there is no separate practice approval step. See [Manage your product catalog](./manage-catalog.md).
+On the **Catalog** page, click **Add Product**, or click a row to edit it. To offer a product to a clinic, push it from **Push to clinic**; the clinic reviews and accepts new products before they can use them. See [Manage your catalog](/vendor-portal/manage-catalog/).
 
 ---
 
 **5. Do I create invoices, or does the clinic?**
 
-You **send** invoices from the **Invoices** page. The clinic's finance team reconciles and pays them in their Accounts Payable workspace. You track status from your Invoices list. See [Send invoices](./invoices-and-payment.md).
+You **send** invoices from the **Invoices** page. The clinic approves, disputes, or holds them on its accounts payable page. See [Invoices and AR](/vendor-portal/invoices-and-payment/).
 
 ---
 
 **6. What is the Use Events page?**
 
-**Use Events** shows where your products were used, de-identified (initials + year of birth only). Use it to reconcile consumption without any PHI.
+**Use Events** shows where your products were used: date, clinic, product, lot, quantity, and the patient's initials and year of birth.
 
 ---
 
 **7. What does the Clinics page show?**
 
-The **Clinics** page lists the clinics your company is enabled at, so you know which facilities you're serving.
+The **Clinics** page lists the clinics your company is connected to, with each clinic's city and state, how many of your product lines are switched on there, the date access was granted, and a link to that clinic's terms.
 
 ---
 
 **8. Is the vendor portal the same login as the clinical app?**
 
-No. The vendor portal is a separate sign-in at `/vendor`. Vendor accounts are managed inside the portal's **Staff** page by a `vendor_admin`, not through a clinic's HR & Compliance.
+Yes, the sign-in page is the same. When a vendor account signs in, it opens the vendor portal home page (`/vendor/home`). Vendor accounts are managed by your company's Admin on the **Staff** page, not through a clinic's HR & Compliance.

@@ -1,0 +1,863 @@
+{
+  "title": "Invoices and AR",
+  "source": "vendor-portal/invoices-and-payment",
+  "url": "https://help.medipyxis.com/vendor-portal/invoices-and-payment/",
+  "claims": [
+    {
+      "id": "vpi-01",
+      "claim": "Invoices & AR at /vendor/invoices; you send, the clinic approves/disputes/holds on its AP page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Invoices &amp; AR</h1>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/invoices\" element={<VendorIdentityGate><VendorInvoicesPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Clinic AP actions on a received invoice: approve, dispute, or hold per line.",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Data source: ap-list-invoices + clinic-invoice-respond edge functions.",
+          "paths": [
+            "frontend/src/pages/ClinicApPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-02",
+      "claim": "Every vendor role can open Invoices; only approved-connection clinics can be invoiced.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Invoices\", path: \"/vendor/invoices\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\")",
+          "paths": [
+            "backend/supabase/functions/vendor-send-invoice/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-03",
+      "claim": "Header shows total open; age cards Current, 30 days, 60 days, 90+ days.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(totalOpen)} open across clinics",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Current</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">30 days</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">60 days</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">90+ days</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-04",
+      "claim": "Table: number, clinic, issued, due, lines, amount, source auto/manual, status draft/sent/disputed/paid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Invoice #</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Issued</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Due</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Amount</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Source</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "draft: 'bg-gray-100 text-gray-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sent: 'bg-blue-100 text-blue-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disputed: 'bg-red-100 text-red-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid: 'bg-green-100 text-green-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const cls = source === 'auto' ?",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-05",
+      "claim": "Denial visibility counts denied lines and links to a disputed invoice.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial visibility",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{denials.length} denied lines",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Open disputed invoice &rarr;",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-06",
+      "claim": "Age-card notes, Cadence runs panel and Run cadence now are not real yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{invoices.filter((i) => i.status === 'sent').length || 2} invoices",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-green-700 font-medium\">4 drafts</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-gray-500\">next Aug 1</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={runCadence",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Run cadence now",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-07",
+      "claim": "New invoice composer: Clinic, Ownership Basis Standard/Consignment, Invoice # required, Invoice Date, Due Date, PDF URL; lines SKU, description, lot, quantity, unit cost; + Add line; Send Invoice sends straight to the clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New invoice",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Clinic *</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Ownership Basis</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"standard\">Standard</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"consignment\">Consignment</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Invoice # *</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Invoice Date</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Due Date</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">PDF URL</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Lot\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Unit cost\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "type=\"number\" min={1} value={l.quantity}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Add line",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{send.isPending ? 'Sending…' : 'Send Invoice'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"received\",",
+          "paths": [
+            "backend/supabase/functions/vendor-send-invoice/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-08",
+      "claim": "Automatic drafts from use events for clinics whose terms have Auto-invoice on; uninvoiced events only; one draft per clinic per run.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Scheduled edge function that batches uninvoiced product_use_events into",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Idempotent: only events with invoice_line_id IS NULL are candidates.",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Each run produces one draft per (vendor, clinic) where events exist.",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "auto_invoice: boolean;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-09",
+      "claim": "In this release automatic drafting does not produce drafts (job scheduled 06:10 UTC; drafting only fires 02:00-02:59 UTC).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'schedule', '10 6 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return hour >= 2 && hour < 3;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hour = now.getUTCHours();",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-10",
+      "claim": "A draft has Send to clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{invoice.status === 'draft' && (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Send to clinic'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-11",
+      "claim": "Drafted-invoice lines: use event, patient initials and birth year, product/lot, line price, claim status pending/paid/denied/not filed, expected, received; totals subtotal, tier adjustment, freight, credit memo, total due.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Use event</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Patient</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product / Lot</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Line price</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Claim status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Expected</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Received</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "not_filed: 'bg-gray-100 text-gray-600',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{status.replace('_', ' ')}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Subtotal</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Tier adjustment</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Freight</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Credit memo</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Total due</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-12",
+      "claim": "Side panels: Reimbursement rollup (expected, received, at risk, lines reimbursed), Denial detail (payer, denial code), Activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Reimbursement rollup</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">At risk (denied)</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Lines reimbursed</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial detail</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer: {line.payer_name}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "CARC: {line.carc_code}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Activity</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-13",
+      "claim": "Clinic approves, disputes, or holds invoice and lines; none final; a dispute is recorded with the reason.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// No hard blocks — all actions are reversible. Disputes create vendor_invoice_disputes rows.",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "line_actions?: Array<{",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-old-01",
+      "status": "removed",
+      "claim": "(removed) \"A nightly job drafts invoices\" on cadences per_use nightly / weekly Mondays / monthly 1st, as working behavior.",
+      "reason": "The scheduled time never matches the drafting window, so no drafts are made.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-old-02",
+      "status": "removed",
+      "claim": "(removed) \"Run cadence now manually triggers the draft job.\"",
+      "reason": "The button has no action.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={runCadence",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-old-03",
+      "status": "removed",
+      "claim": "(removed) Pre-send Remove line / Credit line adjustments on a draft.",
+      "reason": "No such controls exist.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Remove line",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add credit",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-old-04",
+      "status": "removed",
+      "claim": "(removed) Aging buckets named 1–30 / 31–60 / 60+ past due; held lines leave the aging buckets.",
+      "reason": "Buckets are Current, 30 days, 60 days, 90+ days.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "1–30",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpi-old-05",
+      "status": "removed",
+      "claim": "(removed) Dispute discussion through a Messages thread attached to the invoice.",
+      "reason": "The invoice page has no Messages thread.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ThreadPanel",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}
