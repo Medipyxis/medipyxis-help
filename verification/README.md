@@ -36,8 +36,18 @@ Verdicts in the report:
   made, not that it is in the release under test. Treat it as unconfirmed.
 - **NOT CONFIRMED** — a check failed, or the claim has no check. Fix or remove
   the sentence.
+- **ADVICE** / **EXTERNAL** — the sentence is guidance ("read the note before
+  you sign") or a payer/regulatory fact (`"kind": "advice"` or `"external"`, no
+  checks). It is not a claim about the product and cannot be confirmed here.
+  Keep these few; a product claim must never be labelled this way to dodge a check.
 - **REMOVED** — the old page said this and it was taken out. Its checks encode
   the old sentence and must fail (`REMOVED: confirmed false`).
+
+## Raw markdown
+
+`raw/<page>.md` is served as "View raw Markdown". After editing a page's HTML,
+run `python3 verification/sync_raw.py <page>/index.html raw/<page>.md "" <date>`
+so the raw copy says the same thing.
 
 ## Limits
 

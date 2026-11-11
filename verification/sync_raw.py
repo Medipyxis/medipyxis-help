@@ -1,0 +1,54 @@
+# Rewrites raw/<page>.md from the live <page>/index.html body, keeping the
+# frontmatter and bumping last_reviewed.
+# Usage: python3 verification/sync_raw.py <page>/index.html raw/<page>.md "<H1 or empty>" YYYY-MM-DD
+import re, html, sys
+from html.parser import HTMLParser
+class P(HTMLParser):
+    def __init__(s): super().__init__(convert_charrefs=True); s.blocks=[]; s.buf=None; s.depth=0; s.href=[]
+    def start(s): s.buf=[]
+    def flush(s,prefix):
+        if s.buf is not None:
+            t=''.join(s.buf).strip()
+            if t: s.blocks.append(prefix+t)
+        s.buf=None
+    def handle_starttag(s,tag,a):
+        a=dict(a)
+        if tag=='h2': s.flush(s.cur()); s.kind='## '; s.start()
+        elif tag=='p': s.kind=''; s.start()
+        elif tag=='ul':
+            if s.buf is not None: s.flush(s.cur())
+            s.depth+=1
+        elif tag=='li': s.kind=None; s.start()
+        elif tag=='hr': s.blocks.append('---')
+        elif tag=='strong': s.buf is not None and s.buf.append('**')
+        elif tag=='em': s.buf is not None and s.buf.append('_')
+        elif tag=='code': s.buf is not None and s.buf.append('`')
+        elif tag=='a': s.href.append(a.get('href','')); s.buf is not None and s.buf.append('[')
+    def cur(s): return '  '*(s.depth-1)+'- ' if s.kind is None else s.kind
+    def handle_endtag(s,tag):
+        if tag in('h2','p'): s.flush(s.kind)
+        elif tag=='li': s.flush('  '*(s.depth-1)+'- ')
+        elif tag=='ul': s.depth-=1; s.blocks.append('')
+        elif tag=='strong': s.buf is not None and s.buf.append('**')
+        elif tag=='em': s.buf is not None and s.buf.append('_')
+        elif tag=='code': s.buf is not None and s.buf.append('`')
+        elif tag=='a':
+            h=s.href.pop()
+            s.buf is not None and s.buf.append(f']({h})')
+    def handle_data(s,d):
+        if s.buf is not None: s.buf.append(d.replace('\n',' '))
+def conv(b):
+    p=P(); p.feed(b)
+    out=[]; prev_li=False
+    for blk in p.blocks:
+        is_li=blk.lstrip().startswith('- ')
+        if blk=='' : prev_li=False; continue
+        out.append(('\n' if is_li and prev_li else '\n\n')+blk)
+        prev_li=is_li
+    return ''.join(out).strip()+'\n'
+src,raw,h1,date=sys.argv[1:5]
+s=open(src).read()
+b=re.search(r'<div class="article-meta">.*?</div>\n(.*?)<div class="related-block">',s,re.S).group(1)
+fm=open(raw).read().split('---',2)
+front=re.sub(r'last_reviewed: [0-9-]+',f'last_reviewed: {date}',fm[1])
+open(raw,'w').write('---'+front+'---\n\n'+(f'# {h1}\n\n' if h1 else '')+conv(b))

@@ -119,7 +119,9 @@ function runClaim(claim) {
     // The old article stated this; the checks encode the old statement. It was
     // removed because the product contradicts it, so the checks must fail.
     verdict = results.length > 0 && !allPass ? "REMOVED: confirmed false" : results.length === 0 ? "REMOVED: no check" : "REMOVED BUT CHECKS PASS";
-  } else if (results.length === 0) verdict = "NOT CONFIRMED: no automated check";
+  } else if (results.length === 0 && claim.kind === "advice") verdict = "ADVICE: not a product claim";
+  else if (results.length === 0 && claim.kind === "external") verdict = "EXTERNAL: payer or regulatory fact, not checkable in product code";
+  else if (results.length === 0) verdict = "NOT CONFIRMED: no automated check";
   else if (!allPass) verdict = "NOT CONFIRMED: check failed";
   // A merged PR with a matching title shows the change was made, not that it
   // is in the release under test. Such claims are reported separately.
@@ -145,12 +147,13 @@ for (const a of articles) {
   const c = rows.filter((r) => r.verdict === "CONFIRMED").length;
   const live = rows.filter((r) => r.status !== "removed");
   const pe = live.filter((r) => r.verdict === "PR EVIDENCE ONLY").length;
-  const nc = live.filter((r) => r.verdict !== "CONFIRMED" && r.verdict !== "PR EVIDENCE ONLY").length;
+  const other = live.filter((r) => r.verdict.startsWith("ADVICE") || r.verdict.startsWith("EXTERNAL")).length;
+  const nc = live.filter((r) => r.verdict !== "CONFIRMED" && r.verdict !== "PR EVIDENCE ONLY" && !r.verdict.startsWith("ADVICE") && !r.verdict.startsWith("EXTERNAL")).length;
   confirmed += c;
   prOnly += pe;
   notConfirmed += nc;
   lines.push(`## ${a.title}`, ``, `Source: \`${a.source}\` — ${a.url}`, ``);
-  lines.push(`Live claims: ${live.length} · confirmed ${c} · PR evidence only ${pe} · not confirmed ${nc} · removed ${rows.length - live.length}`, ``);
+  lines.push(`Live claims: ${live.length} · confirmed ${c} · PR evidence only ${pe} · advice/external ${other} · not confirmed ${nc} · removed ${rows.length - live.length}`, ``);
   for (const r of rows) {
     lines.push(`### ${r.id} — ${r.verdict}`, ``, `> ${r.claim}`, ``);
     if (r.reason) lines.push(`${r.reason}`, ``);
