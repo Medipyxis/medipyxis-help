@@ -7,7 +7,7 @@
 // review does not confirm a claim.
 //
 // Usage:
-//   node verification/verify.mjs --core ../medipyxis-core [--ref v1.1.345] [--out report.md] [--strict]
+//   node verification/verify.mjs --core ../medipyxis-core [--ref v1.1.345] [--only <claim-file-prefix>] [--out report.md] [--strict]
 //
 // --ref defaults to the latest published (non-prerelease) medipyxis-core
 // release, which is what production runs. --strict exits 1 when any live
@@ -127,7 +127,8 @@ function runClaim(claim) {
   return { ...claim, results, verdict };
 }
 
-const files = readdirSync(join(here, "claims")).filter((f) => f.endsWith(".json")).sort();
+const only = opt("only");
+const files = readdirSync(join(here, "claims")).filter((f) => f.endsWith(".json") && (!only || f.startsWith(only))).sort();
 const articles = files.map((f) => JSON.parse(readFileSync(join(here, "claims", f), "utf8")));
 
 const lines = [];
