@@ -1,0 +1,123 @@
+{
+  "title": "How the signature timestamp prints on a signed note",
+  "source": "modules/visit-wizard-ehr/signature-timestamp",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/signature-timestamp/",
+  "claims": [
+    {
+      "id": "st-01",
+      "claim": "The Provider Attestation block on every signed progress note prints when the note was signed and in which timezone.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "[\"Signature timestamp\", formatSignatureTimestamp(at.signature_timestamp)]", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "subsectionHeading(ctx, \"Provider Attestation\");", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "renderAttestation(ctx);", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "import { renderLegalDefenseNote } from \"@/services/perfectNote/perfectNoteRenderer\";", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "note": "renderer is live in the wizard"}
+      ]
+    },
+    {
+      "id": "st-02",
+      "claim": "For a signed note, the timestamp line reads like: Aug 25, 2026, 11:07 PM EDT",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "normal              -> \"Aug 25, 2026, 11:07 PM EDT\"", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const SIGNATURE_TIMESTAMP_FORMAT: Intl.DateTimeFormatOptions = {", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "  timeZoneName: \"short\",", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-03",
+      "claim": "The date is the calendar day of signing, not the date of service; when the two differ, the signing day is what prints.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = formData.providerAttestation?.signed_at || \"\";", "paths": ["frontend/src/services/perfectNote/s15_attestation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "signature_timestamp: signedAt,", "paths": ["frontend/src/services/perfectNote/s15_attestation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "[\"Date of service\", formatDate(at.date_of_service) || NOT_DOCUMENTED]", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-04",
+      "claim": "The time is hour and minute, no seconds.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "  minute: \"2-digit\",", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "second:", "paths": ["frontend/src/utils/formatters.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "st-05",
+      "claim": "The timezone abbreviation is always printed.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "date-only, no time  -> the calendar day alone", "paths": ["frontend/src/utils/formatters.ts"], "expect": "absent", "note": "a bare-date value prints the day with no zone"}
+      ],
+      "finding": "A signature value stored as a bare YYYY-MM-DD prints the day alone with no zone (formatters.ts:253-257 at v1.1.345); every value with a time prints the abbreviation.",
+      "proposed_text": "The timezone abbreviation is printed whenever the signature was recorded with a time, which is every signature made in the Visit Wizard.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "date-only, no time  -> the calendar day alone", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-06",
+      "claim": "The timestamp prints in the timezone of the device that generates the PDF, not in the facility's timezone; regenerating from a device in another zone gives a different reading of the same instant.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "new Intl.DateTimeFormat(\"en-US\", SIGNATURE_TIMESTAMP_FORMAT).format(instant)", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "formatSignatureTimestamp(at.signature_timestamp)]", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present", "note": "no zone argument passed"},
+        {"type": "grep", "fixed": true, "pattern": "Deliberately not the facility's zone.", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-07",
+      "claim": "For an unsigned note the line reads \"Not recorded\"; Medipyxis never prints a substitute signature date.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (!signedAt) return \"Not recorded\";", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "(same day)", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": {"count": 1}, "note": "only the comment recording the removed fallback remains"}
+      ]
+    },
+    {
+      "id": "st-08",
+      "claim": "The device clock is chosen because it needs no supporting data to be right; the zone abbreviation makes every printed copy a self-describing statement of the same instant.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "device clock needs no data to be correct.", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Printing the", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-09",
+      "claim": "Near midnight, two US timezones can disagree on the calendar day; both copies are correct.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "window where two US timezones disagree on the calendar day", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-10",
+      "claim": "Both copies are generated from the same stored instant, each rendered in the timezone of the device that requested the download.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Notes are", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "regenerated on every download", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-11",
+      "claim": "The signature timestamp is written when the provider clicks Sign in step 17 of the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Sign\\s*$", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present", "note": "step 17 has no Sign button"}
+      ],
+      "finding": "signed_at is written when the provider clicks Complete Provider Attestation in step 17 (ProviderAttestationVisit.tsx:346, button at :818 at v1.1.345); Sign & Lock comes later in the review window.",
+      "proposed_text": "The signature timestamp is written when the provider clicks Complete Provider Attestation in step 17 of the Visit Wizard.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "st-12",
+      "claim": "If the timestamp does not appear, check that the note is actually signed — a locked note is not the same as a signed note.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Signed means Sign & Lock ran", "paths": ["frontend/src/utils/visitSignState.ts"], "expect": "absent"}
+      ],
+      "finding": "In the product, signed means Sign & Lock ran (visitSignState.ts:5 at v1.1.345), so locked and signed are the same; the printed timestamp comes from the step 17 attestation (s15_attestation.ts:214).",
+      "proposed_text": "If the line reads Not recorded, Provider Attestation was not completed in step 17. The timestamp comes from the attestation; Sign & Lock then signs and locks the visit in one step.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "Signed means Sign & Lock ran", "paths": ["frontend/src/utils/visitSignState.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = formData.providerAttestation?.signed_at || \"\";", "paths": ["frontend/src/services/perfectNote/s15_attestation.ts"], "expect": "present"}
+      ]
+    }
+  ]
+}

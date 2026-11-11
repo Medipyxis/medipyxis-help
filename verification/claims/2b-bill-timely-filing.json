@@ -1,0 +1,243 @@
+{
+  "title": "Timely filing windows",
+  "source": "modules/billing/timely-filing",
+  "url": "https://help.medipyxis.com/modules/billing/timely-filing/",
+  "claims": [
+    {
+      "id": "tf-01",
+      "claim": "Every payer has a hard deadline between the date of service and the date a claim must be filed. Miss it and the payer denies for timely filing — a hard denial with almost no appeal path.",
+      "checks": [],
+      "finding": "Payer/regulatory fact, not product behavior."
+    },
+    {
+      "id": "tf-02",
+      "claim": "Medipyxis rolls the deadline per claim by payer, shows how many days remain, and marks the claim critical before it slips.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const deadlineDays = getFilingDeadlineDays(payerName);", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (daysRemaining < 14) severity = 'critical';", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? computeTimelyFiling(", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-03",
+      "claim": "The badge shows up in the Coding Review drawer on every unsubmitted claim. Colors escalate as the window closes.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "className={`text-xs border ${filingBadgeColor(timelyFiling.severity)}`}", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "import { CodingReviewDrawer } from \"@/components/billing/CodingReviewDrawer\";", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "drawer is live in the Work Queue"}
+      ]
+    },
+    {
+      "id": "tf-04",
+      "claim": "Medipyxis derives the filing window from the payer name on the claim's insurance plan.",
+      "checks": [
+        {"type": "grep", "pattern": "claim_payer_name: .*insurance", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "the payer name would come from the insurance plan"}
+      ],
+      "finding": "The drawer passes row.claim_payer_name, which is the billing claim's payer_name (frontend/src/pages/BillingWorkQueuePage.tsx:527); a Work Queue row with no claim yet has no payer name and gets the 90-day default.",
+      "proposed_text": "Medipyxis derives the filing window from the payer name on the claim. A row with no claim yet gets the 90-day default.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "claim_payer_name: claim?.payer_name ?? null,", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "row.claim_payer_name,", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (!payerName) return 90;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-05",
+      "claim": "Four rules, matched against the payer name case-insensitively: medicare 365 days; medicaid 180 days; tricare 365 days; champva 365 days; anything else (commercial) 90 days.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const lower = payerName.toLowerCase();", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('medicare')) return 365;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('medicaid')) return 180;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('tricare')) return 365;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('champva')) return 365;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "  return 90;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-06",
+      "claim": "The default of 90 days is the safe floor for commercial payers ... because that is the shortest window in wide use (Aetna, Cigna, some BCBS plans).",
+      "checks": [],
+      "finding": "Payer contract facts; not encoded in the product beyond the 90-day default (frontend/src/utils/billing/timelyFiling.ts:8)."
+    },
+    {
+      "id": "tf-07",
+      "claim": "The lookup is a pure string match on the payer name — there is no per-payer table today.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "export function getFilingDeadlineDays(payerName: string | null): number {", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "getFilingDeadlineDays(", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": {"count": 2}, "note": "defined and called once; no other source of windows"}
+      ]
+    },
+    {
+      "id": "tf-08",
+      "claim": "When a commercial contract needs a specific window, the biller can override on submission.",
+      "checks": [
+        {"type": "grep", "pattern": "(filing|deadline).*[Oo]verride|[Oo]verride.*(filing|deadline)", "ignoreCase": true, "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "present"}
+      ],
+      "finding": "There is no override. getFilingDeadlineDays takes only the payer name (frontend/src/utils/billing/timelyFiling.ts:1-9) and no code anywhere overrides the window.",
+      "proposed_text": "There is no override: the badge always uses these rules. When a contract allows a longer window, treat the badge as advisory.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "export function getFilingDeadlineDays(payerName: string | null): number {", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "(filing|deadline).*[Oo]verride|[Oo]verride.*(filing|deadline)", "ignoreCase": true, "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent"}
+      ]
+    },
+    {
+      "id": "tf-09",
+      "claim": "The badge shows one of five states derived from daysRemaining = deadlineDays - daysSinceDos: Green daysRemaining >= 60; Yellow 30 <= daysRemaining < 60; Red 14 <= daysRemaining < 30; Critical daysRemaining < 14 (\"Nd to file\"); Past deadline daysRemaining <= 0 (\"Nd PAST DEADLINE\").",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const daysRemaining = deadlineDays - daysSinceDos;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "else if (daysRemaining < 30) severity = 'red';", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "else if (daysRemaining < 60) severity = 'yellow';", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? `${timelyFiling.daysRemaining}d to file`", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ": `${Math.abs(timelyFiling.daysRemaining)}d PAST DEADLINE`}", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{timelyFiling.daysRemaining > 0", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-10",
+      "claim": "The badge appears next to the claim's DOS in the drawer header.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{/* Subtitle row: DOS | Payer | Timely filing */}", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-11",
+      "claim": "daysSinceDos = today (midnight UTC) minus DOS (midnight UTC), floored to whole days.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "new Date().toISOString().slice(0, 10),", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const daysSinceDos = Math.floor((today.getTime() - dos.getTime()) / 86_400_000);", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-12",
+      "claim": "Timezones do not enter. The DOS on the claim is a YYYY-MM-DD value (a Postgres DATE), so it is a calendar day, not an instant.",
+      "checks": [
+        {"type": "grep", "pattern": "dos: .*service_date", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "DOS would come from a stored date column"}
+      ],
+      "finding": "The drawer's DOS is not a stored DATE: it is the UTC calendar day of the appointment's start time, const dos = isoDateFromUTC(a.start_at) (frontend/src/pages/BillingWorkQueuePage.tsx:438, helper at 123-126). An appointment late in the evening in US time zones gets the next day as its DOS, so time zones do enter.",
+      "proposed_text": "The DOS in the drawer is the UTC calendar day of the appointment's start time, and \"today\" is the UTC calendar day. An appointment late in the evening in US time zones can show the next day as its DOS.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const dos = isoDateFromUTC(a.start_at);", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "  return new Date(iso).toISOString().slice(0, 10);", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-13",
+      "claim": "A claim submitted late-night in São Paulo on day 89 lands as day 89 in UTC too ... No off-by-one at day boundaries.",
+      "checks": [
+        {"type": "grep", "pattern": "dos: .*service_date", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "only a stored calendar DOS would rule out day-boundary shifts"}
+      ],
+      "finding": "Because the DOS is the UTC day of the appointment start (frontend/src/pages/BillingWorkQueuePage.tsx:438), a visit after about 8 PM Eastern (9 PM São Paulo) carries the next day's date, making the count one day short. The badge also never uses submission time, so the example's premise does not apply.",
+      "proposed_text": "An evening appointment in the Americas can carry the next UTC day as its DOS, so the badge can count one day fewer than the calendar day of the visit.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const dos = isoDateFromUTC(a.start_at);", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-14",
+      "claim": "The badge does not account for the claim's actual submission time. It calculates from DOS to today.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "  todayIso: string,", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "  dosIso: string,", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "submitted", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "tf-15",
+      "claim": "Once the claim is submitted, the Work Queue tracks submission-date-based aging.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (!submittedAt) return ageBucketFilter === \"not_submitted\";", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-16",
+      "claim": "Watch the Stedi Actions Inbox for the 999/277CA response. If the file rejects, you may not have time to fix and resubmit.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "transaction.x12.999", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const acks = idsOf('transaction.x12.277');", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"}
+      ],
+      "finding": "999 acknowledgements are not recognised and never reach the inbox; only 277CA rejections do (backend/supabase/functions/_shared/stediInboundEvent.ts:33-38; backend/supabase/functions/_shared/stediAckImport.ts:403).",
+      "proposed_text": "Watch the Stedi Actions Inbox for a 277CA rejection. If the claim rejects, you may not have time to fix and resubmit.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const acks = idsOf('transaction.x12.277');", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "event_type: forBiller.length ? 'transaction.processed' : '',", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-17",
+      "claim": "Medipyxis does not block submission of a past-deadline claim — the badge is guidance, not a gate.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "computeTimelyFiling(", "paths": ["frontend/src"], "excludeTests": true, "expect": {"count": 2}, "note": "definition + the drawer badge only"},
+        {"type": "grep", "pattern": "timelyFiling|getFilingDeadlineDays|computeTimelyFiling", "paths": ["backend/supabase/functions"], "excludeTests": true, "expect": "absent"}
+      ]
+    },
+    {
+      "id": "tf-18",
+      "claim": "Submit anyway if: the commercial payer allows longer than 90 days by contract; the payer has published a deadline exception; you have documentation supporting a timely-filing appeal.",
+      "checks": [],
+      "finding": "Billing advice; not product behavior."
+    },
+    {
+      "id": "tf-19",
+      "claim": "For a Medicare 365-day claim past deadline: the CMS-1500 has no appeal path. Do not submit. Write off in AR aging with the timely-filing reason code.",
+      "checks": [],
+      "finding": "Regulatory guidance plus an AR-aging write-off workflow that was not verified here; nothing in the timely-filing code encodes it."
+    },
+    {
+      "id": "tf-20",
+      "claim": "The Work Queue can be sorted by DOS ascending — oldest first — which surfaces the claims closest to their deadline at the top.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": ".order(\"start_at\", { ascending: true });", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "set(Sort|Order)(By|Dir|Key)|sortBy|sortDir", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "a user sort control"}
+      ],
+      "finding": "There is no sort control. The Work Queue always lists appointments oldest start time first (frontend/src/pages/BillingWorkQueuePage.tsx:234). Oldest DOS is not the same as closest deadline when payers differ (365 vs 90 days).",
+      "proposed_text": "The Work Queue lists rows oldest DOS first. Combined with the badge, that gives a \"what to work today\" order.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": ".order(\"start_at\", { ascending: true });", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-21",
+      "claim": "Priority: any commercial claim past 60 days from DOS (approaching 90-day floor); any Medicaid claim past 150 days from DOS; Medicare and TRICARE at 365 days rarely surface as critical.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "  return 90;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('medicaid')) return 180;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('tricare')) return 365;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-22",
+      "claim": "Payer name contains \"Medicare Advantage\" — this matches the medicare rule and gets 365 days.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (lower.includes('medicare')) return 365;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-23",
+      "claim": "Medicare Advantage plans (Part C) are commercial products administered by private carriers, and many carry commercial-shorter filing windows (90 or 180 days).",
+      "checks": [],
+      "finding": "Payer contract fact; not encoded in the product."
+    },
+    {
+      "id": "tf-24",
+      "claim": "Payer name unusual or blank — a claim with no payer name on the insurance plan falls to the 90-day default. Fix the insurance plan to give the badge accurate information.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (!payerName) return 90;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "claim_payer_name: .*insurance", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present", "note": "fixing the insurance plan would only help if the badge read it"}
+      ],
+      "finding": "The badge reads the billing claim's payer_name (frontend/src/pages/BillingWorkQueuePage.tsx:527), not the insurance plan; a row with no claim yet also falls to 90 days.",
+      "proposed_text": "Payer name unusual or blank — a claim with no payer name, or a row with no claim yet, falls to the 90-day default. Fix the payer on the claim to give the badge accurate information.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (!payerName) return 90;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "claim_payer_name: claim?.payer_name ?? null,", "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "tf-25",
+      "claim": "DOS in the future — the badge shows daysRemaining > deadlineDays. Not a defect; the claim is just being coded early.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const daysSinceDos = Math.floor((today.getTime() - dos.getTime()) / 86_400_000);", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present", "note": "negative daysSinceDos for a future DOS, so daysRemaining > deadlineDays"},
+        {"type": "grep", "fixed": true, "pattern": "const daysRemaining = deadlineDays - daysSinceDos;", "paths": ["frontend/src/utils/billing/timelyFiling.ts"], "expect": "present"}
+      ]
+    }
+  ]
+}

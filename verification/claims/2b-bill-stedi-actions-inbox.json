@@ -1,0 +1,366 @@
+{
+  "title": "Stedi Actions Inbox",
+  "source": "modules/billing/stedi-actions-inbox",
+  "url": "https://help.medipyxis.com/modules/billing/stedi-actions-inbox/",
+  "claims": [
+    {
+      "id": "sai-01",
+      "claim": "The Stedi Actions Inbox is where every webhook from Stedi lands: file failures, transaction responses, enrollment updates.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "file.failed", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present", "note": "the webhook receiver would type file-failure events"},
+        {"type": "grep", "fixed": true, "pattern": "enrollment.rejected", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"}
+      ],
+      "finding": "Every webhook is logged, but only two kinds get an event_type the inbox reads: an 835 ERA notice (typed transaction.processed, backend/supabase/functions/sync-stedi-responses/index.ts:207) and a 277CA that needs a biller (backend/supabase/functions/_shared/stediAckImport.ts:403). All other events, including file failures and enrollment events, are logged with a blank event_type (sync-stedi-responses/index.ts:207) and the inbox lists only the four typed values (backend/supabase/functions/stedi-action-list/index.ts:43-48), so they never appear.",
+      "proposed_text": "The Stedi Actions Inbox shows Stedi webhooks that need a biller's eye: 277CA claim rejections and 835 remittance (ERA) notices.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "event_type: forBiller.length ? 'transaction.processed' : '',", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "event_type: kind.kind === 'era' || kind.kind === 'ping' ? kind.type : '',", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-02",
+      "claim": "It is a triage surface — one row per event, with assignment, notes, resolve, and dismiss.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const VALID_ACTIONS = ['assign', 'unassign', 'resolve', 'dismiss', 'note', 'stamp_facility'];", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<React.Fragment key={row.event_id}>", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-03",
+      "claim": "Open it at Billing → Stedi Actions.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/billing/stedi-actions`)}", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "path: \"/facility/:facilityId/billing/stedi-actions\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "                          Stedi Actions", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-04",
+      "claim": "Every event Stedi sends via webhook is recorded and shown, filtered to your facility.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "event_type: kind.kind === 'era' || kind.kind === 'ping' ? kind.type : '',", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts"], "expect": "absent", "note": "every event would keep its own type so the inbox could show it"}
+      ],
+      "finding": "Every event is recorded in stedi_webhook_log, but events other than ERA notices and 277CA rejections are stored with a blank event_type (backend/supabase/functions/sync-stedi-responses/index.ts:207) and are not shown (backend/supabase/functions/stedi-action-list/index.ts:43-48, 125). Shown rows are filtered to the facility (index.ts:132).",
+      "proposed_text": "Every Stedi webhook is recorded. The inbox shows the ones Medipyxis marks as needing attention, filtered to your facility.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": ".from('stedi_webhook_log')", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "logQuery = logQuery.eq('facility_id', facilityId);", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-05",
+      "claim": "There are four event types: file.failed, transaction.processed, enrollment.rejected, enrollment.task.assigned.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{ value: 'file.failed', label: 'File Failed' },", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{ value: 'enrollment.task.assigned', label: 'Enrollment Task' },", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "'(file\\.failed|enrollment\\.rejected|enrollment\\.task\\.assigned)'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts", "backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "present", "note": "a writer for the three non-transaction types"}
+      ],
+      "finding": "The filter offers four types, but nothing at v1.1.345 writes file.failed, enrollment.rejected or enrollment.task.assigned; only transaction.processed rows are created (see sai-01).",
+      "proposed_text": "The Event Type filter lists four types (File Failed, Transaction Processed, Enrollment Rejected, Enrollment Task). At this release only Transaction Processed rows are created.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "{ value: 'file.failed', label: 'File Failed' },", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "'(file\\.failed|enrollment\\.rejected|enrollment\\.task\\.assigned)'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts", "backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "sai-06",
+      "claim": "transaction.processed — A payer response came back for a claim you submitted. Includes 999 (acknowledgement), 277CA (payer receipt/reject), 271 (eligibility response), 835 (remittance advice).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "transaction.x12.999", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "transaction.x12.271", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"}
+      ],
+      "finding": "Only 835 and 277 transactions are recognised (backend/supabase/functions/_shared/stediInboundEvent.ts:33-38); 999 and 271 events are logged untyped and never shown. A 277 is shown only when it needs a biller (backend/supabase/functions/_shared/stediAckImport.ts:403), so 277CA acceptances do not appear either.",
+      "proposed_text": "transaction.processed — a 277CA that rejected a claim you submitted, or an 835 remittance (ERA) notice.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const eras = idsOf('transaction.x12.835');", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const acks = idsOf('transaction.x12.277');", "paths": ["backend/supabase/functions/_shared/stediInboundEvent.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "event_type: forBiller.length ? 'transaction.processed' : '',", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-07",
+      "claim": "file.failed — Stedi rejected the submitted 837P outright. enrollment.rejected — A payer refused an enrollment request. enrollment.task.assigned — Stedi opened a manual task on a payer enrollment.",
+      "checks": [
+        {"type": "grep", "pattern": "'(file\\.failed|enrollment\\.rejected|enrollment\\.task\\.assigned)'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present", "note": "these rows would have to be written to appear"}
+      ],
+      "finding": "These event types are never written at v1.1.345, so these rows cannot appear (see sai-01).",
+      "proposed_text": "File-failure and enrollment events from Stedi are recorded but do not appear in the inbox at this release.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "'(file\\.failed|enrollment\\.rejected|enrollment\\.task\\.assigned)'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "sai-08",
+      "claim": "Medipyxis stores the event, resolves it to your facility, links it to the affected claim or enrollment when it can, and puts it in this queue.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "billing_claim_id: link?.claimId ?? null,", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "facility_id: facilityId,", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "enrollment: enrollByIdMap.get(innerDetail.enrollmentId || innerDetail.id) ?? null,", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-09",
+      "claim": "Every row starts in Open.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "action_status: state?.action_status ?? 'open',", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-10",
+      "claim": "In Progress — someone assigned it to themselves or added a note. The row is being worked.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'in_progress';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": {"count": 2}, "note": "assign AND note would both set In Progress"}
+      ],
+      "finding": "Only Assign sets In Progress (backend/supabase/functions/stedi-action-update/index.ts:145). Adding a note does not change status (lines 175-187).",
+      "proposed_text": "In Progress — someone assigned it. The row is being worked.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'in_progress';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": {"count": 1}}
+      ]
+    },
+    {
+      "id": "sai-11",
+      "claim": "Resolved — the underlying issue is fixed. Dismissed — the event is not actionable.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'resolved';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'dismissed';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-12",
+      "claim": "Filters at the top let you scope by status, event type, payer, and assignee. Default view is Open across all types.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const eventTypeFilter = url.searchParams.get('event_type');", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const payerFilter = url.searchParams.get('payer');", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const assigneeFilter = url.searchParams.get('assignee');", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "status: 'open',", "paths": ["frontend/src/utils/hooks/useStediActionInbox.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "event_type: '',", "paths": ["frontend/src/utils/hooks/useStediActionInbox.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-13",
+      "claim": "Claim link — when the event references a submitted claim, the row shows the patient name, the claim's local status, and the payer name. Click through to open the claim detail.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "'id, claim_number, patient_name, status, local_status, stedi_status, payer_name, facility_id'", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Open Claim <ExternalLink", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-14",
+      "claim": "Enrollment link — when the event references an enrollment, the row shows the payer, the transaction type, and the current status.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "'stedi_enrollment_id, id, payer_id, transaction_type, status, status_text, facility_id'", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<DetailRow label=\"Type\" value={enrollment.transaction_type || 'N/A'} />", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"}
+      ],
+      "note": "Display code exists; enrollment events are not typed at this release (sai-07), so in practice no row carries an enrollment link."
+    },
+    {
+      "id": "sai-15",
+      "claim": "Affected claims count — for file.failed events, how many claims were in the rejected file.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "affected_claims_count: fileClaimCounts.get(innerDetail.fileId) ?? 0", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "label=\"Affected Claims\"", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-16",
+      "claim": "Raw payload — the original Stedi webhook body, unmodified, for reference or to send back to Stedi support.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{JSON.stringify(row.detail, null, 2)}", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "detail: event as Record<string, unknown>,", "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-17",
+      "claim": "Assign — Puts the row in your name. Sets status to In Progress. Others still see it — assignment is not exclusive.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Assign to me", "paths": ["frontend/src/components/stedi-actions/StediActionModals.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'in_progress';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "logQuery = logQuery.eq('facility_id', facilityId);", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present", "note": "the list is per facility, not per assignee"}
+      ]
+    },
+    {
+      "id": "sai-18",
+      "claim": "Assign, Note, Resolve and Dismiss: any biller. Unassign: the assignee or admin.",
+      "checks": [
+        {"type": "grep", "pattern": "assigned_to !== callerProfileId|callerProfileId !== .*assigned_to|role === 'admin'", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present", "note": "an assignee/admin check for Unassign"}
+      ],
+      "finding": "No role or assignee check exists for any action: every action except stamp_facility only requires access to the facility (backend/supabase/functions/stedi-action-update/index.ts:109-112). Unassign is offered only in the bulk bar that appears when rows are ticked (frontend/src/pages/StediActionInboxPage.tsx:546-553).",
+      "proposed_text": "Anyone with access to your facility's billing can Assign, Unassign, Note, Resolve and Dismiss. Unassign is in the bar that appears when you tick rows.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (!hasFacilityAccess(authResult.roles!, facility_id)) {", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "onClick={() => handleBulkAction({ type: 'unassign' })}", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-19",
+      "claim": "Unassign — Removes the assignment. Returns the row to Open if no note or resolution is on it.",
+      "checks": [
+        {"type": "grep", "pattern": "resolution_notes.*'open'|'open'.*resolution_notes", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present", "note": "Open would depend on notes"}
+      ],
+      "finding": "Unassign always sets Open and clears resolved_at/resolved_by, whatever notes exist (backend/supabase/functions/stedi-action-update/index.ts:150-155).",
+      "proposed_text": "Unassign — Removes the assignment and returns the row to Open.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'open';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-20",
+      "claim": "Note — Adds a comment on the row without changing status. Notes are stacked chronologically and stamped with author + time.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.resolution_notes = `${existingNotes}${separator}[${now}] ${action.resolution_notes}`;", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "resolution_notes = `.*callerProfileId", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present", "note": "author in the note stamp"}
+      ],
+      "finding": "Notes are appended with a timestamp only; the author is not recorded (backend/supabase/functions/stedi-action-update/index.ts:186).",
+      "proposed_text": "Note — Adds a comment on the row without changing status. Notes are stacked in order and stamped with the time (not the author).",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.resolution_notes = `${existingNotes}${separator}[${now}] ${action.resolution_notes}`;", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-21",
+      "claim": "Resolve — Marks the row Resolved with a resolution note. Records who resolved it and when.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "return json({ error: 'action.resolution_notes is required for resolve' }, 400, corsHeaders);", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "upsertData.resolved_by = callerProfileId;", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": {"min": 1}}
+      ]
+    },
+    {
+      "id": "sai-22",
+      "claim": "Dismiss — Marks the row Dismissed with a reason. Same audit shape as resolve.",
+      "checks": [
+        {"type": "grep", "pattern": "required for dismiss", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ],
+      "finding": "Dismiss takes no reason: the modal sends none (frontend/src/pages/StediActionInboxPage.tsx:896-898) and the function stores only status, resolved_at and resolved_by (backend/supabase/functions/stedi-action-update/index.ts:167-171).",
+      "proposed_text": "Dismiss — Marks the row Dismissed and records who dismissed it and when. No reason is asked for; add a Note first if you want one on record.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "upsertData.action_status = 'dismissed';", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "await performAction(modalTarget.event_id, { type: 'dismiss' });", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-23",
+      "claim": "Resolve and Dismiss both take a required note. That note is the audit trail.",
+      "checks": [
+        {"type": "grep", "pattern": "required for dismiss", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ],
+      "finding": "Only Resolve requires a note. Also, Resolve replaces the stacked notes with the resolution note (backend/supabase/functions/stedi-action-update/index.ts:164), so earlier notes are lost; and bulk Resolve writes the fixed text \"Bulk resolved\" (frontend/src/pages/StediActionInboxPage.tsx:558).",
+      "proposed_text": "Resolve requires a note. Dismiss does not. Resolving replaces the row's earlier notes with the resolution note.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "return json({ error: 'action.resolution_notes is required for resolve' }, 400, corsHeaders);", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "upsertData.resolution_notes = action.resolution_notes;", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-24",
+      "claim": "Occasionally an event arrives from Stedi without a facility link. When that happens, no biller sees it in their facility's view. Ask Medipyxis support — they can attach it to your facility.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "logQuery = logQuery.or(`facility_id.eq.${facilityId},facility_id.is.null`);", "paths": ["backend/supabase/functions/stedi-action-list/index.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "stamp_facility requires superadmin or customersupport role", "paths": ["backend/supabase/functions/stedi-action-update/index.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-25",
+      "claim": "When a transaction.processed event carries a 277CA rejection for a claim, the claim's Stedi status updates from submitted to the payer's specific state (accepted, rejected on the 277CA, paid, etc.).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "v_new_status := 'rejected';", "paths": ["backend/supabase/migrations/20261019160000_stedi_277ca_claim_status.sql"], "expect": "present"},
+        {"type": "grep", "pattern": "UPDATE (public\\.)?billing_claims", "ignoreCase": true, "paths": ["backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql", "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"], "expect": "present", "note": "an 835 would move the claim to paid"}
+      ],
+      "finding": "The 277CA sets the claim to accepted or rejected (backend/supabase/migrations/20261019160000_stedi_277ca_claim_status.sql:136-143, called from backend/supabase/functions/_shared/stediAckImport.ts:214). An 835 never sets 'paid'; ERA posting only writes ledger rows.",
+      "proposed_text": "When a 277CA arrives for a claim, the claim's status moves from submitted to accepted or rejected.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "v_new_status := 'rejected';", "paths": ["backend/supabase/migrations/20261019160000_stedi_277ca_claim_status.sql"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "v_new_status := 'accepted';", "paths": ["backend/supabase/migrations/20261019160000_stedi_277ca_claim_status.sql"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "supabase.rpc('apply_stedi_277_ack'", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-26",
+      "claim": "The claim appears in the Work Queue under the appropriate bucket (\"Needs biller attention\" for a rejection, \"Paid\" when an 835 arrives).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Needs biller attention", "paths": ["frontend/src"], "excludeTests": true, "expect": "present"}
+      ],
+      "finding": "No Work Queue bucket named \"Needs biller attention\" exists in frontend/src, and an 835 does not set the claim to paid (see sai-25).",
+      "proposed_text": "A rejected claim shows status rejected in billing; an 835 posts its payment to the claim's ledger.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "v_new_status := 'rejected';", "paths": ["backend/supabase/migrations/20261019160000_stedi_277ca_claim_status.sql"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;", "paths": ["backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-27",
+      "claim": "The event stays in the Actions Inbox as the audit record of when the response arrived and what it said.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<TimelineItem label=\"Webhook received\" time={row.created_at} />", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{ value: 'all', label: 'All' },", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-28",
+      "claim": "File.failed with \"structural validation error\" — the 837P payload was malformed before it reached the payer. Open the claim, check the fields called out in CMS-1500 and 837P fields, resubmit.",
+      "checks": [
+        {"type": "grep", "pattern": "'file\\.failed'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present", "note": "file.failed rows would need a writer"}
+      ],
+      "finding": "file.failed rows are never created at v1.1.345 (see sai-01), so this pattern cannot appear in the inbox.",
+      "proposed_text": "Stedi file failures do not appear in the inbox at this release; check the claim's submission result on the claim page.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "'file\\.failed'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "sai-29",
+      "claim": "277CA with a payer-specific reject code — the reason code (from the AAA segment) tells you why: AAA*Y*72 is subscriber-not-found, AAA*Y*73 is patient-not-found, AAA*Y*79 is transaction-not-supported.",
+      "checks": [
+        {"type": "grep", "pattern": "AAA", "paths": ["backend/supabase/functions/_shared/stediAckImport.ts", "frontend/src/pages/StediActionInboxPage.tsx", "frontend/src/utils/billing/stediAckStatus.ts"], "expect": "present", "note": "the inbox would read an AAA segment"}
+      ],
+      "finding": "The inbox Reason column shows the 277CA STC status as category:status code (frontend/src/pages/StediActionInboxPage.tsx:139-147); no AAA segment is read. AAA is the 270/271 eligibility reject segment, not part of a 277CA, and in the X12 AAA03 list 72 = invalid/missing subscriber ID, 73 = invalid/missing subscriber name, 79 = invalid participant identification (X12 code list; not encoded in the product).",
+      "proposed_text": "277CA rejection — the Reason column shows the 277CA status as category:status code (for example A7 with its status code). Fix the field the code names on the claim and resubmit.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "if (si?.statusCode) return si.categoryCode ? `${si.categoryCode}:${si.statusCode}` : si.statusCode;", "paths": ["frontend/src/pages/StediActionInboxPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-30",
+      "claim": "Enrollment.rejected with \"Provider not enrolled with payer\" — the provider needs to enroll directly with the payer before Stedi can register the enrollment.",
+      "checks": [
+        {"type": "grep", "pattern": "'enrollment\\.rejected'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "present", "note": "enrollment.rejected rows would need a writer"}
+      ],
+      "finding": "enrollment.rejected rows are never created at v1.1.345 (see sai-01). The payer-enrollment advice itself is external process guidance.",
+      "proposed_text": "Enrollment rejections do not appear in the inbox at this release; check the Enrollment page.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "'enrollment\\.rejected'", "paths": ["backend/supabase/functions/sync-stedi-responses", "backend/supabase/functions/_shared/stediInboundEvent.ts", "backend/supabase/functions/_shared/stediAckImport.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "sai-31",
+      "claim": "Copy the event ID (top of the expanded panel), the event type (from the row), and the timestamp when the event was created.",
+      "checks": [
+        {"type": "grep", "pattern": "label=\"Event ID\"|\\{row\\.event_id\\}", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present", "note": "event ID shown in the expanded panel"}
+      ],
+      "finding": "The expanded panel does not show the event ID (frontend/src/components/stedi-actions/StediActionExpandedRow.tsx); it is only searchable (frontend/src/pages/StediActionInboxPage.tsx:188) and is in the raw payload. The row shows a friendly event label (e.g. \"Claim rejected\"), not the raw type, and the received time (\"Webhook received\").",
+      "proposed_text": "Copy the event's id from the raw payload, the received time (Webhook received), and the raw payload itself.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "<TimelineItem label=\"Webhook received\" time={row.created_at} />", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{JSON.stringify(row.detail, null, 2)}", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sai-32",
+      "claim": "The raw payload (there is a copy button in the expanded view).",
+      "checks": [
+        {"type": "grep", "pattern": "clipboard|Copy", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"}
+      ],
+      "finding": "There is no copy button; the raw payload is a collapsible text block (frontend/src/components/stedi-actions/StediActionExpandedRow.tsx:250-263).",
+      "proposed_text": "The raw payload: open Raw Payload in the expanded row and select the text to copy it.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "Raw Payload", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "clipboard", "paths": ["frontend/src/components/stedi-actions/StediActionExpandedRow.tsx"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "sai-33",
+      "claim": "Stedi support looks these up by event ID.",
+      "checks": [],
+      "finding": "Vendor-support practice; not product behavior."
+    }
+  ]
+}

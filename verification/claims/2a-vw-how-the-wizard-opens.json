@@ -1,0 +1,914 @@
+{
+  "title": "How the Visit Wizard opens (route-on-arrival)",
+  "source": "modules/visit-wizard-ehr/how-the-wizard-opens",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/how-the-wizard-opens/",
+  "claims": [
+    {
+      "id": "hwo-01",
+      "claim": "The Visit Wizard opens from three surfaces — Fleet Calendar, Wound Cockpit, and Patient Chart — and all three behave the same way.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentManagementCard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const arrival = await resolveWizardArrival(",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const wizardEntry = decideWizardEntry(arrivalForThisVisit);",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-02",
+      "claim": "Before you start: you are a clinician, medical director, or clinical manager at a facility that uses the wound-care wizard.",
+      "checks": [],
+      "finding": "The /visit-wizard route is gated by FeatureAccess feature=\"All Patients\" (user-routes.tsx:2545-2550); which roles hold that feature is configured in the database, so the role list cannot be checked from code."
+    },
+    {
+      "id": "hwo-03",
+      "claim": "Medipyxis looks up the appointment's visit type and any existing visit for that patient and appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".select(\"visit_type:visit_type_id (canonical_key)\")",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".select(\"wound_id, visit_id, is_draft, visit_locked, service_date, completion_status\")",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"appointment_id\", appointmentId)",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-04",
+      "claim": "The wizard opens on the right patient and appointment, with the visit type taken from the appointment, and resumes a live draft if one exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const params = new URLSearchParams({ patientId, appointmentId });",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (canonicalKey) params.set(\"visitTypeKey\", canonicalKey);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "params.set(\"visitAction\", \"resume\");",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (arrival?.kind === \"draft\") return \"resume\";",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-05",
+      "claim": "Case 1 — No visit yet: the wizard opens on Section 1 with the visit type pre-selected from the appointment and the patient/wound context carried in.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "useState<string>(\"consentAttestation\")",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The wizard opens with no section expanded (`useState<string>(\"\")`, VisitWizardV4.tsx:5665-5666); the visit type and carried-forward data are loaded (openVisitWizard.ts:159, VisitWizardV2Page.tsx:584).",
+      "proposed_text": "Case 1 — No visit yet: the wizard opens with all sections collapsed, the visit type taken from the appointment, and the patient's carried-forward data pre-filled. Open Step 1 to begin.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "const [activeAccordionSection, setActiveAccordionSection] =",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (canonicalKey) params.set(\"visitTypeKey\", canonicalKey);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const result = await resolveWizardInitialState(",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-06",
+      "claim": "The wizard creates the draft on first save.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const isAutosave = sectionId === '__autosave__';",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const dirty = methods.formState.dirtyFields as Record<string, unknown>;",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "isDirty: autosaveIsDirty,",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-07",
+      "claim": "Nothing is stored until you complete a field.",
+      "checks": [],
+      "finding": "Autosave fires on any dirty form change (VisitWizardV4.tsx:7392-7409), and code comments record that merely expanding Step 9 was enough to make autosave insert a visit row (resolveWizardArrival.ts:299; VisitWizardV2Page.tsx:241-243); whether opening a section alone still writes a row needs a browser check, so this sentence cannot be confirmed from code."
+    },
+    {
+      "id": "hwo-08",
+      "claim": "Case 2 — If there is an active draft for this appointment, the wizard resumes that exact draft with your prior work intact.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "params.set(\"visitAction\", \"resume\");",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (draftRow.visit_id) params.set(\"visitId\", String(draftRow.visit_id));",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (arrival?.kind === \"draft\") return \"resume\";",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-09",
+      "claim": "Continuous autosave means the last field you completed on your other device or in your other tab is already saved.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "debounce so every typed change persists within ~1s, with a 30s heartbeat",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-10",
+      "claim": "Medipyxis allows only one active draft per appointment.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "backend/supabase/migrations/20260712190100_visit_data_v2_one_active_draft_per_appointment.sql",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "visit_data_v2_one_active_draft_per_appointment",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-11",
+      "claim": "Case 3 — If the appointment already carries a finalized (signed and locked) note on this wound, the wizard opens on a fresh Section 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "When resolveWizardArrival finds a signed (visit_locked) row on the appointment, decideWizardEntry returns show:'signed-visit' (resolveWizardArrival.ts:320-329) and VisitWizardV2Page renders SignedVisitReview instead of mounting the wizard (VisitWizardV2Page.tsx:1223-1229), whichever wound the signed note is on.",
+      "proposed_text": "If the appointment already has a signed note, the wizard does not open. You see \"This visit is signed and locked\" with Review signed note, Add an addendum, Add a wound by addendum, and Back to patient chart. Any change goes on the signed note as an addendum.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "export const SIGNED_AND_LOCKED_TITLE = \"This visit is signed and locked\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Review signed note",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "              Add a wound by addendum",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Back to patient chart",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label = \"Add an addendum\",",
+          "paths": [
+            "frontend/src/components/progress-notes/AddAddendumToNoteButton.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "wizardEntry.show === 'signed-visit' && supabaseClient && (",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<SignedVisitReview",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-12",
+      "claim": "Do not sign a second note on an appointment that already carries a signed note for the same wound — use Addendum on the existing note.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AddAddendumToNoteButton",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Add Addendum to Progress Note",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-13",
+      "claim": "Medipyxis permits one finalized note per wound on the same appointment, so documenting a second wound separately on the same visit is legitimate and will not be blocked.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "export const APPOINTMENT_ALREADY_SIGNED = 'APPOINTMENT_ALREADY_SIGNED';",
+          "paths": [
+            "backend/supabase/functions/finalize-visit-lock/oneSignedVisitPerAppointment.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "error: \"APPOINTMENT_ALREADY_FINALIZED\",",
+          "paths": [
+            "backend/supabase/functions/_shared/oneVisitPerAppointment.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "finalize-visit-lock refuses to sign a second visit on an appointment that already has a signed one (oneSignedVisitPerAppointment.ts:16-19; handler.ts:1079, 1300), save-visit-data refuses a new visit row beside a finished one (_shared/oneVisitPerAppointment.ts:40-42), and the signed screen tells users to add another wound by addendum (SignedVisitScreen.tsx:78-80).",
+      "proposed_text": "An appointment holds one signed note. To document another wound you assessed at that visit, open the appointment and use Add a wound by addendum on the signed note; a second visit on the same appointment is refused.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "export const APPOINTMENT_ALREADY_SIGNED = 'APPOINTMENT_ALREADY_SIGNED';",
+          "paths": [
+            "backend/supabase/functions/finalize-visit-lock/oneSignedVisitPerAppointment.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "error: \"APPOINTMENT_ALREADY_FINALIZED\",",
+          "paths": [
+            "backend/supabase/functions/_shared/oneVisitPerAppointment.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "              Add a wound by addendum",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-14",
+      "claim": "Table: an appointment with a signed note on this wound — the wizard shows a fresh Section 1; close it, open the signed note from Progress Notes or the Wound Cockpit timeline, and use Add Addendum.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "When resolveWizardArrival finds a signed (visit_locked) row on the appointment, decideWizardEntry returns show:'signed-visit' (resolveWizardArrival.ts:320-329) and VisitWizardV2Page renders SignedVisitReview instead of mounting the wizard (VisitWizardV2Page.tsx:1223-1229), whichever wound the signed note is on.",
+      "proposed_text": "If the appointment already has a signed note, the wizard does not open. You see \"This visit is signed and locked\" with Review signed note, Add an addendum, Add a wound by addendum, and Back to patient chart. Any change goes on the signed note as an addendum.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "export const SIGNED_AND_LOCKED_TITLE = \"This visit is signed and locked\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Review signed note",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "              Add a wound by addendum",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Back to patient chart",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label = \"Add an addendum\",",
+          "paths": [
+            "frontend/src/components/progress-notes/AddAddendumToNoteButton.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "wizardEntry.show === 'signed-visit' && supabaseClient && (",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<SignedVisitReview",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-15",
+      "claim": "Table: an appointment with a signed note on a different wound — a fresh Section 1, ready to document the new wound; both notes will co-exist on the appointment by design.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "export const APPOINTMENT_ALREADY_SIGNED = 'APPOINTMENT_ALREADY_SIGNED';",
+          "paths": [
+            "backend/supabase/functions/finalize-visit-lock/oneSignedVisitPerAppointment.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "When resolveWizardArrival finds a signed (visit_locked) row on the appointment, decideWizardEntry returns show:'signed-visit' (resolveWizardArrival.ts:320-329) and VisitWizardV2Page renders SignedVisitReview instead of mounting the wizard (VisitWizardV2Page.tsx:1223-1229), whichever wound the signed note is on. A second signed visit on the appointment is refused by finalize-visit-lock (oneSignedVisitPerAppointment.ts:16-19).",
+      "proposed_text": "An appointment holds one signed note. To document another wound you assessed at that visit, open the appointment and use Add a wound by addendum on the signed note; a second visit on the same appointment is refused.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "export const APPOINTMENT_ALREADY_SIGNED = 'APPOINTMENT_ALREADY_SIGNED';",
+          "paths": [
+            "backend/supabase/functions/finalize-visit-lock/oneSignedVisitPerAppointment.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "error: \"APPOINTMENT_ALREADY_FINALIZED\",",
+          "paths": [
+            "backend/supabase/functions/_shared/oneVisitPerAppointment.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "              Add a wound by addendum",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-16",
+      "claim": "Fleet Calendar — Appointment Details modal, Start Visit button.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return \"Start Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getActionVerb(appointment.status_key)",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-17",
+      "claim": "Wound Cockpit — the inline appointment picker on each wound's cockpit page.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "// Wound Cockpit's inline appointment picker.",
+          "paths": [
+            "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AppointmentPickerInline",
+          "paths": [
+            "frontend/src/pages/WoundCockpitPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-18",
+      "claim": "Patient Chart — the Appointment Management card's Open Visit button.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Open Visit",
+          "paths": [
+            "frontend/src/components/AppointmentManagementCard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          Appointment Management",
+          "paths": [
+            "frontend/src/components/AppointmentManagementTile.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The button text is 'Open visit' with a lowercase v (AppointmentManagementCard.tsx:926).",
+      "proposed_text": "Patient Chart — the Appointment Management card's Open visit button.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "              Open visit",
+          "paths": [
+            "frontend/src/components/AppointmentManagementCard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          Appointment Management",
+          "paths": [
+            "frontend/src/components/AppointmentManagementTile.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import AppointmentManagementTile from \"@/components/AppointmentManagementTile\";",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-19",
+      "claim": "Troubleshooting: if a temporary network problem prevents the draft lookup, the wizard opens rather than blocking you.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "outcome = { kind: \"lookup-failed\" };",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return { kind: \"unknown\" };",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return urlParam === \"resume\" ? \"resume\" : \"add\";",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-20",
+      "claim": "Troubleshooting: if the wizard opens on the wrong wound, use the Wound picker in Section 7 to switch.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onSwitchWound={switchToWound}",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "aria-label=\"Treatment mode for this wound\"",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-21",
+      "claim": "Troubleshooting: Start Visit can take you to the Primary Care Cockpit when Fleet Calendar specialty routing sends a primary-care patient to the PCP flow.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "primary care cockpit|primarycarecockpit|pcp.?cockpit",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Fleet Calendar Start Visit always calls openVisitWizard (AppointmentDetailsModal.tsx:1473), which always navigates to /visit-wizard (openVisitWizard.ts:230); no Primary Care Cockpit exists.",
+      "proposed_text": "(Remove this row: Start Visit always opens the Visit Wizard.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/visit-wizard?${params.toString()}`);",
+          "paths": [
+            "frontend/src/utils/openVisitWizard.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hwo-22",
+      "claim": "Troubleshooting: the wizard opens fresh when the appointment already has a signed note; it does not redirect you to the signed note.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "When resolveWizardArrival finds a signed (visit_locked) row on the appointment, decideWizardEntry returns show:'signed-visit' (resolveWizardArrival.ts:320-329) and VisitWizardV2Page renders SignedVisitReview instead of mounting the wizard (VisitWizardV2Page.tsx:1223-1229), whichever wound the signed note is on.",
+      "proposed_text": "If the appointment already has a signed note, the wizard does not open. You see \"This visit is signed and locked\" with Review signed note, Add an addendum, Add a wound by addendum, and Back to patient chart. Any change goes on the signed note as an addendum.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "export const SIGNED_AND_LOCKED_TITLE = \"This visit is signed and locked\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Review signed note",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "              Add a wound by addendum",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "            Back to patient chart",
+          "paths": [
+            "frontend/src/components/visit-wizard/SignedVisitScreen.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label = \"Add an addendum\",",
+          "paths": [
+            "frontend/src/components/progress-notes/AddAddendumToNoteButton.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "show: \"signed-visit\",",
+          "paths": [
+            "frontend/src/utils/resolveWizardArrival.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "wizardEntry.show === 'signed-visit' && supabaseClient && (",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<SignedVisitReview",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

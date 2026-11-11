@@ -1,0 +1,382 @@
+{
+  "title": "Look up FDA HCT/P recalls",
+  "source": "modules/inventory/recall-lookup",
+  "url": "https://help.medipyxis.com/modules/inventory/recall-lookup/",
+  "claims": [
+    {
+      "id": "inv-rc-01",
+      "claim": "Open Recall Lookup at /inventory-management/recall-lookup.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/recall-lookup\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<Inv_RecallLookup />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-02",
+      "claim": "Open Recall Lookup from Inventory Management.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "recall",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No hub tile or link: nothing outside the route table references /inventory-management/recall-lookup. Reach it by URL only.",
+      "proposed_text": "Open Recall Lookup at /inventory-management/recall-lookup (there is no menu link).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/recall-lookup\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-03",
+      "claim": "You need the vendor_coordinator or admin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"biller\",",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "the lookup would be limited to vendor_coordinator/admin"
+        }
+      ],
+      "finding": "Allowed roles are INVENTORY_ACCESS (admin, vendor_coordinator, clinical_manager, medical_director, clinician, provider) plus biller, finance_ap, superadmin, customersupport (inventory-recall-lookup/index.ts:41-47; _shared/auth-helpers.ts:307). Results are limited to the caller's facilities.",
+      "proposed_text": "Anyone with the Inventory feature can run a recall lookup; results cover only your facilities.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "...ROLE_PERMISSIONS.INVENTORY_ACCESS,",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-04",
+      "claim": "You can look up by the lot number (or distinct identification code) named in the recall notice.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".eq(\"lot_number\", lotNumber)",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "distinct_identification_code",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The search matches lot_number only (inventory-recall-lookup/index.ts:81). The distinct identification code is returned in the CSV but cannot be searched.",
+      "proposed_text": "Enter the lot number named in the recall notice.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".eq(\"lot_number\", lotNumber)",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Enter lot number...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-05",
+      "claim": "The results table lists every application of the lot with patient (name, MRN, DOB), clinician, visit date, application timestamp, quantity, wound case, HCPCS / Q-code, size, tissue ID, distinct identification code, and batch expiration.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Patient</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>MRN</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>DOB</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Clinician</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Visit Date</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Wound Case</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>HCPCS</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Size</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Quantity</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Tissue ID</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The on-screen table shows Patient, MRN, DOB, Visit Date, Clinician, Wound Case, HCPCS, Size. Quantity, Q Code, Tissue ID, Distinct ID Code, Batch Expiration and Application Timestamp are only in the CSV export (Inv_RecallLookup.tsx buildCsvContent).",
+      "proposed_text": "The results table shows patient, MRN, DOB, visit date, clinician, wound case, HCPCS and size. The CSV export adds quantity, Q code, tissue ID, distinct identification code, batch expiration and application timestamp.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Patient</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>MRN</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>DOB</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Clinician</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Visit Date</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Wound Case</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>HCPCS</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<TableHead>Size</TableHead>",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"Distinct ID Code\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"Application Timestamp\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"Q Code\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-06",
+      "claim": "Export to CSV to hand off to your compliance team.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Export CSV",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "type: \"text/csv\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-rc-07",
+      "claim": "The lookup resolves an affected lot to the specific patients and visits it touched.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Enter a lot number to identify all patients who received product",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "visit_date: string | null;",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

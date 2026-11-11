@@ -1,0 +1,249 @@
+{
+  "title": "Add a new patient from Referral Intake",
+  "source": "modules/referral-intake/new-referral",
+  "url": "https://help.medipyxis.com/modules/referral-intake/new-referral/",
+  "claims": [
+    {
+      "id": "ri-nr-01",
+      "claim": "Inbound faxes are handled in the Fax Review Queue instead, where the action is Approve & Create Patient.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": ": \"Approve & Create Patient\"}", "paths": ["frontend/src/components/idp/FaxReviewDetail.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const FaxReviewDetail = lazy(() => import(\"./components/idp/FaxReviewDetail\"));", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-02",
+      "claim": "First name, last name, and date of birth are the only required fields.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "firstName: z.string().min(1, \"First Name is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "lastName: z.string().min(1, \"Last Name is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "dateOfBirth: z.string().min(1, \"Date of Birth is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Subscriber Date of Birth is required for insurance plans where the subscriber is not the patient. Please complete the Insurance section.\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "absent", "note": "no other field may block save" }
+      ],
+      "finding": "Name and DOB are the only always-required fields, but once an insurance row is added, Create Patient is blocked when a non-self subscriber has no Subscriber Date of Birth (ReferralsNewPage.tsx:2905-2913), and when the subscriber name does not match the patient until Subscriber Relationship is set (:2894-2902).",
+      "proposed_text": "You know the patient's first name, last name, and date of birth. Those three fields are always required. If you add insurance where the subscriber is not the patient, Subscriber Date of Birth is required too.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "dateOfBirth: z.string().min(1, \"Date of Birth is required\"),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Subscriber Date of Birth is required for insurance plans where the subscriber is not the patient. Please complete the Insurance section.\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-03",
+      "claim": "You can save the patient without the referring practice and insurance information and add them later.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "You can create the patient without insurance, or add", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const patientDemographicsSchema = formValidationSchema.pick({", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present", "note": "submit validation covers demographics only; practice fields are optional" }
+      ]
+    },
+    {
+      "id": "ri-nr-04",
+      "claim": "Click Referral Intake in the sidebar. The board heading is Patient Intake.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Referral Intake\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Patient Intake", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-05",
+      "claim": "You can also press ⌘K (Windows: Ctrl+K) and type \"new referral\" — the command item is titled New Referrals and opens the form.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"New Referrals\", category: \"Referral Intake\", path: \"/referrals-new-page\"", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ],
+      "finding": "⌘K / Ctrl+K opens the command bar (AppShell.tsx:1141), but its items come from AppShell.tsx:807-850: the sidebar labels plus a short list (Fax review queue, Clinical inventory view, CRM Home, ...). There is no New Referrals item, so typing \"new referral\" finds nothing. The \"New Referrals\" item lives in frontend/src/utils/navigationUtils.ts:46, used only by components/app-shell/AppShell.tsx, which nothing imports.",
+      "proposed_text": "You can also press ⌘K (Windows: Ctrl+K), type \"referral\", and choose Referral Intake to open the board.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const quickJumpItems = visibleNavItems", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "label: \"Referral Intake\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-06",
+      "claim": "Click Add New Referral in the top-right (alongside Fax Queue and Fleet Calendar).",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Add New Referral", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Fax Queue</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Fleet Calendar</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-07",
+      "claim": "The form heading is Add New Patient. Click Create Patient at the bottom; if you are offline, the same button reads Save Offline.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Add New Patient", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{!isOnline ? \"Save Offline\" : \"Create Patient\"}", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-08",
+      "claim": "The form restates at the bottom: \"Required fields: First Name, Last Name, Date of Birth.\"",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "* Required fields: First Name, Last Name, Date of Birth", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-09",
+      "claim": "Care Type: Wound Care or Primary Care. Helper text: \"Select the type of care this patient is being referred for.\"",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Select the type of care this patient is being referred for", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": ">Wound Care</p>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": ">Primary Care</p>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-10",
+      "claim": "Patient Demographics: First Name, Middle Initial, Last Name, Date of Birth, Sex (Male, Female, Other), Marital Status, Employment Status, Primary Phone Number, Secondary Phone Number, Email Address.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Patient Demographics", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(First Name|Middle Initial|Last Name|Date of Birth|Marital Status|Employment Status|Primary Phone Number|Secondary Phone Number|Email Address)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 9 } },
+        { "type": "grep", "fixed": true, "pattern": "<option value=\"M\">Male</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<option value=\"F\">Female</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<option value=\"Other\">Other</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-11",
+      "claim": "Address Information: Street Address, Lives at, City, State, ZIP Code. Phone and address are optional.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Address Information", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(Street Address|Lives at|City|State|ZIP Code)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 5 } },
+        { "type": "grep", "fixed": true, "pattern": "address: z.string().optional(),", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "// PR-21 (2026-05-17): downgraded phone + address from required to optional", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-12",
+      "claim": "Referring Information Practice & Physician: Referral Source (search CRM practices), Add New Practice, Referring Individual, Date Referral Sent, Referral Entry Date, Referral ID, practice phone and fax, Referring Physician and Referring Physician NPI, Assigned BD Rep.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "placeholder=\"Select a practice from CRM...\"", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span>Add New Practice</span>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(Referral Source|Referring Individual|Date Referral Sent|Referral Entry Date|Referral ID|Referring Phone|Practice Fax|Referring Physician|Referring Physician NPI|Assigned BD Rep)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 10 } }
+      ]
+    },
+    {
+      "id": "ri-nr-13",
+      "claim": "Patient's Primary Care Physician: PCP Practice, PCP Physician, phone, fax, and PCP Physician NPI.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Patient's Primary Care Physician", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(PCP Practice|PCP Physician|PCP Practice Phone|PCP Practice Fax|PCP Physician NPI)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 5 } }
+      ]
+    },
+    {
+      "id": "ri-nr-14",
+      "claim": "Insurance Information: click Add Insurance for each payer. Fields: Insurance Provider, Policy Number / Member Number, Group Number (optional), Subscriber First Name, Subscriber Last Name, Payer ID, Subscriber Relationship (Self, Spouse, Child, Other). Use Verify (or Verify again) to run eligibility. You can add more than one insurance row.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "<span>Add Insurance</span>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<Label className=\"pb-2\">Insurance Provider</Label>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(Policy Number / Member Number|Subscriber First Name|Subscriber Last Name|Payer ID|Subscriber Relationship)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 5 } },
+        { "type": "grep", "fixed": true, "pattern": "placeholder=\"Group number (if applicable)\"", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "<option value=\"(self|spouse|child)\">(Self|Spouse|Child)</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "count": 3 } },
+        { "type": "grep", "fixed": true, "pattern": "<option value=\"other\">Other</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +Verify( again)?$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 2 } },
+        { "type": "grep", "fixed": true, "pattern": "formData.insurances.filter(", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present", "note": "insurances is a list" }
+      ]
+    },
+    {
+      "id": "ri-nr-15",
+      "claim": "Urgency: Referral Reason, and Urgency Level: Routine, Urgent, or Emergent.",
+      "checks": [
+        { "type": "grep", "pattern": "^ +(Referral Reason|Urgency Level)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 2 } },
+        { "type": "grep", "pattern": "<option value=\"(routine|urgent|emergent)\">(Routine|Urgent|Emergent)</option>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "count": 3 } }
+      ]
+    },
+    {
+      "id": "ri-nr-16",
+      "claim": "Condition & Accident Information For Billing: optional checkboxes Related to Employment, Related to Auto Accident, Related to Other Accident, plus Auto Accident State when that box is checked. Under Billing Preferences: Accept Assignment of Benefits.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Condition & Accident Information", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^ +(Related to Employment|Related to Auto Accident|Related to Other Accident|Auto Accident State|Billing Preferences|Accept Assignment of Benefits)$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 6 } },
+        { "type": "grep", "fixed": true, "pattern": "{formData.conditionRelatedToAutoAccident && (", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-17",
+      "claim": "Insurance Verification Summary: a recap of the insurance rows you added, if any.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Insurance Verification Summary", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Review verification results for all insurance plans", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-18",
+      "claim": "At the bottom you can also check Send digital consent form via SMS upon approval, or click Send Consent SMS if a primary phone number is entered.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "<span>Send digital consent form via SMS upon approval</span>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "disabled={isSendingSms || !(formData.phone || \"\").trim()}", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span>Send Consent SMS</span>", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-19",
+      "claim": "Cancel leaves the form without saving.",
+      "checks": [
+        { "type": "grep", "pattern": "^ +Cancel$", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": { "min": 1 } },
+        { "type": "grep", "fixed": true, "pattern": "}/patients`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present", "note": "Cancel only navigates away (to All Patients)" }
+      ]
+    },
+    {
+      "id": "ri-nr-20",
+      "claim": "Clicking Create Patient creates the patient record immediately (status Active) and a referral in the New Referrals column.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "patient_status: \"ACTIVE\", // FLOW6-1", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "          status: \"NEW\",", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const result = await referralApi.createReferral(", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-21",
+      "claim": "A success message reads \"Referral created successfully!\" and includes the MRN when one is assigned.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "? `Referral created successfully! MRN: ${patientMrn}`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": ": \"Referral created successfully!\";", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-22",
+      "claim": "After a short pause you are taken back to the Patient Intake board. The detail panel does not open by itself.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "navigate(`/facility/${facilityToUse}/referrals`);", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "}, 1500);", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "referrals\\?(open|referral|selected)", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-nr-23",
+      "claim": "The card does not move to Financial automatically when insurance is present, and the patient does not wait for an Assigned status before appearing in All Patients.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "FINANCIAL", "paths": ["frontend/src/services/referralApi.ts", "frontend/src/pages/ReferralsNewPage.tsx"], "expect": "absent" },
+        { "type": "grep", "fixed": true, "pattern": ".insert(patientInsertPayload)", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<option value=\"active\">Active</option>", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-24",
+      "claim": "You cannot create the patient when First Name, Last Name, or Date of Birth is empty; the form lists any that are still missing.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Please complete the following required fields:", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{getAllValidationErrors().map((error, index) => (", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-25",
+      "claim": "\"Please enter a valid phone number\" means a phone was entered in a format the form does not accept. Use (xxx) xxx-xxxx, or leave the field blank.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "message: \"Please enter a valid phone number\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Required format: (xxx) xxx-xxxx", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "if (!value || value.trim() === \"\") return true;", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-nr-26",
+      "claim": "When the button reads Save Offline you can save the referral offline and finish it when you reconnect.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "toast.success(\"Referral saved offline\", {", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "description: \"Will sync when connection is restored\",", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,412 @@
+{
+  "title": "Create a DME order",
+  "source": "modules/orders-dme/create-dme-order",
+  "url": "https://help.medipyxis.com/modules/orders-dme/create-dme-order/",
+  "claims": [
+    {
+      "id": "dme-cr-01",
+      "claim": "Generate a DME prescription from the Orders & DME module or directly within the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/patients/:patientId/orders\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrdersDMEVisit patientId={patientId} />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-02",
+      "claim": "You must have prescribing authority or be creating the order on behalf of a supervising provider.",
+      "checks": [],
+      "finding": "No prescribing-authority or supervising-provider check exists on the order path; the page is gated only by the Orders & DME feature (user-routes.tsx /patients/:patientId/orders). This is a policy statement, not product behaviour."
+    },
+    {
+      "id": "dme-cr-03",
+      "claim": "From the patient's chart open Orders & DME, or reach it from the Orders & DME section (section 12) of the Visit Wizard (the link carries the patient context automatically).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/patients/${patientId}/orders`)}",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate\\(`/patients/\\$\\{patientId\\}/orders`\\)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/OrdersDMEVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The chart has an Orders & DME tile (PatientOverviewPage.tsx:3571). The wizard step is badged \"Step 11\" (VisitWizardV4.tsx:18207) and embeds its own ordering panel (OrdersDMEVisit, :18233); it has no link to the Orders & DME page.",
+      "proposed_text": "From the patient's chart, click Orders & DME. During a visit you can also order from the Orders & DME step (Step 11) of the Visit Wizard, which works inside the wizard.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/patients/${patientId}/orders`)}",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Step 11$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only Step 11 badge is the Orders & DME accordion (VisitWizardV4.tsx:18207)"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-04",
+      "claim": "Select the DME tab and click New DME Order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"DME\",",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New {activeTab} Order",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "With no DME orders yet, the button reads Create DME Order instead (PatientOrdersDmePage.tsx:1656)."
+    },
+    {
+      "id": "dme-cr-05",
+      "claim": "Fill the DME order form top to bottom: select the Patient (type name or DOB, autocomplete); select Equipment Category (HCPCS codes filter by it); choose the Item (HCPCS populates automatically); set Quantity and Units; enter Duration; add Clinical Justification with an ICD-10 picker; select the Ordering Provider (NPI populates from profile); select the Vendor and optional custom form; add Notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Equipment Category",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx",
+            "backend/supabase/migrations/20260924120000_seed_standard_order_form_library.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "HCPCS code(s), if known",
+          "paths": [
+            "backend/supabase/migrations/20260924120000_seed_standard_order_form_library.sql"
+          ],
+          "expect": "absent",
+          "note": "a free-text HCPCS box contradicts 'HCPCS populates automatically'"
+        }
+      ],
+      "finding": "There is no fixed DME form with these fields. The flow is: New DME Order → \"Select recipient for DME Order\" (vendor first, :3750) → \"Choose custom form\" (:3857) → the chosen form. The patient is already set (page is per patient). The standard \"Durable Medical Equipment Request\" form (seed 20260924120000:162) has an Equipment checklist (Wheelchair, Walker, Hospital bed, ...), free-text \"HCPCS code(s), if known\", Quantity, \"Length of need / start date\", \"Diagnosis / ICD-10 code(s)\", \"Ordering provider / credentials\" and NPI. There is no equipment category, item picker, HCPCS auto-fill, units, or ICD-10 search; vendor forms vary.",
+      "proposed_text": "Click New DME Order, pick the vendor, then pick a form (the vendor's own, or the Medipyxis Durable Medical Equipment Request). Fill in the form: equipment, HCPCS codes if known, quantity, length of need, diagnosis / ICD-10 codes, and ordering provider and NPI.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Select recipient for {activeTab} Order</DialogTitle>",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Choose custom form</DialogTitle>",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Durable Medical Equipment Request', 'Vendor Request', 1,",
+          "paths": [
+            "backend/supabase/migrations/20260924120000_seed_standard_order_form_library.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "HCPCS code(s), if known",
+          "paths": [
+            "backend/supabase/migrations/20260924120000_seed_standard_order_form_library.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Diagnosis / ICD-10 code(s)",
+          "paths": [
+            "backend/supabase/migrations/20260924120000_seed_standard_order_form_library.sql"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-06",
+      "claim": "Choose a supplier from the enabled-vendor list for DME. If the vendor has a custom order form, select it to capture vendor-specific fields.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const vendorRows = await crmVendorService.list({ scopeFacilityId: facilityId });",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// No vertical filter (2026-09-08).",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The list is all of the clinic's enabled vendors plus home health agencies, not a DME-specific list (PatientOrdersDmePage.tsx:717-751).",
+      "proposed_text": "Choose the supplier from your clinic's enabled vendors. If it has its own order form, pick that form; otherwise use a Medipyxis standard form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// No vertical filter (2026-09-08).",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowFormSelector(true);",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-07",
+      "claim": "Save the order as a Draft, or Send Fax / Send Email to dispatch it to the vendor. On sending, the order moves to Submitted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Save as Draft\"",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await OrdersDmeService.recordFaxSend({",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "OrdersDmeService\\.record(Email|Send)",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present",
+          "note": "email send would need to record the order as Submitted too"
+        }
+      ],
+      "finding": "Send Fax records the order and sets Submitted (ensureOrderForSend :1265, recordFaxSend :1335; status written in ordersDmeService.ts:324). Send Email (handleSendVendorEmail, PatientOrdersDmePage.tsx:1371-1517) sends the email and shows a toast but never creates or updates the order — no status change. Product defect: emailed orders leave no Submitted record.",
+      "proposed_text": "Save the order as a draft, or click Send Fax to send it to the vendor; a faxed order moves to Submitted once the fax is accepted. Send Email emails the form but does not update the order's status.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await OrdersDmeService.recordFaxSend({",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success(`Email sent successfully to ${vendorEmail}`);",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-08",
+      "claim": "The DME order appears in the DME tab with its status (Draft until sent, then Submitted → Received → Provisioned as the vendor works it).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^      (Draft|Submitted|Received|Provisioned): \"",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": {
+            "min": 8
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Received: \"Provider has materials and is actively working it\",",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-09",
+      "claim": "When results or confirmations come back, use Upload Results on the order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Upload results\");",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Upload Results shows only on Provisioned orders and only raises a toast \"Upload results\"; nothing is uploaded (PatientOrdersDmePage.tsx:1606-1617). Product defect.",
+      "proposed_text": "Uploading results to an order is not available yet.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Upload results\");",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-10",
+      "claim": "The order is linked to the patient record for tracking.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const orderId = await ensureOrderForSend(formDataWithCategory);",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient_id",
+          "paths": [
+            "frontend/src/services/ordersDmeService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-11",
+      "claim": "DME orders for Medicare beneficiaries must include an ICD-10 code, duration of need, and ordering provider NPI; Duration is required for Medicare compliance.",
+      "checks": [],
+      "finding": "Regulatory statement, not product behaviour; the product does not enforce it (the standard DME form fields are free text and no required-field check for Medicare exists on the order path)."
+    },
+    {
+      "id": "dme-cr-12",
+      "claim": "Troubleshooting: 'HCPCS code not shown' — change the category, HCPCS codes are category-scoped; 'Submit button disabled' — check Patient, Equipment Category, Item, Quantity, Duration, and ICD-10.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Equipment Category",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx",
+            "frontend/src/components/visit-wizard/visit/OrdersDMEVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No Equipment Category, category-scoped HCPCS list, or Item field exists on either order surface (PatientOrdersDmePage.tsx, OrdersDMEVisit.tsx). Submit is disabled only while submitting or saving (PatientOrdersDmePage.tsx:4140).",
+      "proposed_text": "Remove these two troubleshooting rows. Keep \"Patient not found — add the patient via Referral Intake\".",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isSubmittingOrder || isSavingDraftOrder}",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-cr-13",
+      "claim": "Patient not found — add the patient via Referral Intake or the Patients module.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${currentFacility?.id}/referrals-new-page`);",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

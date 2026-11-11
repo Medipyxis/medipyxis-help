@@ -1,0 +1,366 @@
+{
+  "title": "The claim scrubber",
+  "source": "modules/billing/claim-scrub",
+  "url": "https://help.medipyxis.com/modules/billing/claim-scrub/",
+  "claims": [
+    {
+      "id": "scr-01",
+      "claim": "It runs on every auto-drafted claim, appends its findings to the claim's biller_notes",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const scrubResult = computeClaimScrub({", "paths": ["frontend/src/services/autoBillingClaimService.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const scrubNotes = formatScrubNoteForBiller(scrubResult);", "paths": ["frontend/src/services/autoBillingClaimService.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "claimDraft.biller_notes = existingScrubNotes", "paths": ["frontend/src/services/autoBillingClaimService.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-02",
+      "claim": "... and shows them in the Coding Review drawer.",
+      "checks": [
+        {"type": "grep", "pattern": "biller_notes|CLAIM SCRUB|scrub", "ignoreCase": true, "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present", "note": "would hold if the drawer read the claim's biller_notes / scrub findings"}
+      ],
+      "finding": "CodingReviewDrawer.tsx never reads billing_claims.biller_notes; its 'Biller Notes' list reads billing_work_queue_activity (frontend/src/components/billing/CodingReviewDrawer.tsx:265-275). No frontend surface found that renders the scrub text from billing_claims.biller_notes (the Work Queue 'Biller Notes' column reads a separate notes table, BillingWorkQueuePage.tsx:485-487).",
+      "proposed_text": "It runs on every auto-drafted claim and appends its findings to the claim's biller_notes field. The Coding Review drawer does not display them.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const scrubResult = computeClaimScrub({", "paths": ["frontend/src/services/autoBillingClaimService.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "biller_notes|CLAIM SCRUB", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "scr-03",
+      "claim": "It never blocks submission — it is guidance for the biller to check before the claim leaves. ... Nothing here throws, nothing gates submission, nothing sets status=needs_provider.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "throw ", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"},
+        {"type": "grep", "fixed": true, "pattern": "status: 'needs_provider'", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"},
+        {"type": "grep", "pattern": "claimScrub|computeClaimScrub", "paths": ["backend/supabase/functions/_shared/submitToStedi.ts", "backend/supabase/functions/submit-claim", "backend/supabase/functions/submit-to-stedi"], "excludeTests": true, "expect": "absent"}
+      ]
+    },
+    {
+      "id": "scr-04",
+      "claim": "Medipyxis lost eighty-four thousand dollars in June 2026 to hard-blocking LCD rules that fired on claims that should have gone out; the scrubber is the architecture that replaced it.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "June 2026 LCD Navigator rollout that turned rule stubs into save-blocks", "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "cost an $84,000 refund", "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-05",
+      "claim": "Five rules, wound-care specific ... Each rule is labeled either DEFENSIBLE ... or SHADOW.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "export type ScrubRuleStatus = 'DEFENSIBLE' | 'SHADOW';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "pattern": "^//   R[1-5]  ", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"count": 5}}
+      ]
+    },
+    {
+      "id": "scr-06",
+      "claim": "R1 — Fires when: any of the C5271–C5278 codes appear on the claim with a date of service on or after 2026-01-01. ... Replace with the current 15271–15278 CPT ladder.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const CY2026_C_CODE_DELETION_DOS = '20260101';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const violating = [...hcpcs].filter((c) => DELETED_C_CODES.has(c)).sort();", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Use CPT 15271-15278 for skin substitute applications", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-07",
+      "claim": "R1 Source: CY2026 OPPS Final Rule (CMS-1809-FC).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "CMS-1809-FC", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ],
+      "finding": "R1 cites 'CY2026 PFS / OPPS Final Rule (CMS-1832-F)' with the CMS-1832-F fact-sheet URL (frontend/src/services/claimScrub.ts:224-225, :464-467).",
+      "proposed_text": "Source cited by the product: CY2026 PFS / OPPS Final Rule (CMS-1832-F).",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "'CY2026 PFS / OPPS Final Rule (CMS-1832-F) — HCPCS C5271-C5278 deleted;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-08",
+      "claim": "R2 — Fires when: the claim carries a CTP HCPCS (Q4xxx range) with a JW or JZ modifier attached.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent", "note": "would hold if the CTP trigger were Q4xxx HCPCS rather than application CPTs"}
+      ],
+      "finding": "R2 fires on a CTP application CPT (15271-15278) with JW/JZ and DOS on/after 2026-01-01; the Q4xxx product code is not part of the trigger (frontend/src/services/claimScrub.ts:452, :474-480).",
+      "proposed_text": "Fires when: the claim carries a skin substitute application CPT (15271–15278) with a JW or JZ modifier, for a date of service on or after 2026-01-01.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const PROHIBITED_CTP_MODIFIERS = new Set(['JW', 'JZ']);", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const CY2026_RULES_EFFECTIVE_DOS = '20260101';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-09",
+      "claim": "R2 Why: JW (drug amount discarded) and JZ (zero amount discarded) are single-use vial modifiers restricted to biologics licensed under a BLA. Skin substitutes are regulated as tissue products under 21 CFR 1271, not BLA drugs. Attaching JW or JZ to a Q-coded skin substitute is a payer-defined mismatch that draws a hard reject.",
+      "checks": [],
+      "finding": "Regulatory/payer statement, not product behavior. The product's own reason is different: 'JW/JZ modifiers inapplicable for incident-to skin substitutes' under CMS-1832-F, with BLA-licensed biologicals excluded (frontend/src/services/claimScrub.ts:481-487); 21 CFR 1271 is not encoded anywhere."
+    },
+    {
+      "id": "scr-10",
+      "claim": "R2 Source: CMS MM11856 (JW modifier policy) and MLN Matters SE20015.",
+      "checks": [
+        {"type": "grep", "pattern": "MM11856|SE20015", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ],
+      "finding": "R2 cites 'CY2026 PFS / OPPS Final Rule (CMS-1832-F) — JW/JZ modifiers inapplicable for incident-to skin substitutes.' (frontend/src/services/claimScrub.ts:486-488).",
+      "proposed_text": "Source cited by the product: CY2026 PFS / OPPS Final Rule (CMS-1832-F).",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "'CY2026 PFS / OPPS Final Rule (CMS-1832-F) — JW/JZ modifiers inapplicable for incident-to skin substitutes.',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-11",
+      "claim": "R3 — Fires when: the claim has a CTP HCPCS, patient state is one of NJ / OH / OK / TX, and DOS is on or after 2026-01-15.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const WISER_STATES = new Set(['NJ', 'OH', 'OK', 'TX']);", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const WISER_EFFECTIVE_DOS = '20260115';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent", "note": "would hold if the CTP trigger were a HCPCS code"}
+      ],
+      "finding": "States and date are right; the CTP trigger is an application CPT 15271-15278 (hasCtpApplication, frontend/src/services/claimScrub.ts:452), not a CTP HCPCS.",
+      "proposed_text": "Fires when: the claim has a skin substitute application CPT (15271–15278), patient state is one of NJ / OH / OK / TX, and DOS is on or after 2026-01-15.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const WISER_STATES = new Set(['NJ', 'OH', 'OK', 'TX']);", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const WISER_EFFECTIVE_DOS = '20260115';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-12",
+      "claim": "the WISeR (Wound care Investigational Skin substitute Enhanced Review) Model requires prior authorization for skin substitute applications in these four states as of 2026-01-15.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Wound care Investigational", "paths": ["frontend/src", "backend/supabase/functions"], "expect": "present"}
+      ],
+      "finding": "WISeR is the Wasteful and Inappropriate Service Reduction Model; that is the title in the product's prod policy_rules corpus (frontend/src/services/__tests__/fixtures/corpusPolicyRules.prod.json:1659) and in the CMS-5056-N URL the scrubber cites (claimScrub.ts:244-245).",
+      "proposed_text": "the WISeR (Wasteful and Inappropriate Service Reduction) Model requires prior authorization for skin substitute applications in these four states for dates of service on or after 2026-01-15.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "\"lcd_title\": \"Wasteful and Inappropriate Service Reduction Model\"", "paths": ["frontend/src/services/__tests__/fixtures/corpusPolicyRules.prod.json"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const WISER_EFFECTIVE_DOS = '20260115';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-13",
+      "claim": "A claim without a WISeR UTN on Box 23 draws an automatic hold.",
+      "checks": [
+        {"type": "grep", "pattern": "automatic hold|auto-hold", "ignoreCase": true, "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ],
+      "finding": "The product's warning says a missing UTN 'will trigger CO-197 + RARC N210 denial' (frontend/src/services/claimScrub.ts:840-842), not a hold.",
+      "proposed_text": "The scrubber warns that a claim without the WISeR UTN in Box 23 (837P Loop 2300 REF*G1) will be denied with CO-197 + RARC N210.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "will trigger CO-197 + RARC N210 denial.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-14",
+      "claim": "The rule ladders through the visit's visit_authorization in a defined priority (G1 no auth linked → G2 expired / G5 not yet valid → G6 product mismatch → G4 not-active-status → G3 exhausted) and emits distinct advisory codes for each shape",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "No active authorization linked to this visit — will trigger CO-197.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G1"},
+        {"type": "grep", "fixed": true, "pattern": "linked but expired on ${validTo}.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G2"},
+        {"type": "grep", "fixed": true, "pattern": "linked but not effective until ${validFrom}.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G5"},
+        {"type": "grep", "fixed": true, "pattern": "Product mismatch — will trigger CO-B7 denial", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G6"},
+        {"type": "grep", "fixed": true, "pattern": "(not active/renewed). Will trigger CO-B7 or CO-197.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G4"},
+        {"type": "grep", "fixed": true, "pattern": "linked but exhausted (${visitsUsed}/${visitLimit}).", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "G3; else-if order G1,G2,G5,G6,G4,G3 read at claimScrub.ts:532-806"}
+      ]
+    },
+    {
+      "id": "scr-15",
+      "claim": "wiser_pa_missing — no auth attached, or the attached auth is expired, exhausted, denied, or outside its validity window.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "code: 'wiser_pa_missing',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"min": 5}},
+        {"type": "grep", "fixed": true, "pattern": "&& authStatus !== 'active'", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-16",
+      "claim": "wiser_pa_product_mismatch — an auth is attached but its approved Q-codes don't include the code being billed.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "code: 'wiser_pa_product_mismatch',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (!approvedNorm.has(n)) return true;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-17",
+      "claim": "wiser_utn_missing — an auth exists and is valid, but the UTN is not present on the claim's Box 23 field.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "code: 'wiser_utn_missing',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "&& (authStatus === 'active' || authStatus === 'renewed')", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-18",
+      "claim": "R3 Source: CMS WISeR Model announcement (Medicare Innovation Center, 2025).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "'https://www.cms.gov/priorities/innovation/innovation-models/wiser';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const scrubUrl = CMS_WISER_MODEL_URL;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-19",
+      "claim": "R4 — Fires when: the claim carries a CTP HCPCS and the patient's state differs from the facility's state.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "&& patientState !== facilityState", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent", "note": "would hold if the CTP trigger were a HCPCS code"}
+      ],
+      "finding": "The state comparison is right; the CTP trigger is an application CPT 15271-15278 (frontend/src/services/claimScrub.ts:452, :884-889).",
+      "proposed_text": "Fires when: the claim carries a skin substitute application CPT (15271–15278) and the patient's state differs from the facility's state.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "&& patientState !== facilityState", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const hasCtpApplication = [...cpts].some((c) => CTP_APPLICATION_CPTS.has(c));", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-20",
+      "claim": "This is a Medipyxis policy call (SHADOW); we surface it as info severity, not warning",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "code: 'mac_state_mismatch',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "ruleStatus: 'SHADOW',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"count": 1}},
+        {"type": "grep", "fixed": true, "pattern": "severity: 'info',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"count": 2}, "note": "R3 Box-23-unlinked info + R4"}
+      ]
+    },
+    {
+      "id": "scr-21",
+      "claim": "R4 Source: Medipyxis internal policy. Not a published CMS rule; the surfacing is a heuristic.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "'Medipyxis policy (2026-07-11) — MAC/state variation observed", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-22",
+      "claim": "R5 — Fires when: a debridement CPT (11042–11047) and a CTP application (15271–15278 or 15275–15278) appear on the same DOS.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "  '97597',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent", "note": "would hold if the debridement set were 11042-11047 only"}
+      ],
+      "finding": "The bundled debridement set also includes 97597 (selective debridement), and the rule applies only for DOS on/after 2026-01-01 (frontend/src/services/claimScrub.ts:308-316, :906-911).",
+      "proposed_text": "Fires when: a debridement code (11042–11047 or 97597) and a skin substitute application CPT (15271–15278) are on the same claim, for a date of service on or after 2026-01-01.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "  '97597',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "  '11042',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "code: 'debridement_ctp_bundled',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-23",
+      "claim": "R5 Source: NCCI Policy Manual for Medicare Services, Chapter III, effective 2026.",
+      "checks": [
+        {"type": "grep", "pattern": "NCCI Policy Manual|Chapter III", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ],
+      "finding": "R5 cites 'CY2026 PFS / OPPS Final Rule (CMS-1832-F) NCCI change' (frontend/src/services/claimScrub.ts:917-919).",
+      "proposed_text": "Source cited by the product: CY2026 PFS / OPPS Final Rule (CMS-1832-F), NCCI change.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "'CY2026 PFS / OPPS Final Rule (CMS-1832-F) NCCI change", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-24",
+      "claim": "The scrubber operates at the claim level: CPT codes, HCPCS codes, modifiers, patient state, DOS, and the visit's authorization snapshot. It does not read: Wound-level clinical data.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "This module operates on the *claim* level (CPT/HCPCS/modifiers/state/DOS)", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "activeAuthorization?: ActiveAuthorizationSnapshot | null;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-25",
+      "claim": "Those live in the note and are checked by the LCD Navigator on the clinical side (guidance-only there too).",
+      "checks": [],
+      "finding": "Guidance-only is a runtime flag (LCD_GUIDANCE_ONLY = getRuntimeBooleanFlag('VITE_LCD_GUIDANCE_ONLY'), frontend/src/utils/featureFlags.ts:107); its value is environment configuration, not code, so it cannot be confirmed from the release."
+    },
+    {
+      "id": "scr-26",
+      "claim": "Every rule in the scrubber is inline in claimScrub.ts with its own source tag. The seeded policy_rules table is used only during code review as a citation reference; the runtime never queries it.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": ".from(", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"},
+        {"type": "grep", "fixed": true, "pattern": "reference during code review; runtime never queries the table.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-27",
+      "claim": "the scrubber has to run identically in test, demo, and prod without a database dependency, and it has to fail closed if a citation goes stale.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": ".from(", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"},
+        {"type": "grep", "pattern": "LAST_VERIFIED *[<>]|Date\\.now\\(\\)", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "would hold if citation age were checked at runtime"}
+      ],
+      "finding": "No DB dependency is true. Nothing checks citation age: LAST_VERIFIED is a fixed stamp (frontend/src/services/claimScrub.ts:213) copied onto every warning; a stale citation changes nothing.",
+      "proposed_text": "The scrubber runs identically in test, demo and prod without a database dependency. Citation freshness is a fixed stamp, re-verified by hand.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": ".from(", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"},
+        {"type": "grep", "fixed": true, "pattern": "const LAST_VERIFIED = '2026-07-11';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-28",
+      "claim": "Every scrubber finding is appended to the claim's biller_notes field with a fixed format: ⚠️ SCRUB: <code> — <human message> [source: <URL> · verified <YYYY-MM-DD>]",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "SCRUB: ", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ],
+      "finding": "Format is `[CLAIM SCRUB:${w.code}:${w.ruleStatus}] ${w.message} (Source: ${w.sourceCitation}${urlSuffix} Last verified: ${w.lastVerified}. Guidance only, not enforced.)` (frontend/src/services/claimScrub.ts:957).",
+      "proposed_text": "Every finding is appended to the claim's biller_notes field as: [CLAIM SCRUB:<code>:<DEFENSIBLE|SHADOW>] <message> (Source: <citation> — <URL> Last verified: <YYYY-MM-DD>. Guidance only, not enforced.)",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "return `[CLAIM SCRUB:${w.code}:${w.ruleStatus}] ${w.message} (Source: ${w.sourceCitation}${urlSuffix} Last verified: ${w.lastVerified}. Guidance only, not enforced.)`;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-29",
+      "claim": "The Coding Review drawer renders these as a list at the top of the drawer, above the coding grid. Each finding shows: the rule code, the human message, the source URL and last-verified date, severity — warning (yellow) or info (blue).",
+      "checks": [
+        {"type": "grep", "pattern": "biller_notes|CLAIM SCRUB|ScrubWarning", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ],
+      "finding": "The drawer's banners come from validateCodingAlignment (frontend/src/components/billing/CodingReviewDrawer.tsx:380-383, :648-670), not from scrub findings; nothing in the drawer reads biller_notes.",
+      "proposed_text": "The Coding Review drawer does not show scrubber findings. They are stored in the claim's biller_notes field.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "biller_notes|CLAIM SCRUB|ScrubWarning", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "scr-30",
+      "claim": "PD-1 — Guidance-only, never hard-block. All returns are advisory strings. PD-2 — Never invent codes, rates, or policies. Every rule cites a defensible source or is labeled SHADOW.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "PD-1 Guidance-only, NEVER hard-block.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "ruleStatus: 'DEFENSIBLE',", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"min": 9}},
+        {"type": "grep", "fixed": true, "pattern": "throw ", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "scr-31",
+      "claim": "PD-3 — Cite live URLs with last_verified. Each defensible warning carries the source URL and the date it was last verified. Stale citations get re-verified when the source date is more than 90 days old.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "sourceUrl: CMS_1832_F_URL,", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"min": 3}},
+        {"type": "grep", "pattern": "const LAST_VERIFIED = '2026-(08-1[2-9]|08-[23][0-9]|09-|1[0-2]-)", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present", "note": "would hold if re-verified within 90 days of the 2026-11-10 release"}
+      ],
+      "finding": "URL + date per defensible warning is true. The stamp is 2026-07-11 (frontend/src/services/claimScrub.ts:213), about 120 days before v1.1.345; no re-verification has happened and none is automated.",
+      "proposed_text": "Each defensible warning carries the source URL and the date it was last verified (currently 2026-07-11). Re-verification is a manual step.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const LAST_VERIFIED = '2026-07-11';", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "lastVerified: LAST_VERIFIED,", "paths": ["frontend/src/services/claimScrub.ts"], "expect": {"min": 10}}
+      ]
+    },
+    {
+      "id": "scr-32",
+      "claim": "PD-4 — Truth over optimism. If a precondition can't be evaluated (missing state, missing DOS, missing auth), the rule silently skips rather than fabricating a verdict.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "No active authorization linked to this visit — will trigger CO-197.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "absent", "note": "would hold if a missing auth made R3 skip"}
+      ],
+      "finding": "Missing or malformed state/DOS makes rules skip (normalizeState, isValidYYYYMMDD; claimScrub.ts:389-426). A missing authorization does not skip: it is the G1 finding wiser_pa_missing (claimScrub.ts:520-530).",
+      "proposed_text": "If the state or date of service is missing or malformed, the rule silently skips rather than fabricating a verdict. A missing authorization is not skipped: it is the wiser_pa_missing finding.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "return /^[A-Z]{2}$/.test(upper) ? upper : null;", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const dosIsValid = isValidYYYYMMDD(dosYYYYMMDD);", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "No active authorization linked to this visit — will trigger CO-197.", "paths": ["frontend/src/services/claimScrub.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-33",
+      "claim": "It complements, does not replace: The zero-dollar guard — money-boundary refusal, not advisory. The required-fields pre-flight — refuses to submit a claim missing structural 837P fields.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);", "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const requiredCheck = assertRequiredClaimFields(claimPayload);", "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "scr-34",
+      "claim": "The Coding Review drawer's manual review — the biller reads the note, verifies the codes, and clicks Submit.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Submit", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ],
+      "finding": "The drawer has no Submit button; its actions are Save, Save & Next, Flag for Clinical, Edit in Full Form and Close (frontend/src/components/billing/CodingReviewDrawer.tsx:800-852). Submission happens from the claim pages.",
+      "proposed_text": "The Coding Review drawer's manual review — the biller reads the note and verifies the codes; the claim is submitted from the full claim form.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "Submit", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "absent"},
+        {"type": "grep", "fixed": true, "pattern": "`/facility/${facilityId}/billing/new?editClaimId=${row.claim_id}`", "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"], "expect": "present"}
+      ]
+    }
+  ]
+}

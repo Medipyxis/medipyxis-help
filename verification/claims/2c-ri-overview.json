@@ -1,0 +1,146 @@
+{
+  "title": "Referral Intake — overview",
+  "source": "modules/referral-intake/overview",
+  "url": "https://help.medipyxis.com/modules/referral-intake/overview/",
+  "claims": [
+    {
+      "id": "ri-ov-01",
+      "claim": "Open it from the Referral Intake item in the sidebar.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Referral Intake\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "import AppShell from \"./AppShell\";", "paths": ["frontend/src/components/AppProvider.tsx"], "expect": "present", "note": "the sidebar that carries the item is the live shell" },
+        { "type": "grep", "fixed": true, "pattern": "const Referrals = lazy(() => import(\"./pages/Referrals.tsx\"));", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-02",
+      "claim": "The page heading is Patient Intake, with the line \"Manage incoming patient referrals through the intake workflow.\"",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Patient Intake", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Manage incoming patient referrals through the intake", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-03",
+      "claim": "From the header you can open the Fax Queue (it goes to the Fax Review Queue — it is a button, not a kanban column), Fleet Calendar, or Add New Referral.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Fax Queue</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/fax-review-queue`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Fleet Calendar</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Add New Referral", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent", "note": "no kanban column is titled Fax..." }
+      ]
+    },
+    {
+      "id": "ri-ov-04",
+      "claim": "The kanban columns are New Referrals, Info Needed, Financial, Ready for Assignment, Assigned, and Non-Admit.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "title: \"New Referrals\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Info Needed\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Financial\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Ready for Assignment\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Assigned\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Non-Admit\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "^    title: \"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": { "count": 6 }, "note": "exactly six column titles in the columns array" }
+      ]
+    },
+    {
+      "id": "ri-ov-05",
+      "claim": "Creating a patient with Create Patient or Approve & Create Patient always starts the referral in New Referrals.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "const result = await referralApi.createReferral(", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "          status: \"NEW\",", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const result = await createPatientFromFax(", "paths": ["frontend/src/components/idp/FaxReviewDetail.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "      status: \"NEW\",", "paths": ["frontend/src/services/idpService.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "id: \"NEW\" as ReferralStatus,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present", "note": "NEW is the New Referrals column" }
+      ]
+    },
+    {
+      "id": "ri-ov-06",
+      "claim": "Financial: cards are moved here by the team; they are not auto-routed just because insurance was entered on the form.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "FINANCIAL", "paths": ["frontend/src/services/referralApi.ts", "frontend/src/services/idpService.ts", "frontend/src/services/referralRecordsService.ts", "frontend/src/pages/ReferralsNewPage.tsx"], "expect": "absent" },
+        { "type": "grep", "fixed": true, "pattern": "'FINANCIAL'", "paths": ["backend/supabase/migrations", "backend/supabase/functions"], "expect": "absent", "note": "no trigger or function routes a patient to FINANCIAL" }
+      ]
+    },
+    {
+      "id": "ri-ov-07",
+      "claim": "Assigned: use the Assign action on the card.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "<span className=\"hidden sm:inline\">Assign</span>", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleAssignClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-08",
+      "claim": "The card stays on this board in the Assigned column, and the card does not leave Referral Intake on its own.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent" }
+      ],
+      "finding": "Cards do leave the board on their own. Once a first visit is booked the patient is SCHEDULED; it still shows in the Assigned column, but when that appointment is more than 7 days in the past the card is filtered out of every column (frontend/src/pages/Referrals.tsx:2002-2006, flag set at :1487 from the 7-day window at :1444).",
+      "proposed_text": "The card stays in the Assigned column, including after the first visit is booked. When that booked visit is more than 7 days in the past, the card drops off the board.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "// ASSIGNED column also shows currently-SCHEDULED (within-window) referrals.", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-09",
+      "claim": "The patient record already exists from create — Assigned does not create it.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present", "note": "assignment updates the existing patient row" },
+        { "type": "grep", "fixed": true, "pattern": ".insert(patientInsertPayload)", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present", "note": "the patient row is inserted at create" }
+      ]
+    },
+    {
+      "id": "ri-ov-10",
+      "claim": "Schedule the first visit from Fleet Calendar.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ],
+      "reason": "True as written. Note: Assigned cards also carry a Schedule button that opens a booking dialog on the board (Referrals.tsx:556-580, :2874)."
+    },
+    {
+      "id": "ri-ov-11",
+      "claim": "Non-Admit: drag the card into this column.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "id: \"NON_ADMIT\" as ReferralStatus,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const isOverColumn = columns.some((col) => col.id === overId);", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-12",
+      "claim": "Add New Patient form — opened by Add New Referral.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/referrals-new-page`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const ReferralsNewPage = lazy(() => import(\"./pages/ReferralsNewPage.tsx\"));", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "Add New Patient", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-13",
+      "claim": "Fax Review Queue — also in the sidebar as Fax Review Queue, or from the Fax Queue button on this board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Fax Review Queue\"", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ],
+      "finding": "The live sidebar (frontend/src/components/AppShell.tsx:629-756) has no Fax Review Queue item. The queue is reached from the Fax Queue button on the board, from the Fax Center sidebar item (AppShell.tsx:751, opens /more) via its Fax Review Queue tile (frontend/src/pages/MorePage.tsx:134), or from ⌘K as \"Fax review queue\" (AppShell.tsx:815). The \"Fax Review Queue\" entry in frontend/src/constants/navigation.ts:68 only feeds components/app-shell/AppShell.tsx, which nothing imports.",
+      "proposed_text": "Fax Review Queue — open it with the Fax Queue button on this board, from the Fax Review Queue tile under Fax Center in the sidebar, or by pressing ⌘K and typing \"fax review queue\".",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Fax Center\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax Review Queue\",", "paths": ["frontend/src/pages/MorePage.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title: \"Fax review queue\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-ov-14",
+      "claim": "Click any card to open the right-hand drawer. Six tabs: Details · Documents · Chat · Precharting · History · Notes.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "import UnifiedReferralDrawer from \"@/components/UnifiedReferralDrawer\";", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleCardClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "fixed inset-y-0 right-0", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" },
+        { "type": "grep", "pattern": "\\{ name: \"(details|documents|chat|precharting|history|notes)\", label: \"(Details|Documents|Chat|Precharting|History|Notes)\"", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": { "count": 6 } },
+        { "type": "grep", "fixed": true, "pattern": "<TabsList className=\"grid grid-cols-6", "paths": ["frontend/src/components/UnifiedReferralDrawer.tsx"], "expect": "present" }
+      ]
+    }
+  ]
+}
