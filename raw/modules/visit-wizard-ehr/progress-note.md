@@ -53,7 +53,7 @@ The note cites only the two verified wound-care policies.
 | **Home visits** | Nothing, unless you typed a homebound justification — which prints exactly as you wrote it |
 | **Patient education** | "Not documented." for the teaching method. There is no field in which to record a method |
 
-The debridement section does not include **Pathology sent**, **Tissue present pre**, or **Post-procedure dressing**, because no screen in Medipyxis asks for them.
+The debridement section does not include **Pathology sent** or **Post-procedure dressing**, because no screen in Medipyxis asks for them. **Tissue present (pre-procedure)** prints from this visit's wound-bed assessment, or "Not documented." when the wound bed was not assessed this visit.
 
 ---
 

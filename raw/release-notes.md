@@ -48,6 +48,4 @@ Medipyxis ships on a rolling-deploy model. Release notes are consolidated monthl
 
 Entries marked with a ticket key are traceable to a resolved Jira issue. Contact your implementation manager if you need the full ticket context for a compliance audit.
 
-<Note>
-Release notes describe shipped behavior. If you are on a version earlier than the note date, some items may not yet be available in your environment. Check **Admin → About** for your current app version.
-</Note>
+Release notes describe what shipped on the date shown. Where an item has changed since, the entry says so.

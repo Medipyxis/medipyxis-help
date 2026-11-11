@@ -6,7 +6,7 @@ audience: [clinician, medical_director, clinical_manager, billing_admin]
 roles: [clinician, medical_director, clinical_manager, admin]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-08-31
+last_reviewed: 2026-11-11
 related:
   - visit-wizard-ehr-overview
   - visit-wizard-ehr-sign-off
@@ -17,69 +17,52 @@ related:
 tags: [note-honesty, audit-defensibility, comorbidity, debridement, fabrication-guard, ICD-10]
 ---
 
-Medipyxis progress notes must document what the clinician actually observed and did — nothing more. Two guardrails landed the week of August 25, 2026 that remove long-standing places where the renderer was quietly filling clinical fields the clinician had not documented. If a Medicare reviewer reads one of your notes, everything on the page is now traceable back to something you entered.
+This page covers two places where the progress note used to fill in clinical details you had not entered: the post-debridement wound area, and the type or stage of a condition. In both places the note now prints only what you documented.
+
+One gap remains, in the note's diagnosis codes. It is described under [Condition type or stage](#condition-type-or-stage). For the rest of the printed note, see [How your progress note is written](/modules/visit-wizard-ehr/progress-note/).
 
 ## Before you start
 
 - You document wound-care visits in the Visit Wizard.
-- Your facility's compliance or billing team wants to know how the notes protect against fabrication findings.
+- Compliance or billing staff can use this page to see what a signed note will and will not contain.
 
 ---
 
-## Guardrail 1 — No synthesized post-debridement measurement
+## Post-debridement wound area
 
-**What used to happen.** On any visit with debridement, the renderer set the post-debridement wound area equal to the pre-debridement area and printed both, labeled as if they were separate measurements taken at separate times:
+If you recorded a pre-debridement wound area, that number prints. If you did not record a post-debridement area, the note prints **Not measured** for the post-debridement row. The note does not copy the pre-debridement area into the post-debridement row.
 
-```
-Wound area — pre  (auto: baseline)    12 cm²
-Wound area — post (auto: this visit)  12 cm²
-```
-
-The wizard has never captured a post-debridement area anywhere in the flow, so the "post" row was a measurement that never happened, appearing on every debridement, on every note. Identical pre/post pairs on repeat visits are exactly the pattern a reviewer reads as fabricated measurement data — and identical **by construction** meant no clinician error could ever produce anything different.
-
-**What the note does now.** The renderer emits the pre-debridement area only when it was documented, and prints **"Not measured"** for the post-debridement row rather than echoing a number that was never taken. The misleading `(auto: baseline)` / `(auto: this visit)` qualifiers are gone. The **"post > pre"** clinical safety check (which could never fire while the two values were forced equal) can now fire for real once a real post-debridement measurement is ever captured.
-
-**What this means for your workflow.** No change to how you document. If you did not take a post-debridement measurement, the note will not claim you did.
-
-## Guardrail 2 — No invented comorbidity type or stage
-
-**What used to happen.** Where a clinician had documented that a patient carried a condition but had not specified its subtype, the note renderer filled the blank with a concrete clinical value:
-
-- Diabetes without a documented type → **"Type 2"**.
-- Kidney disease without a documented stage → **"Stage 3"**.
-- Malnutrition without a documented type → **"Protein-Calorie"**.
-
-Each of those subtypes is **ICD-10-determinative**: it picks E11 vs E10, N18.1 through N18.6, and E43 vs E44 respectively. A coder reading the note had no way to tell whether the subtype came from the record or from a default.
-
-**What the note does now.** When the qualifier is not documented, the renderer emits the condition alone — "diabetes mellitus", "Chronic kidney disease", "Malnutrition" — with no invented type or stage. The signed note now says only what you actually said.
-
-**What this means for your workflow.** If the subtype matters for coding, document it. When you leave it blank, the note will not silently pick one. The [diagnosis-code validation drawer](../billing/diagnosis-code-validation.md) flags the corresponding ICD-10 gap so the coder is not left guessing.
-
-<Warning>
-A signed note that carries an undocumented "Type 2" or "Stage 3" gives a payer a reason to deny — and, on audit, gives the reviewer a fabrication finding. If a subtype is clinically true, put it in the record; if it is unknown, leave it blank and the note will report it as unspecified.
-</Warning>
+There is no change to how you document the visit. If you did not take a post-debridement measurement, the note will not claim that you did.
 
 ---
 
-## What "note honesty" means in Medipyxis
+## Condition type or stage
 
-Both guardrails share one rule: **the printed note may never state a clinical fact that was not entered by the clinician.** That includes:
+If you recorded that a patient has a condition but you did not specify its type or stage, the comorbidity list in the note names the condition only — for example, “Diabetes mellitus”, “Chronic kidney disease”, or “Malnutrition”. It does not add a type or stage that you did not enter.
 
-- Measurements — pre-treatment, post-treatment, and derived numbers must all trace back to a captured value, or the note prints "Not measured."
-- Comorbidity types and stages — printed only when documented.
-- Consent language, face-to-face certification, scale-marker paragraphs, and debridement judgment — the five other sites the audit gate enumerates as fabrication-risk. These are covered by the addendum flow: if any of them is corrected after signing, the addendum's **nature of amendment** must be recorded as `fabrication_remediation` with the tag naming the specific site.
-- Charge lines — protected by the [zero-dollar charge guard](../billing/charge-master-and-zero-dollar-guard.md) so nothing bills at $0.00 rate by accident.
+**Check the diagnosis codes before you sign.** The diagnosis codes suggested by **Pull Codes** can still be type-specific when you left the type blank. For example, diabetes with a foot or leg wound is suggested as a Type 2 code, malnutrition as moderate protein-calorie malnutrition, and kidney disease with a wound includes end-stage renal disease. If you keep a suggested code, it prints in the note’s diagnosis table (**Diagnosis with ICD-10 Codes**, or the Plan of Care summary in the provider version of the note). Remove any code that does not match what you documented. A fix is being tracked.
+
+If the type or stage matters for coding, document it in the Visit Wizard. Medipyxis does not currently flag a missing diabetes type, kidney disease stage, or malnutrition type.
+
+---
+
+## What the note will print
+
+In the two places this page covers, the printed note states a clinical fact only when you entered it.
+
+- **Debridement wound area** — the pre-debridement and post-debridement rows print a number only when you recorded it. Otherwise the row prints “Not measured”.
+- **Condition types and stages in the comorbidity list** — printed only when you documented them. Diagnosis codes you keep from Pull Codes are the exception described above.
+
+If you later need to correct a signed note, use an addendum and record the nature of the amendment.
 
 ---
 
 ## What still needs your attention
 
-Guardrails remove **silent** fabrication. They do not replace clinician review:
+These rules do not replace clinician review:
 
-- Read every AI-drafted section before signing — anything left in it becomes part of the signed note.
-- If a subtype (diabetes type, CKD stage, malnutrition type) matters for the case, document it in the wizard rather than relying on the coder to guess.
-- If you notice a signed note that carries a value you did not enter, do **not** re-sign a corrected wizard visit — open the note from Progress Notes and use **Add Addendum**. The addendum will carry the correction, the amendment reason, and your signature, and it is what a Medicare reviewer expects to see.
+- Read the note before you sign. Anything in the signed note is yours.
+- If a measurement or a type/stage is clinically true, enter it in the Visit Wizard so it can print.
+- Review the diagnosis codes and remove any that state a type or stage you did not document.
 
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+---
