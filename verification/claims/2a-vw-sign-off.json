@@ -16,8 +16,9 @@
     },
     {
       "id": "so-02",
-      "claim": "The LCD Navigator checklist is step 16.",
+      "claim": "The earlier steps of the Visit Wizard are complete, including LCD Audit & Review (step 16).",
       "checks": [
+        {"type": "grep", "fixed": true, "pattern": "LCD Audit & Review", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "LCD Navigator dismissed — reopen by clicking Step 16", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Step 16", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
       ]
@@ -35,13 +36,27 @@
         {"type": "grep", "fixed": true, "pattern": "Supervising Provider Will Sign", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Provider authored · view only", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "readOnly={wizardMode === \"completion\"}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Step 17 has no role gate; the signer is the clinician with a valid NPI or else the supervising provider, and the title list includes RN, LPN and LVN."
+    },
+    {
+      "id": "so-03b",
+      "claim": "Step 17 is filled for the visit's clinician when they hold a valid 10-digit NPI. Otherwise the supervising provider chosen in Step 2 signs. When the wizard is opened in completion mode, Provider Attestation is view only.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const clinicianCanSign = hasValidNpi(clinicianNpi);", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Supervising Provider Will Sign", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Please select a Supervising Provider with a valid NPI in Step 2 (Patient Context &amp; Demographics).", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Provider authored · view only", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "readOnly={wizardMode === \"completion\"}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
       ]
     },
     {
       "id": "so-04",
       "claim": "Under CMS documentation requirements, the rendering provider — not a scribe or co-signing clinician alone — must attest to the accuracy and completeness of the encounter note.",
       "checks": [],
-      "finding": "Regulatory statement about CMS rules, not product behavior; it cannot be checked against code."
+      "finding": "Regulatory statement about CMS rules, not product behavior; it cannot be checked against code.",
+      "kind": "external"
     },
     {
       "id": "so-05",
@@ -52,6 +67,16 @@
       "finding": "The wizard is an accordion of sections with Step N badges; there is no step navigator and no Next button (Provider Attestation accordion item, VisitWizardV4.tsx:18686-18723 at v1.1.345).",
       "proposed_text": "Open the Provider Attestation section (badge Step 17) in the wizard.",
       "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "Step 17", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<ProviderAttestationVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no step navigator or Next button; the wizard is an accordion of sections with Step badges."
+    },
+    {
+      "id": "so-05b",
+      "claim": "Open the Provider Attestation section (badge Step 17) in the wizard.",
+      "checks": [
         {"type": "grep", "fixed": true, "pattern": "Step 17", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "<ProviderAttestationVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
       ]
@@ -67,13 +92,24 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "I attest that this documentation is accurate, complete, and", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "compliant with LCD and payer documentation requirements.", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The step 17 statement reads differently: I attest that this documentation is accurate, complete, and compliant with LCD and payer documentation requirements."
+    },
+    {
+      "id": "so-06b",
+      "claim": "Read the attestation statement: \"I attest that this documentation is accurate, complete, and compliant with LCD and payer documentation requirements.\"",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "I attest that this documentation is accurate, complete, and", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "compliant with LCD and payer documentation requirements.", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
       ]
     },
     {
       "id": "so-07",
-      "claim": "The legal disclosure references ESIGN, UETA, CMS and HIPAA.",
+      "claim": "The Electronic Signature Preview notes that this format is legally accepted under ESIGN, UETA, CMS, and HIPAA documentation standards.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "This format is legally accepted under ESIGN, UETA, CMS, and HIPAA", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+        {"type": "grep", "fixed": true, "pattern": "This format is legally accepted under ESIGN, UETA, CMS, and HIPAA", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Electronic Signature Preview", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
       ]
     },
     {
@@ -85,6 +121,15 @@
       "finding": "There is no scroll gate; the fields, checkbox and Complete Provider Attestation button are live as soon as the section opens (ProviderAttestationVisit.tsx:644-822 at v1.1.345).",
       "proposed_text": "(Remove the sentence.) The attestation fields are available as soon as the section opens.",
       "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "onScroll", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "absent"}
+      ],
+      "status": "removed",
+      "reason": "There is no scroll gate; the fields are live as soon as the section opens."
+    },
+    {
+      "id": "so-08b",
+      "claim": "The fields are available as soon as the section opens.",
+      "checks": [
         {"type": "grep", "fixed": true, "pattern": "onScroll", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "absent"}
       ]
     },
@@ -100,6 +145,18 @@
         {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "return `Electronically Signed By: ${attestation.provider_name}${", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Professional Title *", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Step 17 has no drawn signature or Clear button; the signature is a typed line made by Complete Provider Attestation."
+    },
+    {
+      "id": "so-09b",
+      "claim": "Confirm the provider name, Professional Title and 10-digit NPI, tick the Provider Attestation box, and click Complete Provider Attestation. Your electronic signature is the typed line \"Electronically Signed By: name, credential, NPI, Date\". There is no signature pad.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "return `Electronically Signed By: ${attestation.provider_name}${", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Professional Title *", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "ignoreCase": true, "pattern": "signature ?pad|SignatureCanvas|react-signature", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "absent"}
       ]
     },
     {
@@ -113,6 +170,27 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "disabled={isSubmitting || loading || woundsLoading}", "paths": ["frontend/src/components/MultiWoundReviewModal.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "!providerAttestation.provider_attestation ||", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Sign & Lock is disabled only while submitting or loading; there is no signature pad gate."
+    },
+    {
+      "id": "so-10b",
+      "claim": "Sign & Lock becomes available once the review has loaded. Complete Provider Attestation stays disabled until the provider name, Professional Title, a 10-digit NPI and the attestation tick are all present.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "disabled={isSubmitting || loading || woundsLoading}", "paths": ["frontend/src/components/MultiWoundReviewModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "!providerAttestation.provider_attestation ||", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "so-10c",
+      "claim": "Click Continue to Review at the bottom of the wizard. Check the progress note preview, then click Looks Good, Continue. Click Sign & Lock in the review window.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Continue to Review$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Looks Good, Continue →", "paths": ["frontend/src/components/ProgressNotePreview.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "onContinue={openSignReview}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<MultiWoundReviewModal", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Sign & Lock$", "paths": ["frontend/src/components/MultiWoundReviewModal.tsx"], "expect": "present"}
       ]
     },
     {
@@ -155,6 +233,16 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "Use appointment date", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "If you keep your selected date, tell us why", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The prompt also offers Use appointment date with no reason; a reason is needed only if you keep your date."
+    },
+    {
+      "id": "so-14b",
+      "claim": "If the visit's service date does not match the appointment date, a Date check prompt appears at Sign & Lock. Switch to the appointment date, or keep your date and pick a reason.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Use appointment date", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "If you keep your selected date, tell us why", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"}
       ]
     },
     {
@@ -185,6 +273,16 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "[\"Electronically signed\", formatSignatureName(at.provider_name, at.provider_credentials)", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "renderAttestation(ctx);", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The provider details print in the Provider Attestation block at the end of the note, not the header, and no drawn signature prints."
+    },
+    {
+      "id": "so-17b",
+      "claim": "The rendering provider's name, credential, NPI, date of service and signature timestamp print in the Provider Attestation block at the end of the note.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "[\"Electronically signed\", formatSignatureName(at.provider_name, at.provider_credentials)", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "renderAttestation(ctx);", "paths": ["frontend/src/services/perfectNote/perfectNoteRenderer.ts"], "expect": "present"}
       ]
     },
     {
@@ -199,6 +297,17 @@
         {"type": "grep", "fixed": true, "pattern": "Co-sign Requested", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "<PhysicianSignOffVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Complete Physician Sign-Off", "paths": ["frontend/src/components/visit-wizard/visit/PhysicianSignOffVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no Pending Co-Signature state or co-sign notification; co-signature is the optional Physician Sign-Off section."
+    },
+    {
+      "id": "so-18b",
+      "claim": "If your practice uses co-signature, the supervising clinician completes the optional Physician Sign-Off section. When the scheduler flagged the appointment, the section shows Co-sign Requested. It does not block Sign & Lock.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Co-sign Requested", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<PhysicianSignOffVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Complete Physician Sign-Off", "paths": ["frontend/src/components/visit-wizard/visit/PhysicianSignOffVisit.tsx"], "expect": "present"}
       ]
     },
     {
@@ -210,6 +319,17 @@
       "finding": "Opening a signed visit shows the \"This visit is signed and locked\" screen with an \"Add an addendum\" button (AddAddendumToNoteButton.tsx:24, SignedVisitScreen.tsx:97 at v1.1.345) that opens the \"Add Addendum to Progress Note\" form.",
       "proposed_text": "Open the signed visit. On the \"This visit is signed and locked\" screen, click Add an addendum.",
       "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "label = \"Add an addendum\",", "paths": ["frontend/src/components/progress-notes/AddAddendumToNoteButton.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<AddAddendumToNoteButton", "paths": ["frontend/src/components/visit-wizard/SignedVisitScreen.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Add Addendum to Progress Note", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no Addendum button in a top action bar; the signed-and-locked screen has Add an addendum."
+    },
+    {
+      "id": "so-19b",
+      "claim": "Open the signed visit. On the \"This visit is signed and locked\" screen, click Add an addendum.",
+      "checks": [
         {"type": "grep", "fixed": true, "pattern": "label = \"Add an addendum\",", "paths": ["frontend/src/components/progress-notes/AddAddendumToNoteButton.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "<AddAddendumToNoteButton", "paths": ["frontend/src/components/visit-wizard/SignedVisitScreen.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Add Addendum to Progress Note", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
@@ -229,11 +349,24 @@
         {"type": "grep", "fixed": true, "pattern": "{ id: \"fabrication_remediation\", label: \"Fabrication remediation\" },", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "addendumReason.trim().length < 10 ||", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Fabricated Statements to Remediate", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The dropdown is Type of Addendum with five fixed types; the reason is free text, not three correction kinds."
+    },
+    {
+      "id": "so-20b",
+      "claim": "Pick the Type of Addendum (Correction, Clarification, Late entry, Fabrication remediation, or Other) and write the reason (at least 10 characters). For a sentence you did not write, choose Fabrication remediation and tick the statements you are correcting.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Type of Addendum", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{ id: \"late_entry\", label: \"Late entry\" },", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{ id: \"fabrication_remediation\", label: \"Fabrication remediation\" },", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "addendumReason.trim().length < 10 ||", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Fabricated Statements to Remediate", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
       ]
     },
     {
       "id": "so-21",
-      "claim": "Written-in-language reasons include \"Procedure tolerance was a template default\" and \"LCD citation was wrong (cited policy does not govern this service)\".",
+      "claim": "The statements you can tick include \"Procedure tolerance was a template default\" and \"LCD citation was wrong (cited policy does not govern this service)\".",
       "checks": [
         {"type": "grep", "fixed": true, "pattern": "label: \"Procedure tolerance was a template default\",", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "label: \"LCD citation was wrong (cited policy does not govern this service)\",", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
@@ -265,6 +398,15 @@
       "proposed_text": "Click Submit Addendum.",
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "Submit Addendum", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The button is labelled Submit Addendum."
+    },
+    {
+      "id": "so-24b",
+      "claim": "Click Submit Addendum.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Submit Addendum", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
       ]
     },
     {
@@ -285,8 +427,12 @@
     {
       "id": "so-27",
       "claim": "Addendum content is visible in audit logs.",
-      "checks": [],
-      "finding": "Whether addenda surface in an audit-log view needs a DB/UI check; no audit-log reader for progress_note_addendums was found in code at v1.1.345."
+      "checks": [
+        {"type": "grep", "ignoreCase": true, "pattern": "addendum", "paths": ["frontend/src/pages/Inv_AuditTrails.tsx", "frontend/src/components/MedicationAuditTrail.tsx"], "expect": "present", "note": "the product's audit-trail views; the old sentence holds only if one of them shows addenda"}
+      ],
+      "finding": "Whether addenda surface in an audit-log view needs a DB/UI check; no audit-log reader for progress_note_addendums was found in code at v1.1.345.",
+      "status": "removed",
+      "reason": "No audit-log view in the product reads addenda."
     },
     {
       "id": "so-28",
@@ -299,13 +445,27 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "Provider authored · view only", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "readOnly={wizardMode === \"completion\"}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Step 17 is not gated by account role; it is view only only in completion mode."
+    },
+    {
+      "id": "so-28b",
+      "claim": "Provider Attestation shows \"Provider authored · view only\": the wizard was opened in completion mode. Ask the rendering provider to open the visit and complete step 17.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Provider authored · view only", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "readOnly={wizardMode === \"completion\"}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
       ]
     },
     {
       "id": "so-29",
-      "claim": "Troubleshooting: appointment still shows Draft Saved after signing because the browser did not sync the status update; refresh the Fleet Calendar.",
-      "checks": [],
-      "finding": "Depends on live calendar sync and browser state; not checkable from code. The sign path does set visit_completed (useAppointmentStatusSync.ts notifySigned)."
+      "claim": "Troubleshooting: if the Fleet Calendar still shows the old status after signing, refresh it. Sign & Lock sets the appointment to Visit Completed.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "status_key: \"visit_completed\" satisfies AppointmentStatusKey,", "paths": ["frontend/src/hooks/useAppointmentStatusSync.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "notifySigned: notifyAppointmentSigned,", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "finding": "Depends on live calendar sync and browser state; not checkable from code. The sign path does set visit_completed (useAppointmentStatusSync.ts notifySigned).",
+      "note": "Rewritten 2026-11-11: the old cause (browser did not sync) could not be checked; the refresh advice stays."
     },
     {
       "id": "so-30",
@@ -317,11 +477,13 @@
       "proposed_text": "(Remove the row.) The Type of Addendum list is built into Medipyxis and is the same for every organization.",
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "const NATURE_OF_AMENDMENT_OPTIONS: Array<{", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present"}
-      ]
+      ],
+      "status": "removed",
+      "reason": "The Type of Addendum list is built in and the same for every organization; there is nothing to configure."
     },
     {
       "id": "so-31",
-      "claim": "Troubleshooting: the addendum button is not visible because the encounter note is not yet signed.",
+      "claim": "Troubleshooting: if there is no Add an addendum button, the note is not signed yet; the signed-and-locked screen with Add an addendum appears only for a signed visit.",
       "checks": [
         {"type": "grep", "fixed": true, "pattern": "visit wizard whenever the appointment's visit is signed", "paths": ["frontend/src/components/visit-wizard/SignedVisitScreen.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "<AddAddendumToNoteButton", "paths": ["frontend/src/components/visit-wizard/SignedVisitScreen.tsx"], "expect": "present"}

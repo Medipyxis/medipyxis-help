@@ -6,7 +6,7 @@ audience: [clinician, clinical_manager]
 roles: [clinician, medical_director, clinical_manager]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/wound-cockpit/{wound_uuid}
 related:
   - visit-wizard-ehr-overview
@@ -19,7 +19,7 @@ tags: [wound-cockpit, wound-cases, compliance-pills, IVR-status]
 
 # Wound Cockpit overview
 
-The Wound Cockpit is the patient-level wound management page in Medipyxis. It lists every wound case for the selected patient on one screen so you can see status, compliance, and measurements at a glance, and start or continue a visit from any wound.
+The Wound Cockpit is the patient-level wound management page in Medipyxis. It lists every wound case for the selected patient on one screen so you can see status, IVR readiness, and measurements at a glance, and start or continue a visit for the patient.
 
 ---
 
@@ -34,10 +34,7 @@ The Wound Cockpit is the patient-level wound management page in Medipyxis. It li
 
 Open the Wound Cockpit from the patient chart. The page shows:
 
-![Wound Cockpit — patient-level wound case list with KPIs and compliance pills](../../assets/visit-wizard/02_wound_cockpit.png)
-*The Wound Cockpit. The top banner summarizes medications, allergies, and vitals; metric counters show case volume; each wound is a card with compliance pills and measurements.*
-
-### Patient summary banner
+**Patient summary banner**
 
 Three cards at the top give immediate clinical context:
 
@@ -45,22 +42,23 @@ Three cards at the top give immediate clinical context:
 - **Allergies** — known allergy count.
 - **Vitals** — today's vitals (for example, blood pressure and A1C) where recorded.
 
-### Metric counters
+**Metric counters**
 
-Five counters summarize the patient's wound caseload:
+Six counters summarize the patient's wound caseload:
 
-- **Total Cases**
-- **Open Wounds**
-- **Graft Eligible**
-- **Overdue Visits**
-- **IVR Required**
+- **Cases**
+- **Open**
+- **Eligible** (graft eligible)
+- **Overdue**
+- **IVR** (IVR required)
+- **In Protocol**
 
-### Top actions
+**Top actions**
 
 - **Archived Wounds** — view wounds that have been archived.
 - **Advanced Filters** — filter the case list.
 - **Export Data** — export the current case list.
-- **Add Visit** — start a new encounter (also available on each wound card).
+- **Visit picker** — choose a visit to open, or start a new one. See below.
 
 ---
 
@@ -68,61 +66,44 @@ Five counters summarize the patient's wound caseload:
 
 Each wound appears as a card showing:
 
-| Element | What it shows |
-|---|---|
-| **Location & etiology** | The wound's anatomic location and etiology badge (for example, `venous_ulcer`, `pressure_injury`, `diabetic_foot`). |
-| **Wound ID** | The internal wound record ID. |
-| **Status pills** | `Active`, plus IVR readiness (`IVR: Not Ready` or `IVR Available`). |
-| **Photo** | A thumbnail if a photo is on file, with the count. |
-| **Compliance pills** | `Graft Eligible`, `IVR Available`, and `LCD: Compliant` — the current compliance and eligibility status. |
-| **Metrics grid** | Created date, number of visits, Length, Width, Depth, and Area (cm²). |
-| **Progress notes** | The latest progress note, if any. |
-| **Actions** | **Add Visit**, **Details**, **Intake**, and an overflow menu. |
+- **Location and etiology** — the wound's anatomic location and etiology badge.
+- **Wound ID** — the internal wound record ID.
+- **Status pills** — **Active**, plus IVR readiness (**IVR: Not Ready** until an IVR status is recorded).
+- **Flags** — a card may also show **Visit Overdue** or **IVR Action Required**.
+- **Photo** — a thumbnail if a photo is on file, with the count.
+- **Metrics grid** — Created date, number of visits, Length, Width, Depth, and Area (cm²).
+- **Progress notes** — the latest progress note, if any.
+- **Actions** — the IVR readiness button, **Details**, **Intake**, a **More actions** menu (**Archive Wound Case**), and **Order More** once IVR is approved.
 
 ---
 
-## Starting a visit from a wound card
+## Starting or continuing a visit
 
-Click **Add Visit** on a wound card to start a new encounter for that wound. The Visit Wizard opens with that wound selected in the Wound Assessment step (step 7).
+To start or continue a visit, use the picker at the top of the page. Choose a scheduled visit (an open note is marked "note in progress") or **+ Start visit — pick a calendar slot…**, then click **Open**.
 
-<Note>
-If a draft already exists for today, continue from the existing draft instead of starting a new one. Drafts autosave continuously — each field is saved as you complete it. See [Visit Wizard overview](./overview.md).
-</Note>
+**Open** is disabled until you choose a visit in the picker.
+
+If a draft already exists for today, continue from the existing draft instead of starting a new one. Drafts autosave continuously. Each field is saved as you complete it. See [Visit Wizard overview](/modules/visit-wizard-ehr/overview/).
 
 ---
 
-## Compliance and IVR status pills
+## IVR readiness
 
-The colored pills on each card summarize readiness at a glance:
+Each card has an IVR readiness button whose label and colour reflect the wound's coverage check. Click it to open the readiness check and see what the check still needs.
 
-- **LCD: Compliant** (green) — the wound's documentation meets the LCD compliance checks.
-- **Graft Eligible** (purple) — the wound qualifies for graft/advanced therapy consideration.
-- **IVR Available** (green) / **IVR: Not Ready** (gray) — whether the wound is ready for an Insurance Verification Request for advanced therapy.
-
-A wound that is not IVR-ready shows `IVR: Not Ready` and `IVR Not Available` on the card's status bar. Resolve the outstanding documentation (measurements, tissue percentages, prior-treatment history) to advance IVR readiness.
+IVR shows Not Ready until an IVR status is recorded for the wound.
 
 ---
 
 ## Roles and permissions
 
-| Role | What they can do |
-|---|---|
-| Clinician | View wounds and compliance status; start visits. |
-| Clinical manager | View wounds and compliance status. |
-| Medical director | View wounds and compliance status; review attested notes. |
-| Admin | View everything in their facility. |
+Anyone with access to All Patients can open the Wound Cockpit and use all of its actions. The page does not change by role.
 
 ---
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| No wounds appear on the page | The patient has no wound records | Create a wound during intake or via the Add Wound flow. |
-| **Add Visit** is disabled | A visit is already in progress for today, or the wound is archived | Check for an existing draft; or restore the wound from Archived Wounds. |
-| **LCD: Compliant** pill is missing | Wound documentation is incomplete | Complete the Wound Assessment (step 7) measurements and tissue percentages, then save. |
-| IVR shows "Not Ready" | Required readiness data is missing | Complete measurements, tissue composition, and prior-treatment history; the pill updates on save. |
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+- **No wounds appear on the page.** The patient has no wound records. Create a wound during intake or via the Add Wound flow.
+- **Open is disabled.** Choose a visit in the picker first.
+- **You need to work on an archived wound.** Open **Archived Wounds** and click **Unarchive**.
+- **IVR shows Not Ready.** No IVR status is recorded for the wound yet. Click the IVR readiness button on the card to see what the coverage check still needs.

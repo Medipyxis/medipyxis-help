@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -22,101 +22,66 @@ tags: [attestation, e-signature, ESIGN, UETA, CMS, HIPAA, sign-off, addendum, pr
 
 # Sign off on a visit with Provider Attestation (step 17)
 
-Complete step 17 of the Visit Wizard by reading the attestation statement, applying your electronic signature, and locking the encounter note; use the Addendum process for any corrections after signing.
+Complete step 17 of the Visit Wizard by reading the attestation statement, confirming your details, and clicking Complete Provider Attestation. Then review the note and click Sign & Lock. Use an addendum for any corrections after signing.
 
 ## Before you start
 
-- All 17 steps of the Visit Wizard are complete, including the LCD Navigator™ checklist (step 16).
-- You are the rendering provider — a clinician with a provider profession title (NP, PA, MD, DO) or a medical director. Support staff cannot complete Provider Attestation.
+- The earlier steps of the Visit Wizard are complete, including LCD Audit & Review (step 16).
+- Step 17 is filled for the visit's clinician when they hold a valid 10-digit NPI. Otherwise the supervising provider chosen in Step 2 signs. When the wizard is opened in completion mode, Provider Attestation is view only.
 - You have confirmed that all clinical documentation reflects the actual care provided during this encounter.
 
-<Compliance>
-Under CMS documentation requirements, the rendering provider — not a scribe or co-signing clinician alone — must attest to the accuracy and completeness of the encounter note. Verify your organization's co-signature policy before delegating attestation.
-</Compliance>
+Under CMS documentation requirements, the rendering provider, not a scribe or co-signing clinician alone, must attest to the accuracy and completeness of the encounter note. Verify your organization's co-signature policy before delegating attestation.
 
 ## Steps
 
-### Review and sign
+**Complete Provider Attestation**
 
-1. **Reach step 17.** Complete all 16 preceding steps. Click **Provider Attestation** in the step navigator or click **Next** from step 16.
+1. **Open step 17.** Open the Provider Attestation section (badge Step 17) in the wizard. The fields are available as soon as the section opens.
+2. **Read the attestation statement.** It reads: "I attest that this documentation is accurate, complete, and compliant with LCD and payer documentation requirements."
+3. **Confirm your details and attest.** Confirm the provider name, Professional Title and 10-digit NPI, tick the Provider Attestation box, and click **Complete Provider Attestation**. Your electronic signature is the typed line "Electronically Signed By: name, credential, NPI, Date". There is no signature pad.
 
-   ![Provider Attestation screen — top section showing the attestation statement and legal disclosure](../../assets/visit-wizard/15_provider_attestation_top.png)
+![Provider Attestation section — attestation box, Electronic Signature Preview, and Complete Provider Attestation button](/assets/visit-wizard/14_provider_attestation_bottom.png)
+_The bottom of the Provider Attestation section. The Electronic Signature Preview shows the typed signature line. Continue to Review is in the bar at the bottom of the wizard._
 
-   *The top of the Provider Attestation screen. The attestation statement and legal disclosure appear before the signature field.*
+The Electronic Signature Preview notes that this format is legally accepted under ESIGN, UETA, CMS, and HIPAA documentation standards.
 
-2. **Read the attestation statement.** The statement reads in full:
+**Review and Sign & Lock**
 
-   > "I, the rendering provider, attest that the information contained in this encounter note is accurate and complete to the best of my knowledge and that the services documented were medically necessary and performed as described."
+1. **Click Continue to Review** at the bottom of the wizard.
+2. **Check the progress note preview**, then click **Looks Good, Continue**.
+3. **Click Sign & Lock** in the review window. Sign & Lock becomes available once the review has loaded. Medipyxis locks the encounter note, records the date/time stamp and your user identity, and updates the appointment status on the **Fleet Calendar** to `Visit Completed`. A **Go to Billing** prompt appears so you can move the completed encounter into the billing workflow.
 
-3. **Read the legal disclosure.** The disclosure references:
-
-   - **ESIGN Act** (Electronic Signatures in Global and National Commerce Act)
-   - **UETA** (Uniform Electronic Transactions Act)
-   - **CMS** documentation and signature requirements
-   - **HIPAA** privacy and security standards
-
-   Scroll to the bottom of the disclosure to activate the signature field.
-
-   ![Provider Attestation screen — bottom section showing the e-signature pad and Submit button](../../assets/visit-wizard/14_provider_attestation_bottom.png)
-
-   *The e-signature area. Sign with a stylus, finger, or mouse. The **Sign & Lock** button activates only after a signature is drawn.*
-
-4. **Apply your electronic signature.** Draw your signature in the signature pad. To clear and redraw, click **Clear**.
-
-5. **Click Sign & Lock.** Medipyxis locks the encounter note, records the date/time stamp and your user identity, and updates the appointment status on the **Fleet Calendar** to `Visit Completed`. A **Go to Billing** prompt appears so you can move the completed encounter into the billing workflow.
-
-   <Note>
-   If the visit's service date does not match the scheduled appointment date, a soft-block prompt appears at **Sign & Lock** asking you to confirm a reason before the note locks.
-   </Note>
-
-   ![Consent and attestation confirmation screen showing the locked note status](../../assets/visit-wizard/13_consent_attestation.png)
-
-   *Confirmation that the attestation is recorded and the note is locked. The encounter is now read-only.*
+If the visit's service date does not match the appointment date, a Date check prompt appears at Sign & Lock. Switch to the appointment date, or keep your date and pick a reason.
 
 ---
 
 ## Result
 
-The encounter note is locked and marked `Visit Completed`. The signed note is available in the patient's chart and, depending on your billing workflow, is queued for claim generation in the **Billing & Documentation** module. The rendering provider's name, credential, signature, and timestamp appear on the note header.
+The encounter note is locked and marked `Visit Completed`. The signed note is available in the patient's chart and, depending on your billing workflow, is queued for claim generation. The rendering provider's name, credential, NPI, date of service and signature timestamp print in the Provider Attestation block at the end of the note.
 
-<Note>
-If your facility uses a co-signature workflow (for example, an NP supervised by an MD), the note may enter a `Pending Co-Signature` state. The supervising provider receives an in-app notification and must also complete their attestation step.
-</Note>
+If your practice uses co-signature, the supervising clinician completes the optional Physician Sign-Off section. When the scheduler flagged the appointment, the section shows Co-sign Requested. It does not block Sign & Lock.
 
 ---
 
 ## Adding an addendum after signing
 
-Once a note is signed, the encounter is read-only. To correct or add information, use the **Addendum** process.
+Once a note is signed, the encounter is read-only. To correct or add information, use an addendum.
 
-1. **Open the locked encounter** from the patient chart or Fleet Calendar.
-2. **Click Addendum** in the top action bar.
-3. **Select an addendum reason** from the dropdown. The list covers three kinds of correction:
+1. **Open the signed visit.** On the "This visit is signed and locked" screen, click **Add an addendum**.
+2. **Pick the Type of Addendum** (Correction, Clarification, Late entry, Fabrication remediation, or Other) and write the reason (at least 10 characters).
+3. **For a sentence you did not write**, choose Fabrication remediation and tick the statements you are correcting, for example _Procedure tolerance was a template default_ or _LCD citation was wrong (cited policy does not govern this service)_.
+4. **Enter the addendum text.** Describe what changed and why. Do not delete or re-state the original note. The addendum appears as a dated attachment below the original signed note.
+5. **Click Submit Addendum.** The addendum is appended to the encounter record with your name, credential, and a new timestamp.
 
-   - **Clinical corrections** — a correction to clinical documentation, or additional findings documented after the visit.
-   - **Billing corrections** — a billing code correction, which you should coordinate with your biller.
-   - **Corrections to written-in language** — reasons that name a specific kind of sentence in a signed note that you did not write, for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. Use these when a signed note contains a sentence you did not write.
+Pick the reason that names what you are correcting. A reviewer reads the reason alongside the addendum text, so a precise reason is worth more than a general one.
 
-   Pick the reason that names what you are correcting. A reviewer reads the reason alongside the addendum text, so a precise reason is worth more than a general one.
-4. **Enter the addendum text.** Describe what changed and why. Do not delete or re-state the original note — the addendum appears as a dated attachment below the original signed note.
-5. **Click Save Addendum.** The addendum is appended to the encounter record with your name, credential, and a new timestamp.
-
-<Warning>
-Addendum content is permanently appended to the encounter record and is visible in audit logs. Do not use the Addendum field to alter the clinical meaning of a note after the fact without a legitimate clinical or administrative reason.
-</Warning>
+Addendum content is permanently appended to the encounter record. Do not use an addendum to alter the clinical meaning of a note after the fact without a legitimate clinical or administrative reason.
 
 ---
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| **Sign & Lock** button disabled | Signature pad is empty | Draw your signature in the pad before submitting |
-| **Provider Attestation** step is not accessible | Your account is not a rendering provider | Ask the rendering provider to sign in and complete step 17 |
-| Appointment still shows `Draft Saved` after signing | Browser did not sync the status update | Refresh the Fleet Calendar |
-| Addendum reason dropdown is empty | Organization has not configured addendum reasons | Contact your administrator to configure addendum reason codes |
-| **Addendum** button not visible | Encounter note is not yet signed (still in draft) | Complete Provider Attestation first |
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+- **Complete Provider Attestation is disabled.** It stays disabled until the provider name, Professional Title, a 10-digit NPI and the attestation tick are all present.
+- **Provider Attestation shows "Provider authored · view only".** The wizard was opened in completion mode. Ask the rendering provider to open the visit and complete step 17.
+- **The Fleet Calendar still shows the old status after signing.** Refresh the Fleet Calendar. Sign & Lock sets the appointment to Visit Completed.
+- **There is no Add an addendum button.** The note is not signed yet. The "This visit is signed and locked" screen, with Add an addendum, appears only for a signed visit.

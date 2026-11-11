@@ -7,194 +7,85 @@
       "id": "wo-01",
       "claim": "Offline documentation is not a toggle in the web Visit Wizard; there is no separate offline toggle to enable or sync step to run.",
       "checks": [
-        {
-          "type": "grep",
-          "ignoreCase": true,
-          "pattern": "\"(go|work) offline\"|>\\s*(go|work) offline|sync now|offline mode|enable offline",
-          "paths": [
-            "frontend/src/components/VisitWizardV4.tsx",
-            "frontend/src/components/visit-wizard",
-            "frontend/src/pages/VisitWizardV2Page.tsx"
-          ],
-          "excludeTests": true,
-          "expect": "absent"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
-          "paths": ["frontend/src/pages/VisitWizardV2Page.tsx"],
-          "expect": "present",
-          "note": "the wizard route renders VisitWizardV4, so the absent check covers the live wizard"
-        }
+        {"type": "grep", "ignoreCase": true, "pattern": "\"(go|work) offline\"|>\\s*(go|work) offline|sync now|offline mode|enable offline", "paths": ["frontend/src/components/VisitWizardV4.tsx", "frontend/src/components/visit-wizard", "frontend/src/pages/VisitWizardV2Page.tsx"], "excludeTests": true, "expect": "absent"},
+        {"type": "grep", "fixed": true, "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));", "paths": ["frontend/src/pages/VisitWizardV2Page.tsx"], "expect": "present", "note": "the wizard route renders VisitWizardV4, so the absent check covers the live wizard"}
       ]
     },
     {
       "id": "wo-02",
       "claim": "The web app is online-only by design.",
       "checks": [
-        {
-          "type": "pr",
-          "number": 2711,
-          "titleMatch": "remove the wizardSafetyNet offline system \\(online-only web app\\)"
-        },
-        {
-          "type": "file",
-          "path": "frontend/src/services/wizardSafetyNet",
-          "expect": "absent"
-        }
+        {"type": "pr", "number": 2711, "titleMatch": "remove the wizardSafetyNet offline system \\(online-only web app\\)"},
+        {"type": "file", "path": "frontend/src/services/wizardSafetyNet", "expect": "absent"}
       ]
     },
     {
       "id": "wo-03",
       "claim": "The Visit Wizard saves your work continuously to the server as you go; each field is auto-saved as you complete it.",
       "checks": [
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "const DEFAULT_DEBOUNCE_MS = 1_000;",
-          "paths": ["frontend/src/hooks/useWizardAutoSave.ts"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "(cb: () => void) => methods.watch(() => cb()),",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present",
-          "note": "every form change feeds the autosave debounce"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "onSave: performPeriodicSave,",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "\"save-visit-data\"",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": {"min": 1},
-          "note": "draft saves go to the server through the save-visit-data edge function"
-        }
+        {"type": "grep", "fixed": true, "pattern": "const DEFAULT_DEBOUNCE_MS = 1_000;", "paths": ["frontend/src/hooks/useWizardAutoSave.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "(cb: () => void) => methods.watch(() => cb()),", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "note": "every form change feeds the autosave debounce"},
+        {"type": "grep", "fixed": true, "pattern": "onSave: performPeriodicSave,", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "\"save-visit-data\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"min": 1}, "note": "draft saves go to the server through the save-visit-data edge function"}
       ]
     },
     {
       "id": "wo-04",
       "claim": "An in-progress visit can be recalled on any device by its visit record, including after a brief connection drop.",
       "checks": [
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "const urlVisitId = searchParams.get(\"visitId\");",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "PRIMARY draft-recall key",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "const DEFAULT_HEARTBEAT_MS = 30_000;",
-          "paths": ["frontend/src/hooks/useWizardAutoSave.ts"],
-          "expect": "present",
-          "note": "a failed save is retried on the next autosave tick after the connection returns"
-        },
-        {
-          "type": "pr",
-          "number": 3712,
-          "titleMatch": "a new visit keeps its own number in the address after its first save"
-        }
+        {"type": "grep", "fixed": true, "pattern": "const urlVisitId = searchParams.get(\"visitId\");", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "PRIMARY draft-recall key", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const DEFAULT_HEARTBEAT_MS = 30_000;", "paths": ["frontend/src/hooks/useWizardAutoSave.ts"], "expect": "present", "note": "a failed save is retried on the next autosave tick after the connection returns"},
+        {"type": "pr", "number": 3712, "titleMatch": "a new visit keeps its own number in the address after its first save"}
       ]
     },
     {
       "id": "wo-05",
       "claim": "The autosave status indicator in the wizard reflects the live connection state (for example, saving or offline) for the server autosave.",
       "checks": [
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "setAutosaveStatus(\"offline\")",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        }
+        {"type": "grep", "fixed": true, "pattern": "setAutosaveStatus(\"offline\")", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
       ],
       "finding": "The wizard's Status pill can only show Ready, Saving or Error: the status type includes \"offline\" (VisitWizardV4.tsx:1590) and the pill has an \"Offline\" branch (VisitWizardV4.tsx:18864), but nothing ever sets it to offline. Losing the connection shows Error, not Offline. The app header shows its own Offline badge when the device is offline (AppShell.tsx:1573-1578).",
       "proposed_text": "The wizard header shows the autosave status (Ready, Saving, or Error) and an Auto-save On / last-saved indicator. If your device loses its connection, the app header shows an Offline badge and the wizard status shows Error until a save goes through again. Neither is an offline mode you turn on.",
       "proposed_checks": [
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "? \"✓ Ready\"",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "? \"⏳ Saving...\"",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "? \"⚠ Error\"",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "Auto-save On",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "<WifiOff className=\"h-3 w-3\" />",
-          "paths": ["frontend/src/components/AppShell.tsx"],
-          "expect": "present"
-        },
-        {
-          "type": "grep",
-          "fixed": true,
-          "pattern": "setAutosaveStatus(\"error\");",
-          "paths": ["frontend/src/components/VisitWizardV4.tsx"],
-          "expect": {"min": 1}
-        }
+        {"type": "grep", "fixed": true, "pattern": "? \"✓ Ready\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \"⏳ Saving...\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \"⚠ Error\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Auto-save On", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<WifiOff className=\"h-3 w-3\" />", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "setAutosaveStatus(\"error\");", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"min": 1}}
+      ],
+      "status": "removed",
+      "reason": "Nothing sets the wizard status to offline; a lost connection shows Error in the wizard and an Offline badge in the app header."
+    },
+    {
+      "id": "wo-05b",
+      "claim": "The wizard header shows the autosave status (Ready, Saving, or Error) and an Auto-save On / last-saved indicator. If your device loses its connection, the app header shows an Offline badge and the wizard status shows Error until a save goes through again. Neither is an offline mode you turn on.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "? \"✓ Ready\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \"⏳ Saving...\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \"⚠ Error\"", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Auto-save On", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<WifiOff className=\"h-3 w-3\" />", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{!isOnline && (", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<AppShell>", "paths": ["frontend/src/components/AppProvider.tsx"], "expect": "present", "note": "every signed-in page, including the wizard, renders inside the app header"},
+        {"type": "grep", "fixed": true, "pattern": "setAutosaveStatus(\"offline\")", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "absent", "note": "the wizard status never switches to Offline"},
+        {"type": "grep", "fixed": true, "pattern": "setAutosaveStatus(\"error\");", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"min": 1}}
       ]
     },
     {
       "id": "wo-06",
       "claim": "The autosave indicator is not a user-enabled offline mode.",
       "checks": [
-        {
-          "type": "grep",
-          "ignoreCase": true,
-          "pattern": "\"(go|work) offline\"|>\\s*(go|work) offline|offline mode|enable offline",
-          "paths": [
-            "frontend/src/components/VisitWizardV4.tsx",
-            "frontend/src/components/LastSavedIndicator.tsx"
-          ],
-          "excludeTests": true,
-          "expect": "absent"
-        }
+        {"type": "grep", "ignoreCase": true, "pattern": "\"(go|work) offline\"|>\\s*(go|work) offline|offline mode|enable offline", "paths": ["frontend/src/components/VisitWizardV4.tsx", "frontend/src/components/LastSavedIndicator.tsx"], "excludeTests": true, "expect": "absent"}
       ]
     },
     {
       "id": "wo-07",
       "claim": "For field visits in areas with no connectivity, complete documentation where you have a connection; coordinate with your implementation manager on the save model before your next field visit.",
       "checks": [],
-      "finding": "Advice to the reader, not a statement about product behaviour; nothing in code can confirm it."
+      "finding": "Advice to the reader, not a statement about product behaviour; nothing in code can confirm it.",
+      "kind": "advice"
     }
   ]
 }

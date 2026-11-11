@@ -50,6 +50,16 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "date-only, no time  -> the calendar day alone", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "A signature stored as a bare date prints the day with no zone; the abbreviation is not always printed."
+    },
+    {
+      "id": "st-05b",
+      "claim": "The timezone abbreviation is printed whenever the signature was recorded with a time, which is every signature made in the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "date-only, no time  -> the calendar day alone", "paths": ["frontend/src/utils/formatters.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
       ]
     },
     {
@@ -104,6 +114,16 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Step 17 has no Sign button; the timestamp is written by Complete Provider Attestation."
+    },
+    {
+      "id": "st-11b",
+      "claim": "The signature timestamp is written when the provider clicks Complete Provider Attestation in step 17 of the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = new Date().toISOString();", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
       ]
     },
     {
@@ -117,6 +137,17 @@
       "proposed_checks": [
         {"type": "grep", "fixed": true, "pattern": "Signed means Sign & Lock ran", "paths": ["frontend/src/utils/visitSignState.ts"], "expect": "present"},
         {"type": "grep", "fixed": true, "pattern": "const signedAt = formData.providerAttestation?.signed_at || \"\";", "paths": ["frontend/src/services/perfectNote/s15_attestation.ts"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "In the product a signed visit is one where Sign & Lock ran, so locked and signed are the same."
+    },
+    {
+      "id": "st-12b",
+      "claim": "If the line reads Not recorded, Provider Attestation was not completed in step 17. The timestamp comes from the attestation. Sign & Lock then signs and locks the visit in one step.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Signed means Sign & Lock ran", "paths": ["frontend/src/utils/visitSignState.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const signedAt = formData.providerAttestation?.signed_at || \"\";", "paths": ["frontend/src/services/perfectNote/s15_attestation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Attestation recorded — press Sign &amp; Lock to finish", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
       ]
     }
   ]
