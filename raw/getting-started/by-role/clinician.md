@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: quickstart
 estimated_minutes: 60
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/pm-clinician-dashboard
 related:
   - visit-wizard-ehr-start-a-visit
@@ -17,97 +17,94 @@ tags: [onboarding, clinician, visit-wizard]
 
 # Clinician first hour
 
-By the end of this hour you will have logged in, reviewed your day, opened a patient, completed a full Initial Evaluation visit through all 17 wizard steps with wound assessment and photos, and signed it off. You can do this on your laptop or your issued tablet.
+By the end of this hour you will have seen your day, opened a visit, worked through the Visit Wizard (Steps 1 to 17, plus Step 2b) with wound measurements and photos, and signed the note.
 
 ## Before you start
 
-- Your practice admin has assigned you to at least one facility and one role.
-- You have at least one scheduled visit for today (if not, your admin can assign one from **Fleet Calendar**).
-- If you're on a tablet, install the Medipyxis Clinician mobile app from your admin's MDM link.
+- Your admin has given you access to at least one facility and a role.
+- You have at least one visit scheduled for today. If not, ask your scheduler or admin to book one on the **Fleet Calendar**.
 
 ## Step 1 — See your day (5 min)
 
-1. After logging in, click **Patient Management** in the sidebar.
-2. The **Clinician Dashboard** shows today's visits, grouped by stop. Each card shows patient name, address, last wound status, and a route-position badge.
-3. Click a visit card to open the **Wound Cockpit** for that patient before you drive.
+1. After you sign in, click **Patient Management** in the sidebar. It opens **My Clinical Day**: your schedule for the day, patients who need scheduling, and overdue visits.
+2. Open **Fleet Calendar** and use the **All Providers** filter to show only your own column. Each appointment card shows the patient, the time, and the status.
+3. To look at a patient's wounds before you go, open the **Wound Cockpit** from the patient's chart.
 
-<Tip>
-Open **Fleet Calendar** (week view) once per Monday to preview the whole week — it makes routing faster on Tuesday.
-</Tip>
+Tip: switch the Fleet Calendar to week view at the start of the week to see what is coming.
 
-## Step 2 — Start a new visit from the Wound Cockpit (2 min)
+## Step 2 — Open the visit (2 min)
 
-1. From the Wound Cockpit, click the **+ Initial Evaluation** button (top-right of the cockpit chrome).
-2. The **Visit Wizard** opens as a multi-step form. Use the left sidebar inside the wizard to jump between sections; the active section is highlighted.
-3. Your work autosaves continuously as you go — a dropped connection or a device switch won't lose it. (The web app is online-only; there is no separate offline mode.)
-## Step 3 — Move through the 17 wizard steps (35 min)
+1. On the Fleet Calendar, click the appointment, then **Start Visit**. Or, in the patient's Wound Cockpit, pick the appointment in the visit picker and click **Open**.
+2. The **Visit Wizard** opens with your saved work loaded and all sections collapsed. Open a section from the list; completed sections show a checkmark.
+3. Your work saves automatically as you go, so a dropped connection or a device switch won't lose it. (The web app is online-only; there is no separate offline mode.)
 
-The wizard captures every field Medicare LCD policy needs to make the visit billable. Don't skip anything the wizard flags with a red dot.
+See [How the Visit Wizard opens](/modules/visit-wizard-ehr/how-the-wizard-opens/).
 
-### Patient context (Steps 1–6)
+## Step 3 — Work through the wizard (35 min)
+
+The wizard has Steps 1 to 17, plus Step 2b (Clinical History Review) between Steps 2 and 3. Sections with missing fields show what is missing and let you continue; nothing stops documentation.
+
+### Patient context (Steps 1–6 and 2b)
 
 | # | Step | What you capture |
 |---|---|---|
-| 1 | **Patient Consent** | Digital or manual consent capture for today's visit. |
-| 2 | **Visit Setup** | Date of Service (DOS), Place of Service (POS), assigned provider, home health involvement, other facility involvement, and reason for visit. |
-| 3 | **ROS / Subjective** | Review of Systems and subjective assessment. Voice-intake is available — speak the note and Medipyxis structures it for you. |
-| 4 | **Objective Assessment** | Vital signs, height, weight, BMI, physical exam findings, labs, and diagnostic test results. |
-| 5 | **Comorbidities & Risk Factors** | Comorbidities that affect healing (diabetes, PAD, immunosuppression, etc.). These feed downstream billing logic. |
-| 6 | **Functional Status & ADLs** | Functional status and activities of daily living. |
+| 1 | **Consent & Attestation** | Shows the consent on file. If none is on file, use Capture consent, Record signed paper, or Record verbal consent. A missing consent does not stop you. |
+| 2 | **Patient Context & Demographics** | The Chief Complaint (you can dictate it with Voice). The visit type comes from the appointment. Insurance is shown for reference only. |
+| 2b | **Clinical History Review** | Allergies, surgical, family and social history, current medications, problems and immunizations. |
+| 3 | **Review of Systems (ROS)** | Body-system checklist, filled in from the prior visit. Voice intake is available. |
+| 4 | **Objective Assessment** | Vitals: BP, HR, Temp, SpO₂, Respirations, Weight, Height, BMI. Record the ankle-brachial index (ABI) here. |
+| 5 | **Functional Status & ADLs** | Ambulation and independence in activities of daily living. |
+| 6 | **Comorbidities & Risk Factors** | Diabetes, PAD, CVI, CHF, smoking status and other risk factors. |
 
 ### Wound documentation (Steps 7–10)
 
 | # | Step | What you capture |
 |---|---|---|
-| 7 | **Wound Assessment** | Comprehensive wound assessment: type, precise anatomical location, stage, measurements (L × W × D in cm), tissue types (granulation, slough, necrotic, epithelial, eschar), and exudate. Tap the camera icon to attach the wound photo. |
-| 8 | **Previous Treatment** | Prior treatments and historical measurements — establishes chronicity for billing. |
-| 9 | **Treatment / Intervention** | Interventions performed today. This step captures the trigger points for the CPT and HCPCS codes that the Billing section generates. |
-| 10 | **Care Plan** | Healing prognosis, healing timeline, visit frequency, medical necessity factors, and treatment plan notes. |
+| 7 | **Wound Assessment** | Etiology and stage, Treating or Monitoring status, Length, Width and Depth (cm), tissue percentages (granulation, slough, necrotic, epithelial, eschar), exudate, pain and signs of infection. A wound photo is recommended for every wound you are treating; it does not stop you from finishing. |
+| 8 | **Previous Treatments** | Prior offloading, compression, debridement and grafts, and the Medical Necessity Statement. |
+| 9 | **Interventions & Treatments** | Debridement type, dressings, and ultrasonic therapy. Generate Procedure Note drafts a procedure narrative for you to review. |
+| 10 | **Care Planning** | Treatment goals, the Follow-up Interval and the Next Visit Date. Generate Draft gives an AI draft of the plan to accept, edit or discard. |
 
-### Procedures, orders, meds, billing (Steps 11–14)
-
-| # | Step | What you capture |
-|---|---|---|
-| 11 | **Procedures & Supplies** | Procedures performed and supplies/grafts used (scan the UIN for each unit). |
-| 12 | **Orders & DME** | DME orders, lab orders, home health orders, and outbound referrals. |
-| 13 | **Medication Management** | Medication updates and new prescriptions. Launch DoseSpot here for electronic prescribing. |
-| 14 | **Billing** | Auto-generated CPT/HCPCS billing codes for biller review before you sign. |
-
-### Education, audit, and sign-off (Steps 15–17)
+### Orders, education, supplies, meds, billing (Steps 11–15)
 
 | # | Step | What you capture |
 |---|---|---|
-| 15 | **Patient Education** | Education provided and the patient's response/understanding. |
-| 16 | **LCD Audit & Review** | Medicare LCD compliance check for the visit. Unresolved items raise a warning to resolve before you sign. |
-| 17 | **Provider Attestation** | Final review of the generated narrative and your electronic signature. |
+| 11 | **Orders & DME** | Clinical orders and DME. DME is fulfilled by a vendor; there is no product picker here. |
+| 12 | **Patient Education** | Handouts, Education Topics Covered Today, and the Patient Understanding Assessment. |
+| 13 | **Procedure Supplies** | The Box UID/UIN, lot and quantity for grafts and supplies, and any units wasted. |
+| 14 | **Current Medication** | Medications, and prescribing through DoseSpot. |
+| 15 | **Billing & Documentation** | Click Pull Codes to fill billing codes from your documentation (rule-based, no AI). Check the E/M level, modifiers and place of service. |
 
-Detailed wizard walkthrough: [Visit Wizard — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md).
-Wound assessment specifics: [Wound assessment](../../modules/visit-wizard-ehr/wound-assessment.md).
+### Audit and sign-off (Steps 16–17)
 
-<Compliance>
-The **LCD Navigator** check runs in real time across every wound-care visit. If a required CMS criterion for the selected treatment isn't met, the badge turns amber/red and the LCD Dojo tile tells you exactly which field to fix. Unresolved items raise a warning to resolve before you **Sign & Lock** — the difference between a billable note and a denied claim.
-</Compliance>
+| # | Step | What you capture |
+|---|---|---|
+| 16 | **LCD Audit & Review** | The coverage-policy findings for the visit: a patient-level card and a row for each wound. Findings link back to the section where data is missing. |
+| 17 | **Provider Attestation** | Your typed electronic signature: name, credentials and NPI. |
+
+Detailed walkthrough: [Walk through a visit in the Visit Wizard](/modules/visit-wizard-ehr/start-a-visit/). Wound assessment specifics: [Wound assessment](/modules/visit-wizard-ehr/wound-assessment/).
+
+The LCD badge at the top of the wizard re-checks the visit about a second after each change. Green means all checks pass, amber means at least one item to review, and grey means it is still checking. It never turns red and never blocks Sign & Lock. Click it to run the check on demand. See [LCD Navigator](/modules/visit-wizard-ehr/lcd-navigator/).
 
 ## Step 4 — Sign and finalize (10 min)
 
-When you reach Provider Attestation:
-
-1. **Save as draft** — if you're not ready to sign, leave the visit as a draft. The wizard autosaves continuously, so it remembers exactly where you stopped.
-2. **Sign & Lock** — when the note is complete, sign and click **Sign & Lock**. If the service date doesn't match the appointment date, a prompt asks for a reason. Medipyxis generates the final **Progress Note**, writes the billing record, and deducts inventory for any tissue applied.
-3. **Go to Billing** — a prompt then offers to hand the encounter to the billing team.
+1. **Not ready to sign?** Leave the wizard. The visit stays an unsigned draft with your work saved. Reopen the same appointment to continue.
+2. **Attest.** In Step 17, confirm your name, credentials and NPI, tick the attestation box, and click **Complete Provider Attestation**.
+3. **Review and sign.** Click **Continue to Review**, check the note preview, then click **Sign & Lock**. If the service date doesn't match the appointment date, a prompt asks you to switch to the appointment date or give a reason. Inventory for the supplies you entered is deducted when you click Continue to Review.
+4. **After signing.** The note is locked and filed, and a claim is drafted for the billing team to review. A **Go to Billing** prompt appears. Any later change needs an addendum.
 
 ## Step 5 — Housekeeping (5 min)
 
-- Before signing out, check the **Action Items** card on your dashboard. If you have pending addendums or signatures, finish them now.
-- Log mileage with the **Mileage & Expenses** cockpit shortcut.
+- Before you finish, check the Fleet Calendar. Signed visits show **Visit Completed**; a visit still showing **Progress Note In Progress** has not been signed.
+- Mileage & Expenses is not switched on yet: its page is marked "Coming Soon!". Skip it.
 
 ## Result
 
-- One real Initial Evaluation signed, billing-ready, with photos, wound measurements, narrative, and an automatic LCD compliance audit.
-- You know where to start every day (Patient Management → Wound Cockpit), where your calendar lives (Fleet Calendar), and where to chat your team (Team Chat).
+- One visit signed and locked, with wound measurements, photos, and an LCD compliance check.
+- You know where to start every day (Patient Management and the Fleet Calendar), where a patient's wounds live (the Wound Cockpit), and where to chat with your team (Team Chat).
 
 ## Next up
 
-- [Visit Wizard — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md)
-- [LCD Navigator — compliance guide](../../modules/visit-wizard-ehr/lcd-navigator.md)
-- [Add a photo later (addendum)](../../modules/visit-wizard-ehr/sign-off.md)
+- [Walk through a visit in the Visit Wizard](/modules/visit-wizard-ehr/start-a-visit/)
+- [LCD Navigator — compliance guide](/modules/visit-wizard-ehr/lcd-navigator/)
+- [Sign off and add an addendum](/modules/visit-wizard-ehr/sign-off/)

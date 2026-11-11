@@ -6,7 +6,7 @@ audience: [vendor]
 roles: [vendor_admin, vendor_user]
 type: quickstart
 estimated_minutes: 30
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /vendor
 related:
   - vendor-portal-overview
@@ -18,44 +18,49 @@ tags: [onboarding, vendor, orders, catalog, invoices]
 
 # Graft vendor first hour
 
-By the end of this hour you will have signed in to the vendor portal, reviewed your catalog, worked an order end to end, and sent an invoice. The vendor portal is a dedicated app at `/vendor`, separate from the clinical app, and never shows PHI.
+By the end of this hour you will have signed in to the vendor portal, reviewed your catalog, worked an order end to end, and sent an invoice. The vendor portal is the part of Medipyxis at `/vendor`, with its own menu. Where it refers to a patient, it shows only their initials and year of birth.
 
 ## Before you start
 
-- Your company's `vendor_admin` (or a clinic that set your company up) invited you by email. Accept the invite and set your password.
+- A clinic invited your company by email, or your company's Admin invited you from the **Staff** page. Use the link in the email to set your password.
 - Know your product SKUs and pricing.
 
 ## Step 1 — Sign in (3 min)
 
-1. Go to `https://app.medipyxis.com/vendor` and sign in. You land on the vendor **Home** page.
-2. The portal navigation gives you **Home**, **Orders**, **Use Events**, **Catalog**, **Invoices**, and **Clinics**. **Staff** appears only if you're a `vendor_admin`.
+1. Go to `https://app.medipyxis.com/login` and sign in. There is no separate vendor sign-in page: a vendor account opens the vendor **Home** page.
+2. The menu has **Home**, **Catalog**, **Shipments**, **Orders**, **Requests**, **Verifications**, **Use Events**, **Consignment**, **Supply Radar**, **Invoices**, **Clinics**, **CRM**, **Messages**, and **Documents**. Admins also see **Staff** and **API**.
 
-See [Sign in and manage staff](../../vendor-portal/onboarding-your-company.md).
+See [Onboard your company on the vendor portal](/vendor-portal/onboarding-your-company/).
 
 ## Step 2 — Check your catalog (7 min)
 
 1. Open **Catalog**.
-2. Confirm your SKUs are present and correct. Add or edit any with **New SKU**. You own your catalog directly — there is no practice approval step.
+2. Confirm your products are listed and correct. Click **Add Product**, or click a row to edit it.
+3. To offer products to a clinic, click **Push to clinic**. The clinic reviews and accepts new products before its staff can use them.
 
-See [Manage your product catalog](../../vendor-portal/manage-catalog.md).
+See [Manage your catalog and push it to clinics](/vendor-portal/manage-catalog/).
 
 ## Step 3 — Work an order (10 min)
 
 1. Open **Orders**. New orders arrive as **Pending**.
-2. **Accept** an order (it moves to In Progress), then **Ship** it and enter the **tracking number**. It completes as **Delivered** once the clinic confirms receipt.
+2. Open an order and click **Accept**. It moves to the **In Progress** tab.
+3. Under **Mark Shipped**, enter the tracking number and click **Ship**.
+4. When it arrives, click **Mark Delivered**.
 
-See [Manage orders](../../vendor-portal/manage-orders.md).
+See [Manage orders](/vendor-portal/manage-orders/).
 
 ## Step 4 — Send an invoice (5 min)
 
 1. Open **Invoices**.
-2. Create an invoice for a shipped order and submit it. The clinic's finance team reconciles and pays it on their side.
+2. Click **New invoice**, pick the clinic, add your line items, and click **Send Invoice**.
+3. The clinic approves, disputes, or holds the invoice on its accounts payable page.
 
-See [Send invoices](../../vendor-portal/invoices-and-payment.md).
+See [Invoices and AR](/vendor-portal/invoices-and-payment/).
 
 ## Step 5 — Review usage (5 min)
 
-- Open **Use Events** to see where your products were used, de-identified (initials + year of birth only). Open **Clinics** to see which facilities you're enabled at.
+- Open **Use Events** to see where your products were used: date, clinic, product, lot, quantity, and the patient's initials and year of birth.
+- Open **Clinics** to see the clinics your company is connected to.
 
 ## Result
 
@@ -63,4 +68,4 @@ See [Send invoices](../../vendor-portal/invoices-and-payment.md).
 
 ## Need help?
 
-For portal questions, see the [Vendor Portal Guide](../../vendor-portal/) and [FAQ](../../vendor-portal/faq.md). For account issues, contact your company's `vendor_admin` or email support@medipyxis.com.
+For portal questions, see the [Vendor Portal Guide](../../vendor-portal/) and [FAQ](/vendor-portal/faq/). For account issues, contact your company's Admin or email support@medipyxis.com.
