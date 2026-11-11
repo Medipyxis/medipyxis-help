@@ -13,7 +13,10 @@ class P(HTMLParser):
         s.buf=None
     def handle_starttag(s,tag,a):
         a=dict(a)
-        if tag=='h2': s.flush(s.cur()); s.kind='## '; s.start()
+        if tag in ('h2','h3','h4'): s.flush(s.cur()); s.kind='#'*int(tag[1])+' '; s.start()
+        elif tag=='table': s.table=[]
+        elif tag=='tr' and getattr(s,'table',None) is not None: s.table.append([])
+        elif tag in ('td','th') and getattr(s,'table',None) is not None: s.start()
         elif tag=='p': s.kind=''; s.start()
         elif tag=='ul':
             if s.buf is not None: s.flush(s.cur())
@@ -26,7 +29,17 @@ class P(HTMLParser):
         elif tag=='a': s.href.append(a.get('href','')); s.buf is not None and s.buf.append('[')
     def cur(s): return '  '*(s.depth-1)+'- ' if s.kind is None else s.kind
     def handle_endtag(s,tag):
-        if tag in('h2','p'): s.flush(s.kind)
+        if tag in('h2','h3','h4','p') and getattr(s,'table',None) is None: s.flush(s.kind)
+        elif tag in ('td','th') and getattr(s,'table',None) is not None:
+            s.table[-1].append(''.join(s.buf or []).strip().replace('|','\\|')); s.buf=None
+        elif tag=='table' and getattr(s,'table',None) is not None:
+            rows=[r for r in s.table if r]
+            if rows:
+                n=max(len(r) for r in rows)
+                rows=[r+['']*(n-len(r)) for r in rows]
+                md=['| '+' | '.join(rows[0])+' |','|'+'---|'*n]+['| '+' | '.join(r)+' |' for r in rows[1:]]
+                s.blocks.append('\n'.join(md))
+            s.table=None
         elif tag=='li': s.flush('  '*(s.depth-1)+'- ')
         elif tag=='ul': s.depth-=1; s.blocks.append('')
         elif tag=='strong': s.buf is not None and s.buf.append('**')

@@ -6,7 +6,7 @@ audience: [billing]
 roles: [biller, admin, superadmin]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-06-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/billing
 related:
   - billing-overview
@@ -18,84 +18,64 @@ tags: [billing, ERA, payments, reconciliation, Stedi, 835]
 
 # Post and reconcile ERAs from Stedi
 
-Review inbound Electronic Remittance Advice (ERA / 835) files delivered by Stedi, confirm auto-posting results, and reconcile unmatched payments to their corresponding claims.
+Review the ERAs (electronic remittance advice, 835) that Stedi delivers, check what posted automatically, and match the payment lines that did not.
 
 ## Before you start
 
 - Claims have been submitted through Stedi (status **Submitted**).
-- Stedi credentials and the inbound webhook are configured — see [Billing Setup](../../admin/billing-setup.md).
-- You have the `biller`, `admin`, or `superadmin` role.
+- You have the biller, admin, or superadmin role.
 
 ## How ERA auto-posting works
 
-When a payer issues an 835 ERA, Stedi delivers it to Medipyxis automatically over a webhook — there is **no sync button to press and no polling step**. Medipyxis lands the ERA, matches each payment line to an existing claim using the claim number and date of service, and posts the matched payments without manual intervention. Successfully matched and posted ERAs advance the corresponding claim to **Paid** status.
+When a payer issues an 835 ERA, Stedi delivers it to Medipyxis automatically over a webhook — there is **no sync button to press and no polling step**.
 
-ERA lines that cannot be automatically matched — for example, because the payer's claim number differs from the Medipyxis claim number — appear in the **Payments (ERA)** tab with a status of **Unmatched** and require manual reconciliation.
+Medipyxis lands the ERA and links each payment line to the claim that was sent with the same patient control number. A line is linked only when exactly one claim matches. Medipyxis posts the matched payments without manual intervention.
 
-## Steps — review auto-posted ERAs
+Posting puts the payment and adjustments on the claim's A/R ledger. It does not change the claim's status.
 
-1. **Open the Payments (ERA) tab.** Navigate to `/facility/{facility_uuid}/billing` and click **Payments (ERA)**.
+ERA lines that match none of our claims show **Unmatched** in the ERA's line detail and wait for a biller to match them on the **ERA / EOB** page.
 
-   ![Payments (ERA) tab showing a list of ERA batches with match status](../../assets/billing/billing_04_payments_era_tab.png)
-   *The **Payments (ERA)** tab. Each row represents one 835 ERA batch delivered by Stedi. The **Match Status** column indicates whether lines were auto-posted or require attention.*
+## Steps — review posted ERAs
 
-2. **Review the ERA batch list.** Each row shows:
-   - **Payer** — the insurance carrier that issued the ERA.
-   - **Paid Date** — the payment/remittance date carried on the 835.
-   - **Total Paid** — the sum of all payment lines in the batch.
-   - **Matched Lines** — the number of lines auto-posted to claims.
-   - **Unmatched Lines** — the number of lines requiring manual reconciliation.
-   - **Status** — **Posted** (all lines matched), **Partial** (some lines unmatched), or **Unmatched** (no lines matched).
+- **Open the Payments tab.** Go to `/facility/{facility_uuid}/billing` and click **Payments**. To match lines, use the ERA / EOB page (`/facility/{facility_uuid}/era-eob`), linked from the Billing overview.
+- **Review the ERA list.** Each row is one 835 ERA delivered by Stedi. Each row shows EFT / Check #, Payer, Method, Payment Date, Deposit, Claims and Status.
+- **Read the Status.** Status — Posted (every line posted, or nothing to post), Partially posted (some lines still need a biller), or Received, not posted (no line done yet).
+- **Open an ERA.** Click any ERA row to open the line detail. Check the Claim # of each line (hover to see the number it was sent as and the payer's claim number). The Billed, Paid, Adjustment and Patient Owes amounts match the payer's EOB.
+- **Check the adjustments.** Contractual Adjustments (CO codes) and Patient Responsibility (PR codes) amounts are correctly recorded. Adjustment group codes are reported as CO, PR, OA, or PI.
+- **Confirm the posting on the claim.** Open the claim and check its ledger: the ERA payment appears with its check/EFT number and amount. The claim's status is not changed by the ERA.
 
-3. **Open a batch to verify auto-posting.** Click any ERA row to expand the line-level detail. For each line, confirm:
-   - The **Claim #** links to the correct claim.
-   - The **Allowed Amount** and **Paid Amount** match the payer's EOB.
-   - **Contractual Adjustments** (CO codes) and **Patient Responsibility** (PR codes) amounts are correctly recorded. Adjustment group codes are reported as CO, PR, OA, or PI.
+You can download the remittance PDF from any ERA row in the Payments tab with the download button (**Download ERA as PDF**).
 
-4. **Confirm posted claims.** In the **Claims** tab, verify that claims referenced by the ERA now show status **Paid**. The claim detail should display the payment date, check/EFT number, and paid amount from the ERA.
+## Steps — match unmatched lines
 
-## Steps — manually reconcile unmatched ERAs
+- **Find the unmatched lines.** Open the ERA on the ERA / EOB page and look for lines marked Unmatched in the Match column.
+- **Identify the correct claim.** For each unmatched line, note the payer's claim number, patient name, date of service, and procedure code. Search the Claims tab for a claim matching those details.
+- **Open the match dialog.** On the ERA / EOB page, open the ERA and click **Match to claim** on the unmatched line. Search by claim number or patient and choose the claim. The dialog, **Match this payment to a claim**, lists any differences in patient, date of service, amount or payer.
+- **Match and post.** Tick the confirmation and, if the dialog lists differences, type the claim number. Click **Match and post**. The payment and adjustments post to that claim's ledger in the same step; the claim's status does not change.
+- **Document the discrepancy.** If the paid amount differs from the billed charge by more than the expected contractual adjustment, record the variance outside the ERA screen (there is no notes field on an ERA) and flag it for supervisor review.
 
-5. **Filter to Unmatched lines.** Within the ERA batch detail, select the **Unmatched** tab or filter by **Match Status: Unmatched**.
+Never post an ERA payment to the wrong claim in order to clear an unmatched item. If you cannot identify the correct claim, escalate to your supervisor.
 
-6. **Identify the correct claim.** For each unmatched line, note the payer's claim number, patient name, date of service, and procedure code. Search the **Claims** tab for a claim matching those details.
+If a payer's ERAs keep arriving unmatched, the payment's patient control number matches none of our claims (or more than one). Ask your administrator to check how those claims were submitted.
 
-7. **Link the ERA line to the claim.** In the unmatched ERA line row, click **Match Manually**. Use the search dialog to find and select the correct claim.
+## Zero-pay and denied lines
 
-8. **Post the payment.** After matching, click **Post Payment**. The system applies the allowed amount, adjustments, and patient responsibility to the selected claim and advances it to **Paid**.
+Some ERA lines will show a **Paid Amount** of $0.00 with a Claim Adjustment Reason Code (CARC). These represent denials or full contractual write-offs returned via ERA.
 
-9. **Document the discrepancy.** If the ERA paid amount differs from the billed charge by more than the expected contractual adjustment, add a note in the **Reconciliation Notes** field explaining the variance. Flag for supervisor review if the underpayment appears to be a payer error.
+The line's Status shows the 835 claim status: Processed as primary (or secondary, tertiary), Denied, Reversal, or Pricing only — no payment. A processed line can still pay $0; read the Paid column.
 
-<Note>
-ERA records are retained in the **Payments (ERA)** tab to support audit and reprocessing needs. You can download the remittance PDF from any ERA batch row using the **Download remittance PDF** action.
-</Note>
-
-## Steps — address zero-pay and denial ERAs
-
-10. **Identify zero-pay lines.** Some ERA lines will show a **Paid Amount** of $0.00 with a Claim Adjustment Reason Code (CARC). These represent denials or full contractual write-offs returned via ERA. Line status codes on the 835 include Paid, Partial, Denied, Zero Pay, and Reversal.
-
-11. **Create a denial record.** For zero-pay lines with a denial CARC, click **Create Denial** in the ERA line row. Medipyxis creates a linked denial record in the **Denials** tab pre-populated with the denial reason code. Proceed with the appeal workflow as described in [Denial Management](./denial-management.md).
+Denied and $0 lines show "Denied / $0, nothing to post" in the Posting column of the ERA / EOB page. Medipyxis does not create a denial record from them; work the denial from the claim. A fix that adds these denials to the Denials tab is being tracked.
 
 ## Result
 
-All ERA lines are either **Posted** to a matched claim or linked to a denial record. The **Payments (ERA)** tab shows no rows in **Partial** or **Unmatched** status. Posted claims reflect accurate **Paid Amount** and **Contractual Adjustment** values for AR reporting.
-
-<Warning>
-Never post an ERA payment to the wrong claim in order to clear an unmatched item. Misposting creates incorrect AR balances and may trigger compliance issues. If you cannot identify the correct claim, escalate to your supervisor.
-</Warning>
-
-<Tip>
-If the same payer consistently produces unmatched ERAs, the root cause is often a payer-assigned claim number that differs from the Medipyxis claim number. Ask your administrator to review the Stedi payer configuration for that carrier.
-</Tip>
+Every line is posted or has nothing to post, and each ERA's status reads Posted.
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| No ERAs appearing in the tab | Stedi 835 webhook not configured or ERA delivery not enabled | ERA delivery is automatic from Stedi; if none appear, contact your administrator to verify the Stedi webhook configuration |
-| Claim status remains **Submitted** after ERA posted | ERA batch not yet processed | Allow time for delivery; ERAs land automatically once the payer issues the 835 |
-| **Post Payment** button disabled on manual match | Claim is in **Pending** or **Needs Info** status | Resolve the claim's outstanding issues before posting the ERA |
-| Paid amount does not match contract | Payer underpayment or fee schedule discrepancy | Document in **Reconciliation Notes** and escalate to your billing supervisor |
+- **No ERAs appearing in the tab** — ERA delivery is automatic from Stedi; if none appear, contact your administrator to verify the Stedi webhook configuration.
+- **Claim status remains Submitted after the ERA posted** — Expected: ERA posting does not change the claim status. Check the claim's ledger for the payment.
+- **Match and post is disabled** — No claim chosen, or not yet confirmed. Pick the claim, tick the confirmation, and type the claim number if the dialog lists differences.
+- **Paid amount does not match contract** — Payer underpayment or fee schedule discrepancy. Escalate to your billing supervisor with the ERA's check number and line.
 
 ## Related
 

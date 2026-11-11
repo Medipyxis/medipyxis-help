@@ -4,6 +4,30 @@
   "url": "https://help.medipyxis.com/modules/billing/era-posting/",
   "claims": [
     {
+      "id": "era-33",
+      "claim": "Review the ERAs (electronic remittance advice, 835) that Stedi delivers, check what posted automatically, and match the payment lines that did not.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { type EraEventResult, eraDuplicates, eraLogFields, importEraEvent } from '../_shared/stediEraImport.ts';",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
       "id": "era-01",
       "claim": "Claims have been submitted through Stedi (status Submitted).",
       "checks": [
@@ -26,8 +50,21 @@
     {
       "id": "era-02",
       "claim": "Stedi credentials and the inbound webhook are configured — see Billing Setup.",
-      "checks": [],
-      "finding": "Deployment configuration (Stedi portal webhook, secrets), not checkable from code. The receiver exists: backend/supabase/functions/sync-stedi-responses/index.ts."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing Setup",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "present",
+          "note": "true only if a Billing Setup screen exists"
+        }
+      ],
+      "finding": "Deployment configuration (Stedi portal webhook, secrets), not checkable from code. The receiver exists: backend/supabase/functions/sync-stedi-responses/index.ts.",
+      "status": "removed",
+      "reason": "Deployment configuration, not checkable, and there is no Billing Setup screen in the product. Deleted."
     },
     {
       "id": "era-03",
@@ -124,6 +161,32 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "Matching uses only the patient control number, not claim number and DOS. Replaced by era-34."
+    },
+    {
+      "id": "era-34",
+      "claim": "Medipyxis lands the ERA and links each payment line to the claim that was sent with the same patient control number. A line is linked only when exactly one claim matches.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Our claims keyed by the PCN we SENT",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Link only on exactly one match; zero or several stay unlinked but visible.",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -190,6 +253,34 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "ERA posting never changes the claim status. Replaced by era-35."
+    },
+    {
+      "id": "era-35",
+      "claim": "Posting puts the payment and adjustments on the claim's A/R ledger. It does not change the claim's status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "UPDATE (public\\.)?billing_claims",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql",
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql",
+            "backend/supabase/migrations/20261005200000_stedi_era_import.sql"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments and adjustments post to each matched claim's ledger automatically when the ERA arrives.",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -223,6 +314,32 @@
       "finding": "The tab is labelled \"Payments\" (frontend/src/pages/BillingDashboard.tsx:2716). Unmatched is shown per line in the ERA detail (Match column), and the only place to match a line is the separate ERA / EOB page (frontend/src/pages/EraEob.tsx:290-298).",
       "proposed_text": "ERA lines that match none of our claims show Unmatched in the ERA's line detail and wait for a biller to match them on the ERA / EOB page.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "A payment that matched none of our claims waits as Unmatched: open the ERA and match it to a claim.",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tab is Payments, and matching happens on the ERA / EOB page. Replaced by era-36."
+    },
+    {
+      "id": "era-36",
+      "claim": "ERA lines that match none of our claims show Unmatched in the ERA's line detail and wait for a biller to match them on the ERA / EOB page.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -308,6 +425,61 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "The tab is labelled Payments. Replaced by era-37."
+    },
+    {
+      "id": "era-37",
+      "claim": "Open the Payments tab: go to /facility/{facility_uuid}/billing and click Payments. To match lines, use the ERA / EOB page (/facility/{facility_uuid}/era-eob), linked from the Billing overview.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"payments\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/era-eob\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/era-eob`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA / EOB",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -337,6 +509,41 @@
       "finding": "There is no Match Status column. The ERA list's Status column shows the rolled-up posting state: Posted, Partially posted, or Received, not posted (frontend/src/utils/eraPosting.ts:20-28).",
       "proposed_text": "Each row is one 835 ERA delivered by Stedi. The Status column shows Posted, Partially posted, or Received, not posted.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Electronic Remittance Advice received via Stedi 835 webhooks",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"partially_posted\": return \"Partially posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"received\": return \"Received, not posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Match Status column. Replaced by era-38."
+    },
+    {
+      "id": "era-38",
+      "claim": "Each row is one 835 ERA delivered by Stedi. The Status column shows Posted, Partially posted, or Received, not posted.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -430,6 +637,50 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "List columns are EFT / Check #, Payer, Method, Payment Date, Deposit, Claims, Status. Replaced by era-39."
+    },
+    {
+      "id": "era-39",
+      "claim": "Each row shows EFT / Check #, Payer, Method, Payment Date, Deposit, Claims and Status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">EFT / Check #</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">Method</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">Payment Date</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">Claims</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -448,6 +699,41 @@
       "finding": "ERA statuses are Posted (every line posted or nothing to post), Partially posted (some lines unmatched or not posted) and Received, not posted (no line done) (frontend/src/utils/eraPosting.ts:20-28; roll-up in backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql).",
       "proposed_text": "Status — Posted (every line posted, or nothing to post), Partially posted (some lines still need a biller), or Received, not posted (no line done yet).",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"posted\": return \"Posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"partially_posted\": return \"Partially posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"received\": return \"Received, not posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Statuses are Posted, Partially posted, Received, not posted. Replaced by era-40."
+    },
+    {
+      "id": "era-40",
+      "claim": "Status — Posted (every line posted, or nothing to post), Partially posted (some lines still need a biller), or Received, not posted (no line done yet).",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -535,6 +821,43 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "Claim # is plain text, not a link. Replaced by era-41."
+    },
+    {
+      "id": "era-41",
+      "claim": "Click any ERA row to open the line detail. Check the Claim # of each line (hover to see the number it was sent as and the payer's claim number).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => loadERADetail(era)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Sent as ${pmt.pcn}`",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Payer claim # ${pmt.payer_claim_control_number}`",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -555,6 +878,32 @@
       "finding": "The line detail has no Allowed column. It shows Billed, Paid, Adjustment, Patient Owes (frontend/src/pages/BillingDashboard.tsx:4988-5000).",
       "proposed_text": "The Billed, Paid, Adjustment and Patient Owes amounts match the payer's EOB.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient Owes",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<(TableHead|th)[^>]*>[^<]*Allowed",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx",
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Allowed column. Replaced by era-42."
+    },
+    {
+      "id": "era-42",
+      "claim": "The Billed, Paid, Adjustment and Patient Owes amounts match the payer's EOB.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -672,6 +1021,42 @@
           ],
           "expect": "absent"
         }
+      ],
+      "status": "removed",
+      "reason": "The claim status does not change to Paid. Replaced by era-43."
+    },
+    {
+      "id": "era-43",
+      "claim": "Open the claim and check its ledger: the ERA payment appears with its check/EFT number and amount. The claim's status is not changed by the ERA.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "check {e.check_number}",
+          "paths": [
+            "frontend/src/components/billing/ledger/ClaimLedgerPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { ClaimLedgerPanel } from \"@/components/billing/ledger/ClaimLedgerPanel\";",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "UPDATE (public\\.)?billing_claims",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql",
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"
+          ],
+          "expect": "absent"
+        }
       ]
     },
     {
@@ -712,13 +1097,42 @@
             "min": 1
           }
         }
+      ],
+      "status": "removed",
+      "reason": "There is no Unmatched tab or match filter. Replaced by era-44."
+    },
+    {
+      "id": "era-44",
+      "claim": "Open the ERA on the ERA / EOB page and look for lines marked Unmatched in the Match column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<th className=\"text-left py-2 px-2 font-semibold text-gray-700\">Match</th>",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unmatched",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
       ]
     },
     {
       "id": "era-18",
       "claim": "For each unmatched line, note the payer's claim number, patient name, date of service, and procedure code. Search the Claims tab for a claim matching those details.",
       "checks": [],
-      "finding": "Procedural advice. Note the match dialog itself searches the clinic's claims and flags patient, DOS, amount and payer agreement (frontend/src/components/billing/era/MatchEraLineDialog.tsx:40-52)."
+      "finding": "Procedural advice. Note the match dialog itself searches the clinic's claims and flags patient, DOS, amount and payer agreement (frontend/src/components/billing/era/MatchEraLineDialog.tsx:40-52).",
+      "kind": "advice"
     },
     {
       "id": "era-19",
@@ -760,6 +1174,65 @@
           "type": "grep",
           "fixed": true,
           "pattern": "Search by claim number or patient (3+ letters)",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is Match to claim, on the ERA / EOB page. Replaced by era-45."
+    },
+    {
+      "id": "era-45",
+      "claim": "On the ERA / EOB page, open the ERA and click Match to claim on the unmatched line. Search by claim number or patient and choose the claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { MatchEraLineDialog } from \"../components/billing/era/MatchEraLineDialog\";",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Search by claim number or patient (3+ letters)",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "era-56",
+      "claim": "The dialog, Match this payment to a claim, lists any differences in patient, date of service, amount or payer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Match this payment to a claim</DialogTitle>",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Check before posting: {warnings.join(\"; \")}.",
           "paths": [
             "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
           ],
@@ -821,6 +1294,59 @@
           ],
           "expect": "absent"
         }
+      ],
+      "status": "removed",
+      "reason": "Matching and posting are one step; status does not change. Replaced by era-46."
+    },
+    {
+      "id": "era-46",
+      "claim": "Tick the confirmation and, if the dialog lists differences, type the claim number. Click Match and post. The payment and adjustments post to that claim's ledger in the same step; the claim's status does not change.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Match and post\"",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "action !== \"match_era_line\"",
+          "paths": [
+            "backend/supabase/functions/claim-ledger/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "UPDATE (public\\.)?billing_claims",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const canSubmit = Boolean(chosen) && confirmed && typedOk && !saving;",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Type the claim number to confirm despite the differences above",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -841,6 +1367,24 @@
       "finding": "There is no Reconciliation Notes field anywhere in the frontend at v1.1.345.",
       "proposed_text": "If the paid amount differs from the billed charge by more than the expected contractual adjustment, record the variance outside the ERA screen (there is no notes field on an ERA) and flag it for supervisor review.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Reconciliation Notes",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Reconciliation Notes field. Replaced by era-47."
+    },
+    {
+      "id": "era-47",
+      "claim": "If the paid amount differs from the billed charge by more than the expected contractual adjustment, record the variance outside the ERA screen (there is no notes field on an ERA) and flag it for supervisor review.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -900,6 +1444,34 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "The action is Download ERA as PDF. Replaced by era-48."
+    },
+    {
+      "id": "era-48",
+      "claim": "You can download the remittance PDF from any ERA row in the Payments tab with the download button (Download ERA as PDF).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Download ERA as PDF\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functions.invoke('fetch-era-pdf'",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -928,6 +1500,50 @@
       "finding": "The Status column shows the 835 CLP02 claim status with these labels only: Processed as primary/secondary/tertiary, Denied, Processed as primary, forwarded, Reversal, Pricing only — no payment; any other code shows as \"Code N\" (frontend/src/utils/eraClaimStatus.ts:17-25). There is no Paid, Partial or Zero Pay status.",
       "proposed_text": "The line's Status shows the 835 claim status: Processed as primary (or secondary, tertiary), Denied, Reversal, or Pricing only — no payment. A processed line can still pay $0; read the Paid column.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"1\": \"Processed as primary\",",
+          "paths": [
+            "frontend/src/utils/eraClaimStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"4\": \"Denied\",",
+          "paths": [
+            "frontend/src/utils/eraClaimStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"22\": \"Reversal\",",
+          "paths": [
+            "frontend/src/utils/eraClaimStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"25\": \"Pricing only — no payment\",",
+          "paths": [
+            "frontend/src/utils/eraClaimStatus.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No Paid, Partial or Zero Pay line status exists. Replaced by era-49."
+    },
+    {
+      "id": "era-49",
+      "claim": "The line's Status shows the 835 claim status: Processed as primary (or secondary, tertiary), Denied, Reversal, or Pricing only — no payment. A processed line can still pay $0; read the Paid column.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -1029,6 +1645,33 @@
           "excludeTests": true,
           "expect": "absent"
         }
+      ],
+      "status": "removed",
+      "reason": "No Create Denial action exists and nothing creates denial records. Replaced by era-50."
+    },
+    {
+      "id": "era-50",
+      "claim": "Denied and $0 lines show \"Denied / $0, nothing to post\" in the Posting column of the ERA / EOB page. Medipyxis does not create a denial record from them; work the denial from the claim. A fix that adds these denials to the Denials tab is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied / $0, nothing to post\",",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
       ]
     },
     {
@@ -1076,13 +1719,40 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "Lines are never linked to denial records. Replaced by era-51."
+    },
+    {
+      "id": "era-51",
+      "claim": "Every line is posted or has nothing to post, and each ERA's status reads Posted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "posted            — every line is posted or denied (and there is a line);",
+          "paths": [
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"posted\": return \"Posted\";",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "era-27",
       "claim": "Never post an ERA payment to the wrong claim in order to clear an unmatched item. If you cannot identify the correct claim, escalate to your supervisor.",
       "checks": [],
-      "finding": "Practice advice. The product backs it: the match dialog lists differences and requires typing the claim number to confirm when they differ (frontend/src/components/billing/era/MatchEraLineDialog.tsx:254)."
+      "finding": "Practice advice. The product backs it: the match dialog lists differences and requires typing the claim number to confirm when they differ (frontend/src/components/billing/era/MatchEraLineDialog.tsx:254).",
+      "kind": "advice"
     },
     {
       "id": "era-28",
@@ -1102,6 +1772,32 @@
       "finding": "Matching never uses the Medipyxis claim number or the payer's claim number; it uses the PCN echoed in CLP01 (backend/supabase/functions/_shared/stediEraImport.ts:334-341: \"claim_number is never what was sent\"). A line goes unmatched when no claim, or more than one, carries that PCN — for example a claim submitted before the PCN was stored.",
       "proposed_text": "If a payer's ERAs keep arriving unmatched, the payment's patient control number matches none of our claims (or more than one). Ask your administrator to check how those claims were submitted.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "the claim — `claim_number` is never what was sent",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Link only on exactly one match; zero or several stay unlinked but visible.",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Matching never uses the claim number. Replaced by era-52."
+    },
+    {
+      "id": "era-52",
+      "claim": "If a payer's ERAs keep arriving unmatched, the payment's patient control number matches none of our claims (or more than one). Ask your administrator to check how those claims were submitted.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -1175,6 +1871,33 @@
           ],
           "expect": "present"
         }
+      ],
+      "status": "removed",
+      "reason": "Not a delay: ERA posting never changes the claim status. Replaced by era-53."
+    },
+    {
+      "id": "era-53",
+      "claim": "Claim status remains Submitted after the ERA posted — expected: ERA posting does not change the claim status — Check the claim's ledger for the payment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "UPDATE (public\\.)?billing_claims",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql",
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { ClaimLedgerPanel } from \"@/components/billing/ledger/ClaimLedgerPanel\";",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
@@ -1193,6 +1916,32 @@
       "finding": "The button is \"Match and post\", and it is disabled only until a claim is chosen and confirmed (and its number typed when the dialog lists differences): canSubmit = Boolean(chosen) && confirmed && typedOk && !saving (frontend/src/components/billing/era/MatchEraLineDialog.tsx:139). Claim status plays no part.",
       "proposed_text": "Match and post is disabled — no claim chosen, or not yet confirmed — Pick the claim, tick the confirmation, and type the claim number if the dialog lists differences.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const canSubmit = Boolean(chosen) && confirmed && typedOk && !saving;",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Type the claim number to confirm despite the differences above",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is Match and post, gated on choosing and confirming, not claim status. Replaced by era-54."
+    },
+    {
+      "id": "era-54",
+      "claim": "Match and post is disabled — no claim chosen, or not yet confirmed — Pick the claim, tick the confirmation, and type the claim number if the dialog lists differences.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,
@@ -1231,6 +1980,23 @@
       "finding": "No Reconciliation Notes field exists (see era-21).",
       "proposed_text": "Paid amount does not match contract — Payer underpayment or fee schedule discrepancy — Escalate to your billing supervisor with the ERA's check number and line.",
       "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">EFT / Check #</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No Reconciliation Notes field exists. Replaced by era-55."
+    },
+    {
+      "id": "era-55",
+      "claim": "Paid amount does not match contract — Payer underpayment or fee schedule discrepancy — Escalate to your billing supervisor with the ERA's check number and line.",
+      "checks": [
         {
           "type": "grep",
           "fixed": true,

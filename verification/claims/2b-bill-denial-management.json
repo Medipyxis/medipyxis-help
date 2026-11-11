@@ -4,283 +4,1671 @@
   "url": "https://help.medipyxis.com/modules/billing/denial-management/",
   "claims": [
     {
+      "id": "den-26",
+      "claim": "Track an appeal on a denial record in the Denials tab of Billing Operations, and close the record when the payer makes a final decision.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denials\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_no_further_action\", label: \"Closed – No Further Action\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
       "id": "den-01",
       "claim": "You have the biller role, or admin.",
-      "checks": [],
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "canEdit(Denial|Appeal)|appealStatusReadOnly|isBiller",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if denial editing were gated on the biller/admin role"
+        }
+      ],
       "finding": "Cannot be confirmed from code as a role rule. The Billing page (and its Denials tab) is gated by the feature \"Billing Operations\" (frontend/src/user-routes.tsx:956-962), not by a named biller/admin role. Appeal-status saves are a direct browser write to denial_management (frontend/src/utils/hooks/useBillingDashboard.ts:986-995); who may write is decided by database policy, which the migrations at v1.1.345 do not show (only a SELECT policy, backend/supabase/migrations/20260511270000_rls_billing_tranche3a.sql:97).",
       "proposed_text": "You can open Billing (your account needs the Billing Operations feature).",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "<RequireFeature feature=\"Billing Operations\">", "paths": ["frontend/src/user-routes.tsx"], "expect": {"min": 1}}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Billing Operations\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "The Billing page is gated by the Billing Operations feature, not a biller/admin role. Replaced by den-27."
+    },
+    {
+      "id": "den-27",
+      "claim": "You can open Billing (your account needs the Billing Operations feature).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Billing Operations\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "den-28",
+      "claim": "Medipyxis does not yet create a denial record when a payer denies a claim, so the Denials list can be empty even when you have denials to work. A fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "note": "the denial-record writer is never called",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "note": "no server function writes denial records"
+        }
+      ]
+    },
+    {
+      "id": "den-29",
+      "claim": "A denied or $0 ERA line shows on the ERA / EOB page as \"Denied / $0, nothing to post\". To track the claim itself, set its status to Denied (and to Appealed once you file an appeal).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied / $0, nothing to post\",",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"appealed\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-02",
       "claim": "Every denial record carries an appeal status. These are the values Medipyxis tracks: Not Started, Needs Review, In Research, Pending Documentation, Pending Provider Input, Ready to Appeal, Appeal Submitted, Under Payer Review, Additional Info Requested, Appeal Accepted, Appeal Denied.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"not_started\", label: \"Not Started\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"needs_review\", label: \"Needs Review\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"in_research\", label: \"In Research\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"pending_documentation\", label: \"Pending Documentation\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"pending_provider_input\", label: \"Pending Provider Input\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"ready_to_appeal\", label: \"Ready to Appeal\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_submitted\", label: \"Appeal Submitted\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"under_payer_review\", label: \"Under Payer Review\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"additional_info_requested\", label: \"Additional Info Requested\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_accepted\", label: \"Appeal Accepted\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_denied\", label: \"Appeal Denied\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"not_started\", label: \"Not Started\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"needs_review\", label: \"Needs Review\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"in_research\", label: \"In Research\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"pending_documentation\", label: \"Pending Documentation\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"pending_provider_input\", label: \"Pending Provider Input\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"ready_to_appeal\", label: \"Ready to Appeal\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_submitted\", label: \"Appeal Submitted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"under_payer_review\", label: \"Under Payer Review\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"additional_info_requested\", label: \"Additional Info Requested\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_accepted\", label: \"Appeal Accepted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_denied\", label: \"Appeal Denied\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-03",
       "claim": "Claim Corrected & Resubmitted — The claim was corrected and resubmitted rather than formally appealed.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "label: \"Claim Corrected & Resubmitted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "exact user-visible label"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claim Corrected & Resubmitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "exact user-visible label"
+        }
       ],
       "finding": "The option label is \"Claim Corrected and Resubmitted\" (frontend/src/pages/BillingDashboard.tsx:739).",
       "proposed_text": "Claim Corrected and Resubmitted — The claim was corrected and resubmitted rather than formally appealed.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"claim_corrected_and_resubmitted\", label: \"Claim Corrected and Resubmitted\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"claim_corrected_and_resubmitted\", label: \"Claim Corrected and Resubmitted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The label is Claim Corrected and Resubmitted. Replaced by den-30."
+    },
+    {
+      "id": "den-30",
+      "claim": "Claim Corrected and Resubmitted — The claim was corrected and resubmitted rather than formally appealed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"claim_corrected_and_resubmitted\", label: \"Claim Corrected and Resubmitted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-04",
       "claim": "Closed — No Further Action: Denial closed; nothing further to do. Closed — Written Off: Denial closed and the balance written off.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "label: \"Closed — No Further Action\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "page uses an em dash"},
-        {"type": "grep", "fixed": true, "pattern": "label: \"Closed — Written Off\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Closed — No Further Action\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "page uses an em dash"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Closed — Written Off\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ],
       "finding": "The labels use an en dash, not an em dash: \"Closed – No Further Action\" and \"Closed – Written Off\" (frontend/src/pages/BillingDashboard.tsx:740-741). Selecting one only writes the status; nothing writes off a balance (updateAppealStatus, frontend/src/utils/hooks/useBillingDashboard.ts:986-995).",
       "proposed_text": "Closed – No Further Action: Denial closed; nothing further to do. Closed – Written Off: Denial marked as written off (this status does not post a write-off to the ledger).",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"closed_no_further_action\", label: \"Closed – No Further Action\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"closed_written_off\", label: \"Closed – Written Off\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "pattern": "ledger|WRITEOFF", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "ignoreCase": true, "expect": "absent", "note": "the appeal-status writer never touches the ledger"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_no_further_action\", label: \"Closed – No Further Action\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_written_off\", label: \"Closed – Written Off\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "ledger|WRITEOFF",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "ignoreCase": true,
+          "expect": "absent",
+          "note": "the appeal-status writer never touches the ledger"
+        }
+      ],
+      "status": "removed",
+      "reason": "Labels use an en dash, and Written Off does not write off a balance. Replaced by den-31."
+    },
+    {
+      "id": "den-31",
+      "claim": "Closed – No Further Action: Denial closed; nothing further to do. Closed – Written Off: Denial marked as written off (this status does not post a write-off to the ledger).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_no_further_action\", label: \"Closed – No Further Action\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_written_off\", label: \"Closed – Written Off\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "ledger|WRITEOFF",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "ignoreCase": true,
+          "expect": "absent",
+          "note": "the appeal-status writer never touches the ledger"
+        }
       ]
     },
     {
       "id": "den-05",
       "claim": "Not Appealed — A decision was made not to appeal this denial. Appeal Approved — The appeal was approved — the claim should proceed to payment.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"not_appealed\", label: \"Not Appealed\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"not_appealed\", label: \"Not Appealed\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ],
       "finding": "Both are listed as legacy values: \"Not Appealed (legacy)\" and \"Appeal Approved (legacy)\" (frontend/src/pages/BillingDashboard.tsx:742-744).",
       "proposed_text": "Not Appealed (legacy) and Appeal Approved (legacy) are older values still shown in the list; use Appeal Accepted or a Closed status for new work.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"not_appealed\", label: \"Not Appealed (legacy)\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved (legacy)\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"not_appealed\", label: \"Not Appealed (legacy)\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved (legacy)\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Both are legacy values. Replaced by den-32."
+    },
+    {
+      "id": "den-32",
+      "claim": "Not Appealed (legacy) and Appeal Approved (legacy) are older values still shown in the list; use Appeal Accepted or a Closed status for new work.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"not_appealed\", label: \"Not Appealed (legacy)\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved (legacy)\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-06",
-      "claim": "Open the Denials view. From the Billing module, open Denials.",
+      "claim": "Open Billing Operations and click the Denials tab.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "path: \"/facility/:facilityId/billing\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "value=\"denials\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": {"min": 2}},
-        {"type": "grep", "fixed": true, "pattern": "<CardTitle className=\"text-sm\">Denial Management</CardTitle>", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denials\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Denial Management</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-33",
+      "claim": "The Denial Management card lists denial records with the columns Patient, Claim #, Denial Reason, Category, Appeal Status, Deadline and Actions.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Denial Management</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Patient</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Claim #</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Denial Reason</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Category</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Appeal Status</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Deadline</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Actions</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-07",
       "claim": "The Appeal Status column shows the current stage for each denial.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "<TableHead>Appeal Status</TableHead>", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "{denial.appeal_status.replace(\"_\", \" \")}", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "shows the raw stored value with only the first underscore replaced, not the dropdown label"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Appeal Status</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{denial.appeal_status.replace(\"_\", \" \")}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "shows the raw stored value with only the first underscore replaced, not the dropdown label"
+        }
       ]
     },
     {
       "id": "den-08",
       "claim": "Sort by aging to surface the oldest denials first, and filter by Appeal Status to find items that have not been actioned.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "Appeal status filter", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "pattern": "denials(Sort|SortBy|Order)|sortDenials|filteredDenials\\.sort", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "a sort control for the denials list"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Appeal status filter",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "denials(Sort|SortBy|Order)|sortDenials|filteredDenials\\.sort",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "a sort control for the denials list"
+        }
       ],
       "finding": "There is no sort control on the Denials list. Denials load newest first (.order('created_at', { ascending: false }), frontend/src/utils/hooks/useBillingDashboard.ts:945); the only control is the Appeal status filter (frontend/src/pages/BillingDashboard.tsx:4753-4770).",
       "proposed_text": "The list shows the newest denial first. Use the Appeal status filter to find items that have not been actioned.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "Appeal status filter", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "        .order('created_at', { ascending: false });", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Appeal status filter",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "        .order('created_at', { ascending: false });",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no sort control. Replaced by den-34."
+    },
+    {
+      "id": "den-34",
+      "claim": "The list shows the newest denial first. Use the Appeal status filter to find items that have not been actioned.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Appeal status filter",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "        .order('created_at', { ascending: false });",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-35",
+      "claim": "Export CSV downloads the rows that match the filter.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={exportDenialsCSV}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={filteredDenials.length === 0}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-36",
+      "claim": "The eye icon (View / update denial) opens the Denial / Appeal Workflow panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View / update denial\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial / Appeal Workflow",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-37",
+      "claim": "On a row whose status is Not Started or Not Appealed, the send icon (Mark appeal submitted) sets the status to Appeal Submitted in one click.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Mark appeal submitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial.appeal_status === \"not_started\")",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"appeal_submitted\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-09",
       "claim": "Click a denied claim to open the denial detail. Review: the denial reason code and description from the ERA or payer correspondence; the original claim's date of service, procedure codes, and diagnosis codes; any previous appeal history in the activity log.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "Denial / Appeal Workflow", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "pattern": "selectedDenialForNotes\\.(denial_reason|claim\\?\\.(service_date|date_of_service|procedure|cpt|icd|diagnos))", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "the detail would show reason, DOS or codes"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial / Appeal Workflow",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "selectedDenialForNotes\\.(denial_reason|claim\\?\\.(service_date|date_of_service|procedure|cpt|icd|diagnos))",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "the detail would show reason, DOS or codes"
+        }
       ],
       "finding": "The detail opens from the eye button (title \"View / update denial\"), not by clicking the claim. The \"Denial / Appeal Workflow\" panel shows only the claim number, patient, an Appeal status dropdown and a Notes history (frontend/src/pages/BillingDashboard.tsx:5333-5425). It shows no date of service, procedure or diagnosis codes; the denial reason is only in the list's Denial Reason column (line 4822-4825). There is no activity log of status changes.",
       "proposed_text": "Click the eye icon (View / update denial) to open the Denial / Appeal Workflow panel. It shows the claim number, the appeal status and a timestamped notes history. The denial reason is in the list's Denial Reason column.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "title=\"View / update denial\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "Denial / Appeal Workflow", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "Timestamped, user-attributed denial notes history.", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "<TableHead>Denial Reason</TableHead>", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View / update denial\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial / Appeal Workflow",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Timestamped, user-attributed denial notes history.",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Denial Reason</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Opens from the eye button and shows no DOS/codes/activity log. Replaced by den-38."
+    },
+    {
+      "id": "den-38",
+      "claim": "Open the record. Click the eye icon (View / update denial) to open the Denial / Appeal Workflow panel. It shows the claim number, the appeal status and a timestamped notes history. The denial reason is in the list's Denial Reason column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View / update denial\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Denial / Appeal Workflow",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Timestamped, user-attributed denial notes history.",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Denial Reason</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-10",
       "claim": "Set status to Needs Review. This signals to other billers that the denial is being worked.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"needs_review\", label: \"Needs Review\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "appeal_status: appealStatus,", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"needs_review\", label: \"Needs Review\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "appeal_status: appealStatus,",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-39",
+      "claim": "Pick the status under Appeal status and click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Appeal status</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!denialAppealStatusDraft}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-11",
       "claim": "Common denial categories and typical responses: missing or invalid documentation; medical necessity; duplicate claim; timely filing (gather clearinghouse timestamps); coding error; authorization missing.",
-      "checks": [],
-      "finding": "Billing guidance, not product behavior. No code maps a category to a response."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claim Corrected & Resubmitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"not_appealed\", label: \"Not Appealed\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "the old guidance offered Not Appealed as a current status"
+        }
+      ],
+      "finding": "Billing guidance, not product behavior. No code maps a category to a response.",
+      "status": "removed",
+      "reason": "Category-to-response guidance used labels that are wrong or legacy (Claim Corrected & Resubmitted, Not Appealed). Replaced by den-40."
+    },
+    {
+      "id": "den-40",
+      "claim": "Determine the root cause — for example missing documentation, medical necessity, a duplicate claim, timely filing, a coding error or a missing authorization — and set the status that matches your next step (for example Pending Documentation or Pending Provider Input).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"pending_documentation\", label: \"Pending Documentation\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"pending_provider_input\", label: \"Pending Provider Input\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
     },
     {
       "id": "den-12",
       "claim": "Gather supporting documentation. Attach the payer's denial EOB/ERA detail, clinical notes supporting medical necessity, and any payer-specific appeal form.",
       "checks": [
-        {"type": "grep", "pattern": "upload|attach|type=\"file\"", "ignoreCase": true, "paths": ["frontend/src/components/denials/DenialNotesPanel.tsx"], "expect": "present", "note": "an attachment control on the denial"}
+        {
+          "type": "grep",
+          "pattern": "upload|attach|type=\"file\"",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/components/denials/DenialNotesPanel.tsx"
+          ],
+          "expect": "present",
+          "note": "an attachment control on the denial"
+        }
       ],
       "finding": "A denial record has no attachment control: the Denial / Appeal Workflow panel has only the appeal status and text notes (frontend/src/components/denials/DenialNotesPanel.tsx has no upload; frontend/src/pages/BillingDashboard.tsx:5356-5425).",
       "proposed_text": "Gather supporting documentation: the payer's denial EOB/ERA detail, clinical notes supporting medical necessity, and any payer-specific appeal form. Denial records hold text notes only, so keep the files with your appeal package and note where they are.",
       "proposed_checks": [
-        {"type": "grep", "pattern": "upload|attach|type=\"file\"", "ignoreCase": true, "paths": ["frontend/src/components/denials/DenialNotesPanel.tsx"], "expect": "absent"}
+        {
+          "type": "grep",
+          "pattern": "upload|attach|type=\"file\"",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/components/denials/DenialNotesPanel.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Denial records have no attachment control. Replaced by den-41."
+    },
+    {
+      "id": "den-41",
+      "claim": "Gather supporting documentation: the payer's denial EOB/ERA detail, clinical notes supporting medical necessity, and any payer-specific appeal form. Denial records hold text notes only, so keep the files with your appeal package and note where they are.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "upload|attach|type=\"file\"",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/components/denials/DenialNotesPanel.tsx"
+          ],
+          "expect": "absent"
+        }
       ]
     },
     {
       "id": "den-13",
       "claim": "Write the appeal narrative in the notes.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "<DenialNotesPanel", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": ".from(\"denial_management_notes\")", "paths": ["frontend/src/services/billerNotesService.ts"], "expect": {"min": 1}}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DenialNotesPanel",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"denial_management_notes\")",
+          "paths": [
+            "frontend/src/services/billerNotesService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
       ]
+    },
+    {
+      "id": "den-42",
+      "claim": "Type in the Notes box and click Add note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Notes</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Add denial/appeal follow-up note…\"",
+          "paths": [
+            "frontend/src/components/denials/DenialNotesPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add note",
+          "paths": [
+            "frontend/src/components/denials/DenialNotesPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-43",
+      "claim": "Submit the appeal to the payer through the payer's channel (portal, fax, or mail).",
+      "kind": "advice",
+      "checks": []
     },
     {
       "id": "den-14",
       "claim": "Set status to Appeal Submitted and record the submission date.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_submitted\", label: \"Appeal Submitted\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "pattern": "appeal_submitted_(at|date)|submission_date", "paths": ["frontend/src/pages/BillingDashboard.tsx", "frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present", "note": "a field for the submission date"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_submitted\", label: \"Appeal Submitted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "appeal_submitted_(at|date)|submission_date",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx",
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present",
+          "note": "a field for the submission date"
+        }
       ],
       "finding": "There is no submission-date field. Saving a status writes appeal_status, appeal_notes and updated_at only (frontend/src/utils/hooks/useBillingDashboard.ts:989-993).",
       "proposed_text": "Set status to Appeal Submitted (or use the Mark appeal submitted button on the row) and write the submission date in the notes.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "title=\"Mark appeal submitted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "<DenialNotesPanel", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Mark appeal submitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DenialNotesPanel",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no submission-date field. Replaced by den-44."
+    },
+    {
+      "id": "den-44",
+      "claim": "Set status to Appeal Submitted (or use the Mark appeal submitted button on the row) and write the submission date in the notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Mark appeal submitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DenialNotesPanel",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-15",
       "claim": "Medicare first-level redeterminations must be filed within 120 days of the initial denial; second-level reconsiderations within 180 days.",
       "checks": [],
-      "finding": "Medicare regulatory fact (42 CFR 405.942 / 405.962), not encoded in the product. Cannot be checked against code."
+      "finding": "Medicare regulatory fact (42 CFR 405.942 / 405.962), not encoded in the product. Cannot be checked against code.",
+      "kind": "external"
     },
     {
       "id": "den-16",
       "claim": "Medipyxis does not currently auto-calculate appeal deadlines.",
       "checks": [
-        {"type": "grep", "pattern": "appeal_deadline *[:=] *(new Date|add[A-Z]|calc|compute|[^,;]*\\+ *[0-9])", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent", "note": "no code computes appeal_deadline; the only assignments copy a stored value or are type declarations"},
-        {"type": "grep", "pattern": "appeal_deadline *(=|:=)", "paths": ["backend/supabase/migrations"], "expect": "absent"}
+        {
+          "type": "grep",
+          "pattern": "appeal_deadline *[:=] *(new Date|add[A-Z]|calc|compute|[^,;]*\\+ *[0-9])",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "absent",
+          "note": "no code computes appeal_deadline; the only assignments copy a stored value or are type declarations"
+        },
+        {
+          "type": "grep",
+          "pattern": "appeal_deadline *(=|:=)",
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent"
+        }
       ]
     },
     {
       "id": "den-17",
       "claim": "Approved → set Appeal Approved. The claim should reprocess for payment and post through an ERA.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;", "paths": ["backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
       ],
       "finding": "Appeal Approved is a legacy option, labelled \"Appeal Approved (legacy)\" (frontend/src/pages/BillingDashboard.tsx:744). ERA posting does happen automatically (backend/supabase/functions/_shared/stediEraImport.ts:486).",
       "proposed_text": "Approved → set Appeal Accepted. The payment posts to the claim's ledger when the payer's ERA arrives.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "{ value: \"appeal_accepted\", label: \"Appeal Accepted\" }", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;", "paths": ["backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_accepted\", label: \"Appeal Accepted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Appeal Approved is legacy. Replaced by den-45."
+    },
+    {
+      "id": "den-45",
+      "claim": "Approved → set Appeal Accepted. The payment posts to the claim's ledger when the payer's ERA arrives.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_accepted\", label: \"Appeal Accepted\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-18",
       "claim": "Accepted for review → Appeal Accepted. Denied → Appeal Denied. Corrected instead of appealed → Claim Corrected & Resubmitted.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "label: \"Appeal Accepted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "label: \"Appeal Denied\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "label: \"Claim Corrected & Resubmitted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Accepted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claim Corrected & Resubmitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ],
       "finding": "The third label is \"Claim Corrected and Resubmitted\" (frontend/src/pages/BillingDashboard.tsx:739).",
       "proposed_text": "Accepted for review → Appeal Accepted. Denied → Appeal Denied. Corrected instead of appealed → Claim Corrected and Resubmitted.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "label: \"Appeal Accepted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "label: \"Appeal Denied\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "label: \"Claim Corrected and Resubmitted\"", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Accepted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claim Corrected and Resubmitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The third label is Claim Corrected and Resubmitted. Replaced by den-46."
+    },
+    {
+      "id": "den-46",
+      "claim": "Accepted for review → Appeal Accepted. Denied → Appeal Denied. Corrected instead of appealed → Claim Corrected and Resubmitted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Accepted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Appeal Denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claim Corrected and Resubmitted\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "den-47",
+      "claim": "Resolved, nothing more to do → Closed – No Further Action.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"closed_no_further_action\", label: \"Closed – No Further Action\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-19",
       "claim": "The denial record reflects the current appeal status and a full activity trail.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "denial_management_notes", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present", "note": "a status change would be logged to the notes trail"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management_notes",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present",
+          "note": "a status change would be logged to the notes trail"
+        }
       ],
       "finding": "Status changes are not recorded anywhere: updateAppealStatus overwrites appeal_status and appeal_notes in place (frontend/src/utils/hooks/useBillingDashboard.ts:986-995). The only history is the notes billers type (DenialNotesPanel).",
       "proposed_text": "The denial record shows its current appeal status and the notes billers have added. Earlier statuses are not kept, so note each change.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "appeal_status: appealStatus,", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "denial_management_notes", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "absent"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "appeal_status: appealStatus,",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management_notes",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Status changes are not recorded. Replaced by den-48."
+    },
+    {
+      "id": "den-48",
+      "claim": "The denial record shows its current appeal status and the notes billers have added. Earlier statuses are not kept, so note each change.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "appeal_status: appealStatus,",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management_notes",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "absent"
+        }
       ]
     },
     {
       "id": "den-20",
       "claim": "Closed denials drop out of the active Denials view; use the status filter to include them in reporting.",
       "checks": [
-        {"type": "grep", "pattern": "startsWith\\(\"closed|!== \"closed_", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "closed statuses would be excluded from the default view"}
+        {
+          "type": "grep",
+          "pattern": "startsWith\\(\"closed|!== \"closed_",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "closed statuses would be excluded from the default view"
+        }
       ],
       "finding": "Nothing hides closed denials. With the filter on All the list shows every denial (frontend/src/pages/BillingDashboard.tsx:749-752).",
       "proposed_text": "Closed denials stay in the list. Filter by a Closed status to find them, or by another status to hide them.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "if (denialsAppealStatusFilter === \"all\") return denials;", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (denialsAppealStatusFilter === \"all\") return denials;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Nothing hides closed denials. Replaced by den-49."
+    },
+    {
+      "id": "den-49",
+      "claim": "Closed denials stay in the list. Filter by a Closed status to find them, or by another status to hide them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (denialsAppealStatusFilter === \"all\") return denials;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-21",
       "claim": "Do not set a denial to Closed — Written Off without supervisor approval. Write-offs affect your facility's net collection rate and are reviewed in reporting.",
-      "checks": [],
-      "finding": "Practice policy, not product behavior. The product has no approval step: any user who can save the dropdown can pick Closed – Written Off (frontend/src/pages/BillingDashboard.tsx:5388-5399)."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "ledger|WRITEOFF",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present",
+          "note": "true only if setting Closed – Written Off posted a write-off",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Practice policy, not product behavior. The product has no approval step: any user who can save the dropdown can pick Closed – Written Off (frontend/src/pages/BillingDashboard.tsx:5388-5399).",
+      "status": "removed",
+      "reason": "Practice policy with no product basis: no approval step, and Written Off posts nothing, so it does not move collection figures. Deleted."
     },
     {
       "id": "den-22",
       "claim": "Review the Claims Reports in the Reports Center periodically to spot systemic issues.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "label: \"Claims Reports\",", "paths": ["frontend/src/pages/BillingReportsCenterPage.tsx"], "expect": "present"},
-        {"type": "grep", "fixed": true, "pattern": "Reports Center", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Reports Center",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-23",
       "claim": "Denial not visible in the Denials view — ERA has not been posted yet — Check the ERA/Payments view; post the ERA first.",
       "checks": [
-        {"type": "grep", "fixed": true, "pattern": "createDenial(", "paths": ["frontend/src"], "excludeTests": true, "expect": "present", "note": "something would create a denial record"},
-        {"type": "grep", "fixed": true, "pattern": "denial_management", "paths": ["backend/supabase/functions/_shared/stediEraImport.ts", "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql", "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"], "expect": "present", "note": "ERA posting would create denial records"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "present",
+          "note": "something would create a denial record"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts",
+            "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql",
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql"
+          ],
+          "expect": "present",
+          "note": "ERA posting would create denial records"
+        }
       ],
       "finding": "Posting an ERA never creates a denial record. Nothing at v1.1.345 inserts into denial_management: createDenial is defined (frontend/src/utils/hooks/useBillingDashboard.ts:959) but never called, and the ERA import/posting code does not touch the table.",
       "proposed_text": "Denial not in the Denials view — Medipyxis does not create denial records from ERAs. A denied or $0 ERA line shows on the ERA / EOB page as \"Denied / $0, nothing to post\".",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "createDenial(", "paths": ["frontend/src"], "excludeTests": true, "expect": "absent"},
-        {"type": "grep", "fixed": true, "pattern": "denial_management", "paths": ["backend/supabase/functions/_shared/stediEraImport.ts"], "expect": "absent"},
-        {"type": "grep", "fixed": true, "pattern": "denied: \"Denied / $0, nothing to post\",", "paths": ["frontend/src/utils/eraPosting.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied / $0, nothing to post\",",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Posting an ERA never creates a denial record. Replaced by den-50."
+    },
+    {
+      "id": "den-50",
+      "claim": "Denial not in the Denials view — Medipyxis does not create denial records from ERAs. A denied or $0 ERA line shows on the ERA / EOB page as \"Denied / $0, nothing to post\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied / $0, nothing to post\",",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-24",
       "claim": "Appeal Status dropdown is read-only — Your role does not have edit access — Ask your administrator to verify your role permissions.",
       "checks": [
-        {"type": "grep", "pattern": "canEdit(Denial|Appeal)|appealStatusReadOnly|isBiller", "paths": ["frontend/src/pages/BillingDashboard.tsx"], "expect": "present", "note": "a role-based read-only state on the dropdown"}
+        {
+          "type": "grep",
+          "pattern": "canEdit(Denial|Appeal)|appealStatusReadOnly|isBiller",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "a role-based read-only state on the dropdown"
+        }
       ],
       "finding": "The dropdown is never read-only (frontend/src/pages/BillingDashboard.tsx:5370-5377). If the account cannot write, the Save shows the error toast from updateAppealStatus (frontend/src/utils/hooks/useBillingDashboard.ts:1003-1006).",
       "proposed_text": "Saving the appeal status shows an error — your account may not be allowed to update denial records — Ask your administrator to verify your role permissions.",
       "proposed_checks": [
-        {"type": "grep", "fixed": true, "pattern": "'Failed to update appeal status'", "paths": ["frontend/src/utils/hooks/useBillingDashboard.ts"], "expect": "present"}
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Failed to update appeal status'",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The dropdown is never read-only. Replaced by den-51."
+    },
+    {
+      "id": "den-51",
+      "claim": "Saving the appeal status shows an error — Your account may not be allowed to update denial records. Ask your administrator to verify your role permissions.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Failed to update appeal status'",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        }
       ]
     },
     {
       "id": "den-25",
       "claim": "Denial shows Appeal Approved but no ERA payment received — Payer reprocessing is pending — Wait for the next ERA cycle; check the Stedi dashboard for a pending 835.",
-      "checks": [],
-      "finding": "Payer-side and Stedi-portal advice; not product behavior. Appeal Approved is a legacy status (frontend/src/pages/BillingDashboard.tsx:744)."
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"appeal_approved\", label: \"Appeal Approved\" }",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if Appeal Approved were a current status"
+        }
+      ],
+      "finding": "Payer-side and Stedi-portal advice; not product behavior. Appeal Approved is a legacy status (frontend/src/pages/BillingDashboard.tsx:744).",
+      "status": "removed",
+      "reason": "Appeal Approved is a legacy status and the advice points to an outside portal. Deleted."
     }
   ]
 }
