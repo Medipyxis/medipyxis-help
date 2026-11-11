@@ -1,0 +1,396 @@
+{
+  "title": "Walk through the Add New Patient form",
+  "source": "modules/referral-intake/intake-wizard",
+  "url": "https://help.medipyxis.com/modules/referral-intake/intake-wizard/",
+  "claims": [
+    {
+      "id": "ri-iw-01",
+      "claim": "There is no separate Intake Wizard, no Start Intake button, and no Publish Patient Record step; adding a patient is the Add New Patient form, opened with Add New Referral.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "intake-wizard|IntakeWizard",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "Start Intake|Publish Patient Record",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/referrals-new-page`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 2816,
+          "mergedFrom": "2026-07-01",
+          "mergedTo": "2026-07-03"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-02",
+      "claim": "Click Referral Intake in the sidebar (the board heading is Patient Intake), click Add New Referral; the form heading is Add New Patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Referral Intake\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Referral",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Patient",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-03",
+      "claim": "Anyone whose role can open Referral Intake can use this form.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<RequireFeature feature=\"Referral Intake\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/referrals-new-page\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-04",
+      "claim": "The board columns are New Referrals, Info Needed, Financial, Ready for Assignment, Assigned, and Non-Admit. There is no New or Triaged column.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^    title: \"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"(New|Triaged)\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-05",
+      "claim": "Care Type: Wound Care (\"Wound assessment & treatment\") or Primary Care (\"General health & preventive care\"); it is the first section on the form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-gray-500\">Wound assessment & treatment</p>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-gray-500\">General health & preventive care</p>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +(Care Type|Patient Demographics)$",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": {
+            "min": 2
+          },
+          "note": "order checked by reading: Care Type :3757 precedes Patient Demographics :3799"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-06",
+      "claim": "Required: First Name, Last Name, Date of Birth. Optional: Middle Initial, Sex, Marital Status, Employment Status, phones, Email Address, Street Address, Lives at, City, State, ZIP Code. If you enter a phone, use (xxx) xxx-xxxx.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dateOfBirth: z.string().min(1, \"Date of Birth is required\"),",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "address: z.string().optional(),",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Required format: (xxx) xxx-xxxx",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-07",
+      "claim": "Search Referral Source for a practice already in your CRM, or click Add New Practice; then fill in Patient's Primary Care Physician.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Select a practice from CRM...\"",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Add New Practice</span>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient's Primary Care Physician",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-08",
+      "claim": "Click Add Insurance, enter the fields, and click Verify to run eligibility through the payer connection. Add another row for secondary coverage. Results appear in Insurance Verification Summary.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Add Insurance</span>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "verify-insurance",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx",
+            "frontend/src/services"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Insurance Verification Summary",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-09",
+      "claim": "Enter a Referral Reason and set Urgency Level to Routine, Urgent, or Emergent. Optional billing checkboxes cover employment, auto accident, and other accident, plus Accept Assignment of Benefits.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"(routine|urgent|emergent)\">(Routine|Urgent|Emergent)</option>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +(Related to Employment|Related to Auto Accident|Related to Other Accident|Accept Assignment of Benefits)$",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-10",
+      "claim": "The form does not include a wound body map, etiology, ICD-10 picker, allergies, or history section.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "icd|allerg|etiolog|body ?map|medical history",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Section 5: Clinical Information (commented out)",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-11",
+      "claim": "Click Create Patient (or Save Offline if you are offline). Cancel discards the form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!isOnline ? \"Save Offline\" : \"Create Patient\"}",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Cancel$",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-12",
+      "claim": "The patient is created immediately; a success message includes the MRN when one is assigned, and you return to the Patient Intake board with the card in New Referrals.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `Referral created successfully! MRN: ${patientMrn}`",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityToUse}/referrals`);",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "          status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/referralApi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-iw-13",
+      "claim": "Nothing named Save Draft or Publish Patient Record appears on this form, and the card is not moved to Assigned by creating the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Save Draft|Publish Patient Record",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ASSIGNED",
+          "paths": [
+            "frontend/src/services/referralApi.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

@@ -1,0 +1,266 @@
+{
+  "title": "Orders & DME overview",
+  "source": "modules/orders-dme/overview",
+  "url": "https://help.medipyxis.com/modules/orders-dme/overview/",
+  "claims": [
+    {
+      "id": "dme-ov-01",
+      "claim": "Orders & DME is the per-patient hub for generating and tracking clinical orders. It opens from a patient's chart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/patients/${patientId}/orders`)}",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/patients/:patientId/orders\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<h1 className=\"text-xl font-bold text-gray-900\">Orders & DME</h1>",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-02",
+      "claim": "Order types run as tabs across the top: DME, Labs, Imaging, Referrals, Home Health.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^      label: \"(DME|Labs|Imaging|Referrals|Home Health)\",",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-03",
+      "claim": "For each order you pick a vendor from the enabled-vendor list for that order type (vendors are scoped per clinic).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const vendorRows = await crmVendorService.list({ scopeFacilityId: facilityId });",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// No vertical filter (2026-09-08).",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "the list would need to be filtered by order type"
+        }
+      ],
+      "finding": "The recipient list is this clinic's enabled vendors, scoped server-side by clinic_vendor_enablements, plus home health agencies (PatientOrdersDmePage.tsx:742-751). Since 2026-09-08 it is deliberately NOT filtered by order type (:717-729): every tab shows the same list.",
+      "proposed_text": "For each order you pick a recipient from your clinic's enabled vendors and home health agencies (the same list on every tab).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const vendorRows = await crmVendorService.list({ scopeFacilityId: facilityId });",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// No vertical filter (2026-09-08).",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "practiceRows = await listHomeHealthPractices(facilityId);",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-04",
+      "claim": "Optionally choose the vendor's custom form, then send it by fax or email to the vendor. Orders can be saved as a Draft first.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Choose custom form</DialogTitle>",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Send (Fax|Email)$",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Save as Draft\"",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Choosing a form is not optional: after the vendor, the form picker always opens (one or more forms, falling back to the Medipyxis standard forms) — PatientOrdersDmePage.tsx:866-883. Send via Fax is hidden for Mini-plan orgs (:4218-4219)."
+    },
+    {
+      "id": "dme-ov-05",
+      "claim": "Each order carries a status: Draft, Submitted, Received, Provisioned, Rejected, Canceled, or Needs Info.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^      (Draft|Submitted|Received|Provisioned|Rejected|Canceled|\"Needs Info\"): \"bg-",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": {
+            "count": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-06",
+      "claim": "When results come back, use Upload Results on the order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Upload results\");",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "the button must do more than show a toast"
+        }
+      ],
+      "finding": "Upload Results appears only on Provisioned orders, and its click handler only shows a toast reading \"Upload results\" — nothing is uploaded (frontend/src/pages/PatientOrdersDmePage.tsx:1606-1617). The working Upload Results menu item is in OrdersTabContent.tsx, used only by OrdersDmeWizard, which nothing imports. Product defect.",
+      "proposed_text": "Uploading results to an order is not available yet.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Upload results\");",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-07",
+      "claim": "During a visit, the Orders & DME section (section 12) of the Visit Wizard opens this surface with the patient context attached.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrdersDMEVisit patientId={patientId} />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate\\(`/patients/\\$\\{patientId\\}/orders`\\)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/OrdersDMEVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "'opens this surface' needs the wizard to link to the patient Orders & DME page"
+        }
+      ],
+      "finding": "In the wizard, Orders & DME is badged \"Step 11\" (VisitWizardV4.tsx:18206-18208; \"section 12\" is only the stored-data key and the read-only display). It does not open the patient Orders & DME page; it embeds its own ordering panel, OrdersDMEVisit, with the patient id (VisitWizardV4.tsx:18233).",
+      "proposed_text": "During a visit, the Orders & DME step (Step 11) of the Visit Wizard lets you place orders for that patient without leaving the wizard.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrdersDMEVisit patientId={patientId} />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Step 11$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only Step 11 badge is the Orders & DME accordion (VisitWizardV4.tsx:18207)"
+        }
+      ]
+    },
+    {
+      "id": "dme-ov-08",
+      "claim": "Standalone — open a patient's chart and go to Orders & DME to place or track orders outside a visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/patients/${patientId}/orders`)}",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New {activeTab} Order",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

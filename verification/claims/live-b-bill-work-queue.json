@@ -1,0 +1,1443 @@
+{
+  "title": "Work the Billing Work Queue and submit claims",
+  "source": "modules/billing/work-queue",
+  "url": "https://help.medipyxis.com/modules/billing/work-queue/",
+  "claims": [
+    {
+      "id": "wq-01",
+      "claim": "It is a calendar-synced readiness board: one row per encounter (appointment) in your date range, showing the visit, the progress note, and billing readiness side by side.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Calendar-synced encounters with documentation & billing readiness",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextRows: WorkQueueRow[] = appts.map((a) => {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".gte(\"start_at\", startAt.toISOString())",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-02",
+      "claim": "You have the biller or admin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "status_write: \\[[^]]*'biller'",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present",
+          "note": "the Work Queue's Claim Status and bulk actions call manual-status-update / batch-claim-status-update, which require status_write"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"status_write\",",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "A user whose role is biller cannot change a Claim Status from the queue. manual-status-update and batch-claim-status-update require the status_write operation (manual-status-update/handler.ts:225-229; batch-claim-status-update/handler.ts:121), and status_write allows only billing_lead, coder, medical_director, admin, superadmin and customersupport (_shared/billingRoleGuard.ts:17). The biller role is not on that list, so the dropdown and the bulk toolbar fail for billers.",
+      "proposed_text": "You have the billing lead, coder, medical director, or admin role. (The biller role cannot change a Claim Status.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"status_write\",",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-03",
+      "claim": "Readiness is derived from the visit and note state — a claim is ready to bill once the visit is Seen and the progress note is complete.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (args.visitStatus === \"No Show\" || args.visitStatus === \"Not Seen\") {",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (visitDataV2Row?.__hasProgressNote === true && isVisitSigned(visitDataV2Row)) return \"Completed\";",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Ready for Billing\", blockingReason: null };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-04",
+      "claim": "Open Billing → Work Queue. / Open the Work Queue. Sidebar → Billing → Work Queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"(Billing|Work Queue)\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx",
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "note": "true only if the sidebar has a Billing or Work Queue item"
+        }
+      ],
+      "finding": "The sidebar item is \"Billing Operations\" (AppShell.tsx:737; navigation.ts:138) and has no Work Queue child. The Work Queue is opened from the Quick Actions card on the Billing Operations Overview tab (BillingDashboard.tsx:2880-2890) or by its URL /facility/{facility_uuid}/billing/work-queue.",
+      "proposed_text": "Open Billing Operations from the sidebar, then click Work Queue under Quick Actions on the Overview tab.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/billing/work-queue`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Work Queue$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/work-queue\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-05",
+      "claim": "Work Queue columns: Patient, DOS, Visit Status, Note Status, Billing Readiness, Claim Status, Charges, Provider, Blocking Reason, Biller Notes, Actions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<TableHead>(Patient|DOS|Visit Status|Note Status|Billing Readiness|Claim Status|Charges|Provider|Blocking Reason|Actions)</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 10
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"min-w-[260px]\">Biller Notes</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-06",
+      "claim": "DOS — Date of service (the appointment date).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const dos = isoDateFromUTC(a.start_at);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "DOS is the UTC calendar date of appointment.start_at (BillingWorkQueuePage.tsx:122-125), so an evening appointment in a US time zone shows the next day."
+    },
+    {
+      "id": "wq-07",
+      "claim": "Visit Status — Derived: Scheduled · Seen · Not Seen · No Show · Cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return <Badge className=\"[^\"]+\">(Seen|Scheduled|No Show|Not Seen|Cancelled)</Badge>;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-08",
+      "claim": "Note Status — Derived: No Note Started · Draft Saved · In Progress · Completed · Signed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return <Badge className=\"[^\"]+\">(No Note Started|Draft Saved)</Badge>;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "note": "the column shows these two values under their own names"
+        }
+      ],
+      "finding": "The column renders \"No Note Started\" as \"No Note\" and \"Draft Saved\" as \"Draft\" (BillingWorkQueuePage.tsx:1032-1043); In Progress, Completed and Signed show as written.",
+      "proposed_text": "Note Status — Derived: No Note · Draft · In Progress · Completed · Signed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "return <Badge className=\"[^\"]+\">(No Note|Draft|In Progress|Completed|Signed)</Badge>;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"No Note Started\":",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-09",
+      "claim": "Billing Readiness — Derived: Not Ready · Pending Provider Completion · Pending Signature · Ready for Billing · Billing in Progress · Billed · Not Billable.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return <Badge className=\"[^\"]+\">(Pending Provider Completion|Pending Signature|Ready for Billing|Billing in Progress)</Badge>;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 4
+          },
+          "note": "the column shows these values under their own names"
+        }
+      ],
+      "finding": "The column shows short badges: Ready for Billing → \"Ready\", Pending Provider Completion → \"Pending Note\", Pending Signature → \"Pending Sig\", Billing in Progress → \"In Progress\"; Billed and Not Billable as written (BillingWorkQueuePage.tsx:982-997). \"Not Ready\" is only a fallback for an unknown note status (billingReadiness.ts:224).",
+      "proposed_text": "Billing Readiness — Derived, shown as: Ready (Ready for Billing) · Pending Note (Pending Provider Completion) · Pending Sig (Pending Signature) · In Progress (Billing in Progress) · Billed · Not Billable.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "return <Badge className=\"[^\"]+\">(Ready|Pending Note|Pending Sig|Billed|In Progress|Not Billable)</Badge>;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"Pending Provider Completion\":",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-10",
+      "claim": "Claim Status — The biller-set status on the claim (if a claim exists). Visit, Note, and Billing Readiness are derived from the encounter; Claim Status is set by the biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "currentStatus={r.claim_manual_status}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.claim_id && supabaseClient ? (",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-11",
+      "claim": "Charges — Total charge on the claim, if one exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.claim_total_charge != null",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-12",
+      "claim": "Provider — The rendering clinician.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rendering_provider_name",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the column reads the claim's rendering provider"
+        }
+      ],
+      "finding": "The Provider column shows the clinician on the appointment (appointment.clinician_id → user_profile name, BillingWorkQueuePage.tsx:308-312, 497-499), not the claim's rendering provider, which can differ.",
+      "proposed_text": "Provider — The clinician on the appointment.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(clinicianId ? clinicianNameById.get(clinicianId) : null) ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.clinician_name}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-13",
+      "claim": "Blocking Reason — Why the encounter isn't ready (e.g. \"Note not completed\", \"Draft saved\", \"Patient not seen\").",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "blockingReason: \"(Note not completed|Draft saved|Patient not seen)\"",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.blocking_reason || \"—\"}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-14",
+      "claim": "Biller Notes — An internal note you can edit inline on each row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Add internal billing note…\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"billing_work_queue_notes\")",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-15",
+      "claim": "Actions — Open Chart · Edit · Review · Notify.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Open Chart|Edit|Review|Notify)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 4
+          }
+        }
+      ],
+      "finding": "Edit and Review appear only on rows that have a claim (BillingWorkQueuePage.tsx:1599, 1613)."
+    },
+    {
+      "id": "wq-16",
+      "claim": "No Show / Not Seen / Cancelled → Not Billable.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Not Billable\", blockingReason: \"Patient not seen\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Not Billable\", blockingReason: \"Cancelled visit\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-17",
+      "claim": "Note Completed → Ready for Billing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (args.noteStatus === \"Completed\") {",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Ready for Billing\", blockingReason: null };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-18",
+      "claim": "Note Signed but no progress note yet → Pending Provider Completion.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Pending Provider Completion\", blockingReason: \"Progress note not generated\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-19",
+      "claim": "Note Draft Saved → Pending Signature.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Pending Signature\", blockingReason: \"Draft saved\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-20",
+      "claim": "Note In Progress / No Note Started → Not Billable (note not completed).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (args.noteStatus === \"In Progress\" || args.noteStatus === \"No Note Started\") {",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Not Billable\", blockingReason: \"Note not completed\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-21",
+      "claim": "Once a claim exists, readiness follows the claim: submitted/accepted/paid → Billed; needs-coding → Ready for Billing; otherwise Billing in Progress.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ([\"submitted\", \"accepted\", \"paid\"].includes(claim)) {",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Ready for Billing\", blockingReason: \"Needs coding\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Billing in Progress\", blockingReason: null };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-22",
+      "claim": "Claim Status values: Eligibility Needed · Ready · In Progress · Flag Clinical · Hold · Billed · Paid · Denied · Appealed · Corrected · Partial Pay · Patient Responsibility · Write-Off · Void · Needs Coding.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  \\{ value: '[a-z_]+', label: '[^']+' \\},$",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 15
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "label: '(Eligibility Needed|Ready|In Progress|Flag Clinical|Hold|Billed|Paid|Denied|Appealed|Corrected|Partial Pay|Patient Responsibility|Write-Off|Void|Needs Coding)' \\},$",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-23",
+      "claim": "Changing a status is recorded in the claim's history; some transitions (for example Flag Clinical) surface a warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"claim_status_history\")",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.warning(result.flag_clinical_warning);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Flag Clinical warning appears only when no clinician can be resolved for the flag (manual-status-update/handler.ts:50, 287)."
+    },
+    {
+      "id": "wq-24",
+      "claim": "Search — Patient or provider name / email.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "clinician_email|\\.email\\.toLowerCase|email.*includes\\(q\\)",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the search matches a provider email"
+        }
+      ],
+      "finding": "Search matches only patient_name and clinician_name (BillingWorkQueuePage.tsx:562-567). A provider's email is matched only when the provider has no full name, because the name falls back to the email (BillingWorkQueuePage.tsx:311). The box's placeholder still says \"Patient or provider name/email…\" (BillingWorkQueuePage.tsx:1258).",
+      "proposed_text": "Search — Patient or provider name.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!patient.includes(q) && !clinician.includes(q)) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-25",
+      "claim": "Date of Service — Start and end date (defaults to the last 30 days). Set your date range and click Apply. The queue defaults to the last 30 days.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "d.setDate(d.getDate() - 30);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [startDate, setStartDate] = useState<string>(thirtyDaysAgoISO);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Apply$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-26",
+      "claim": "Appointment status — scheduled · confirmed · in_progress · completed · no_show · cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(scheduled|confirmed|in_progress|completed|no_show|cancelled)\">(scheduled|confirmed|in_progress|completed|no_show|cancelled)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-27",
+      "claim": "Visit status (filter) — Scheduled · Seen · Not Seen · No Show · Cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(Scheduled|Seen|Not Seen|No Show|Cancelled)\">(Scheduled|Seen|Not Seen|No Show|Cancelled)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-28",
+      "claim": "Note status (filter) — No Note Started · Draft Saved · In Progress · Completed · Signed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(No Note Started|Draft Saved)\">(No Note Started|Draft Saved)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "note": "the filter offers these two under their own names"
+        }
+      ],
+      "finding": "The filter lists \"No Note\" and \"Draft\" for those two values (BillingWorkQueuePage.tsx:1340-1341).",
+      "proposed_text": "Note status — No Note · Draft · In Progress · Completed · Signed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"No Note Started\">No Note</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"Draft Saved\">Draft</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(In Progress|Completed|Signed)\">(In Progress|Completed|Signed)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-29",
+      "claim": "Billing readiness (filter) — Ready for Billing · Pending Provider Completion · Pending Signature · Billing in Progress · Billed · Not Billable.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(Ready for Billing|Pending Signature|Billing in Progress|Billed|Not Billable)\">(Ready for Billing|Pending Signature|Billing in Progress|Billed|Not Billable)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"Pending Provider Completion\">",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-30",
+      "claim": "Claim Status (filter) — Any of the 15 claim statuses above, or No Claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"no_claim\">No Claim</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{MANUAL_STATUS_OPTIONS.map((opt) => (",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-31",
+      "claim": "Payer — Any payer present in the current results.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (r.claim_payer_name) set.add(r.claim_payer_name);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-32",
+      "claim": "Claim Age — Not Submitted · 0–30 · 31–60 · 61–90 · 90+ days (measured from the claim's submission date).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const submittedAt = r.claim_submitted_at;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (safeAge > 30) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (safeAge <= 90) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(not_submitted|0_30|31_60|61_90|90_plus)\">(Not Submitted|0-30 days|31-60 days|61-90 days|90\\+ days)</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-33",
+      "claim": "Quick presets above the table jump to common views: Ready, Pending Doc, Pending Sig, No Show, and Not Seen, each with a live count.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Ready|Pending Doc|Pending Sig|No Show|Not Seen)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{bucketCounts\\.(ready|pendingDoc|pendingSig)\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{rows\\.filter\\(\\(r\\) => r\\.visit_status === \"(No Show|Not Seen)\"\\)\\.length\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "wq-34",
+      "claim": "Click Ready to see encounters ready to bill, or Pending Doc / Pending Sig to see what's waiting on the provider.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prev === \"Ready for Billing\" ? \"all\" : \"Ready for Billing\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prev === \"Pending Provider Completion\" ? \"all\" : \"Pending Provider Completion\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prev === \"Pending Signature\" ? \"all\" : \"Pending Signature\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-35",
+      "claim": "Click Open Chart to review the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `/facility/${facilityId}/patients/${r.patient_id}`",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-36",
+      "claim": "Click Notify to record a provider reminder — it also posts an in-app notification and a message in the encounter's team-chat thread.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activity_type: \"provider_reminder\",",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "void supabaseClient.functions.invoke('emit-notification', {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".findOrCreateAppointmentConversation(",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chatService.sendMessage(",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-37",
+      "claim": "Notify is available only when the visit is Seen and the encounter isn't already ready or billed. (Troubleshooting: Notify is disabled — Visit isn't Seen, or the encounter is already ready/billed.)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.visit_status !== \"Seen\" ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.billing_readiness_status === \"Billing in Progress\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if Billing in Progress does not disable Notify"
+        }
+      ],
+      "finding": "Notify is also disabled when readiness is Billing in Progress, i.e. any claim exists that is not submitted/accepted/paid or needs-coding (BillingWorkQueuePage.tsx:1626-1631).",
+      "proposed_text": "Notify is available only when the visit is Seen and the encounter is not Ready for Billing, Billing in Progress, or Billed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.visit_status !== \"Seen\" ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.billing_readiness_status === \"Ready for Billing\" ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.billing_readiness_status === \"Billed\" ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "r.billing_readiness_status === \"Billing in Progress\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-38",
+      "claim": "When a claim exists, click Review to open the Coding Review drawer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setDrawerRow(r)}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-39",
+      "claim": "Click Edit to open the claim in the claim form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${facilityId}/billing/new?editClaimId=${r.claim_id}`",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const editClaimId = searchParams.get('editClaimId');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-40",
+      "claim": "Select the checkbox on any rows that have a claim, then use the bulk action toolbar to apply a Claim Status to all selected claims at once.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".filter((r) => r.claim_id)",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BulkActionToolbar",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await batchUpdateClaimStatus(supabase, {",
+          "paths": [
+            "frontend/src/components/billing/BulkActionToolbar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Flag Clinical is not offered in bulk (BulkActionToolbar.tsx:24-26)."
+    },
+    {
+      "id": "wq-41",
+      "claim": "Changing filters or the date range clears the selection so stale claims can't be batch-updated by mistake.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// H1 fix: clear bulk selection when filters or date range change so stale",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "clearClaimSelection();",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-42",
+      "claim": "The queue auto-refreshes every 2 minutes while the tab is visible; Refresh forces an immediate reload.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, 120_000);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (document.visibilityState === \"visible\") {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Refresh work queue\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-43",
+      "claim": "Export CSV downloads the current filtered rows (patient, DOS, visit/note/readiness status, blocking reason, provider, biller notes).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const body = filtered",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\[\"(Patient|DOS|Visit Status|Note Status|Billing Readiness|Blocking Reason|Clinician|Biller Notes)\", \\(r\\) =>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 8
+          }
+        }
+      ],
+      "finding": "The file also has MRN, Appointment Status, Appointment ID and Visit ID columns; the provider column is headed \"Clinician\". The MRN column is always blank (see product defects)."
+    },
+    {
+      "id": "wq-44",
+      "claim": "Calendar opens the Fleet Calendar for the same encounters.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "fleet-calendar\\?",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the queue's date range or filters are passed to the calendar"
+        }
+      ],
+      "finding": "Calendar navigates to /facility/{id}/ops/fleet-calendar with no date range or filter (BillingWorkQueuePage.tsx:1072-1076); the calendar opens on its own default view, not on the queue's encounters.",
+      "proposed_text": "Calendar opens the Fleet Calendar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? navigate(`/facility/${facilityId}/ops/fleet-calendar`)",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/ops/fleet-calendar\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-45",
+      "claim": "Claims submitted to the payer flow through Stedi and post back as ERAs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-46",
+      "claim": "Encounter not in the queue — Outside the selected DOS range, or the appointment status is filtered out. Widen the Date of Service range and clear filters.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "apptQuery = apptQuery.eq(\"status\", appointmentStatusFilter);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".lte(\"start_at\", endAt.toISOString())",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Also missing: appointments whose clinician has no active role at this facility (BillingWorkQueuePage.tsx:186-195, 241)."
+    },
+    {
+      "id": "wq-47",
+      "claim": "Readiness stuck at Pending Provider Completion — Note is signed but the progress note hasn't generated. Click Notify to remind the provider.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Pending Provider Completion\", blockingReason: \"Progress note not generated\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wq-48",
+      "claim": "Readiness is Not Billable — Patient was No Show / Not Seen, or the note isn't complete.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Not Billable\", blockingReason: \"Patient not seen\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { status: \"Not Billable\", blockingReason: \"Note not completed\" };",
+          "paths": [
+            "frontend/src/utils/billing/billingReadiness.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Two further causes: a Cancelled visit, and a completed note on a visit that is not signed (\"Visit not signed\", billingReadiness.ts:210-212)."
+    },
+    {
+      "id": "wq-49",
+      "claim": "No Claim Status dropdown on a row — No claim exists yet for that encounter. A claim is created from the completed visit or via Edit → the claim form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.claim_id && supabaseClient ? (",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { AutoBillingClaimService } from './autoBillingClaimService';",
+          "paths": [
+            "frontend/src/services/finalizeVisit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+\\{r\\.claim_id && \\($",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "Edit and Review are each wrapped in this gate; one hit (Review only) would mean Edit is offered on a row with no claim"
+        }
+      ],
+      "finding": "Edit is shown only on rows that already have a claim (BillingWorkQueuePage.tsx:1599-1611), so it cannot create one. A claim is created automatically when the visit is finalized (finalizeVisit.ts:11), or by hand with New Claim on Billing Operations (/billing/new).",
+      "proposed_text": "No claim exists yet for that encounter. One is created automatically when the visit is signed; to create one by hand, use New Claim on Billing Operations.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { AutoBillingClaimService } from './autoBillingClaimService';",
+          "paths": [
+            "frontend/src/services/finalizeVisit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/billing/new`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+New Claim$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

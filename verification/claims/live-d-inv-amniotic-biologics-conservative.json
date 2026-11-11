@@ -1,0 +1,568 @@
+{
+  "title": "Specialty catalog tiles — Amniotic, Biologics, and Conservative Care",
+  "source": "modules/inventory/amniotic-biologics-conservative",
+  "url": "https://help.medipyxis.com/modules/inventory/amniotic-biologics-conservative/",
+  "claims": [
+    {
+      "id": "inv-abc-01",
+      "claim": "The three specialty tiles (Amniotic, Biologics, Conservative Care) still appear in the Inventory Management hub, and receiving still flows through them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: `/inventory-management/product-batches/amniotic`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "route: `/inventory-management/product-batches/biologics`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "route: `/inventory-management/product-batches/conservative`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ManualReceiveModal",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-02",
+      "claim": "On demo and production, the legacy category tables already hold zero rows.",
+      "checks": [],
+      "finding": "A database row count, not a code fact; the code check runner cannot query demo or prod. Needs a count(*) against amniotic_inventory_items / biologics_inventory_items (and the conservative legacy table) on both projects."
+    },
+    {
+      "id": "inv-abc-03",
+      "claim": "Today's specialty products flow through the new unified catalog under the hood; the tiles are a compatibility surface.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".from(\"inventory_product_catalog_v2\")",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/product-batches/:category\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-04",
+      "claim": "Amniotic / Advance Treatment tile — active units listed with UIN, lot, tissue ID, and expiration date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "UIN",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a UIN column in Active Inventory"
+        }
+      ],
+      "finding": "Active Inventory shows Lot #, Tissue ID, Exp Date, Size, HCPCS, SKU, Status — no UIN column (ActiveProducts.tsx:890-950).",
+      "proposed_text": "Amniotic / Advance Treatment tile — active units listed with lot, tissue ID, and expiration date.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Tissue ID",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Exp Date",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-05",
+      "claim": "PRP and Ultrasonic Mist (UM) have their own hub tiles and receive the same way; like conservative care, they do not require IVR prior authorization.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title: \"PRP\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Ultrasonic Mist (UM)\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "ProductCategoryEnum\\.(PRP|UM)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-06",
+      "claim": "Amniotic receiving captures Tissue ID (required), Lot #, Expiration Date, Size, and HCPCS; HCPCS is pulled automatically from the Product Catalog entry and is editable at receiving.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.error(`Lot number is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.error(`Expiration date is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Size (e.g. 2x3 cm)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "product_code: catalogItem.hcpcs_code || \"\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "updateLineItem(item.id, \"product_code\", e.target.value)",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-07",
+      "claim": "Lot # is validated against the product's LOT SUFFIX in the Product Catalog.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "checking a lot against the suffix would compare strings"
+        }
+      ],
+      "finding": "No receiving path compares the lot to the suffix. A suffix only makes the lot required on bulk upload (BulkUploadOrderModal.tsx:1158-1183).",
+      "proposed_text": "Lot # — manufacturer lot number; required at receiving.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.error(`Lot number is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-08",
+      "claim": "The system blocks use of expired units at the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Cannot use expired batch",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-09",
+      "claim": "Each unit entered on the receiving form generates one UIN in Main Inventory; every unit entered through a receiving form generates exactly one UIN.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "receiving would write a per-unit UIN",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Receiving writes inventory_product_batches_v2 rows (with quantity) and no UIN; see inv-ov-01.",
+      "proposed_text": "Each line entered on the receiving form becomes an inventory record (lot, expiration, quantity) on the category's Active Inventory tab.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "action: \"manualReceive\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-10",
+      "claim": "For biologics, HCPCS is mandatory: the receiving form will not accept a unit without a valid HCPCS code.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "A-Z\\]\\\\d\\{4\\}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "validity would be a format check"
+        }
+      ],
+      "finding": "Receiving requires a non-empty HCPCS/Q code for Amniotic and Biologics (ManualReceiveModal.tsx:402; manual-receive.ts:381) but does not check its format or validity.",
+      "proposed_text": "For amniotic and biologics, the receiving form will not accept a unit without an HCPCS/Q code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Amniotic/Biologics manual receive requires tissueId, sizeLabel, and productCode.",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches/manual-receive.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-11",
+      "claim": "Manufacturer lot format is enforced: if the lot string does not match the LOT SUFFIX pattern, the system rejects the entry and displays a format hint.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "checking a lot against the suffix would compare strings"
+        }
+      ],
+      "finding": "No lot-format check at receiving (see inv-abc-07). The only format rule is on the catalog suffix itself: '-' plus three digits for Amniotic/Biologics (AddEditProduct.tsx:159-166).",
+      "proposed_text": "Remove, or: In the Product Catalog, an amniotic or biologic product's Lot No. Suffix must be '-' followed by three digits.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Lot No. Suffix must start with '-' followed by exactly three digits\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-12",
+      "claim": "Use IVR Tracking to confirm payer authorization is in place before scheduling the procedure.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title: \"IVR Tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-13",
+      "claim": "The conservative care type list includes foams, alginates, collagen matrices, compression, solutions, and general operational supply types such as Surgical Instrument, PPE, and General Supply.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Foam Dressing\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Calcium Alginate\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Collagen Matrix\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Compression Stocking\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Hypochlorous Acid Solution\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Surgical Instrument\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"PPE\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"General Supply\" }",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-14",
+      "claim": "Conservative care: Tissue ID is not collected, and HCPCS is optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "categoryEnum === ProductCategoryEnum.Biologics;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"HCPCS code must be 1 letter followed by 4 digits (e.g., A6402)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-15",
+      "claim": "When on-hand quantity reaches the PAR level set in the catalog entry, the system surfaces a replenishment alert in the Main Inventory view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "lowStock: 0,",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "low-stock would be computed"
+        }
+      ],
+      "finding": "ActiveProducts.tsx:410 hard-codes lowStock: 0; no live PAR alert (see inv-ov-03).",
+      "proposed_text": "You can record a PAR level in a product's catalog entry; Medipyxis does not yet alert when stock reaches it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "name=\"par_level\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-abc-16",
+      "claim": "When a clinician selects a product in the Procedures & Supplies section of the Visit Wizard, they scan or enter the UIN to record which physical unit was applied.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "[Ss]can",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "inventory_product_batches_v2",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Products are picked by lot in Conservative Care & Interventions (ConservativeCareInterventionVisit.tsx). Procedures & Supplies only has a free-text Box UID/UIN field for skin-substitute applications, not linked to inventory.",
+      "proposed_text": "Clinicians pick the lot in the Visit Wizard's Conservative Care & Interventions section; for a skin-substitute application, Procedures & Supplies also requires the Box UID/UIN from the package.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Enter Box UID/UIN\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

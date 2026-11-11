@@ -1,0 +1,1015 @@
+{
+  "title": "Use the LCD compliance status and review",
+  "source": "modules/visit-wizard-ehr/lcd-navigator",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/lcd-navigator/",
+  "claims": [
+    {
+      "id": "lcd-01",
+      "claim": "A live LCD Compliance Status bar at the top of the wizard summarizes how far along the encounter is.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "LCD Compliance Status",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "note": "the wizard is mounted by a routed page"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<VisitWizardV2Page />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-02",
+      "claim": "The wizard has 17 steps and each step shows its own status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Step (1[0-7]|[1-9])\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "count": 17
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{getStatusText(",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "min": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "lcd-03",
+      "claim": "Sections completed: a count of complete steps out of 17 (for example, \"10 of 17 sections completed\"). Result: the banner shows 17 of 17 sections completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sections completed",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The bar shows \"{n} Complete\" and \"{n} Pending\" (VisitWizardV4.tsx:16807 and 16866), where Pending is 17 minus Complete; the words \"of 17 sections completed\" never appear.",
+      "proposed_text": "The bar shows how many of the 17 steps are Complete and how many are still Pending (for example, \"10 Complete • 7 Pending\").",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{completedSections} Complete",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingSections} Pending",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lcdAuditSections.length - completedSections;",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-04",
+      "claim": "Flagged for review: the number of steps that still need attention before final submission.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Flagged for review",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The bar shows \"{n} Flagged\" only when at least one step is flagged (VisitWizardV4.tsx:16817). It counts flagged steps, not steps that need attention.",
+      "proposed_text": "Flagged: appears only when one or more steps are flagged, and shows how many.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{warningSections} Flagged",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{warningSections > 0 && (",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-05",
+      "claim": "A progress track that fills as sections are completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "100 / lcdAuditSections.length",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-green-500\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-06",
+      "claim": "The bar turns red/pink when any steps are still pending and reminds you to review flagged sections before final submission.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "review flagged sections",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The bar does not turn red as a whole and shows no reminder. Each pending step is one pink segment in the track (bg-red-200, VisitWizardV4.tsx:16834). Complete steps are green and flagged steps are yellow.",
+      "proposed_text": "In the progress track, each complete step is a green segment, each flagged step is yellow, and each pending step is pink.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-green-500\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-yellow-400\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"bg-red-200\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-07",
+      "claim": "Each of the 17 steps shows one of three statuses: Completed, Needs Attention, Pending.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"For Review\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent",
+          "note": "holds only if there is no fourth status"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"In Progress\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "getStatusText returns five statuses: Completed, Needs Attention, For Review, In Progress, Pending (VisitWizardV4.tsx:11248-11256).",
+      "proposed_text": "Each step shows one of five statuses: Completed (green), Needs Attention (red), For Review (yellow, flagged), In Progress (blue, the open step), or Pending (gray).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Completed\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Needs Attention\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"For Review\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"In Progress\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Pending\";",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-08",
+      "claim": "Completed steps show a green \"Completed\" status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Completed\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-green-100 text-green-700\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-09",
+      "claim": "Needs Attention steps show red/pink with an orange warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Needs Attention\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "AlertTriangle className=\"h-4 w-4 text-orange",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Needs Attention uses a red warning icon (text-red-600, VisitWizardV4.tsx:11278). No orange icon is used in the step status.",
+      "proposed_text": "Needs Attention (red, with a red warning icon): the section has a validation gap.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Needs Attention\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AlertTriangle className=\"h-4 w-4 text-red-600\" />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-10",
+      "claim": "Pending (gray) steps.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Pending\";",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"bg-gray-100 text-gray-600\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-11",
+      "claim": "Pending means the section hasn't been started yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "not_?started|notStarted",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "getSectionStatus returns only \"complete\" or \"pending\" (VisitWizardV4.tsx:6202). A section that has been started but is not complete also shows Pending.",
+      "proposed_text": "Pending (gray): the section is not complete yet. This includes sections you have started.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sectionId: string): \"complete\" | \"pending\" => {",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-12",
+      "claim": "Every step row has three actions: Complete (disabled once completed), Fix (jumps to the section), and Flag. Walk-through: click Fix on that step.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ">\\s*(Fix|Flag)\\s*<|^\\s+(Fix|Flag)\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx",
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx",
+            "frontend/src/components/intake/SectionCompleteButton.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Step rows have no Fix or Flag control. Each section has a \"Mark as Complete\" button inside it, which turns into \"Edit Again\" once marked (SectionCompleteButton.tsx:165). You open a step by clicking its row in the accordion (VisitWizardV4.tsx:16945).",
+      "proposed_text": "Click a step to open it. Inside the step, Mark as Complete confirms the section is done; Edit Again reopens it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark as Complete",
+          "paths": [
+            "frontend/src/components/intake/SectionCompleteButton.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Edit Again",
+          "paths": [
+            "frontend/src/components/intake/SectionCompleteButton.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SectionCompleteButton",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "min": 10
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setActiveAccordionSection(value || \"\");",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-13",
+      "claim": "Flag marks the section for review, for example for your medical director.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onSectionFlagged,",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "the flag callback would have to be read by the step 16 panel"
+        }
+      ],
+      "finding": "The wizard passes onSectionFlagged to LCDAuditReviewVisit (VisitWizardV4.tsx:18636), but the component never reads it (LCDAuditReviewVisit.tsx:45-50). Flags only come from a saved draft's section_16 record (VisitWizardV4.tsx:14006).",
+      "proposed_text": "There is no Flag button. A step shows For Review only when a saved draft already has it flagged.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onSectionFlagged,",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setFlaggedSections(new Set(lcdAudit.flaggedSections));",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-14",
+      "claim": "The 17 steps are: Consent & Attestation; Patient Context & Demographics; Review of Systems (ROS); Objective Assessment (Vitals); Functional Status & ADLs; Comorbidities & Risk Factors; Wound Assessment; Previous Treatments; Interventions & Treatments; Care Planning; Orders & DME; Patient Education; Procedure Supplies; Medication Management; Billing & Documentation; LCD Audit & Review; Provider Attestation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consentAttestation: \"Consent & Attestation\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "contextV2: \"Patient Context & Demographics\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ros: \"Review of Systems (ROS)\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vitals: \"Objective Assessment (Vitals)\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functionalStatus: \"Functional Status & ADLs\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "riskFactors: \"Comorbidities & Risk Factors\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "woundAssessment: \"Wound Assessment\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "previousTreatments: \"Previous Treatments\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "conservativeCare: \"Interventions & Treatments\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "carePlanning: \"Care Planning\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ordersDME: \"Orders & DME\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "education: \"Patient Education\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "procedureSupplies: \"Procedure Supplies\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medicationManagement: \"Medication Management\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingStagingV2: \"Billing & Documentation\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lcdAuditReview: \"LCD Audit & Review\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerAttestation: \"Provider Attestation\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-15",
+      "claim": "The full 17-step list shows step 14 as \"Medication Management\".",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Medication Management\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The step list heading for step 14 reads \"Current Medication\" (VisitWizardV4.tsx:18449). \"Medication Management\" appears only in the progress-track tooltip.",
+      "proposed_text": "Step 14 appears as Current Medication in the step list (Medication Management in the progress-track tooltip).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Current Medication\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medicationManagement: \"Medication Management\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-16",
+      "claim": "Step 16 (LCD Audit & Review) is the final compliance review step before attestation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "isLcdGuidanceOnly() ? (",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<LCDAuditReviewVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "VITE_LCD_GUIDANCE_ONLY: 'true'",
+          "paths": [
+            ".github/workflows/deploy-prod.yml"
+          ],
+          "expect": "present",
+          "note": "the step 16 panel renders only when this flag is on; prod sets it"
+        }
+      ]
+    },
+    {
+      "id": "lcd-17",
+      "claim": "Step 16 stays pending until steps 1-15 are complete and you've reviewed the flagged items.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const noFlagged = flaggedSections.size === 0;",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return allComplete && noFlagged ? \"complete\" : \"pending\";",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-18",
+      "claim": "In step 16 you review the AI Visit Summary card: Patient Overview, Treatment Summary, Clinical Findings, Recommendations, Overall Assessment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "AI Visit Summary",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".generateVisitSummary(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no AI Visit Summary. openaiService.generateVisitSummary (openaiService.ts:180) has no caller. Step 16 renders LCDAuditReviewVisit (VisitWizardV4.tsx:18631): an audit-readiness line, a patient-level compliance card, and a findings row for each wound.",
+      "proposed_text": "Step 16 shows the coverage-policy findings for the visit: a patient-level card and a findings row for each wound.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PatientComplianceCard",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Per-wound findings · ",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundComplianceAccordion",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-19",
+      "claim": "Anything left in the AI Visit Summary becomes part of your signed note; the summary regenerates on save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "AI Visit Summary",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "No AI Visit Summary exists in the release. generateVisitSummary is never called (openaiService.ts:180), so nothing from it reaches the note.",
+      "proposed_text": "Remove the AI Visit Summary paragraph and the matching troubleshooting row; the wizard has no AI Visit Summary.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "AI Visit Summary",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "lcd-20",
+      "claim": "The Sections Status banner shows overall progress (continue until it shows all 17 complete with 0 flagged).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sections Status",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no \"Sections Status\" banner. The progress bar is titled \"LCD Compliance Status\" (VisitWizardV4.tsx:16787).",
+      "proposed_text": "Continue until the LCD Compliance Status bar shows 17 Complete and 0 Pending.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "LCD Compliance Status",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingSections} Pending",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-21",
+      "claim": "The compliance result is recorded with the encounter.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const LCD_AUDIT_SECTION_KEY = 'section_16_lcd_audit_review';",
+          "paths": [
+            "frontend/src/services/lcdAuditService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"section_16_lcd_audit_review\",",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-22",
+      "claim": "The compliance result is in the encounter audit log and is available to medical directors and billers for review.",
+      "checks": [],
+      "finding": "Cannot be confirmed from code. The result is stored on the visit row (section_16_lcd_audit_review) and read by wound-cockpit-load, but no audit-log entry or medical-director/biller review screen for it was found; who can see it depends on route access and data."
+    },
+    {
+      "id": "lcd-23",
+      "claim": "Roadmap: the ambient LCD badge (green/amber/red) is planned but not yet live.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AmbientBadgeInHeader />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "One ambient LCD badge is live in the LCD Compliance Status header (VisitWizardV4.tsx:16797). It shows green \"All clear\", amber with a flag count, or grey while checking; red cannot be reached (LCDAmbientBadge.tsx:9-11). It re-checks 1.2 s after form changes (AmbientBadgeMount.tsx:27). Badges on every section are not built.",
+      "proposed_text": "One LCD badge is live in the LCD Compliance Status header: green (All clear), amber (with a flag count) or grey (checking). A badge at the top of every section is planned.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AmbientBadgeInHeader />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "colour === 'green' ? 'All clear' :",
+          "paths": [
+            "frontend/src/components/lcd-navigator/LCDAmbientBadge.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "debounceMs: 1200,",
+          "paths": [
+            "frontend/src/components/lcd-navigator/AmbientBadgeMount.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "lcd-24",
+      "claim": "Roadmap: Dojo intervention guidance tiles are planned but not yet live.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<InterventionStrip[ />]",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "= useInterventionDojo(",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "lcd-25",
+      "claim": "Roadmap: a copy bank of pre-written compliance statements is planned but not yet live.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "copy ?bank|copy_bank",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "lcd-26",
+      "claim": "Roadmap: named Navigator checks (a discrete, reviewable list of compliance checks: medical necessity, conservative-care duration, NCCI/MUE edits, modifier validity) are planned but not yet live.",
+      "checks": [],
+      "finding": "Not checkable as worded. Step 16 already renders a list of patient-level and per-wound findings (LCDAuditReviewVisit.tsx), so whether the named-check list is live depends on which checks the page means, which code cannot settle."
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

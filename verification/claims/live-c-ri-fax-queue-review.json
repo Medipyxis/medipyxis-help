@@ -1,0 +1,493 @@
+{
+  "title": "Review the Fax Review Queue",
+  "source": "modules/referral-intake/fax-queue-review",
+  "url": "https://help.medipyxis.com/modules/referral-intake/fax-queue-review/",
+  "claims": [
+    {
+      "id": "ri-fq-01",
+      "claim": "Open it from the Fax Review Queue item in the sidebar, or click Fax Queue on the Patient Intake board header. It is not a kanban column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Review Queue\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No Fax Review Queue item in the live sidebar (frontend/src/components/AppShell.tsx:629-756). It is reached from the board's Fax Queue button (Referrals.tsx:3313), the Fax Review Queue tile under Fax Center (MorePage.tsx:134; AppShell.tsx:751) or ⌘K \"Fax review queue\" (AppShell.tsx:815).",
+      "proposed_text": "Open it with Fax Queue on the Patient Intake board header, from the Fax Review Queue tile under Fax Center in the sidebar, or with ⌘K \"fax review queue\". It is not a kanban column.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax Review Queue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax review queue\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-02",
+      "claim": "Columns: Received, Patient Info, File Name, Document Type, Priority, Status, Confidence, SLA, Actions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<TableHead( className=\"text-right\")?>(Received|Patient Info|File Name|Document Type|Priority|Status|Confidence|SLA|Actions)</TableHead>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": {
+            "count": 9
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const FaxReviewQueue = lazy(() => import(\"./components/idp/FaxReviewQueue\"));",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-03",
+      "claim": "Patient Info shows what was extracted about the patient, when available.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "item.extraction_result?.extracted_data",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-04",
+      "claim": "Document Type shows the classified document type.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.fax?.subject || \"Fax Document\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Document Type cell shows the fax's subject line, or \"Fax Document\" when there is none (frontend/src/components/idp/FaxReviewQueue.tsx:695). It does not show a classified document type.",
+      "proposed_text": "Document Type: the fax's subject line, or \"Fax Document\" when the fax has no subject.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.fax?.subject || \"Fax Document\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-05",
+      "claim": "Priority: STAT, Emergent, Urgent, or Routine (a filter on this queue); the Add New Patient form uses Routine, Urgent, or Emergent and does not include STAT.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(stat|emergent|urgent|routine)\">(STAT|Emergent|Urgent|Routine)</SelectItem>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": {
+            "count": 4
+          }
+        },
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "fixed": true,
+          "pattern": "<option value=\"stat\"",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-06",
+      "claim": "Status values (column and filter) are Pending, Processing, Ready for Review, Approved, Auto Created, Rejected, and Failed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(pending|processing|approved|auto_created|rejected|failed)\">(Pending|Processing|Approved|Auto Created|Rejected|Failed)</SelectItem>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"ready_for_review\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.queue_status.replace(\"_\", \" \")}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "absent",
+          "note": "the Status column must print the same words as the filter"
+        }
+      ],
+      "finding": "The filter uses these labels, but the Status column prints the raw value with only the first underscore replaced (frontend/src/components/idp/FaxReviewQueue.tsx:713, String.replace with a string pattern). Rows read \"pending\", \"auto created\", and \"ready for_review\" — a display defect.",
+      "proposed_text": "Use the Status filter to narrow the list: Pending, Processing, Ready for Review, Approved, Auto Created, Rejected, or Failed. (Fix the Status column first or describe it as showing the stored status in lower case.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(pending|processing|approved|auto_created|rejected|failed)\">(Pending|Processing|Approved|Auto Created|Rejected|Failed)</SelectItem>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"ready_for_review\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-07",
+      "claim": "Confidence shows how confident extraction was for this fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "?.overall_confidence_score || 0",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-08",
+      "claim": "SLA: an SLA indicator for the row; an \"SLA Breached\" summary also appears at the top of the queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.sla_breached ? (",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-muted-foreground\">SLA Breached</p>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-09",
+      "claim": "Use the status, priority, and review filters to narrow the list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Statuses</SelectItem>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Priorities</SelectItem>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"requires_review\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-10",
+      "claim": "Click a row to open the fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<TableRow[^>]*onClick",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Rows have a pointer cursor but no click handler (frontend/src/components/idp/FaxReviewQueue.tsx:657-660). The fax opens from the View button in the Actions column (:740-755, handleViewDetails at :343). View is disabled while the row is Processing.",
+      "proposed_text": "Click View in the row's Actions column to open the fax. (View is unavailable while the fax is Processing.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleViewDetails(item.id)}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={item.queue_status === \"processing\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-11",
+      "claim": "The document is on one side; the extracted fields are on the other.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div className=\"grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Right Column: Extracted Data Form",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<iframe",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-12",
+      "claim": "Edit anything that is wrong, then Save Changes if you are not ready to create the patient yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleSave}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Save Changes$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-13",
+      "claim": "Approve & Create Patient creates the patient and a referral in New Referrals, the same outcome as Create Patient on the manual form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Approve & Create Patient\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await createPatientFromFax(",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const referralRecordsResult = await createReferralRecordsForPatient(",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-14",
+      "claim": "If the fax should not become a patient, click Reject.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleReject}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Reject$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-15",
+      "claim": "You can check Send digital consent form via SMS upon approval on the fax review screen when a phone number is available.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Send digital consent form via SMS upon approval</span>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "editedData?.demographics?.phone ||",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-fq-16",
+      "claim": "There is no Convert to Referral, Mark Duplicate, or Open Referral button on this page, and no separate \"Create patient\" chip after insurance is verified.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Convert to Referral|Mark Duplicate|Open Referral|>Create patient<",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx",
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}
