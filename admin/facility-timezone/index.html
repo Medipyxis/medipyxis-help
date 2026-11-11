@@ -65,18 +65,17 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item active" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Set your facility timezone</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 4 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-08-28</span></div>
-      <p>Every facility in Medipyxis has one canonical timezone. That timezone is what the scheduling grid, appointment reminders, chart timestamps, and provider handoff views resolve to. Set it once during facility setup and every downstream surface follows it.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 4 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Every facility in Medipyxis has one timezone. New appointments are booked in it, and the scheduling screens show times in it. Set it when the facility is set up and check it before you book the first appointment.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You have the <code>admin</code> or <code>superadmin</code> role.</li>
-<li>You know which timezone the facility operates in (the physical clinic location, not the head office).</li>
-<li>If clinicians drive to patients across state lines, decide whether this is a <strong>multi-timezone service area</strong> — see below.</li>
+<li>You can open <strong>Facilities</strong> in the sidebar.</li>
+<li>You know which timezone the facility operates in (where the clinic sees patients, not the head office).</li>
 </ul>
 <h2 id="steps">Steps</h2>
 <ol>
-<li><strong>Open Admin → Facilities</strong> and click the facility you want to configure. If you are creating a new facility, click <strong>+ Add Facility</strong>.</li>
-<li><strong>Find the Timezone dropdown</strong> on the facility form. Pick from the eight supported US timezones:</li>
+<li><strong>Open Facilities</strong> in the sidebar, find the facility, and click its <strong>Edit</strong> button. (New locations are added by Medipyxis support; see <a href="/admin/multi-location-setup/">Set up an organization with multiple locations</a>.)</li>
+<li><strong>Find the Timezone dropdown</strong> on the facility form. It is required. Pick one of the eight US timezones:</li>
 </ol>
 <table>
 <thead>
@@ -121,18 +120,18 @@
 </tbody>
 </table>
 <ol start="3">
-<li><strong>Multi-timezone service area</strong> — Check this box only if the facility routinely books visits in more than one timezone (for example, a mobile team based in El Paso, TX that also visits patients in Las Cruces, NM). When enabled, individual appointments can carry their own timezone override; when disabled, every appointment is booked in the facility timezone. Leave it unchecked for single-location clinics.</li>
-<li><strong>Save.</strong> The change takes effect immediately for new appointments. Existing appointments keep the timezone they were booked in.</li>
+<li><strong>Leave Multi-timezone service area unticked.</strong> The box is saved with the facility, but booking does not use it yet: every appointment is booked in the facility timezone either way.</li>
+<li><strong>Click Save Changes.</strong></li>
 </ol>
 <h2 id="how-the-timezone-is-used">How the timezone is used</h2>
 <ul>
-<li><strong>Fleet Calendar and Clinician Calendar</strong> render every appointment slot in the facility timezone. The banner at the top of the booking modal shows which timezone is being used.</li>
-<li><strong>Appointment reminders</strong> — the send time is calculated against the facility timezone so a patient receives a 24-hour reminder at 9:00 a.m. their local morning, not at 6:00 a.m.</li>
-<li><strong>Chart timestamps</strong> on the patient chart and progress notes are stored in UTC but displayed in the facility timezone.</li>
-<li><strong>Signature timestamps</strong> on signed notes show both the UTC time and the local time in the facility timezone.</li>
+<li><strong>Booking an appointment</strong> — the time you enter is read in the facility timezone. The badge next to <strong>Time</strong> in the booking window shows which timezone that is.</li>
+<li><strong>Calendars</strong> — the clinician calendar and appointment lists show times in the facility timezone.</li>
+<li><strong>Patient appointment reminders</strong> — these go out only at facilities where Medipyxis has switched patient appointment alerts on. The reminder is due about 24 hours before the visit, and messages due between 9 p.m. and 8 a.m. in the facility timezone wait until the morning.</li>
+<li><strong>Signature timestamps</strong> on signed notes are not in the facility timezone. They print in the timezone of the device that makes the PDF, with the zone abbreviation. See <a href="/modules/visit-wizard-ehr/signature-timestamp/">How the signature timestamp prints on a signed note</a>.</li>
 </ul>
 <h2 id="default-value">Default value</h2>
-<p>If a facility is created without a timezone (for example through the bulk uploader), Medipyxis defaults to <code>America/New_York</code> (Eastern). Change this before booking your first appointment — moving a facility timezone after appointments exist does not retro-adjust already booked slots.</p>
+<p>A new facility form starts on Eastern and switches to the main timezone of the state you pick, until you choose a timezone yourself. If a facility has no timezone saved, booking falls back to Eastern (<code>America/New_York</code>).</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
 <thead>
@@ -144,29 +143,22 @@
 </thead>
 <tbody>
 <tr>
-<td>Appointment shows the wrong time to the patient</td>
-<td>Facility timezone is Eastern by default but the clinic is Pacific</td>
-<td>Update the facility record, then reschedule affected appointments</td>
+<td>Appointment times are off by a whole number of hours</td>
+<td>The facility is on the wrong timezone (for example Eastern for a Pacific clinic)</td>
+<td>Fix the facility's timezone, then check the affected appointments</td>
 </tr>
 <tr>
-<td>Two clinicians see the same slot at different times</td>
-<td>One is in a different timezone client-side</td>
-<td>The calendar always renders in facility timezone — refresh the browser</td>
-</tr>
-<tr>
-<td>DST shifted appointments by an hour</td>
-<td>Facility is on <code>America/Phoenix</code> or <code>Pacific/Honolulu</code> which do not observe DST</td>
+<td>Times shifted by an hour at a daylight-saving change</td>
+<td>The facility is on Arizona or Hawaii, which do not observe daylight saving time, or should be</td>
 <td>Confirm the facility's actual timezone; switch if wrong</td>
 </tr>
 <tr>
 <td>A visit in another state is booked in the wrong timezone</td>
-<td>Multi-timezone service area is off</td>
-<td>Enable <strong>Multi-timezone service area</strong>, then edit the appointment and set its per-appointment timezone</td>
+<td>Booking always uses the facility timezone; per-appointment timezones are not available</td>
+<td>Enter the time as it reads in the facility timezone</td>
 </tr>
 </tbody>
 </table>
-<h2 id="related-settings">Related settings</h2>
-<p>Facility timezone is separate from user profile locale. Individual clinicians do not carry their own scheduling timezone — every clinician working at a facility sees that facility's timezone. This is deliberate: appointment coordinators, providers, and patients all need one shared reference.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/facility-setup/">Set up a facility in your first week</a></li><li><a href="/modules/fleet-calendar/overview/">Fleet Calendar overview</a></li><li><a href="/modules/patient-management/overview/">Patient Management — overview</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -174,7 +166,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="" href="#how-the-timezone-is-used">How the timezone is used</a></li><li><a class="" href="#default-value">Default value</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related-settings">Related settings</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="" href="#how-the-timezone-is-used">How the timezone is used</a></li><li><a class="" href="#default-value">Default value</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/facility-timezone.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/facility-timezone.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

@@ -65,65 +65,42 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item active" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Deactivate a facility, archive a patient, and disable a user</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-10-29</span></div>
-      <p>Medipyxis distinguishes between deactivation (temporarily stopping operations) and archiving (long-term record retention). This page covers all three offboarding workflows and the correct order of operations for each.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>When a patient leaves your care, a location closes, or an employee leaves, Medipyxis lets you hide them from day-to-day work without deleting anything. This page covers all three and how to undo each one.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need to be an admin.</li>
-<li>Archiving a patient is irreversible from the UI; only Medipyxis support can unarchive.</li>
-<li>Never delete a patient record — archive instead.</li>
-<li>Before deactivating a facility or disabling a user, reassign all open work first.</li>
+<li>Archiving a patient needs access to <strong>All Patients</strong>; deactivating a facility needs <strong>Facilities</strong>; disabling a user needs <strong>HR &amp; Compliance</strong>. Administrators have all three.</li>
+<li>Archive patients rather than deleting them. Archiving keeps the whole record and can be undone.</li>
+<li>Before you deactivate a facility or disable a user, move their open work (referrals, appointments, claims) to someone else.</li>
 </ul>
-<h2 id="archive-a-patient-not-delete">Archive a patient (not delete)</h2>
-<p>Patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.</p>
+<h2 id="archive-a-patient-not-delete">Archive a patient</h2>
 <ol>
-<li>Navigate to <strong>Patient Management</strong> and open the patient's record.</li>
-<li>Click the <strong>Actions</strong> menu (three-dot icon at top-right of the patient card).</li>
-<li>Select <strong>Archive Patient</strong>.</li>
-<li>Enter the reason for archiving (required field — choose from the dropdown: <code>Deceased</code>, <code>No Longer a Patient</code>, <code>Duplicate Record</code>, <code>Other</code>).</li>
-<li>Click <strong>Confirm Archive</strong>.</li>
+<li>Click <strong>All Patients</strong> in the sidebar and find the patient.</li>
+<li>Click the archive button on the patient's row (<strong>Archive patient</strong>).</li>
+<li>Read the confirmation — "This will hide the patient from active views. No data is deleted, and the patient can be restored later." — and click <strong>Archive</strong>.</li>
 </ol>
-<p><strong>Effect of archiving:</strong>
-- The patient record moves to an <strong>Archived</strong> filter state; they no longer appear in active patient lists or search results.
-- All historical visits, claims, and documents are retained and accessible to admins via the Archived filter.
-- Open referrals and pending claims associated with the patient are flagged for manual resolution before archiving completes. The system will not archive a patient with an unresolved claim in <code>Pending</code> or <code>Needs Info</code> status.</p>
-<p><Warning>
-Do not use <strong>Archive</strong> as a substitute for merging duplicate records. Use the <strong>Merge Patients</strong> workflow instead (Patient Management → Actions → Merge). Archiving a duplicate leaves two records; merging consolidates them.
-</Warning></p>
+<p><strong>Effect of archiving:</strong> the patient's status becomes Archived and they drop out of the active patient lists. Their visits, claims and documents are kept. You need an internet connection to archive.</p>
+<p><strong>To restore a patient:</strong> in <strong>All Patients</strong>, choose <strong>Archived</strong> in the status filter, then click <strong>Unarchive patient</strong> on their row and confirm. The patient returns as Active.</p>
+<p>There is no merge tool for duplicate patients. If you find a duplicate chart, contact Medipyxis support before you archive either copy.</p>
 <h2 id="deactivate-a-facility">Deactivate a facility</h2>
-<p>Deactivating a facility removes it from active scheduling, referral routing, and billing workflows. It does not delete any data.</p>
-<p><strong>Before deactivating:</strong>
-1. Reassign all open referrals to an active facility (<strong>Referral Intake</strong> → filter by facility → bulk reassign).
-2. Resolve or transfer all open claims (<strong>Billing → Claims</strong> → filter by facility).
-3. Notify all users assigned to this facility that they will lose access to facility-scoped screens.</p>
-<p><strong>Deactivation steps:</strong>
-1. Navigate to <strong>Facilities</strong> in the sidebar.
-2. Locate the facility row and confirm it shows <strong>Active</strong> in the STATUS column.
-3. Click <strong>Actions → Deactivate</strong>.
-4. Read the confirmation modal — it lists the count of open referrals and pending claims associated with the facility.
-5. If the counts are zero (or you have confirmed resolution), click <strong>Confirm Deactivate</strong>.</p>
+<ol>
+<li>Click <strong>Facilities</strong> in the sidebar.</li>
+<li>On the <strong>Active Facilities</strong> tab, find the facility.</li>
+<li>Click the <strong>Deactivate</strong> button on its row. It takes effect straight away; there is no confirmation step.</li>
+</ol>
+<p>A "Facility deactivated successfully" message confirms it, and the facility moves to the <strong>Deactivated Facilities</strong> tab. No data is deleted.</p>
 <p><img alt="Facilities list showing FACILITY, CONTACT, STATS, STATUS, and ACTIONS columns. Inactive facilities display a gray badge in the STATUS column." src="/assets/facilities/list.png" />
-<em>After deactivation, the facility's STATUS badge changes from Active (green) to Inactive (gray). The facility remains visible in the list for historical reference.</em></p>
-<p><strong>Reactivating:</strong> Click <strong>Actions → Activate</strong> at any time to restore the facility to active status. Users previously assigned to it regain access.</p>
+<em>The facilities list. A deactivated facility shows Inactive in the STATUS column on the Deactivated Facilities tab.</em></p>
+<p><strong>Reactivating:</strong> open the <strong>Deactivated Facilities</strong> tab and click <strong>Reactivate</strong> on the facility's row.</p>
 <h2 id="disable-a-user">Disable a user</h2>
-<p>Disabling a user prevents them from logging in without deleting their account or their activity history.</p>
-<p><strong>Before disabling:</strong>
-1. Reassign any open referrals or claims the user owns:
-   - <strong>Referral Intake</strong> → filter <strong>Assigned To</strong> by the departing user → bulk reassign.
-   - <strong>Billing → Work Queue</strong> → filter <strong>Assignee</strong> → reassign.
-2. Remove the user from any active Fleet Calendar routes scheduled in the future.</p>
-<p><strong>Disable steps:</strong>
-1. Navigate to <strong>HR &amp; Compliance → Facility Users</strong>.
-2. Find the user by name or email.
-3. Click <strong>Edit</strong> → toggle <strong>Account Status</strong> to <strong>Inactive</strong> → click <strong>Save</strong>.
-4. The user's active session is terminated within 60 seconds.</p>
-<p><strong>Effect:</strong>
-- The user cannot log in.
-- Their historical audit log entries, visit notes, and claim signatures are preserved unchanged.
-- Their name remains in the Assigned Clinician dropdowns so that historical records remain accurate; they appear as <code>(Inactive)</code> to indicate they cannot accept new work.</p>
-<p><Note>
-Disabling is preferable to deleting for departing employees. Deleted accounts remove the link between the user's identity and their historical actions, which breaks audit trail continuity.
-</Note></p>
+<p>Disabling a user stops them signing in without deleting their account or their history.</p>
+<ol>
+<li>Go to <strong>HR &amp; Compliance → Facility Users</strong>.</li>
+<li>Find the user by name or email, and click the edit button on their row.</li>
+<li>Set <strong>Status</strong> to <strong>Inactive</strong> and click <strong>Save Changes</strong>. (The <strong>Archive User</strong> button at the bottom of the form does the same after you confirm.)</li>
+</ol>
+<p><strong>Effect:</strong> the user is signed out everywhere, cannot sign in again, and their facility roles are switched off. Their notes, signatures and history are kept.</p>
+<p><strong>Re-enabling:</strong> open the same form, set <strong>Status</strong> back to <strong>Active</strong> and click <strong>Save Changes</strong>. Check their <strong>Facility Assignment</strong> before you save.</p>
 <h2 id="summary-of-offboarding-actions">Summary of offboarding actions</h2>
 <table>
 <thead>
@@ -137,22 +114,22 @@ Disabling is preferable to deleting for departing employees. Deleted accounts re
 <tr>
 <td>Patient deceased or no longer active</td>
 <td>Archive (not delete)</td>
-<td>Patient Management → Actions</td>
+<td>All Patients → archive button on the row</td>
 </tr>
 <tr>
-<td>Facility closing permanently</td>
+<td>Facility closing</td>
 <td>Deactivate</td>
-<td>Facilities → Actions</td>
+<td>Facilities → Deactivate button on the row</td>
 </tr>
 <tr>
-<td>Employee leaving organization</td>
+<td>Employee leaving the organization</td>
 <td>Disable (set Inactive)</td>
-<td>HR &amp; Compliance → Facility Users</td>
+<td>HR &amp; Compliance → Facility Users → edit</td>
 </tr>
 <tr>
 <td>Duplicate patient record</td>
-<td>Merge, then archive the source</td>
-<td>Patient Management → Actions → Merge</td>
+<td>Contact Medipyxis support</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -163,7 +140,7 @@ Disabling is preferable to deleting for departing employees. Deleted accounts re
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#archive-a-patient-not-delete">Archive a patient (not delete)</a></li><li><a class="" href="#deactivate-a-facility">Deactivate a facility</a></li><li><a class="" href="#disable-a-user">Disable a user</a></li><li><a class="" href="#summary-of-offboarding-actions">Summary of offboarding actions</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#archive-a-patient-not-delete">Archive a patient</a></li><li><a class="" href="#deactivate-a-facility">Deactivate a facility</a></li><li><a class="" href="#disable-a-user">Disable a user</a></li><li><a class="" href="#summary-of-offboarding-actions">Summary of offboarding actions</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/deactivating-and-archiving.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/deactivating-and-archiving.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

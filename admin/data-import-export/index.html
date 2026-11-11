@@ -65,108 +65,40 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item active" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Import and export data</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
-      <p>Bring staff and patient records in via bulk upload and the Practice Onboarding pipeline, review ZusHealth patient data in the chart, and export referral and claim records.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Bring patient records in with the Practice Onboarding importer, see ZusHealth records in the patient chart, and export billing data.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need the <code>admin</code> or <code>superadmin</code> role.</li>
-<li>For a full practice migration (patients, insurance, medications, wounds, visit history), use the <strong>Practice Onboarding</strong> pipeline described below.</li>
+<li>Practice Onboarding is on the <strong>Administrator</strong> cockpit. Its card is shown to admins.</li>
+<li>For a full practice migration (patients, insurance, medications, wounds, visit history), use <strong>Practice Onboarding</strong>, described below.</li>
 </ul>
-<h2 id="bulk-employee-upload">Bulk Employee Upload</h2>
-<p>Use this workflow when onboarding many employees at once, or when migrating users from another system.</p>
+<h2 id="bulk-employee-upload">Staff: Bulk Employee Upload is turned off</h2>
+<p>The <strong>Bulk Employee Upload</strong> tile on the HR &amp; Compliance hub opens a message that bulk upload is temporarily disabled. Add staff one at a time with <strong>New Employee Onboarding</strong> — see <a href="/admin/user-management/">Invite users and manage facility access</a>.</p>
+<h2 id="practice-onboarding-patient-chart-import">Practice Onboarding (patient and chart import)</h2>
+<p>To migrate a practice's patients and clinical history, use the <strong>Practice Onboarding</strong> importer.</p>
 <ol>
-<li>Navigate to <strong>HR &amp; Compliance → Bulk Employee Upload</strong>.</li>
-<li>Click <strong>Download CSV Template</strong> to get the current schema.</li>
-<li>Populate the template. Recognized columns include:</li>
+<li>Click <strong>Administrator</strong> in the sidebar, then the <strong>Practice Onboarding</strong> card.</li>
+<li>Work through the nine steps in order: <strong>Patients</strong> first; then <strong>Insurance</strong>, <strong>Medications</strong>, <strong>Allergies</strong>, <strong>Comorbidities</strong>, <strong>Emergency Contacts</strong>, <strong>Wounds</strong>, and <strong>Documents &amp; Historical Wound Photos</strong>; and finally <strong>Visit History</strong>.</li>
+<li>A step stays locked until the step it depends on is complete: most steps need <strong>Patients</strong>, and <strong>Visit History</strong> needs <strong>Wounds</strong>.</li>
 </ol>
-<table>
-<thead>
-<tr>
-<th>Column</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>first name</code></td>
-<td>Yes</td>
-<td></td>
-</tr>
-<tr>
-<td><code>last name</code></td>
-<td>Yes</td>
-<td></td>
-</tr>
-<tr>
-<td><code>email</code></td>
-<td>Yes</td>
-<td>Must be unique per organization</td>
-</tr>
-<tr>
-<td><code>role</code></td>
-<td>Yes</td>
-<td>Must match a role in Organization Role Config</td>
-</tr>
-<tr>
-<td><code>phone</code></td>
-<td>No</td>
-<td>10-digit, no formatting</td>
-</tr>
-<tr>
-<td><code>facility assignment</code></td>
-<td>No</td>
-<td>Facility ID; if blank, user is assigned to the uploading facility</td>
-</tr>
-<tr>
-<td><code>provider_first_name</code>, <code>provider_last_name</code>, <code>provider_print_name</code>, <code>provider_initials</code></td>
-<td>No</td>
-<td>Provider identity fields, used for clinical roles</td>
-</tr>
-</tbody>
-</table>
-<ol start="4">
-<li>Upload the completed CSV. The system runs a validation pass and displays errors (duplicate email, unknown role, malformed value) in a preview.</li>
-<li>Fix any flagged rows, re-upload, and confirm.</li>
-</ol>
-<p><Note>
-Rows that pass validation are imported even if others fail. You can upload a corrected partial file for the failed rows after fixing them.
-</Note></p>
-<h2 id="practice-onboarding-patient-chart-import">Practice Onboarding (patient &amp; chart import)</h2>
-<p>To migrate an entire practice's patients and clinical history, use the <strong>Practice Onboarding</strong> admin hub.</p>
-<ol>
-<li>Navigate to <strong><code>/administrator</code> → Practice Onboarding</strong>.</li>
-<li>Work through the guided, step-dependent import pipeline: <strong>Patients</strong> first, then <strong>Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Documents, and Wounds</strong>, and finally <strong>Visit History</strong>.</li>
-<li>Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully.</li>
-</ol>
-<p><Note>
-Practice Onboarding is the supported path for bulk patient/chart migration (including from other EMRs). Imported patients are flagged so their first visit shows a migration-context banner in the Visit Wizard.
-</Note></p>
+<p>A patient imported as a transfer from another EHR shows an "Established Patient — Transferring from …" banner on their first visit in Medipyxis. See <a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a> for the full walkthrough.</p>
 <h2 id="zushealth-patient-data">ZusHealth patient data</h2>
-<p>Medipyxis integrates with ZusHealth to bring longitudinal patient records (medications, allergies, labs, prior surgeries, vaccinations, conditions) into the patient chart, and to contribute finalized visits back to the patient's external record (TEFCA).</p>
+<p>Medipyxis connects to ZusHealth to bring outside patient records (allergies, medications, lab results, surgeries, vaccinations and conditions) into the patient chart, and to send finished visits back.</p>
 <ul>
-<li><strong>Pulling data in:</strong> ZusHealth data is retrieved from the <strong>patient chart / pre-charting</strong> using the <strong>Pull</strong> button — not from an admin settings page. Imported items show a <strong>last-sync pill</strong> and per-row <strong>provenance badges</strong> indicating their source and date, and appear read-only in the chart.</li>
-<li><strong>Contributing data out:</strong> when a visit is finalized, Medipyxis automatically contributes it back to the patient's external health record via ZusHealth/TEFCA — no extra step for the clinician.</li>
+<li><strong>Pulling data in:</strong> open the patient's chart, or Pre-Charting for a visit, and click <strong>Pull from Zus Health</strong>. It is not on an admin settings page. A last-sync pill shows how current the data is, and rows show a <strong>Zus</strong> or <strong>Manual</strong> source badge.</li>
+<li><strong>Sending visits out:</strong> when a visit is finalized with <strong>Sign &amp; Lock</strong>, Medipyxis sends it to ZusHealth automatically — no extra step for the clinician. This happens only for patients linked to ZusHealth, at facilities connected to ZusHealth.</li>
 </ul>
-<p><Note>
-ZusHealth sync is subject to the data-sharing agreement between your organization and ZusHealth. Medipyxis does not modify or delete records sourced from ZusHealth.
-</Note></p>
-<h2 id="export-referrals">Export referrals</h2>
-<ol>
-<li>Navigate to <strong>Referral Intake</strong>.</li>
-<li>Click the <strong>Export</strong> button.</li>
-<li>Select date range, status filter, and format.</li>
-<li>Download the file. PHI columns are included only if your role has patient-level access.</li>
-</ol>
-<h2 id="export-claims-and-payments">Export claims and payments</h2>
-<ol>
-<li>Navigate to <strong>Billing</strong>.</li>
-<li>Apply any filters (date range, payer, status) in the Claims or Work Queue view.</li>
-<li>Use the <strong>Export CSV</strong> action to download the filtered set.</li>
-<li>For remittance detail, export from the <strong>Payments (ERA)</strong> tab.</li>
-</ol>
+<p>Review imported records before relying on them clinically. See <a href="/modules/patient-management/zus-tefca/">Sync patient history with ZusHealth (TEFCA)</a>.</p>
+<h2 id="export-claims-and-payments">Export billing data</h2>
+<ul>
+<li><strong>Work Queue:</strong> in <strong>Billing Operations → Work Queue</strong>, apply your filters and click <strong>Export CSV</strong> to download the filtered rows.</li>
+<li><strong>Claims:</strong> on the <strong>Claims</strong> tab, select claims and click <strong>Export PDF</strong> or <strong>Export JSON</strong>. Exporting marks those claims <strong>Exported</strong>; it does not send them to the payer.</li>
+<li><strong>Denials:</strong> on the <strong>Denials</strong> tab, <strong>Export CSV</strong> downloads the filtered denials.</li>
+<li><strong>ERAs:</strong> on the <strong>Payments</strong> tab, use the download button on an ERA row (<strong>Download ERA as PDF</strong>).</li>
+</ul>
+<p>Referral Intake has no export.</p>
 <h2 id="result">Result</h2>
-<p>Your staff and patients are imported, ZusHealth data flows into the chart with visits contributed back automatically, and your billing and referral teams can self-serve CSV exports.</p>
+<p>Your patients are imported, ZusHealth data reaches the chart with finished visits sent back automatically, and your billing team can download what it needs.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/">Administrator Guide</a></li><li><a href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a></li><li><a href="/admin/user-management/">Invite users and manage facility access</a></li><li><a href="/admin/facility-setup/">Set up a facility in your first week</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -174,7 +106,7 @@ ZusHealth sync is subject to the data-sharing agreement between your organizatio
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#bulk-employee-upload">Bulk Employee Upload</a></li><li><a class="" href="#practice-onboarding-patient-chart-import">Practice Onboarding (patient &amp; chart import)</a></li><li><a class="" href="#zushealth-patient-data">ZusHealth patient data</a></li><li><a class="" href="#export-referrals">Export referrals</a></li><li><a class="" href="#export-claims-and-payments">Export claims and payments</a></li><li><a class="" href="#result">Result</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#bulk-employee-upload">Staff: Bulk Employee Upload is turned off</a></li><li><a class="" href="#practice-onboarding-patient-chart-import">Practice Onboarding (patient and chart import)</a></li><li><a class="" href="#zushealth-patient-data">ZusHealth patient data</a></li><li><a class="" href="#export-claims-and-payments">Export billing data</a></li><li><a class="" href="#result">Result</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/data-import-export.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/data-import-export.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

@@ -1,0 +1,752 @@
+{
+  "title": "Deactivate a facility, archive a patient, and disable a user",
+  "source": "admin/deactivating-and-archiving",
+  "url": "https://help.medipyxis.com/admin/deactivating-and-archiving/",
+  "claims": [
+    {
+      "id": "da-01",
+      "claim": "Medipyxis lets you hide a patient, a location or an employee from day-to-day work without deleting anything, and each can be undone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ deleted_at: now, updated_at: now, patient_status: \"ARCHIVED\" })",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ deleted_at: null, updated_at: now, patient_status: \"ACTIVE\" })",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ active: !currentStatus })",
+          "paths": [
+            "frontend/src/services/facilityService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (newStatus === \"active\") {",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-02",
+      "claim": "Archiving a patient needs All Patients; deactivating a facility needs Facilities; disabling a user needs HR & Compliance. Administrators have all three.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"All Patients\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Facilities\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"HR & Compliance\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// (2026-05-17): \"admin should be like superadmin of their own account, until",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-03",
+      "claim": "Archiving keeps the whole record and can be undone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"This will hide the patient from active views. No data is deleted, and the patient can be restored later.\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Unarchive patient\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-04",
+      "claim": "Archive patients rather than deleting them. Before you deactivate a facility or disable a user, move their open work to someone else.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "da-05",
+      "claim": "Click All Patients in the sidebar, find the patient, click the archive button on the row (Archive patient), read the confirmation and click Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"All Patients\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive patient\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => requestArchive(patient)}",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Archive$",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-06",
+      "claim": "Effect: the patient's status becomes Archived and they drop out of the active patient lists; visits, claims and documents are kept.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ deleted_at: now, updated_at: now, patient_status: \"ARCHIVED\" })",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setPatients((prev) => prev.filter((p) => p.id !== patient.id));",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-07",
+      "claim": "You need an internet connection to archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Archiving requires an internet connection.\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-08",
+      "claim": "To restore: in All Patients choose Archived in the status filter, click Unarchive patient on their row and confirm; the patient returns as Active.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isOnline && <option value=\"archived\">Archived</option>}",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Unarchive patient\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ deleted_at: null, updated_at: now, patient_status: \"ACTIVE\" })",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-09",
+      "claim": "There is no merge tool for duplicate patients; contact Medipyxis support before you archive either copy.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Merge Patients",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mergePatient",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "da-10",
+      "claim": "Facilities → Active Facilities tab → Deactivate button on the row; it takes effect straight away with no confirmation step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Active Facilities</span>",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleToggleStatus(facility)}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "confirm(",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "da-11",
+      "claim": "A \"Facility deactivated successfully\" message confirms it, and the facility moves to the Deactivated Facilities tab. No data is deleted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Facility deactivated successfully\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Deactivated Facilities</span>",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ active: !currentStatus })",
+          "paths": [
+            "frontend/src/services/facilityService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-12",
+      "claim": "Image: on the Deactivated Facilities tab a deactivated facility shows Inactive in the STATUS column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-13",
+      "claim": "Reactivating: open the Deactivated Facilities tab and click Reactivate on the facility's row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Facility activated successfully\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-14",
+      "claim": "Go to HR & Compliance → Facility Users, find the user by name or email, click the edit button, set Status to Inactive and click Save Changes. The Archive User button does the same after you confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by name, email, or job title...\"",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Inactive\", label: \"Inactive\" }",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "confirm(\"Are you sure you want to archive this user?\")",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateFormData(\"status\", \"Inactive\");",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-15",
+      "claim": "Effect: the user is signed out everywhere, cannot sign in again, and their facility roles are switched off. Their notes, signatures and history are kept.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ban_duration: \"876000h\",",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await admin.auth.admin.signOut(userId, \"global\")",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ active: false, held_for_reactivation: true, updated_at: now() })",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-16",
+      "claim": "Re-enabling: set Status back to Active and click Save Changes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ban_duration: \"none\",",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Active\", label: \"Active\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "da-17",
+      "claim": "Check their Facility Assignment before you save when re-enabling.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "da-r01",
+      "claim": "You need to be an admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(isAdmin|userRole === \"admin\")[^;]*requestArchive",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present",
+          "note": "would hold if the archive button were gated to admins"
+        }
+      ],
+      "status": "removed",
+      "reason": "Each action is gated by a feature (All Patients, Facilities, HR & Compliance), not the admin role. Replaced by da-02."
+    },
+    {
+      "id": "da-r02",
+      "claim": "Archiving a patient is irreversible from the UI; only Medipyxis support can unarchive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Unarchive patient\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "All Patients has an Unarchive button. Replaced by da-08."
+    },
+    {
+      "id": "da-r03",
+      "claim": "Patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "six-year",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "HIPAA's six-year rule covers compliance documentation, not medical-record retention (that is set by state law). Kept only as advice (da-04)."
+    },
+    {
+      "id": "da-r04",
+      "claim": "Navigate to Patient Management, open the patient's record, click the Actions menu (three-dot icon), select Archive Patient, choose a reason (Deceased, No Longer a Patient, Duplicate Record, Other), click Confirm Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No Longer a Patient",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Confirm Archive",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Archive is a button on the All Patients row with a confirmation dialog; there is no reason dropdown and no Confirm Archive button. Replaced by da-05."
+    },
+    {
+      "id": "da-r05",
+      "claim": "Archived patients are accessible to admins via the Archived filter; open referrals and pending claims are flagged and the system will not archive a patient with an unresolved claim in Pending or Needs Info status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Needs Info|needs_info",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No claim check runs before archiving."
+    },
+    {
+      "id": "da-r06",
+      "claim": "Use the Merge Patients workflow instead (Patient Management → Actions → Merge).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Merge Patients",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no merge workflow. Replaced by da-09."
+    },
+    {
+      "id": "da-r07",
+      "claim": "Deactivating a facility removes it from active scheduling, referral routing, and billing workflows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"active\", true)",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Deactivation only sets the facility inactive; inbound fax routing still matches inactive facilities by number. Not confirmed; replaced by da-11."
+    },
+    {
+      "id": "da-r08",
+      "claim": "Before deactivating: reassign open referrals (Referral Intake → filter by facility → bulk reassign), resolve open claims (Billing → Claims → filter by facility), notify users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bulk reassign",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no bulk reassign by facility in Referral Intake. Kept as advice (da-04)."
+    },
+    {
+      "id": "da-r09",
+      "claim": "Locate the facility and confirm it shows Active; click Actions → Deactivate; read the confirmation modal listing open referrals and pending claims; click Confirm Deactivate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Confirm Deactivate",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Deactivate is a one-click row button with no modal and no counts. Replaced by da-10."
+    },
+    {
+      "id": "da-r10",
+      "claim": "After deactivation, the STATUS badge changes from Active (green) to Inactive (gray). The facility remains visible in the list for historical reference.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Deactivated Facilities</span>",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "It moves off the Active Facilities tab to Deactivated Facilities. Replaced by da-11/da-12."
+    },
+    {
+      "id": "da-r11",
+      "claim": "Reactivating: click Actions → Activate at any time. Users previously assigned to it regain access.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Actions → Activate",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is Reactivate on the Deactivated Facilities tab; user access was not checked. Replaced by da-13."
+    },
+    {
+      "id": "da-r12",
+      "claim": "Before disabling: reassign referrals (Referral Intake → filter Assigned To → bulk reassign), Work Queue (filter Assignee → reassign), remove the user from future Fleet Calendar routes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Assignee",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Assignee filter/reassign in the Work Queue or bulk reassign in Referral Intake. Kept as advice (da-04)."
+    },
+    {
+      "id": "da-r13",
+      "claim": "Click Edit → toggle Account Status to Inactive → click Save. The user's active session is terminated within 60 seconds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Account Status",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The field is Status (a dropdown), the button is Save Changes, and sign-out is immediate (global sign-out), not within 60 seconds. Replaced by da-14/da-15."
+    },
+    {
+      "id": "da-r14",
+      "claim": "Their name remains in the Assigned Clinician dropdowns, shown as (Inactive), so historical records stay accurate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(Inactive)",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No '(Inactive)' label is added to clinician dropdowns."
+    },
+    {
+      "id": "da-r15",
+      "claim": "Deleted accounts remove the link between the user's identity and their historical actions, which breaks audit trail continuity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Delete User",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Not checkable as stated; there is no delete button for users on these screens."
+    }
+  ]
+}

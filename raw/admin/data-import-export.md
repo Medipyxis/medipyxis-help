@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, superadmin]
 type: how-to
 estimated_minutes: 10
-last_reviewed: 2026-06-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/hr
 related:
   - admin-index
@@ -21,75 +21,45 @@ prerequisites:
 
 # Import and export data
 
-Bring staff and patient records in via bulk upload and the Practice Onboarding pipeline, review ZusHealth patient data in the chart, and export referral and claim records.
+Bring patient records in with the Practice Onboarding importer, see ZusHealth records in the patient chart, and export billing data.
 
 ## Before you start
 
-- You need the `admin` or `superadmin` role.
-- For a full practice migration (patients, insurance, medications, wounds, visit history), use the **Practice Onboarding** pipeline described below.
+- Practice Onboarding is on the **Administrator** cockpit. Its card is shown to admins.
+- For a full practice migration (patients, insurance, medications, wounds, visit history), use **Practice Onboarding**, described below.
 
-## Bulk Employee Upload
+## Staff: Bulk Employee Upload is turned off
 
-Use this workflow when onboarding many employees at once, or when migrating users from another system.
+The **Bulk Employee Upload** tile on the HR & Compliance hub opens a message that bulk upload is temporarily disabled. Add staff one at a time with **New Employee Onboarding** — see [Invite users and manage facility access](/admin/user-management/).
 
-1. Navigate to **HR & Compliance → Bulk Employee Upload**.
-2. Click **Download CSV Template** to get the current schema.
-3. Populate the template. Recognized columns include:
+## Practice Onboarding (patient and chart import)
 
-| Column | Required | Notes |
-|---|---|---|
-| `first name` | Yes | |
-| `last name` | Yes | |
-| `email` | Yes | Must be unique per organization |
-| `role` | Yes | Must match a role in Organization Role Config |
-| `phone` | No | 10-digit, no formatting |
-| `facility assignment` | No | Facility ID; if blank, user is assigned to the uploading facility |
-| `provider_first_name`, `provider_last_name`, `provider_print_name`, `provider_initials` | No | Provider identity fields, used for clinical roles |
+To migrate a practice's patients and clinical history, use the **Practice Onboarding** importer.
 
-4. Upload the completed CSV. The system runs a validation pass and displays errors (duplicate email, unknown role, malformed value) in a preview.
-5. Fix any flagged rows, re-upload, and confirm.
+1. Click **Administrator** in the sidebar, then the **Practice Onboarding** card.
+2. Work through the nine steps in order: **Patients** first; then **Insurance**, **Medications**, **Allergies**, **Comorbidities**, **Emergency Contacts**, **Wounds**, and **Documents & Historical Wound Photos**; and finally **Visit History**.
+3. A step stays locked until the step it depends on is complete: most steps need **Patients**, and **Visit History** needs **Wounds**.
 
-<Note>
-Rows that pass validation are imported even if others fail. You can upload a corrected partial file for the failed rows after fixing them.
-</Note>
-
-## Practice Onboarding (patient & chart import)
-
-To migrate an entire practice's patients and clinical history, use the **Practice Onboarding** admin hub.
-
-1. Navigate to **`/administrator` → Practice Onboarding**.
-2. Work through the guided, step-dependent import pipeline: **Patients** first, then **Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Documents, and Wounds**, and finally **Visit History**.
-3. Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully. See [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/) for the complete column-by-column schema and patient consent attestation rules.
-
-<Note>
-Practice Onboarding is the supported path for bulk patient/chart migration (including from other EMRs). Imported patients are flagged so their first visit shows a migration-context banner in the Visit Wizard.
-</Note>
+A patient imported as a transfer from another EHR shows an "Established Patient — Transferring from …" banner on their first visit in Medipyxis. See [Onboard a practice with the Practice Onboarding importer](/admin/practice-onboarding/) for the full walkthrough.
 
 ## ZusHealth patient data
 
-Medipyxis integrates with ZusHealth to bring longitudinal patient records (medications, allergies, labs, prior surgeries, vaccinations, conditions) into the patient chart, and to contribute finalized visits back to the patient's external record (TEFCA).
+Medipyxis connects to ZusHealth to bring outside patient records (allergies, medications, lab results, surgeries, vaccinations and conditions) into the patient chart, and to send finished visits back.
 
-- **Pulling data in:** ZusHealth data is retrieved from the **patient chart / pre-charting** using the **Pull** button — not from an admin settings page. Imported items show a **last-sync pill** and per-row **provenance badges** indicating their source and date, and appear read-only in the chart.
-- **Contributing data out:** when a visit is finalized, Medipyxis automatically contributes it back to the patient's external health record via ZusHealth/TEFCA — no extra step for the clinician.
+- **Pulling data in:** open the patient's chart, or Pre-Charting for a visit, and click **Pull from Zus Health**. It is not on an admin settings page. A last-sync pill shows how current the data is, and rows show a **Zus** or **Manual** source badge.
+- **Sending visits out:** when a visit is finalized with **Sign & Lock**, Medipyxis sends it to ZusHealth automatically — no extra step for the clinician. This happens only for patients linked to ZusHealth, at facilities connected to ZusHealth.
 
-<Note>
-ZusHealth sync is subject to the data-sharing agreement between your organization and ZusHealth. Medipyxis does not modify or delete records sourced from ZusHealth.
-</Note>
+Review imported records before relying on them clinically. See [Sync patient history with ZusHealth (TEFCA)](/modules/patient-management/zus-tefca/).
 
-## Export referrals
+## Export billing data
 
-1. Navigate to **Referral Intake**.
-2. Click the **Export** button.
-3. Select date range, status filter, and format.
-4. Download the file. PHI columns are included only if your role has patient-level access.
+- **Work Queue:** in **Billing Operations → Work Queue**, apply your filters and click **Export CSV** to download the filtered rows.
+- **Claims:** on the **Claims** tab, select claims and click **Export PDF** or **Export JSON**. Exporting marks those claims **Exported**; it does not send them to the payer.
+- **Denials:** on the **Denials** tab, **Export CSV** downloads the filtered denials.
+- **ERAs:** on the **Payments** tab, use the download button on an ERA row (**Download ERA as PDF**).
 
-## Export claims and payments
-
-1. Navigate to **Billing**.
-2. Apply any filters (date range, payer, status) in the Claims or Work Queue view.
-3. Use the **Export CSV** action to download the filtered set.
-4. For remittance detail, export from the **Payments (ERA)** tab.
+Referral Intake has no export.
 
 ## Result
 
-Your staff and patients are imported, ZusHealth data flows into the chart with visits contributed back automatically, and your billing and referral teams can self-serve CSV exports.
+Your patients are imported, ZusHealth data reaches the chart with finished visits sent back automatically, and your billing team can download what it needs.

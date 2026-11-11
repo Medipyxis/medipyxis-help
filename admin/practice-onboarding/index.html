@@ -65,19 +65,17 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item active" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin &amp; billing</a></p>
       <h1>Onboard a practice with the Practice Onboarding importer</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-10-24</span></div>
-      <p>Bring an incoming practice's patients and chart data into Medipyxis with the <strong>Practice Onboarding</strong> importer — a guided, 9-step CSV pipeline in the Administrator area (<code>/administrator/practice-onboarding</code>). Each step is an <strong>upload → map → confirm → import</strong> flow, and steps unlock in dependency order.</p>
-      <p><Note>
-      <strong>Need the exact CSV columns and validation rules?</strong> See <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a> for the complete column-by-column breakdown of all 9 templates, including the <code>prior_ehr_*</code> duplicate-handling fields and the 8 <code>consent_*</code> patient consent attestation columns.
-      </Note></p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 8 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Bring an incoming practice's patients and chart data into Medipyxis with the <strong>Practice Onboarding</strong> importer — a guided, 9-step CSV import in the Administrator area (<code>/administrator/practice-onboarding</code>). Each step runs <strong>Upload → Map Columns → Confirm → Import → Results</strong>, and steps unlock in dependency order.</p>
+<p><strong>Need the exact CSV columns and validation rules?</strong> See <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a> for the column-by-column breakdown of all 9 templates, including the <code>prior_ehr_*</code> duplicate-handling columns and the 8 <code>consent_*</code> patient consent columns.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need the <code>admin</code> role and an active facility selected.</li>
-<li>Export the incoming practice's data as CSV files — one file per domain (patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds, and visit history). Each step provides a downloadable CSV template on its upload screen.</li>
-<li>Format all dates as <code>YYYY-MM-DD</code> (recommended) so regional spreadsheet settings never mix <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code> in the same file. Calendar rollover dates such as <code>2026-02-31</code> are rejected before write.</li>
+<li>You need the admin role (the <strong>Practice Onboarding</strong> card on the Administrator cockpit is shown to admins), with the facility you are importing into selected.</li>
+<li>Export the incoming practice's data as CSV files — one file per step. Each step's upload screen has a download button for its CSV template.</li>
+<li>Format all dates as <code>YYYY-MM-DD</code> (recommended) so regional spreadsheet settings never mix <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code> in the same file. Dates that do not exist, such as <code>2026-02-31</code>, are rejected.</li>
 </ul>
 <h2 id="the-9-import-steps">The 9 import steps</h2>
-<p>Steps unlock as their prerequisites complete. <strong>Patients</strong> is always first because every downstream step links records to the patients you imported via <code>patient_uid</code>.</p>
+<p>Steps unlock as their prerequisites complete. <strong>Patients</strong> is always first because every later step links its rows to the patients you imported with <code>patient_uid</code>.</p>
 <table>
 <thead>
 <tr>
@@ -146,34 +144,30 @@
 </table>
 <h2 id="import-a-step">Import a step</h2>
 <ol>
-<li>In the sidebar, go to <strong>Administrator → Practice Onboarding</strong> (<code>/administrator/practice-onboarding</code>).</li>
-<li>Review the <strong>Overall Progress</strong> bar and click <strong>Start</strong> (or <strong>Import More</strong>) on <strong>1. Patients</strong>.</li>
-<li><strong>Upload</strong> — Download <code>patient_import_template.csv</code> if needed, then drag-and-drop or select your CSV file.
+<li>Click <strong>Administrator</strong> in the sidebar, then the <strong>Practice Onboarding</strong> card. A bar shows how many of the 9 steps are completed.</li>
+<li>Click the <strong>Patients</strong> step card to open it. Locked steps show <strong>Locked</strong> and cannot be opened yet.</li>
+<li><strong>Upload</strong> — Click <strong>Download Patients Template</strong> if you need the template, then drag-and-drop or select your CSV file.
 <ul>
 <li>To carry over prior EHR chart numbers and prevent duplicate charts on re-import, fill in <code>prior_ehr_system</code> and <code>prior_ehr_mrn</code> (and use <code>duplicate_decision</code> with an existing <code>patient_uid</code> or <code>NEW</code> if two patients share the same name and date of birth).</li>
-<li>To attest that your practice already holds its <strong>own</strong> signed treatment and billing consent form for a patient, set <code>consent_on_file</code> to <code>yes</code> and optionally fill in <code>consent_signed_on</code>, <code>consent_signer_capacity</code> (<code>patient</code>, <code>poa</code>, or <code>surrogate</code>), <code>consent_signer_name</code>, <code>consent_witnessed</code>, <code>consent_location</code>, <code>consent_photo</code>, and <code>consent_npp_acknowledged</code>. If <code>consent_on_file</code> is blank or <code>no</code>, no consent is recorded and the other 7 <code>consent_*</code> columns are ignored. Never use a nursing facility's admission paperwork for <code>consent_on_file = yes</code>.</li>
+<li>To attest that your practice already holds its <strong>own</strong> signed treatment and billing consent form for a patient, set <code>consent_on_file</code> to <code>yes</code> and optionally fill in <code>consent_signed_on</code>, <code>consent_signer_capacity</code> (<code>patient</code>, <code>poa</code>, or <code>surrogate</code>), <code>consent_signer_name</code>, <code>consent_witnessed</code>, <code>consent_location</code>, <code>consent_photo</code>, and <code>consent_npp_acknowledged</code>. If <code>consent_on_file</code> is blank or <code>no</code>, no consent is recorded. Never use a nursing facility's admission paperwork for <code>consent_on_file = yes</code>.</li>
 </ul>
 </li>
-<li><strong>Map Columns</strong> — Match each column from your CSV to the corresponding Medipyxis field. Columns that match the template header names are mapped automatically.</li>
-<li><strong>Confirm</strong> — Inspect the parsed rows, check the blue date-interpretation preflight banner, and fix any validation errors inline (or skip invalid rows) before importing.</li>
-<li><strong>Results &amp; <code>patient_uid</code> download</strong> — Review the counts of <strong>Imported</strong>, <strong>Skipped (existing)</strong>, <strong>Warnings (<code>Needs Follow-Up</code>)</strong>, and <strong>Errors</strong>. Click <strong>Download Results CSV</strong> to save <code>patients_import_results.csv</code> containing each patient's generated <code>patient_uid</code>.
+<li><strong>Map Columns</strong> — Match each column in your CSV to a Medipyxis field. Columns are matched automatically first; adjust any that are wrong.</li>
+<li><strong>Confirm</strong> — Check the parsed rows and the blue banner that shows how each date column was read. Fix errors inline, or skip rows, before importing.</li>
+<li><strong>Results</strong> — Review the counts: <strong>Imported</strong>, <strong>Errors</strong>, <strong>Skipped (Reused)</strong> (rows that matched an existing record and reused it) and <strong>Warnings</strong>, with a <strong>Needs Follow-Up</strong> list. For Patients, click <strong>Download Results CSV</strong> to save <code>patients_import_results.csv</code> with each patient's <code>patient_uid</code>.
 <ul>
-<li>You can also re-download <code>patients_import_results.csv</code> (and Step 7's <code>wounds_import_results.csv</code>) anytime later directly from the completed <strong>Patients</strong> or <strong>Wounds</strong> step card on <code>/administrator/practice-onboarding</code> (<strong>Download results CSV</strong>), even after clicking <strong>Done</strong> or switching devices.</li>
+<li>You can download the results again later from the completed <strong>Patients</strong> or <strong>Wounds</strong> step card (<strong>Download results CSV</strong>), even after clicking <strong>Done</strong> or switching devices. Imports run before this download was added have no saved results.</li>
 </ul>
 </li>
-<li>Click <strong>Back to Overview</strong> (or <strong>Done</strong>) and repeat the flow for steps 2–9 as each step unlocks. Re-uploading a file is idempotent: existing records are counted as <strong>Skipped</strong> without creating duplicates.</li>
+<li>Click <strong>Done</strong> and repeat for steps 2–9 as each one unlocks. Uploading the same file again does not create duplicates: rows that match existing records are reused and counted as skipped.</li>
 </ol>
-<p><Note>
-Start with <strong>Patients</strong> and import it cleanly before the dependent steps — every other record type links to <code>patient_uid</code>. Import <strong>Step 7 — Wounds</strong> before <strong>Step 8 — Documents &amp; Historical Wound Photos</strong> and <strong>Step 9 — Visit History</strong> so wound photos, wound-linked documents, and historical visits can attach to <code>wound_uid</code> (or <code>wound_id</code>).
-</Note></p>
+<p>Start with <strong>Patients</strong> and import it cleanly before the other steps — every other record type links to <code>patient_uid</code>. Import <strong>Step 7 — Wounds</strong> before <strong>Step 8 — Documents &amp; Historical Wound Photos</strong> and <strong>Step 9 — Visit History</strong> so wound photos, wound-linked documents, and historical visits can attach to <code>wound_uid</code> (or <code>wound_id</code>).</p>
+<p>You can also import a whole vendor export (all tables at once) from the <strong>Import a vendor export (all tables at once)</strong> section at the top of the page.</p>
 <h2 id="result">Result</h2>
-<p>The practice's patients, coverage, clinical history, wounds, and prior visits are in Medipyxis, ready for scheduling and documentation. Prior EHR documents and historical wound photos imported in Step 8 are stored in private buckets (<code>patient-documents</code> and <code>wound-images</code>) and tagged as historical records (<code>prior_ehr_record = true</code>), and imported wounds (Step 7) and visits (Step 9) are read-only history (<code>wound_import_history</code> and <code>visit_import_history</code>): they can be seen on the patient's record for clinical context but cannot be edited, signed, or billed. Import batches are tracked per facility so you can review what was loaded.</p>
-<ul>
-<li><strong>Column-by-column specification:</strong> <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a></li>
-<li><strong>See it on screen:</strong> <a href="/whats-new/practice-data-import/">How do I move my practice's patient data into Medipyxis?</a> (a short silent video with a text description)</li>
-</ul>
+<p>The practice's patients, coverage, clinical history, wounds, documents and prior visits are in Medipyxis, ready for scheduling and documentation. Documents and historical wound photos are stored privately with the patient. Imported wounds and visits are kept as history, separate from visits documented in Medipyxis, and show on the patient's Wound Cockpit and timeline. Each import is recorded per facility, so each step card shows what was loaded.</p>
+<p><strong>Column-by-column specification:</strong> <a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a></p>
+<p><strong>See it on screen:</strong> <a href="/whats-new/practice-data-import/">How do I move my practice's patient data into Medipyxis?</a> (a short silent video with a text description)</p>
 <h2 id="related">Related</h2>
-<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a></li><li><a href="/whats-new/practice-data-import/">How do I move my practice's patient data into Medipyxis?</a></li><li><a href="/admin/data-import-export/">Import and export data</a></li><li><a href="/admin/facility-setup/">Set up a facility in your first week</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>

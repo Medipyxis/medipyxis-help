@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin]
 type: how-to
 estimated_minutes: 8
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facilities
 related:
   - admin-index
@@ -17,85 +17,56 @@ tags: [deactivate, archive, offboarding, HIPAA]
 
 # Deactivate a facility, archive a patient, and disable a user
 
-Medipyxis distinguishes between deactivation (temporarily stopping operations) and archiving (long-term record retention). This page covers all three offboarding workflows and the correct order of operations for each.
+When a patient leaves your care, a location closes, or an employee leaves, Medipyxis lets you hide them from day-to-day work without deleting anything. This page covers all three and how to undo each one.
 
 ## Before you start
 
-- You need to be an admin.
-- Archiving a patient is irreversible from the UI; only Medipyxis support can unarchive.
-- Never delete a patient record — archive instead.
-- Before deactivating a facility or disabling a user, reassign all open work first.
+- Archiving a patient needs access to **All Patients**; deactivating a facility needs **Facilities**; disabling a user needs **HR & Compliance**. Administrators have all three.
+- Archive patients rather than deleting them. Archiving keeps the whole record and can be undone.
+- Before you deactivate a facility or disable a user, move their open work (referrals, appointments, claims) to someone else.
 
-## Archive a patient (not delete)
+## Archive a patient
 
-Patient records must be archived — not deleted — to preserve the audit trail and comply with HIPAA's six-year record retention requirement.
+1. Click **All Patients** in the sidebar and find the patient.
+2. Click the archive button on the patient's row (**Archive patient**).
+3. Read the confirmation — "This will hide the patient from active views. No data is deleted, and the patient can be restored later." — and click **Archive**.
 
-1. Navigate to **Patient Management** and open the patient's record.
-2. Click the **Actions** menu (three-dot icon at top-right of the patient card).
-3. Select **Archive Patient**.
-4. Enter the reason for archiving (required field — choose from the dropdown: `Deceased`, `No Longer a Patient`, `Duplicate Record`, `Other`).
-5. Click **Confirm Archive**.
+**Effect of archiving:** the patient's status becomes Archived and they drop out of the active patient lists. Their visits, claims and documents are kept. You need an internet connection to archive.
 
-**Effect of archiving:**
-- The patient record moves to an **Archived** filter state; they no longer appear in active patient lists or search results.
-- All historical visits, claims, and documents are retained and accessible to admins via the Archived filter.
-- Open referrals and pending claims associated with the patient are flagged for manual resolution before archiving completes. The system will not archive a patient with an unresolved claim in `Pending` or `Needs Info` status.
+**To restore a patient:** in **All Patients**, choose **Archived** in the status filter, then click **Unarchive patient** on their row and confirm. The patient returns as Active.
 
-<Warning>
-Do not use **Archive** as a substitute for merging duplicate records. Use the **Merge Patients** workflow instead (Patient Management → Actions → Merge). Archiving a duplicate leaves two records; merging consolidates them.
-</Warning>
+There is no merge tool for duplicate patients. If you find a duplicate chart, contact Medipyxis support before you archive either copy.
 
 ## Deactivate a facility
 
-Deactivating a facility removes it from active scheduling, referral routing, and billing workflows. It does not delete any data.
+1. Click **Facilities** in the sidebar.
+2. On the **Active Facilities** tab, find the facility.
+3. Click the **Deactivate** button on its row. It takes effect straight away; there is no confirmation step.
 
-**Before deactivating:**
-1. Reassign all open referrals to an active facility (**Referral Intake** → filter by facility → bulk reassign).
-2. Resolve or transfer all open claims (**Billing → Claims** → filter by facility).
-3. Notify all users assigned to this facility that they will lose access to facility-scoped screens.
-
-**Deactivation steps:**
-1. Navigate to **Facilities** in the sidebar.
-2. Locate the facility row and confirm it shows **Active** in the STATUS column.
-3. Click **Actions → Deactivate**.
-4. Read the confirmation modal — it lists the count of open referrals and pending claims associated with the facility.
-5. If the counts are zero (or you have confirmed resolution), click **Confirm Deactivate**.
+A "Facility deactivated successfully" message confirms it, and the facility moves to the **Deactivated Facilities** tab. No data is deleted.
 
 ![Facilities list showing FACILITY, CONTACT, STATS, STATUS, and ACTIONS columns. Inactive facilities display a gray badge in the STATUS column.](../assets/facilities/list.png)
-*After deactivation, the facility's STATUS badge changes from Active (green) to Inactive (gray). The facility remains visible in the list for historical reference.*
+_The facilities list. A deactivated facility shows Inactive in the STATUS column on the Deactivated Facilities tab._
 
-**Reactivating:** Click **Actions → Activate** at any time to restore the facility to active status. Users previously assigned to it regain access.
+**Reactivating:** open the **Deactivated Facilities** tab and click **Reactivate** on the facility's row.
 
 ## Disable a user
 
-Disabling a user prevents them from logging in without deleting their account or their activity history.
+Disabling a user stops them signing in without deleting their account or their history.
 
-**Before disabling:**
-1. Reassign any open referrals or claims the user owns:
-   - **Referral Intake** → filter **Assigned To** by the departing user → bulk reassign.
-   - **Billing → Work Queue** → filter **Assignee** → reassign.
-2. Remove the user from any active Fleet Calendar routes scheduled in the future.
+1. Go to **HR & Compliance → Facility Users**.
+2. Find the user by name or email, and click the edit button on their row.
+3. Set **Status** to **Inactive** and click **Save Changes**. (The **Archive User** button at the bottom of the form does the same after you confirm.)
 
-**Disable steps:**
-1. Navigate to **HR & Compliance → Facility Users**.
-2. Find the user by name or email.
-3. Click **Edit** → toggle **Account Status** to **Inactive** → click **Save**.
-4. The user's active session is terminated within 60 seconds.
+**Effect:** the user is signed out everywhere, cannot sign in again, and their facility roles are switched off. Their notes, signatures and history are kept.
 
-**Effect:**
-- The user cannot log in.
-- Their historical audit log entries, visit notes, and claim signatures are preserved unchanged.
-- Their name remains in the Assigned Clinician dropdowns so that historical records remain accurate; they appear as `(Inactive)` to indicate they cannot accept new work.
-
-<Note>
-Disabling is preferable to deleting for departing employees. Deleted accounts remove the link between the user's identity and their historical actions, which breaks audit trail continuity.
-</Note>
+**Re-enabling:** open the same form, set **Status** back to **Active** and click **Save Changes**. Check their **Facility Assignment** before you save.
 
 ## Summary of offboarding actions
 
 | Scenario | Correct action | Where |
 |---|---|---|
-| Patient deceased or no longer active | Archive (not delete) | Patient Management → Actions |
-| Facility closing permanently | Deactivate | Facilities → Actions |
-| Employee leaving organization | Disable (set Inactive) | HR & Compliance → Facility Users |
-| Duplicate patient record | Merge, then archive the source | Patient Management → Actions → Merge |
+| Patient deceased or no longer active | Archive (not delete) | All Patients → archive button on the row |
+| Facility closing | Deactivate | Facilities → Deactivate button on the row |
+| Employee leaving the organization | Disable (set Inactive) | HR & Compliance → Facility Users → edit |
+| Duplicate patient record | Contact Medipyxis support | — |

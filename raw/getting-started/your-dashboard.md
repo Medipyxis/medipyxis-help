@@ -5,7 +5,7 @@ module: getting-started
 audience: [clinician, intake, admin, billing, bd]
 type: quickstart
 estimated_minutes: 3
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/dashboard
 related:
   - getting-started-welcome
@@ -15,7 +15,7 @@ tags: [onboarding, dashboard]
 
 # Tour of your dashboard
 
-Your dashboard is the launchpad for everything you do in Medipyxis. It's personalized by role — a clinician sees different widgets than a practice admin.
+Your dashboard is the first page you see after you sign in. The sidebar shows the modules your role can open; the dashboard cards are the same for everyone.
 
 <div class="video-embed">
   <iframe src="https://www.youtube-nocookie.com/embed/fgnhQH1QFi4"
@@ -23,70 +23,57 @@ Your dashboard is the launchpad for everything you do in Medipyxis. It's persona
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
 </div>
+
 <span class="video-caption">Platform overview and navigation tour — orient yourself to where things live in Medipyxis before diving in.</span>
 
 ## Anatomy of the dashboard
 
-![Medipyxis dashboard](../assets/dashboard/home.png)
-*The home dashboard with four KPI tiles, Work Cockpits, HR Self-Service, and the Action Items + Recent Activity column.*
-
 ### 1. Welcome banner
 
-Your name, role badge ("Licensed Healthcare Professional"), and duty status (**On Duty** / **Off Duty**) live here. The green **HIPAA** badge confirms your session is HIPAA-compliant.
+"Welcome Back" with your name, and the green **On Duty** and **HIPAA** badges.
 
-### 2. KPI tiles
+### 2. Summary tiles
 
-Four live tiles at a glance:
+Four tiles at a glance:
 
-| Tile | What it counts |
+| Tile | What it shows |
 |---|---|
-| **My Compliance Status** | Your completed / total required credentials |
-| **Unread Messages** | Unread Team Chat and patient-level messages |
-| **Upcoming Events** | Visits, meetings, trainings in the next 7 days |
-| **Team Kudos** | Recognition received this month |
-
-<Note>
-KPI tiles are read-only summaries. To open the underlying area (credentials, messages, calendar, kudos), use the matching item in the sidebar or one of the Work Cockpits below.
-</Note>
+| **Compliance Status** | Your credential compliance |
+| **Active Patients** | Active patients at your facility |
+| **Today's Schedule** | Today's appointments |
+| **Visits Completed** | Visits completed today |
 
 ### 3. Your Work Cockpits
 
-Role-specific shortcuts to your primary working surfaces. For clinicians: **Patient Management**, **Clinical Workflow**, **Mileage & Expenses**. For admins: replace these with **Oversight Cockpit** and **HR & Compliance**.
+Shortcuts to your main working areas: **Patient Management** and **Clinical Workflow**. A **Mileage & Expenses** card is also shown, but that page is marked "Coming Soon!" and is not a working tool yet. Do not use it to log travel.
 
 ### 4. HR Self-Service
 
-Two always-visible cards: **Time Off Requests** (PTO balance and submit button) and **My Credentials & Compliance** (% complete + "Users with Credentials" count).
+**Time Off Requests** is not switched on yet: the card shows "Coming Soon" and the page carries a "Coming Soon!" banner. Do not use it to request time off. **My Credentials & Compliance** is a working card that opens the Credential Tracker.
 
-### 5. Action Items & Recent Activity (right column)
+### 5. Announcements and Recent Activity (right column)
 
-- **Action Items** — tasks assigned to you: pending signatures, credential renewals, stuck visits, unsent faxes. A red "urgent" counter appears if anything needs immediate attention.
-- **Recent Activity** — the last 20 things you did in Medipyxis.
+- **Announcements** — opens announcements and kudos (**View Announcements & Kudos**).
+- **Recent Activity** — your recent actions in Medipyxis, with **View all activity**.
 
 ### 6. Electronic Prescribing Setup
 
-At the bottom of the dashboard, the **Electronic Prescribing Setup** card surfaces the status of your **DoseSpot ePrescribing** integration:
+The **Electronic Prescribing Setup** card shows the status of your **DoseSpot ePrescribing** account:
 
-- If the connection is healthy, a green pill confirms credentials and the EPCS (controlled substance) status.
-- If credentials are missing or expired, the card shows a yellow or red state with a **Configure** button that opens DoseSpot inside an in-app frame.
-- Click **Open DoseSpot** to launch the prescribing console for the patient context you're working on.
+- **ePrescribing** shows Active or Setup needed; **EPCS** (controlled substances) shows Active, Setup required, or Not configured. A **Not confirmed** badge means DoseSpot has not yet confirmed you as a prescriber.
+- If you are not set up, use **Set Up ePrescribing** (or **Complete EPCS Setup**) to start.
 
-For the end-to-end prescribing flow, see the eRx workflow guide.
+For prescribing itself, see [Prescribe with DoseSpot](/modules/visit-wizard-ehr/medication-dosespot/).
 
 ### 7. Knowledge Base & Resources
 
-The final section of the dashboard pulls together quick links to onboarding material, release notes, and admin references. Each tile opens the matching destination inside this help center (for example, **Welcome to Medipyxis**, **Release notes**, **Module reference**). New users should start here on day one.
+The last section links to **Policies**, **Training Materials** and **Industry News**.
 
 ## Tips
 
-<Tip>
-Press `⌘K` / `Ctrl+K` from anywhere to jump to a patient, visit, or page without using the sidebar.
-</Tip>
-
-<Tip>
-Customize which KPI tiles appear by role: **Administrator → Organization Role Config**.
-</Tip>
+Press `⌘K` / `Ctrl+K` from anywhere to jump to a page by name without using the sidebar.
 
 ## Related
 
-- [Oversight Cockpit overview](../modules/oversight-cockpit/overview.md)
-- [Action items deep dive](../modules/dashboard/overview.md)
+- [Oversight Cockpit overview](/modules/oversight-cockpit/overview/)
+- [The Dashboard at a glance](/modules/dashboard/overview/)

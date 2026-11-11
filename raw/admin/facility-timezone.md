@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, superadmin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-08-28
+last_reviewed: 2026-11-11
 app_route: /facilities
 related:
   - admin-facility-setup
@@ -17,53 +17,47 @@ prerequisites:
   - admin-facility-setup
 ---
 
-Every facility in Medipyxis has one canonical timezone. That timezone is what the scheduling grid, appointment reminders, chart timestamps, and provider handoff views resolve to. Set it once during facility setup and every downstream surface follows it.
+Every facility in Medipyxis has one timezone. New appointments are booked in it, and the scheduling screens show times in it. Set it when the facility is set up and check it before you book the first appointment.
 
 ## Before you start
 
-- You have the `admin` or `superadmin` role.
-- You know which timezone the facility operates in (the physical clinic location, not the head office).
-- If clinicians drive to patients across state lines, decide whether this is a **multi-timezone service area** — see below.
+- You can open **Facilities** in the sidebar.
+- You know which timezone the facility operates in (where the clinic sees patients, not the head office).
 
 ## Steps
 
-1. **Open Admin → Facilities** and click the facility you want to configure. If you are creating a new facility, click **+ Add Facility**.
-2. **Find the Timezone dropdown** on the facility form. Pick from the eight supported US timezones:
+1. **Open Facilities** in the sidebar, find the facility, and click its **Edit** button. (New locations are added by Medipyxis support; see [Set up an organization with multiple locations](/admin/multi-location-setup/).)
+2. **Find the Timezone dropdown** on the facility form. It is required. Pick one of the eight US timezones:
 
-   | Value | Label in dropdown |
-   |---|---|
-   | `America/New_York` | Eastern (ET) |
-   | `America/Chicago` | Central (CT) |
-   | `America/Denver` | Mountain (MT) |
-   | `America/Phoenix` | Arizona (no DST) |
-   | `America/Los_Angeles` | Pacific (PT) |
-   | `America/Anchorage` | Alaska (AKT) |
-   | `Pacific/Honolulu` | Hawaii (HST) |
-   | `America/Puerto_Rico` | Atlantic (AST) |
+| Value | Label in dropdown |
+|---|---|
+| `America/New_York` | Eastern (ET) |
+| `America/Chicago` | Central (CT) |
+| `America/Denver` | Mountain (MT) |
+| `America/Phoenix` | Arizona (no DST) |
+| `America/Los_Angeles` | Pacific (PT) |
+| `America/Anchorage` | Alaska (AKT) |
+| `Pacific/Honolulu` | Hawaii (HST) |
+| `America/Puerto_Rico` | Atlantic (AST) |
 
-3. **Multi-timezone service area** — Check this box only if the facility routinely books visits in more than one timezone (for example, a mobile team based in El Paso, TX that also visits patients in Las Cruces, NM). When enabled, individual appointments can carry their own timezone override; when disabled, every appointment is booked in the facility timezone. Leave it unchecked for single-location clinics.
-4. **Save.** The change takes effect immediately for new appointments. Existing appointments keep the timezone they were booked in.
+3. **Leave Multi-timezone service area unticked.** The box is saved with the facility, but booking does not use it yet: every appointment is booked in the facility timezone either way.
+4. **Click Save Changes.**
 
 ## How the timezone is used
 
-- **Fleet Calendar and Clinician Calendar** render every appointment slot in the facility timezone. The banner at the top of the booking modal shows which timezone is being used.
-- **Appointment reminders** — the send time is calculated against the facility timezone so a patient receives a 24-hour reminder at 9:00 a.m. their local morning, not at 6:00 a.m.
-- **Chart timestamps** on the patient chart and progress notes are stored in UTC but displayed in the facility timezone.
-- **Signature timestamps** on signed notes show both the UTC time and the local time in the facility timezone.
+- **Booking an appointment** — the time you enter is read in the facility timezone. The badge next to **Time** in the booking window shows which timezone that is.
+- **Calendars** — the clinician calendar and appointment lists show times in the facility timezone.
+- **Patient appointment reminders** — these go out only at facilities where Medipyxis has switched patient appointment alerts on. The reminder is due about 24 hours before the visit, and messages due between 9 p.m. and 8 a.m. in the facility timezone wait until the morning.
+- **Signature timestamps** on signed notes are not in the facility timezone. They print in the timezone of the device that makes the PDF, with the zone abbreviation. See [How the signature timestamp prints on a signed note](/modules/visit-wizard-ehr/signature-timestamp/).
 
 ## Default value
 
-If a facility is created without a timezone (for example through the bulk uploader), Medipyxis defaults to `America/New_York` (Eastern). Change this before booking your first appointment — moving a facility timezone after appointments exist does not retro-adjust already booked slots.
+A new facility form starts on Eastern and switches to the main timezone of the state you pick, until you choose a timezone yourself. If a facility has no timezone saved, booking falls back to Eastern (`America/New_York`).
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Appointment shows the wrong time to the patient | Facility timezone is Eastern by default but the clinic is Pacific | Update the facility record, then reschedule affected appointments |
-| Two clinicians see the same slot at different times | One is in a different timezone client-side | The calendar always renders in facility timezone — refresh the browser |
-| DST shifted appointments by an hour | Facility is on `America/Phoenix` or `Pacific/Honolulu` which do not observe DST | Confirm the facility's actual timezone; switch if wrong |
-| A visit in another state is booked in the wrong timezone | Multi-timezone service area is off | Enable **Multi-timezone service area**, then edit the appointment and set its per-appointment timezone |
-
-## Related settings
-
-Facility timezone is separate from user profile locale. Individual clinicians do not carry their own scheduling timezone — every clinician working at a facility sees that facility's timezone. This is deliberate: appointment coordinators, providers, and patients all need one shared reference.
+| Appointment times are off by a whole number of hours | The facility is on the wrong timezone (for example Eastern for a Pacific clinic) | Fix the facility's timezone, then check the affected appointments |
+| Times shifted by an hour at a daylight-saving change | The facility is on Arizona or Hawaii, which do not observe daylight saving time, or should be | Confirm the facility's actual timezone; switch if wrong |
+| A visit in another state is booked in the wrong timezone | Booking always uses the facility timezone; per-appointment timezones are not available | Enter the time as it reads in the facility timezone |

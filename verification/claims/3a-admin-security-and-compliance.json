@@ -1,0 +1,466 @@
+{
+  "title": "Security settings and HIPAA compliance",
+  "source": "admin/security-and-compliance",
+  "url": "https://help.medipyxis.com/admin/security-and-compliance/",
+  "claims": [
+    {
+      "id": "sc-01",
+      "claim": "Medipyxis signs you out after 30 minutes without any activity. A warning appears one minute before; clicking, typing, touching the screen or scrolling resets the timer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timeout = 30 * 60 * 1000,",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "warningTime = 60 * 1000,",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You will be signed out shortly due to inactivity.\",",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(\"Signed out due to inactivity.\");",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"mousedown\",",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"keydown\",",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"touchstart\",",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"scroll\",",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-02",
+      "claim": "This applies to every signed-in user and is not a per-user setting.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useAutoLogout({ enabled: !isAuthPage });",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-03",
+      "claim": "The HIPAA Security Rule lists automatic logoff as an implementation specification (45 CFR §164.312(a)(2)(iii)).",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "sc-04",
+      "claim": "If your organization needs a different timeout, raise it with your Medipyxis implementation contact.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "sc-05",
+      "claim": "People sign in with their email address and password. Two-factor sign-in and single sign-on (SSO) are not available for the Medipyxis app today.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "signInWithPassword",
+          "paths": [
+            "frontend/src/utils/authStore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "signInWithSSO",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mfa.enroll",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// TODO: Implement actual 2FA setup",
+          "paths": [
+            "frontend/src/pages/Settings.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-06",
+      "claim": "Medipyxis records user activity to an activity log; HR & Compliance → Activity Logs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Activity Logs\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<HRLogs />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-07",
+      "claim": "Filter by action (Login, Role Change, User Edit, File Upload…), by date range (Today, This Week, Last 7 Days, Last 30 Days, All Time), by user, or search.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"Login\">Login</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"RoleChange\">Role Change</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"UserEdit\">User Edit</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"FileUpload\">File Upload</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"today\">Today</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"thisWeek\">This Week</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"last7days\">Last 7 Days</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"last30days\">Last 30 Days</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Time</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"\">All Users</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search logs...\"",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-08",
+      "claim": "Use Export Logs to download the filtered entries.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Export Logs</span>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={exportJSON}",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-09",
+      "claim": "HIPAA requires audit controls that record activity in systems holding PHI (45 CFR §164.312(b)).",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "sc-10",
+      "claim": "Medipyxis acts as a Business Associate under HIPAA; a BAA is required before processing real patient data; it is executed during contracting; ask your account manager whether a new facility needs an addendum.",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "sc-11",
+      "claim": "When working with support, avoid exposing PHI: use placeholder names (Jane Doe, John Smith) and share record identifiers.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "sc-12",
+      "claim": "Which features each role can open is set per organization in Administrator → Organization Role Config.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Configure which features each role can access per organization.",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sc-13",
+      "claim": "Give each person the least-privileged role that lets them do their job.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "sc-r01",
+      "claim": "Medipyxis is built to the HIPAA Security Rule.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "HIPAA Security Rule",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "A compliance statement, not checkable in product code. Dropped from the intro."
+    },
+    {
+      "id": "sc-r02",
+      "claim": "After a period of inactivity (approximately 30 minutes for clinical roles), the session ends.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "useAutoLogout\\(\\{ enabled: .*(role|isClinical)",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The 30-minute timeout applies to every signed-in user, not only clinical roles. Replaced by sc-01/sc-02."
+    },
+    {
+      "id": "sc-r03",
+      "claim": "Medipyxis's platform-enforced idle logoff satisfies the automatic logoff requirement; ask your implementation contact for a specific timeout value or additional session controls.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "satisfies",
+          "paths": [
+            "frontend/src/hooks/useAutoLogout.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Whether the product satisfies a regulation is not a product fact. Replaced by sc-03/sc-04."
+    },
+    {
+      "id": "sc-r04",
+      "claim": "If your organization requires MFA or SSO, coordinate the setup with your Medipyxis implementation contact — these are configured at the account level rather than through a self-service toggle.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "signInWithSSO",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mfa.enroll",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no MFA or SSO for signing in to Medipyxis; the 2FA setting is disabled and unimplemented. Replaced by sc-05."
+    },
+    {
+      "id": "sc-r05",
+      "claim": "Filter the log by user, date range, and activity type. Each entry records who did what, when, and against which record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "record_id",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The target record is not a column of the log. Replaced by sc-07."
+    },
+    {
+      "id": "sc-r06",
+      "claim": "Medipyxis's Activity Logs support this requirement. Log data is covered as PHI under your BAA and is retained per HIPAA record-retention requirements.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "retention",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Retention of the activity log was not checkable. Replaced by sc-09."
+    }
+  ]
+}

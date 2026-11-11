@@ -1,0 +1,1087 @@
+{
+  "title": "Invite users and manage facility access",
+  "source": "admin/user-management",
+  "url": "https://help.medipyxis.com/admin/user-management/",
+  "claims": [
+    {
+      "id": "um-01",
+      "claim": "Add new staff, give each person a role and the facilities they work at, and change their access later.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/hr-new-user-page\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-02",
+      "claim": "You need access to HR & Compliance. Administrators always have it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<HRNewUserPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"HR & Compliance\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// (2026-05-17): \"admin should be like superadmin of their own account, until",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-03",
+      "claim": "You do not create roles. Every person gets one of the ten roles in the Role list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"admin\", label: \"Administrator\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Select role\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-04",
+      "claim": "In the sidebar, click HR & Compliance. Click the New Employee Onboarding tile. (Use Facility Users to change people who already have a login.)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"HR & Compliance\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/hr-new-user-page\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-05",
+      "claim": "First Name, Last Name: required; letters and spaces only.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.first_name = \"First name: letters and spaces only\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.last_name = \"Last name is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-06",
+      "claim": "Email: required. A login can exist only once per email address.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.email = \"Email address is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `A user with email ${email} already exists.`,",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-07",
+      "claim": "Phone Number: required.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.phone = \"Phone Number is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-08",
+      "claim": "Role: required; one of Administrator, Clinical Manager, Medical Director, Clinician, Referral Coordinator, Business Development Representative, Business Development Manager, Finance/Accounts Payable, Vendor Coordinator, or Biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.role = \"Role is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"admin\", label: \"Administrator\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"clinical_manager\", label: \"Clinical Manager\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"medical_director\", label: \"Medical Director\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"clinician\", label: \"Clinician\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Referral Coordinator\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development Representative\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development Manager\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"finance_ap\", label: \"Finance/Accounts Payable\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Vendor Coordinator\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-09",
+      "claim": "Facility Assignment: required. Pick one or more facilities; only facilities you have access to are listed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.facilityIds = \"At least one facility assignment is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select one or more facilities you have access to",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-10",
+      "claim": "Status: Active or Inactive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Active\", label: \"Active\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Inactive\", label: \"Inactive\" }",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-11",
+      "claim": "Training Status: Not Started, In Progress, or Completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Training Status",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Not Started\", label: \"Not Started\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"In Progress\", label: \"In Progress\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Completed\", label: \"Completed\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-12",
+      "claim": "Provider details (Profession Title, Print Name, Initials, NPI Number, address, licence, DEA and signature) are hidden for business development, biller, referral coordinator, finance and vendor coordinator roles. They are required for the Clinician role. The NPI is required when the profession title is MD, DO, NP, PA or DPM.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "!!r && !(NON_CLINICAL_EXCLUDED_ROLES as readonly string[]).includes(r.toLowerCase());",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"bd_rep\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"bd_manager\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"biller\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"referral_coordinator\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"finance_ap\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"vendor_coordinator\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PROVIDER_CREDENTIALS_REQUIRED_ROLES = [",
+          "paths": [
+            "frontend/src/utils/providerRoleUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const NPI_REQUIRED_CREDENTIALS = [\"MD\", \"DO\", \"NP\", \"PA\", \"DPM\"] as const;",
+          "paths": [
+            "frontend/src/utils/providerRoleUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.npi = \"NPI is required for this profession title\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEA Number",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Provider Signature",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-13",
+      "claim": "Click Create User. The person gets access to each facility you picked and a welcome email with a link to set their password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { sendWelcomeEmail } from \"@/services/welcomeEmailService\";",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await supabaseClient.functions.invoke(\"admin-create-user\", {",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-14",
+      "claim": "Image: HR & Compliance hub with Announcements, Credential Tracker, Activity Logs, New Employee Onboarding, Bulk Employee Upload, Facility Users, Pharmacy Management, Education Bundle Management, and Training Materials tiles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Announcements\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Activity Logs\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Bulk Employee Upload\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Pharmacy Management\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Education Bundle Management\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Training Materials\"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-15",
+      "claim": "Go to HR & Compliance → Facility Users. Find the person with the search box (name, email, or job title). Click the edit button on their row. The same form opens with their details.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by name, email, or job title...\"",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit user\"",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-16",
+      "claim": "Change the Role or the Facility Assignment, then click Save Changes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await supabaseClient.functions.invoke(\"admin-update-user\", {",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facilityIds?: string[];",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-17",
+      "claim": "Setting Status to Inactive signs the person out and stops them signing in.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (newStatus === \"inactive\") {",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ban_duration: \"876000h\",",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await admin.auth.admin.signOut(userId, \"global\")",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-18",
+      "claim": "The Bulk Employee Upload tile is still on the HR & Compliance hub, but it opens a message that bulk upload is temporarily disabled. Add people one at a time with New Employee Onboarding.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Bulk Employee Upload\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// AUR-4: Bulk upload disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-19",
+      "claim": "New people appear in Facility Users and can sign in once they set their password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Pending Setup\",",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "emailRedirectTo: `${window.location.origin}/create-password?email=",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-20",
+      "claim": "Welcome email not received: check spam; in Facility Users use Resend welcome email on their row, or fix the address with the edit button.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ResendWelcomeEmailButton",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Resend welcome email\"",
+          "paths": [
+            "frontend/src/components/hr/ResendWelcomeEmailButton.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-21",
+      "claim": "\"A user with email … already exists\" on create: the person already has a login. Open them in Facility Users and add the facility in Facility Assignment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `A user with email ${email} already exists.`,",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facilityIds?: string[];",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-22",
+      "claim": "Provider fields not showing: the role is a business development, biller, referral coordinator, finance or vendor coordinator role. Pick a clinical role; the provider fields then appear.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setIsProvider(showProviderFields(value));",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"vendor_coordinator\",",
+          "paths": [
+            "frontend/src/services/credentialedUserService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "um-r01",
+      "claim": "You need the admin or superadmin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(userRole|currentRole) (!==|===) \"(admin|superadmin)\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present",
+          "note": "would hold if the form were gated to the admin role"
+        }
+      ],
+      "status": "removed",
+      "reason": "Access is by the HR & Compliance feature, not by the admin role; superadmin is Medipyxis staff only. Rewritten as um-02."
+    },
+    {
+      "id": "um-r02",
+      "claim": "Roles must already be configured in Organization Role Config before you assign them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "ROLES.*getConfigForOrg|organizationRoleConfigService",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Role list is a fixed list of ten roles in the form; Organization Role Config only sets feature access. Replaced by um-03."
+    },
+    {
+      "id": "um-r03",
+      "claim": "Select the correct facility in the Organization Selector.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Organization Selector; facilities are picked in Facility Assignment on the form, and switching is Switch Facility in the profile menu."
+    },
+    {
+      "id": "um-r04",
+      "claim": "Email must be unique per organization.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "unique per organization|already exists in (this|the) organization",
+          "paths": [
+            "backend/supabase/functions/admin-create-user/index.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Uniqueness is per login across the product (admin-create-user rejects any existing email), not per organization. Replaced by um-06."
+    },
+    {
+      "id": "um-r05",
+      "claim": "Phone, Date of Birth, Home Address are optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.phone = \"Phone Number is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Phone Number is required on the form (and the address is required for provider roles). Replaced by um-07."
+    },
+    {
+      "id": "um-r06",
+      "claim": "Role: from the roles seeded in Organization Role Config.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "ROLES.*getConfigForOrg",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Role list is hard-coded in the form. Replaced by um-08."
+    },
+    {
+      "id": "um-r07",
+      "claim": "For clinical roles (clinician and provider profession titles such as NP, PA, MD, DO, RN), additional provider fields appear; these are hidden for non-clinical roles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "!!r && !(NON_CLINICAL_EXCLUDED_ROLES as readonly string[]).includes(r.toLowerCase());",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Provider fields are shown for every role except the listed non-clinical ones (so also for admin, clinical manager and medical director). Replaced by um-12."
+    },
+    {
+      "id": "um-r08",
+      "claim": "Save. The user is created across all assigned facilities and receives an invite email to set their password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Save\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is Create User, not Save. Replaced by um-13."
+    },
+    {
+      "id": "um-r09",
+      "claim": "Find the user, click Edit next to their row, change the Role dropdown and click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const startEditingUser = (user: FacilityUser) => {",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The row button opens the full user form, where the button is Save Changes; the inline Role edit on the Facility Users row is unreachable. Replaced by um-15/um-16."
+    },
+    {
+      "id": "um-r10",
+      "claim": "Changing a role takes effect on the user's next page load. If you demote a user from admin, they lose access to HR & Compliance and Administrator screens.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "currentRole === \"clinical_manager\" ||",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Not checkable as stated: clinical manager and BD manager keep Administrator and HR & Compliance access after a demotion from admin, so the second sentence is false."
+    },
+    {
+      "id": "um-r11",
+      "claim": "When onboarding a large cohort, use Bulk Employee Upload: download the CSV Template, populate it (first name, last name, email, role required; phone, facility assignment, provider fields optional), upload, review the validation preview, confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Bulk Employee Upload is disabled in the product; the tile opens a 'temporarily disabled' message. Replaced by um-18."
+    },
+    {
+      "id": "um-r13",
+      "claim": "Role dropdown is empty: no roles configured yet; complete Role Config first.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "ROLES.*getConfigForOrg",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The role list is fixed and never empty."
+    }
+  ]
+}
