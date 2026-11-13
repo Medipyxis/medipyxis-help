@@ -36,7 +36,7 @@ You can open a visit from:
 
 - **Fleet Calendar** — tap the appointment, then **Start Visit** (**Resume Visit** or **Continue Visit** when documentation has already started).
 - **Patient Management (My Clinical Day)** — open the scheduled visit.
-- **Patient chart > Appointment Management** — select the visit date, then click **Open visit**.
+- **Patient chart → Appointment Management** — select the visit date, then click **Open visit**.
 - **Wound Cockpit** — choose a visit from **Pick a visit or start a new one** in the upper-right corner, then click **Open**.
 
 When opened, the wizard is tied to the selected patient and appointment. See [How the Visit Wizard opens](/modules/visit-wizard-ehr/how-the-wizard-opens/).
