@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [vendor_coordinator, clinician, finance_ap, admin]
 type: reference
 estimated_minutes: 4
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/inventory-management
 related:
   - inventory-overview
@@ -21,77 +21,60 @@ tags: [inventory, UIN, main inventory, active inventory, Visit Wizard, scanning,
 
 # Main Inventory reference
 
-Reference the columns in the Main Inventory flat view and understand how UIN scanning in the Visit Wizard's Procedures & Supplies section links a physical unit to a patient encounter.
+The **Main Inventory** tile on the Inventory Management hub opens **Reorder Requests**, the fulfillment queue for restocking requests. On-hand stock lives on each category tile's **Active Inventory** tab. This page covers both, and how stock is used in the Visit Wizard.
 
-## What Main Inventory shows
+## What the Main Inventory tile opens
 
-**Main Inventory** is the authoritative, real-time list of every inventory unit across all product categories at your facility. A unit appears here as soon as it is received through a category tile (**Amniotic / Advance Treatment**, **Biologics / Matrix**, **Conservative Care Products**, **PRP**, or **Ultrasonic Mist**) and carries a status through its lifecycle — from received and available, through reserved and used, to transferred, returned, or damaged.
+The tile opens **Reorder Requests** — "Provider-initiated requests for restocking below-PAR or expiring items".
 
-![The Main Inventory screen showing a searchable list of all active inventory units with filters for category, status, and expiration date.](../../assets/inventory/main_inventory.png)
+- **Category tabs** — Amniotic, Biologics, and Conservative.
+- **New Request** — create a restocking request.
+- **Search and status filter** — All Status, Pending, Approved, Denied, Completed, or Cancelled.
+- **Approve Selected** and **Deny Selected** — act on several checked requests at once. Denying asks for a reason.
 
-*Main Inventory view. Use the search bar and column filters to narrow the list before selecting a unit.*
+Each pending request has these row actions:
 
-## Active Inventory flat view columns
+- **Acknowledge** — marks the request Approved.
+- **Reject** — asks for a reason and marks the request Denied.
+- **Order** — marks the request Approved and opens that category's page so you can order from the vendor.
+- **Fulfill** — marks the request Completed. It does not move any stock; transfer or assign the items yourself on the category's Active Inventory tab.
 
-![The active inventory flat view table showing columns UIN, LOT #, TISSUE ID, EXP DATE, SIZE, HCPCS, SKU, and STATUS with rows for multiple graft units.](../../assets/inventory/active_inventory_flat.png)
+## The Active Inventory tab
 
-*Active Inventory flat view. Each row represents one physical unit identified by its UIN.*
+To see what is on hand, open a category tile (for example **Biologics / Matrix**) and choose the **Active Inventory** tab. Stock is listed by lot, not by individual unit.
 
-| Column | Description |
-|---|---|
-| **UIN** | Unique Inventory Number — the system-generated identifier assigned to this specific physical unit at receiving. No two units share a UIN. This is the value scanned or entered in the Visit Wizard. |
-| **LOT #** | The manufacturer's lot number for this unit, as entered during receiving. Includes the product's LOT SUFFIX. |
-| **TISSUE ID** | Donor tissue identifier assigned by the tissue bank. Populated for amniotic and advance-treatment products; blank for biologics and conservative care products that have no tissue-bank origin. |
-| **EXP DATE** | Expiration date printed on the manufacturer's packaging. Units near or past expiration are flagged and blocked from selection in the Visit Wizard. Expiration is a date, not a status — an expired unit keeps its status (e.g. `Available`) but is blocked from use. |
-| **SIZE** | Graft dimensions or package quantity (e.g., `2×3 cm`, `5g`), as entered during receiving. |
-| **HCPCS** | Healthcare Common Procedure Coding System code associated with this unit. Pulled from the Product Catalog at receiving time and passed to the billing engine when the unit is applied. |
-| **SKU** | Stock Keeping Unit — your organization's internal product code, inherited from the Product Catalog entry. |
-| **STATUS** | Current state of the unit. See status values below. |
+- **Summary cards** — Products, Total Units, Expiring ≤30d, and Low Stock. The Low Stock count currently always shows 0; a fix is being tracked.
+- **Available / Patient Allocated / Clinician Transferred** — on Amniotic and Biologics only, switch between facility stock, lots allocated to a patient, and lots transferred to a clinician.
+- **Search** — by lot number; on Amniotic and Biologics also by tissue ID, HCPCS code, or order ID.
+- **Grouped / Flat** — Grouped shows one row per product (Product Name, SKU, Qty On Hand, Earliest Exp); Flat shows one row per lot.
+- **Expiration filter** — All Expiration, or Expiring ≤30d down to ≤10d.
 
-### STATUS values
+Flat view columns: **Lot #**, **Tissue ID** (Amniotic and Biologics only), **Exp Date**, **Size** and **HCPCS** (Amniotic and Biologics only), **SKU**, **Status**, and **Actions**. In the Patient Allocated and Clinician Transferred views an extra column shows who the lot is allocated or transferred to.
 
-Each unit carries one of the following statuses through its lifecycle:
+Size is entered at receiving. HCPCS is filled in from the Product Catalog at receiving time. SKU comes from the Product Catalog entry.
 
-| Value | Meaning |
-|---|---|
-| `Ordered` | Ordered from the vendor, not yet shipped. |
-| `Shipped` | Shipped by the vendor, in transit / awaiting receipt. |
-| `Available` | On hand and cleared for use. Selectable in the Visit Wizard. |
-| `Unused` | Stocked and unused (treated the same as `Available` for the in-stock view). |
-| `Reserved` | Held for an IVR or a scheduled wound-case visit; not yet used. |
-| `Hold` / `Release` | Amniotic/biologics hold-and-release control for units pending clearance. |
-| `Used` | Applied to a patient. The UIN links to the encounter record. |
-| `Transferred` | Moved to a clinician or another location. |
-| `Returned` | Returned to the vendor. |
-| `Rejected` | Rejected at receiving or review. |
-| `Damaged` | Damaged and removed from usable stock. |
+### Row actions
 
-<Compliance>
-Graft units applied to a patient are recorded by UIN against the encounter, and discarded amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded). Document the reason whenever a unit is marked `Damaged` or `Rejected`.
-</Compliance>
+- **Transfer**, **Allocate**, **Adjust**, **Used**, and **Unused** appear on Available lots.
+- **Reallocate** moves a patient-allocated lot to a different patient, as long as none of it has been used.
+- **Assign to Provider** appears when you select lots with their checkboxes.
+- **Adjust** requires a reason: Inventory Count, Damaged, Expired, Lost, or Other. Choosing Damaged marks the lot Damaged.
 
-## How UIN scanning works in Procedures & Supplies
+### Status values
 
-The **Procedures & Supplies** section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.
+A lot shows one of these statuses: Ordered, Shipped, Available, Unused, Reserved, Hold, Receive, Used, Transferred, Returned, Rejected, or Damaged. Reserved means held for an IVR or a wound-case visit. Unused is stocked and unused, and counts as in stock alongside Available.
 
-1. In that section, the clinician sees a product search field and a **Scan UIN** button.
-2. The clinician either scans the UIN barcode on the product packaging using a device camera or connected barcode reader, or types the UIN manually into the search field.
-3. The system validates that the scanned UIN:
-   - Exists in Main Inventory for the clinician's facility.
-   - Has status `Available` or `Reserved`.
-   - Has not passed its **EXP DATE**.
-   - Has an IVR in `Approved` or `Agreed` status, if the product's category requires prior authorization.
-4. If validation passes, the unit is added to the encounter's supply record. Its status updates to `Used` when the visit is signed and locked.
-5. If validation fails, the system displays the specific reason (expired, wrong facility, no IVR) so the clinician can resolve it before proceeding.
+Expiration is a date, not a status — an expired lot keeps its status (for example Available).
 
-<Warning>
-Do not apply a product without scanning its UIN in the Visit Wizard. Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim, which can result in audit findings and claim denials.
-</Warning>
+## How stock is used in the Visit Wizard
 
-<Note>
-If a device camera is unavailable, the UIN is printed on the product label and can be entered manually. Manual entry follows the same validation rules as scanning.
-</Note>
+1. In the **Interventions & Treatments** step (Step 9), the clinician picks the product.
+2. The **Select Lot** list shows each lot with its quantity available and expiration, soonest-expiring first. Lots that expire within 30 days are flagged.
+3. The clinician sets the **Quantity** and clicks **Confirm Selection**. Expired lots cannot be used.
+4. When the clinician clicks **Continue to Review**, the selected quantities are deducted from stock. If that step fails, the clinician sees "Visit saved, but product use was not recorded"; saving again is safe.
 
-## Related
+Conservative Care products come from the facility's main stock and the stock assigned to the patient's provider. Grafts come from main stock, clinician stock, and lots already allocated to the patient.
 
-Auto-rendered from `related:` in frontmatter.
+For a skin-substitute application, the **Procedures & Supplies** step also asks for the tissue ID / lot number, expiration date, and **Box UID/UIN**, typed from the package. That step has a wastage field to record the discarded amount. Under CMS 2026 rules discarded skin substitute is not separately payable, so the amount is captured for inventory audit, not for billing.
+
+Record every graft you apply in the Visit Wizard, so the product use is tied to the visit.

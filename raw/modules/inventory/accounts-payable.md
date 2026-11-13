@@ -6,7 +6,7 @@ audience: [admin]
 roles: [finance_ap, admin]
 type: how-to
 estimated_minutes: 7
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/inventory/accounts-payable
 related:
   - inventory-overview
@@ -23,55 +23,44 @@ Take a vendor invoice from intake through matching, payment, and (if needed) dis
 
 ## Before you start
 
-- You must have the `finance_ap` or `admin` role to open **Accounts Payable**.
+- Anyone whose role has the **Inventory** feature can open Accounts Payable and see the invoices.
+- Matching lines, recording payments, and opening or resolving disputes need the **Finance AP** or admin role. Other users can look but cannot do these steps.
 - The products on the invoice should already exist in the **Product Catalog** and have been received into inventory.
 
 ## The Finance AP role
 
-The `finance_ap` role grants access to **Accounts Payable** and to cost data in inventory. Users with only `vendor_coordinator` or clinical roles see inventory units but not cost or AP information. Assign `finance_ap` in **Administrator → Organization Role Config** to staff responsible for invoice reconciliation.
+Give staff who reconcile invoices the **Finance AP** role on their user record. **Administrator → Organization Role Config** sets which features each role, including finance ap, can open; it does not assign roles to people.
 
 ## Accounts Payable tabs
 
-Open **Accounts Payable** from the Inventory Management hub (route `/facility/{facility_uuid}/inventory/accounts-payable`). The workspace is organized into tabs:
+Open **Accounts Payable** from the Inventory Management hub. The workspace is organized into tabs:
 
-| Tab | What it's for |
-|---|---|
-| **Inbox** | Incoming vendor invoices awaiting triage. Start here to review and route new invoices. |
-| **Matching** | Match invoice lines to received shipments. Unmatched lines are surfaced so you can reconcile quantities and prices. |
-| **Payments** | Record payments against matched, approved invoices — including **partial payments**. |
-| **Disputes** | Track discrepancies. Open a dispute when an invoice doesn't reconcile; resolve it when the vendor issues a correction or credit. |
-| **Activity** | The audit trail of AP actions across invoices. |
-| **Reports** | Per-vendor rollups — total invoiced, total paid, total disputed, and match rate. |
+- **Inbox** — **Received Invoices** waiting for triage. Use **Add Invoice** to enter an invoice by hand.
+- **Matching** — **Unmatched Lines**: every invoice line still unmatched, with its product, SKU, lot, box UID, quantity, unit cost, line total, patient, and provider. Mark each line **Match**, **Review**, or **Override**.
+- **Payments** — **Awaiting Payment**: matched, approved, and partially paid invoices. Record full or **partial payments** here.
+- **Disputes** — open disputes and their outcomes.
+- **Activity** — the audit trail of AP actions across invoices.
+- **Reports** — **Vendor Spend Summary (YTD)**: per vendor, total invoiced, total paid, total disputed, and match rate.
 
 ## Typical workflow
 
-1. **Triage in the Inbox.** Review each incoming invoice — vendor, invoice number, date, and amount — and open it to see its lines.
-2. **Match the lines.** On the **Matching** tab, reconcile the invoice's line items against received shipments. Lines whose quantity and price agree reconcile cleanly; the **Unmatched Lines** view lists anything that doesn't.
-3. **Approve for payment.** Once an invoice is matched and reviewed, approve it so it's eligible for payment.
-4. **Record payment.** On the **Payments** tab, record a full or **partial** payment after payment is actually issued through your accounting system. An invoice can sit in a partially-paid state until the balance is cleared.
-5. **Handle discrepancies.** If a line can't be reconciled, open a **dispute** and work it on the **Disputes** tab. Resolve it by re-matching against a corrected invoice or by recording the vendor's credit.
-6. **Review performance.** Use the **Reports** tab to see each vendor's invoiced/paid/disputed totals and match rate.
+1. **Triage in the Inbox.** Review each incoming invoice — vendor, invoice number, date, line count, and amount. Open it to see its details (invoice number, status, invoice and due dates, total), then click **Begin Matching**.
+2. **Match the lines.** On the **Matching** tab, mark each line Match, Review, or Override. Medipyxis does not compare quantities or prices for you; a line stays on Unmatched Lines until someone marks it. A line marked Review leaves the list the next time it loads. When every line is matched or overridden, the invoice becomes **matched**.
+3. **Record payment.** Matched invoices appear on the **Payments** tab. Click **Record Payment** and enter the payment date, amount, method (ACH, Check, Wire, Credit, or Other), and reference — after the payment has actually been issued through your accounting system. A payment smaller than the total leaves the invoice **partially paid** until the balance is cleared.
+4. **Handle discrepancies.** If the invoice is wrong, click **Open Dispute** on it and give a reason; the invoice becomes **disputed**. On the **Disputes** tab, resolve it with one of three outcomes: **credit issued** or **invoice voided** (the invoice is cancelled), or **invoice upheld** (the invoice returns to matched).
+5. **Review performance.** Use the **Reports** tab to see each vendor's invoiced, paid, and disputed totals and match rate.
 
 ## Invoice statuses you'll see
 
 Invoices move through states such as **matched**, **approved**, **partially paid**, **paid**, and **disputed**, which drive where they appear across the tabs and in the reports.
 
-<Warning>
-Only record a payment after it has actually been issued. Marking an invoice paid prematurely removes it from the outstanding-payables view and can lead to double payments during bank reconciliation.
-</Warning>
+Only record a payment after it has actually been issued. Marking an invoice paid removes it from the outstanding-payables view and can lead to double payments during bank reconciliation.
 
-<Note>
-Receiving a shipment (through a category tile) and paying its invoice are separate steps. Receiving creates the inventory units (UINs); Accounts Payable reconciles and pays the vendor invoice for those units.
-</Note>
+Receiving a shipment (through a category tile) and paying its invoice are separate steps. Receiving creates the inventory records (lots) in stock; Accounts Payable reconciles and pays the vendor invoice for them.
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| **Accounts Payable** is not accessible | Your role does not include `finance_ap` or `admin` | Ask an `admin` to update your role in **Administrator → Organization Role Config** |
-| An invoice has unmatched lines | Received quantity or price differs from the invoice | Reconcile on the **Matching** tab; if the vendor is wrong, open a **dispute** |
-| A vendor's match rate looks low | Recurring quantity/price mismatches | Review the vendor's recent invoices on **Reports** and follow up with the vendor |
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+- **Accounts Payable is not accessible** — your role does not have the Inventory feature. You see "Access Denied" with "Restricted: Inventory". Ask an admin to turn the feature on for your role in Administrator → Organization Role Config.
+- **Match, Record Payment, or Open Dispute fails** — your role is not Finance AP or admin.
+- **An invoice still has unmatched lines** — someone needs to mark each line Match or Override on the Matching tab; if the vendor is wrong, open a dispute.
+- **A vendor's match rate looks low on Reports** — review that vendor's invoices on the Inbox and Matching tabs and follow up with the vendor.

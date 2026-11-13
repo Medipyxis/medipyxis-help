@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <!-- seo:start -->
-<meta name="description" content="The Invoices page is where your accounts-receivable work lives: the auto-drafted invoices Medipyxis produced against your terms with each clinic, the…">
+<meta name="description" content="The Invoices &amp; AR page (/vendor/invoices) is where you send invoices to clinics and follow what is owed. You send the invoice; the clinic approves,…">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://help.medipyxis.com/vendor-portal/invoices-and-payment/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -17,7 +17,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Medipyxis Help">
 <meta property="og:title" content="Invoices and AR — Medipyxis Help">
-<meta property="og:description" content="The Invoices page is where your accounts-receivable work lives: the auto-drafted invoices Medipyxis produced against your terms with each clinic, the…">
+<meta property="og:description" content="The Invoices &amp; AR page (/vendor/invoices) is where you send invoices to clinics and follow what is owed. You send the invoice; the clinic approves,…">
 <meta property="og:url" content="https://help.medipyxis.com/vendor-portal/invoices-and-payment/">
 <meta property="og:image" content="https://medipyxis.com/images/og-default.png">
 <meta property="og:image:width" content="1200">
@@ -25,7 +25,7 @@
 <meta property="og:image:alt" content="Invoices and AR — Medipyxis Help">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Invoices and AR — Medipyxis Help">
-<meta name="twitter:description" content="The Invoices page is where your accounts-receivable work lives: the auto-drafted invoices Medipyxis produced against your terms with each clinic, the…">
+<meta name="twitter:description" content="The Invoices &amp; AR page (/vendor/invoices) is where you send invoices to clinics and follow what is owed. You send the invoice; the clinic approves,…">
 <meta name="twitter:image" content="https://medipyxis.com/images/og-default.png">
 <!-- seo:end -->
 </head>
@@ -65,204 +65,37 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/vendor-portal/shipments/">Create and track shipments</a><a class="sidebar-item active" href="/vendor-portal/invoices-and-payment/">Invoices and AR</a><a class="sidebar-item" href="/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a><a class="sidebar-item" href="/vendor-portal/manage-catalog/">Manage your catalog and push it to clinics</a><a class="sidebar-item" href="/vendor-portal/onboarding-your-company/">Onboard your company on the vendor portal</a><a class="sidebar-item" href="/vendor-portal/receiving/">Receive a vendor shipment</a><a class="sidebar-item" href="/vendor-portal/respond-to-requests/">Respond to clinic requests</a><a class="sidebar-item" href="/vendor-portal/terms-and-contracts/">Terms and contracts</a><a class="sidebar-item" href="/vendor-portal/faq/">Vendor Portal FAQ</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/vendor-portal/">Vendor portal</a></p>
       <h1>Invoices and AR</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 7 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-08-31</span></div>
-      <p>The <strong>Invoices</strong> page is where your accounts-receivable work lives: the auto-drafted invoices Medipyxis produced against your terms with each clinic, the invoices you sent, and the AR aging that says who owes what and how long it has been outstanding. In Medipyxis, the vendor <strong>sends</strong> the invoice; the clinic's AP team reviews, disputes, or approves and pays it on their side.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 7 min read</span> <span class="meta-pill">Vendor</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+      <p>The <strong>Invoices &amp; AR</strong> page (<code>/vendor/invoices</code>) is where you send invoices to clinics and follow what is owed. You send the invoice; the clinic approves, disputes, or holds it on its accounts payable page.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You are signed in to the vendor portal as <code>vendor_admin</code> or <code>vendor_user</code>. Terms are read-only for <code>vendor_user</code>; setting or changing the terms behind these invoices requires <code>vendor_admin</code>. See <a href="/vendor-portal/terms-and-contracts/">Terms and contracts</a>.</li>
-<li>You have at least one approved-tether clinic and product <strong>use events</strong> are landing there. Auto-drafting has nothing to bill until a use event lands.</li>
+<li>You are signed in to the vendor portal. Every vendor role can open <strong>Invoices</strong>.</li>
+<li>You can only invoice a clinic whose connection with your company is approved.</li>
 </ul>
-<h2 id="how-invoices-get-created">How invoices get created</h2>
-<p>There are two paths — same table, same downstream flow, different origin.</p>
-<h3 id="auto-drafted-invoices-the-default">Auto-drafted invoices (the default)</h3>
-<p>A nightly job (<code>invoice-draft-run</code>) walks every current <strong>vendor_clinic_terms</strong> row that has <strong>auto_invoice = true</strong> and groups uninvoiced product use events into one draft per vendor × clinic per cadence:</p>
-<table>
-<thead>
-<tr>
-<th>Cadence on your terms</th>
-<th>The draft job fires…</th>
-<th>Due date defaults to</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>per_use</code></td>
-<td>Every night</td>
-<td>Net 45</td>
-</tr>
-<tr>
-<td><code>weekly</code></td>
-<td>Mondays</td>
-<td>30 days</td>
-</tr>
-<tr>
-<td><code>monthly</code></td>
-<td>1st of the month</td>
-<td>45 days</td>
-</tr>
-<tr>
-<td><code>net_30</code></td>
-<td>Every night (accumulating)</td>
-<td>30 days</td>
-</tr>
-<tr>
-<td><code>custom_day</code></td>
-<td>Every night (grouped by your terms)</td>
-<td>30 days</td>
-</tr>
-</tbody>
-</table>
-<p>Two rules keep the draft honest:</p>
+<h2 id="the-invoices-page">The Invoices page</h2>
 <ul>
-<li><strong>Idempotent</strong> — only use events whose <code>invoice_line_id</code> is still null are candidates. Once a line has been drafted, the event is bound to that line and cannot land in another draft.</li>
-<li><strong>One draft per vendor × clinic per run</strong> — you never get two drafts against the same clinic at the same cadence in the same night.</li>
+<li>The header shows the total open across clinics.</li>
+<li>Four cards show amounts by age: <strong>Current</strong>, <strong>30 days</strong>, <strong>60 days</strong>, and <strong>90+ days</strong>.</li>
+<li>The table lists each invoice's number, clinic, issue date, due date, number of lines, amount, source (<code>auto</code> or <code>manual</code>), and status (<code>draft</code>, <code>sent</code>, <code>disputed</code>, or <code>paid</code>).</li>
+<li><strong>Denial visibility</strong> counts invoice lines whose underlying insurance claim was denied, and links to a disputed invoice when there is one.</li>
 </ul>
-<p>Each auto-drafted invoice shows the <code>auto</code> source badge on the list.</p>
-<h3 id="vendor-composed-invoices-the-escape-hatch">Vendor-composed invoices (the escape hatch)</h3>
-<p>For off-cadence bills — setup fees, non-consumption charges, corrections — use <strong>New invoice</strong> at the top of the page. The composer lets you attach line items manually and pick the target clinic (must be an approved tether). These carry the <code>manual</code> source badge.</p>
-<h2 id="the-invoices-page-at-a-glance">The Invoices page at a glance</h2>
-<p>Top of the page, four cards report <strong>AR Aging</strong> across all your open invoices:</p>
-<ul>
-<li><strong>Current</strong> — not yet due.</li>
-<li><strong>1–30 days past due</strong>.</li>
-<li><strong>31–60 days past due</strong>.</li>
-<li><strong>60+ days past due</strong>.</li>
-</ul>
-<p>Below that is the invoice table. Every row shows status, source (<code>auto</code> or <code>manual</code>), the clinic, invoice number, totals, and the last transition date.</p>
-<h3 id="statuses-on-the-vendor-side">Statuses on the vendor side</h3>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>What it means</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>draft</code></td>
-<td>Auto-drafted or in the composer — not yet sent. You can still add adjustments (line removals, credits) before you send.</td>
-</tr>
-<tr>
-<td><code>sent</code></td>
-<td>You clicked <strong>Send to clinic</strong>. The clinic AP team can now approve, dispute, or hold each line.</td>
-</tr>
-<tr>
-<td><code>disputed</code></td>
-<td>The clinic disputed one or more lines. A dispute record and a reason are attached.</td>
-</tr>
-<tr>
-<td><code>paid</code></td>
-<td>Fully approved and paid on the clinic side.</td>
-</tr>
-</tbody>
-</table>
-<p>Approve, dispute, and hold actions on the clinic side are reversible — nothing is a hard block.</p>
-<h2 id="send-an-invoice">Send an invoice</h2>
+<p>The small notes under the age cards, the <strong>Cadence runs</strong> panel, and the <strong>Run cadence now</strong> button do not show or do anything real yet.</p>
+<h2 id="send-an-invoice-you-write">Send an invoice you write</h2>
 <ol>
-<li>Open <strong>Invoices</strong> and pick a draft.</li>
-<li>Review the lines. Each line carries the use event(s) behind it, the product/lot detail, and, when available, <strong>claim context</strong> joined via <code>billing_links</code> — so you can see whether the claim that consumed the product was paid, denied, or is still pending on the clinic's billing side. See <a href="#claim-context-on-invoice-lines">claim context</a>.</li>
-<li>Apply any pre-send adjustments if needed:
-   - <strong>Remove</strong> a line you should not be billing (e.g. wasted-only lot with no consumption).
-   - <strong>Credit</strong> a line with a documented amount and reason.</li>
-<li>Click <strong>Send to clinic</strong>. The invoice transitions from <code>draft</code> → <code>sent</code>, and the clinic's AP workspace picks it up in their <strong>Received invoices</strong> queue.</li>
-<li>The clinic can then <strong>approve</strong>, <strong>dispute</strong> (with a reason), or <strong>hold</strong> each line. Your list refreshes with the outcome.</li>
+<li>Click <strong>New invoice</strong>.</li>
+<li>Pick the <strong>Clinic</strong> and the <strong>Ownership Basis</strong> (<strong>Standard</strong> or <strong>Consignment</strong>), and enter the <strong>Invoice #</strong> (required), <strong>Invoice Date</strong>, <strong>Due Date</strong>, and optionally a <strong>PDF URL</strong>.</li>
+<li>Add line items (SKU, description, lot, quantity, unit cost). Click <strong>+ Add line</strong> for more.</li>
+<li>Click <strong>Send Invoice</strong>. The invoice goes straight to the clinic.</li>
 </ol>
-<p><Warning>
-Once you send an invoice, you cannot un-send it — the transition is one-way. Corrections after send happen through the clinic's dispute flow or a credit invoice from your side. Review adjustments carefully before clicking Send.
-</Warning></p>
-<h2 id="claim-context-on-invoice-lines">Claim context on invoice lines</h2>
-<p>Every line on an auto-drafted invoice was born from a <strong>product use event</strong> with a <code>visit_id</code>. Where the clinic later filed a claim that carried that visit, <code>billing_links</code> joins the two, and the line shows a <strong>claim status</strong> badge:</p>
-<table>
-<thead>
-<tr>
-<th>Badge</th>
-<th>What it says</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>paid</code></td>
-<td>The clinic's claim for the visit that consumed your product was paid.</td>
-</tr>
-<tr>
-<td><code>denied</code></td>
-<td>The claim was denied — check the denial detail sidebar for expected amount and category.</td>
-</tr>
-<tr>
-<td><code>pending</code></td>
-<td>Claim submitted, not yet adjudicated.</td>
-</tr>
-<tr>
-<td><code>not filed</code></td>
-<td>The visit exists but no claim has been submitted yet.</td>
-</tr>
-</tbody>
-</table>
-<p>Reimbursement rollup at the top of the invoice detail summarizes total billed, total paid, and total denied on the visits behind the lines. Denial reasons are summarized (category, not the full remit) — the clinic can opt in per-tether to share the fuller detail, but the default is minimum-necessary.</p>
-<p>This is what makes the invoice worth reading before you send: a line whose underlying claim was denied is a candidate for a credit or a delay, not a straight bill.</p>
-<h2 id="handle-a-disputed-invoice">Handle a disputed invoice</h2>
-<p>When the clinic disputes:</p>
-<ol>
-<li>The invoice moves to <code>disputed</code> and a <code>vendor_invoice_disputes</code> row is created with the clinic's reason.</li>
-<li>The disputed lines are highlighted on the detail page.</li>
-<li>Work with your clinic contact — often through the <strong>Messages</strong> thread attached to the invoice — to resolve. You can then issue a <strong>credit line</strong>, or the clinic can reverse the dispute and approve.</li>
-</ol>
-<p>The clinic can also <strong>hold</strong> individual lines while they work them, without disputing the whole invoice. Held lines sit outside the aging buckets until they release.</p>
-<h2 id="ar-aging-and-follow-up">AR aging and follow-up</h2>
-<p>The four aging KPI cards are your working queue. A practical cadence:</p>
-<ul>
-<li><strong>Current</strong> — no action; watch cadence firing on your terms.</li>
-<li><strong>1–30 past due</strong> — start a Messages thread with the clinic AP contact on the invoice.</li>
-<li><strong>31–60 past due</strong> — escalate through your <code>vendor_sales</code> account owner (the health signal on that clinic in the CRM is already moving).</li>
-<li><strong>60+ past due</strong> — check whether the tether is still <code>approved</code>; if it has gone suspended, the invoice remains payable but new use events stop.</li>
-</ul>
-<h2 id="run-cadence-now">Run cadence now</h2>
-<p><code>Run cadence now</code> on the header manually triggers the draft job for your vendor. Use it when you know a use event has landed but you do not want to wait for the nightly window — for example, before month-end close.</p>
-<h2 id="what-vendors-do-not-do-here">What vendors do not do here</h2>
-<ul>
-<li><strong>Approve or pay invoices.</strong> That happens in the clinic's Accounts Payable workspace. You send; they reconcile.</li>
-<li><strong>See patient names or full claim remits.</strong> Lines carry initials + birth year, provider name, lot, product, and claim category — no chart data.</li>
-<li><strong>Cross a title-transfer line the terms did not authorize.</strong> Consignment lines only bill on use; purchase lines bill on ship. The <code>billing_model</code> on your terms is the gate — see <a href="/vendor-portal/terms-and-contracts/">Terms and contracts</a>.</li>
-</ul>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Likely cause</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>No drafts appearing the morning after use events landed</td>
-<td><code>auto_invoice</code> on the vendor_clinic_terms row is <code>false</code>, or cadence did not fire this run</td>
-<td>Open <strong>Terms</strong> for that clinic and set auto_invoice on; or click <strong>Run cadence now</strong>.</td>
-</tr>
-<tr>
-<td>A use event you expected is not on any draft</td>
-<td>The event is already bound to a prior line, or the tether was not approved when the event landed</td>
-<td>Search the clinic's use events for the visit; if it is bound, it will not re-draft — issue a credit if incorrect.</td>
-</tr>
-<tr>
-<td>Send button disabled</td>
-<td>Invoice is not in <code>draft</code> status</td>
-<td>Refresh — someone on your team already sent it.</td>
-</tr>
-<tr>
-<td>Disputed lines have no reason</td>
-<td>Clinic disputed without filling a reason — allowed at the API level</td>
-<td>Message the clinic AP contact through the invoice thread.</td>
-</tr>
-<tr>
-<td>Claim context missing on a line</td>
-<td>Clinic has not filed the claim yet, or <code>billing_links</code> was not written for that visit</td>
-<td>The badge will update once the claim is filed and linked; no action on your side.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="related">Related</h2>
-<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+<h2 id="automatic-draft-invoices">Automatic draft invoices</h2>
+<p>Medipyxis can draft invoices from the use events of your products, for clinics where your terms have <strong>Auto-invoice</strong> on. A draft groups use events not yet on another invoice, one draft per clinic per run. See <a href="/vendor-portal/terms-and-contracts/">Terms and contracts</a>.</p>
+<p>In the current release, automatic drafting is not producing drafts. Use <strong>New invoice</strong> instead.</p>
+<h2 id="the-invoice-page">The invoice page</h2>
+<p>Click an invoice to open it. A draft has a <strong>Send to clinic</strong> button.</p>
+<p>For a drafted invoice, each line shows the use event, the patient's initials and year of birth, the product and lot, the line price, and, when the clinic has billed the visit, the claim status (<code>pending</code>, <code>paid</code>, <code>denied</code>, or <code>not filed</code>) with expected and received amounts. Below the lines are the subtotal, tier adjustment, freight, credit memo, and total due.</p>
+<p>The side panels show a <strong>Reimbursement rollup</strong> (expected, received, at risk from denials, and lines reimbursed), <strong>Denial detail</strong> for denied lines (payer and denial code), and <strong>Activity</strong>.</p>
+<h2 id="what-the-clinic-does">What the clinic does</h2>
+<p>The clinic can approve, dispute, or hold the invoice and its individual lines. None of these is final; the clinic can change its response. A dispute is recorded with the clinic's reason.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/vendor-portal/">Vendor Portal Guide</a></li><li><a href="/vendor-portal/terms-and-contracts/">Terms and contracts</a></li><li><a href="/vendor-portal/respond-to-requests/">Respond to clinic requests</a></li><li><a href="/vendor-portal/manage-orders/">Manage orders (accept, ship, and track)</a></li><li><a href="/vendor-portal/shipments/">Create and track shipments</a></li><li><a href="/vendor-portal/faq/">Vendor Portal FAQ</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -270,7 +103,7 @@ Once you send an invoice, you cannot un-send it — the transition is one-way. C
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#how-invoices-get-created">How invoices get created</a></li><li><a class="indent-3" href="#auto-drafted-invoices-the-default">Auto-drafted invoices (the default)</a></li><li><a class="indent-3" href="#vendor-composed-invoices-the-escape-hatch">Vendor-composed invoices (the escape hatch)</a></li><li><a class="" href="#the-invoices-page-at-a-glance">The Invoices page at a glance</a></li><li><a class="indent-3" href="#statuses-on-the-vendor-side">Statuses on the vendor side</a></li><li><a class="" href="#send-an-invoice">Send an invoice</a></li><li><a class="" href="#claim-context-on-invoice-lines">Claim context on invoice lines</a></li><li><a class="" href="#handle-a-disputed-invoice">Handle a disputed invoice</a></li><li><a class="" href="#ar-aging-and-follow-up">AR aging and follow-up</a></li><li><a class="" href="#run-cadence-now">Run cadence now</a></li><li><a class="" href="#what-vendors-do-not-do-here">What vendors do not do here</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#the-invoices-page">The Invoices page</a></li><li><a class="" href="#send-an-invoice-you-write">Send an invoice you write</a></li><li><a class="" href="#automatic-draft-invoices">Automatic draft invoices</a></li><li><a class="" href="#the-invoice-page">The invoice page</a></li><li><a class="" href="#what-the-clinic-does">What the clinic does</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/vendor-portal/invoices-and-payment.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/vendor-portal/invoices-and-payment.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

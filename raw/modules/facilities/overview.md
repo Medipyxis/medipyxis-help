@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin]
 type: reference
 estimated_minutes: 3
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/facilities
 related:
   - hr-compliance-overview
@@ -16,48 +16,44 @@ tags: [facilities, admin, management]
 
 # Facilities reference
 
-The Facilities module lists every facility registered under your organization and provides controls to activate, deactivate, and manage each location.
+The Facilities module (**Facility Management**) lists the facilities in your organization and lets you add, edit, deactivate and reactivate them.
 
 ![Facilities list showing columns FACILITY, CONTACT, STATS, STATUS, and ACTIONS](../../assets/facilities/list.png)
 
-*Facilities list. Each row represents one facility location.*
+_Facilities list. Each row represents one facility location._
 
 ## List columns
 
 | Column | Contents |
 |---|---|
-| **FACILITY** | Facility name and address. Clicking the name opens the facility detail panel. |
-| **CONTACT** | Primary contact name and phone number for the facility. |
-| **STATS** | Aggregate counts for the facility: active providers, total patients, and visits in the current month. |
-| **STATUS** | **Active** (facility is operational and visible across all modules) or **Inactive** (facility is hidden from scheduling, routing, and user assignment). |
-| **ACTIONS** | Context menu (⋯) with options: Edit, Deactivate / Reactivate, View Users. |
+| **FACILITY** | Facility name, NPI and address. |
+| **CONTACT** | The facility's phone, email and fax, or “No contact”. |
+| **STATS** | Counts of users, patients and inventory items for the facility. |
+| **STATUS** | **Active** or **Inactive**. |
+| **ACTIONS** | Buttons to open the facility's page, view details, edit, and deactivate or reactivate. |
+
+Above the list, counters show active and inactive facilities and total patients. The **Active Facilities** and **Deactivated Facilities** tabs switch between the two lists, and **Search facilities** filters them.
 
 ## Active vs. inactive
 
 | State | Effect |
 |---|---|
-| **Active** | Facility appears in provider assignment, Fleet Calendar routing, and patient assignment. Users can be assigned to it. |
-| **Inactive** | Facility is hidden from all operational dropdowns. Existing data is preserved but no new activity can be logged against it. Users assigned only to this facility lose login access until reassigned. |
-
-Demo environment counts: **28 total · 11 active · 17 inactive**.
+| **Active** | The facility appears in users' facility lists, so people assigned to it can work in it. |
+| **Inactive** | The facility no longer appears in anyone's facility list. Its data is kept. A user assigned only to that facility has no facility to work in until they are given another one. |
 
 ## How to deactivate a facility
 
 1. **Open the Facilities module** from the sidebar.
-2. **Locate the facility** in the list. Use the search bar to filter by name or city if needed.
-3. **Click the Actions menu** (⋯) in the row.
-4. **Select Deactivate.** A confirmation dialog explains the downstream effects (users, scheduling, routing).
-5. **Confirm.** The **STATUS** column updates to **Inactive** immediately.
+2. **Find the facility** on the **Active Facilities** tab. Use the search box if needed.
+3. **Click Deactivate** in the row's actions. There is no confirmation step: the facility is deactivated straight away and moves to **Deactivated Facilities**.
 
-To reactivate, repeat the steps and select **Reactivate** from the Actions menu.
+To reactivate, open **Deactivated Facilities** and click **Reactivate** on the row.
 
-<Warning>
-Deactivating a facility immediately prevents any providers assigned exclusively to that facility from logging in. Reassign affected users in HR & Compliance → Facility Users before deactivating.
-</Warning>
+Before you deactivate a facility, make sure anyone who works only there has been given access to another facility.
 
 ## Editing facility details
 
-Click **Edit** from the Actions menu to update the facility name, address, NPI, contact, or billing information. Changes take effect immediately across all modules.
+Click **Edit** in the row's actions to update the facility name, legal / billing name, NPI, tax number, phone, email, fax, address and time zone. Click **Add Facility** to create a new one. Your organization has a location limit; when it is reached, **Add Facility** is disabled.
 
 ## Related
 

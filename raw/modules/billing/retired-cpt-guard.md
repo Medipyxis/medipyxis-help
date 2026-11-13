@@ -6,7 +6,7 @@ audience: [billing, admin, clinical]
 roles: [biller, admin, provider]
 type: reference
 estimated_minutes: 5
-last_reviewed: 2026-08-31
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/billing
 related:
   - billing-overview
@@ -16,14 +16,14 @@ related:
 tags: [billing, CPT, coding, retired-codes, 99343, E/M]
 ---
 
-The AMA retires or replaces CPT codes every January. Medipyxis handles retired codes with a deliberate split: the coder can never pick one from a dropdown or receive one as a suggestion, but the system will still recognize a retired code on a signed historical note so old records resolve correctly. This page documents the split, names the codes it currently covers, and explains why the split is the shape it is.
+The AMA retires or replaces CPT codes every January. Medipyxis handles retired codes with a deliberate split: the system never suggests or recommends a retired code, but still recognizes one on a signed historical note so old records resolve correctly. This page documents the split, names the codes it currently covers, and explains why the split is the shape it is.
 
 ## The rule
 
 For any CPT code that has been retired by the AMA:
 
-- The code is **removed from every dropdown, suggestion, and recommender**. Coders cannot select it. The E/M recommender never emits it. The auto-coder never returns it.
-- The code is **kept in the recognition tables**. If a note was signed carrying that code — before it was retired, or before the recognition set was updated — the note still resolves to the correct MDM level and correct description when a biller opens it.
+- The code is **removed from the coded suggestion list and the E/M recommender**. The E/M recommender never emits it. The auto-coder never returns it. The claim code picker lists the facility's superbill codes and does not block retired codes, so keep them out of the facility's superbill list.
+- The code is **kept in the code table Medipyxis uses to read notes**. If a note was signed carrying that code — before it was retired, or before the recognition set was updated — the note still resolves to the correct MDM level and correct description when a biller opens it.
 
 The one-sentence version: **recognize history, never offer it going forward.**
 
@@ -44,41 +44,32 @@ The corrected 2023 ladder for **new patient, home visit** (POS 12/13/14/16):
 
 Established-patient home visits (`99347/99348/99349/99350`) were not affected by the 2023 change.
 
-Where `99343` currently lives in the repo:
+How Medipyxis handles `99343` today:
 
-- **Removed** from the coder dropdown (`frontend/src/utils/dropdownOptions.ts`) — the E/M home-visit block skips 99343 explicitly.
-- **Removed** from the E/M recommender (`s13_emLevel.ts`) — new-patient home moderate now returns `99344`.
-- **Removed** from the downcode suggestion (`s13_emLevel.ts` W9 gate) — a note billed too high for its documented time is downcoded to `99344`, not `99343`.
-- **Removed** from the deterministic coding service (`medicalCodingService.ts`) — the code is not offered as a suggestion.
-- **Kept** in the recognition set (`s11_codingLedger.ts` `EM_CODES_NEW_HOME`, `s13_emLevel.ts` `NEW_PATIENT_CODES` / `TIME_THRESHOLDS` / `EM_MDM_LABELS`). A biller opening a historical note billed with `99343` sees "New patient, home visit, moderate MDM (CPT retired 2023-01-01)".
+- **Not blocked** in the claim code picker — the picker lists your facility's superbill codes (**Charge Master → Templates**), so keep 99343 out of that list.
+- **Removed** from the E/M recommender — new-patient home moderate now returns `99344`.
+- **Excluded** from the time warning — when documented minutes fall short of the billed code, the warning names a code those minutes meet, picked only from recommended codes, so never `99343`. The warning does not change the code.
+- **Removed** from the coded suggestion list — the code is not offered as a suggestion.
+- **Kept** in the shared visit-code table Medipyxis uses to read notes. A note billed with `99343` shows "New patient, home visit, moderate MDM (CPT retired 2023-01-01)".
 
-The guard-relevant commit is `0f880abfc`, "stop emitting CPT 99343, retired by the AMA on 2023-01-01" (Aug 25, 2026).
+The change shipped on 2026-08-25 ("stop emitting CPT 99343, retired by the AMA on 2023-01-01").
 
 ## Why not just delete it everywhere
 
 The obvious move is to strip the retired code from every table. The reason we don't:
 
-**Production carried three real notes billed with `99343` between 2026-07-04 and 2026-07-21**, before the code was removed from the recommender. Those notes are signed clinical records tied to submitted claims. If the recognition set drops the code, `mapEMLevel` stops trusting the stored value and silently substitutes a different CPT when the note is re-rendered — for example, the coding review drawer could show `99349` next to a note that was signed and billed with `99343`. That is a documentation-integrity failure: the note-of-record and the platform's rendering of the note-of-record would disagree.
+**Production still holds signed notes billed with `99343`.** If Medipyxis stopped recognizing the code, it would stop trusting the stored value and substitute a different CPT when the note is re-rendered. That is a documentation-integrity failure: the note-of-record and the platform's rendering of the note-of-record would disagree.
 
 The recognition-vs-recommendation split is the whole point. History is read as it was. Anything going forward is offered only from the current ladder.
 
 ## When the AMA retires a code
 
-The workflow, whenever a code is retired or replaced:
-
 1. Confirm the effective date and the replacement (if any) against the AMA CPT descriptor list or an authoritative summary (AAPC's deleted-codes page is the fastest secondary source).
-2. Remove the code from the dropdowns (`frontend/src/utils/dropdownOptions.ts`).
-3. Remove the code from the recommender surface — for E/M codes, that is `frontend/src/services/perfectNote/s13_emLevel.ts` (the "NEW_*" and "ESTABLISHED_*" maps that get read by `recommendEMCode`), plus the downcode suggestions in the W9 gate.
-4. Remove the code from the deterministic coding service (`frontend/src/services/procedureBillingService.ts`) if it is offered there.
-5. **Do not remove** the code from the recognition sets — `EM_CODES_*`, `EM_MDM_LEVEL`, `EM_MDM_LABELS`, `EM_DESCRIPTIONS`, `TIME_THRESHOLDS`, `NEW_PATIENT_CODES`, `ESTABLISHED_PATIENT_CODES`. Add a comment naming the retirement date so the intent is legible to the next developer to read the file.
-6. Verify: run the s11 and s13 tests. Pull a live note billed with the retired code (if one exists) and confirm it still renders the correct MDM level and description.
+2. Remove the code from your facility's superbill codes in **Charge Master → Templates**. The claim code picker lists those codes and does not block retired ones.
+3. Ask Medipyxis support to stop the code being suggested or recommended. Do not ask for it to be deleted outright: notes already signed with it must keep resolving correctly.
 
 ## What the biller sees
 
-- **Adding a code to a claim.** The dropdown skips retired codes. If a coder types the retired code directly, the field validates against the current ladder and rejects with a message naming the current equivalent.
-- **Opening a historical claim.** The claim renders with the retired code intact. The MDM level and description come from the recognition set. A small "(CPT retired YYYY-MM-DD)" trailer is appended to the description so the biller isn't confused about why the code looks unusual.
-- **Auto-coding a new visit.** The E/M recommender never emits a retired code. The W9 downcode gate never suggests one. The auto-coder never returns one.
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+- **Adding a code to a claim.** The code picker lists the facility's superbill codes and does not check for retired codes. Keep retired codes out of the facility's superbill list.
+- **Opening a historical claim.** The claim renders with the retired code intact. The MDM level and description come from the visit-code table. A small "(CPT retired YYYY-MM-DD)" trailer is appended to the description so the biller isn't confused about why the code looks unusual.
+- **Auto-coding a new visit.** The E/M recommender never emits a retired code. The time warning never suggests one. The auto-coder never returns one.

@@ -1,0 +1,1490 @@
+{
+  "title": "Practice admin cheat sheet",
+  "source": "quick-reference/practice-admin",
+  "url": "https://help.medipyxis.com/quick-reference/practice-admin/",
+  "claims": [
+    {
+      "id": "qrp-20",
+      "claim": "One page. Everything you own across a typical day, week, and month.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrp-21",
+      "claim": "Review incoming faxes waiting for review: Fax Center → Fax Review Queue; watch the SLA column and the \"SLA Breached\" summary.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.sla_breached ? (",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-muted-foreground\">SLA Breached</p>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-22",
+      "claim": "Check today's schedule by provider: Fleet Calendar → Day view → provider swim lanes.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const handleDropOnLane = (e: React.DragEvent, providerId: string) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qrp-23",
+      "claim": "Switch facility: header → Switch Facility → search or pick a facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AppShell from \"./AppShell\";",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-24",
+      "claim": "⌘K / Ctrl+K (Quick Jump) goes to any page or feature: search pages, features or actions.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search pages, features, or actions...\"",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-25",
+      "claim": "Assign providers to new patients: Referral Intake → Ready for Assignment column → Assign.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Assign</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleAssignClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// If moving to ASSIGNED, open assignment dialog",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-26",
+      "claim": "Credential expirations: HR & Compliance → Credential Tracker.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-27",
+      "claim": "Unanswered Team Chat messages: Team Chat → Conversations.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Conversations</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{conversations.some((conv) => conv.unread_count > 0) && (",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-28",
+      "claim": "Monitor IVRs — follow up on any still Pending: Inventory Management → IVR Tracking.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "^  '(pending|incomplete|agreed|approved|declined)',$",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending: 'Pending',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "incomplete: 'Incomplete',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'IVR_STATUS_TRANSITION_INVALID: transition from \"%\" to \"%\" is not allowed.',",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(message);",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-29",
+      "claim": "Targets: zero faxes older than 24 h; referral-to-schedule under 24 h; unbilled encounters cleared within 72 h of signature; unmatched ERA lines matched within 24 h; credential notices actioned the same day.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "qrp-30",
+      "claim": "Referral-to-schedule: Referral Intake → Ready for Assignment column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Referrals\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Info Needed\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Financial\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Ready for Assignment\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Assigned\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Non-Admit\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    title: \"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "count": 6
+          },
+          "note": "exactly six column titles in the columns array"
+        }
+      ]
+    },
+    {
+      "id": "qrp-31",
+      "claim": "Unbilled encounters: Billing Operations → Work Queue → Ready preset.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/billing/work-queue`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Work Queue$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/work-queue\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Quick Actions",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Ready|Pending Doc|Pending Sig|No Show|Not Seen)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{bucketCounts\\.(ready|pendingDoc|pendingSig)\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{rows\\.filter\\(\\(r\\) => r\\.visit_status === \"(No Show|Not Seen)\"\\)\\.length\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "qrp-32",
+      "claim": "ERA posting: matched lines post automatically; unmatched lines are matched on the ERA / EOB page (/era-eob), linked from the Billing overview.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "so there is no manual \"sync\" action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cron\\.schedule.*(stedi|era|835)",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent",
+          "note": "no scheduled ERA polling job"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"payments\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/era-eob\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/era-eob`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA / EOB",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-33",
+      "claim": "Run the Claims report and the Account Receivable report: Billing Operations → Reports Center → Claims Reports / Account Receivable Reports. Export billing reports (Claims, Insurance Payment, Charges) from the Reports Center.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/reports-center\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingReportsCenterPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Account Receivable Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Insurance Payment Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Charges Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-34",
+      "claim": "Scan the Heat Map (patients vs. clinicians): Oversight Cockpit → Heat Map → Patients vs Employees. Review billing geography: Heat Map → Billed by zip.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Patients vs Employees',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-35",
+      "claim": "Review practices that need attention: CRM → status filter (Follow-up Due, Cold).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"follow-up-due\">Follow-up Due</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"cold\">Cold</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-36",
+      "claim": "Check PAR levels on conservative care products: Inventory Management → Product Catalog (red Par Level Reached icon).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Par Level - Only for Conservative, PRP and UM */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product.category === ProductCategoryEnum.Conservative &&",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".or(`expiration_date.gte.${today},expiration_date.is.null`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"id\", { count: \"exact\", head: true })",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present",
+          "note": "counts lot rows, not quantity"
+        }
+      ]
+    },
+    {
+      "id": "qrp-37",
+      "claim": "Clear out patients who will not be admitted: Referral Intake → Non-Admit column → Archive patient on the card.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"NON_ADMIT\" as ReferralStatus,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isOverColumn = columns.some((col) => col.id === overId);",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive patient\"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Archive (soft-delete): set `deleted_at` on the patient record.",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-38",
+      "claim": "Validate the facility user roster: HR & Compliance → Facility Users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"View and manage all users associated with this facility.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-39",
+      "claim": "HR & Compliance → New Employee Onboarding opens the Create New User form, a single page. Choose the role under Role & Assignment and one or more facilities under Facility Assignment, then click Create User.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Edit User Profile\" : \"Create New User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Role & Assignment",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Assignment{\" \"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "selected={formData.facilityIds}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-40",
+      "claim": "Check which features the role can open in Administrator → Organization Role Config. It turns features on or off for each role in your organization and does not assign roles to people.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Configure which features each role can access per organization. Organization admins only.\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleFeature(role, feature)",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"finance_ap\", label: \"Finance AP\" },",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-41",
+      "claim": "Click Switch Facility in the app header to open the facility list; pages show data for the facility you have selected.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `/facility/${currentFacility.id}${item.path}`",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-42",
+      "claim": "Admins who can see patients across the organization can filter All Patients by facility, including All Facilities, without switching.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{viewMode === \"all\" && canViewAllPatientsByOrg && (",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Facilities</option>",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-43",
+      "claim": "Troubleshooting: provider not appearing in Fleet Calendar — not assigned to this facility; confirm in HR & Compliance → Facility Users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "const handleDropOnLane = (e: React.DragEvent, providerId: string) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qrp-44",
+      "claim": "Troubleshooting: referral stuck in Info Needed — open the card → Details tab → complete the missing information, then drag the card on.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import UnifiedReferralDrawer from \"@/components/UnifiedReferralDrawer\";",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleCardClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fixed inset-y-0 right-0",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ name: \"(details|documents|chat|precharting|history|notes)\", label: \"(Details|Documents|Chat|Precharting|History|Notes)\"",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDragEnd = async (event: DragEndEvent) => {",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onDragEnd={handleDragEnd}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-45",
+      "claim": "Troubleshooting: claim in Needs Info status — a required field is missing or a validation error must be resolved; open the claim from Billing Operations → Claims and fix the field.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "needs_info: \"Needs Info\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim flagged for missing or incorrect information. Edit to fix.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search patient, claim #, payer...\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const matchesPayer = !payerFilter || (claim as any).payer_name === payerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(claim as any).rendering_provider_name === providerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const serviceDate = new Date(claim.date_of_service);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Statuses</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-46",
+      "claim": "Troubleshooting: an archived patient still has an appointment — it was booked before the patient was archived (archived patients cannot be booked); cancel the appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setDateError(\"This patient is archived and cannot be scheduled\");",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qrp-01",
+      "claim": "Check action items and SLA breach alerts: Dashboard → right panel → Action Items.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277)",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Dashboard's Action Items panel was removed."
+    },
+    {
+      "id": "qrp-02",
+      "claim": "Verify all providers are marked On Duty: Fleet Calendar → day view → provider swim lanes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/ops"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Fleet Calendar has no On Duty marker. Replaced by qrp-22."
+    },
+    {
+      "id": "qrp-03",
+      "claim": "Switch facility context: Header → facility name pill → select facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility pill",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The control is the Switch Facility button. Replaced by qrp-23."
+    },
+    {
+      "id": "qrp-04",
+      "claim": "Quick Jump navigates to any patient, visit, page, or facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"patient\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Quick Jump searches pages, features and actions only. Replaced by qrp-24."
+    },
+    {
+      "id": "qrp-05",
+      "claim": "Confirm no appointments on archived patients: Fleet Calendar → check for Archived patient badge.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "archived",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Fleet Calendar shows no Archived badge; archived patients cannot be booked. Replaced by qrp-46."
+    },
+    {
+      "id": "qrp-06",
+      "claim": "⌘/ / Ctrl+/ opens help for the current page; ⌘S / Ctrl+S saves the draft on any editable form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"/\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"s\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Only ⌘K is a global shortcut. Replaced by qrp-24."
+    },
+    {
+      "id": "qrp-07",
+      "claim": "Fax queue age: More (Fax) → Fax Review Queue → SLA Breach Timer column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SLA Breach Timer",
+          "paths": [
+            "frontend/src/components/idp"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The column is SLA. Replaced by qrp-21."
+    },
+    {
+      "id": "qrp-08",
+      "claim": "ERA posting: Billing → ERA / Payments (/era-eob).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA / Payments",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The page is ERA / EOB. Replaced by qrp-32."
+    },
+    {
+      "id": "qrp-09",
+      "claim": "Audit inactive practices: CRM → Practices → filter by activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "no activity",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "CRM has no activity filter; use the status filter. Replaced by qrp-35."
+    },
+    {
+      "id": "qrp-10",
+      "claim": "Verify inventory PAR levels are current: Inventory Management → Main Inventory.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "par_level",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Main Inventory opens Reorder Requests; PAR levels are in the Product Catalog. Replaced by qrp-36."
+    },
+    {
+      "id": "qrp-11",
+      "claim": "Review revenue geography (Revenue by Zip).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Revenue by Zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The view is Billed by zip and shows dollars billed. Replaced by qrp-34."
+    },
+    {
+      "id": "qrp-12",
+      "claim": "Archive or close non-admit referrals: Non-Admit column → Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive referral\"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The card action is Archive patient, which archives the patient record. Replaced by qrp-37."
+    },
+    {
+      "id": "qrp-13",
+      "claim": "Complete the single New Employee form (Basic Info; Provider Details appear for clinical roles).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Basic Info",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Provider Details",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The form is Create New User, with sections such as Personal Information and Role & Assignment. Replaced by qrp-39."
+    },
+    {
+      "id": "qrp-14",
+      "claim": "Test a new role in the demo environment before applying it to production users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "demo environment",
+          "paths": [
+            "frontend/src/pages/administrator"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Customers do not have a demo environment. Replaced by qrp-40."
+    },
+    {
+      "id": "qrp-15",
+      "claim": "All module data (patients, referrals, calendar, billing) scopes to the selected facility; practice admins can toggle All Patients → All Facilities.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "All Patients → All Facilities",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "All Facilities is a filter option on All Patients for users who can see the whole organization. Replaced by qrp-41/42."
+    },
+    {
+      "id": "qrp-16",
+      "claim": "Provider not appearing in Fleet Calendar: provider not marked On Duty.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/ops"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no On Duty marker. Replaced by qrp-43."
+    },
+    {
+      "id": "qrp-17",
+      "claim": "Referral stuck in Info Needed: open referral → Details tab → fill flagged field.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "flagged field",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The Details tab does not flag fields. Replaced by qrp-44."
+    },
+    {
+      "id": "qrp-18",
+      "claim": "Claim in Needs Info: Billing → Claims → open claim → follow rule-engine flag.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rule-engine flag",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Reworded to the documented Needs Info meaning. Replaced by qrp-45."
+    },
+    {
+      "id": "qrp-19",
+      "claim": "Credential expiry banner on Dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Credential expiry",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The Dashboard shows a My Credentials & Compliance tile, not a banner."
+    },
+    {
+      "id": "qrp-47",
+      "claim": "Archived patient appeared in scheduling: legacy appointment predating the archive fix.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "archive fix",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Reworded: archived patients cannot be booked, so such appointments were booked before archiving. Replaced by qrp-46."
+    }
+  ]
+}

@@ -1,0 +1,505 @@
+{
+  "title": "Practice admin first hour",
+  "source": "getting-started/by-role/practice-admin",
+  "url": "https://help.medipyxis.com/getting-started/by-role/practice-admin/",
+  "claims": [
+    {
+      "id": "pa-01",
+      "claim": "Medipyxis staff accounts are not in the role list and cannot be given from your organization.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value: \"superadmin\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value: \"customersupport\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-02",
+      "claim": "Have your billing NPI, tax ID, and clinicians' credentials ready.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "pa-03",
+      "claim": "Facilities: check your facility is listed and Active; new locations are added by Medipyxis support; Edit fills NPI, Tax Number, fax and timezone; the facility ID is in the URL after /facility/.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Contact Medipyxis support to add a location\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Timezone <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-04",
+      "claim": "Administrator → Organization Role Config card; ten roles; tick features and Save Changes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save Changes",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-05",
+      "claim": "HR & Compliance → New Employee Onboarding; fill name, email, phone, role, facility, license; Create User sends a welcome email.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { sendWelcomeEmail } from \"@/services/welcomeEmailService\";",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-06",
+      "claim": "Bulk Employee Upload is turned off for now.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-07",
+      "claim": "Credential Tracker: Upload Credential with expiration date; status Valid, Expiring Soon (within 5 days), Expired, Missing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Upload Credential</span>",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (daysUntilExpiration <= 5) {",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "/> (Valid|Expiring Soon|Expired|Missing)$",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "pa-08",
+      "claim": "Send Reminder shows \"Reminder sent successfully!\" but does not send an email.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success(\"Reminder sent successfully!\");",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "console.log(\"Sending reminder for credential:\", selectedCredential);",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functions.invoke",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "pa-09",
+      "claim": "Faxes received on the facility Fax Number are filed to the facility and appear in the Fax Review Queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "normalizePhoneNumber(f.fax || \"\") === normalizedRecipient",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax review queue\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-10",
+      "claim": "Stedi is the clearinghouse (replaced ClaimMD in May 2026) and Medipyxis runs it; enroll providers at Billing Operations → Payer Enrollment.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/submit-to-claimmd",
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "pa-11",
+      "claim": "Charge Master has Insurance Charges, Self-Pay Charges and Templates tabs, and Import CSV.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ChargeMasterPage — 3 tabs: Insurance Charges, Self-Pay Charges, Templates",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Import CSV$",
+          "paths": [
+            "frontend/src/components/billing/ChargeRateTable.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-12",
+      "claim": "Test loop: referral → Fleet Calendar visit → sign off → encounter appears in Billing Work Queue; archive the test patient in All Patients.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/work-queue\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive patient\"",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "pa-13",
+      "claim": "Use a made-up test patient (e.g. DOE, JANE A.), never a real patient.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "pa-r02",
+      "claim": "Know your clearinghouse credentials.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "STEDI_API_KEY",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There are no customer clearinghouse credentials."
+    },
+    {
+      "id": "pa-r03",
+      "claim": "If not listed, click + Add Facility and enter name, address, timezone, tax ID, and default place-of-service.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "place_of_service",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Add Facility is Medipyxis staff only and the form has no default place of service."
+    },
+    {
+      "id": "pa-r04",
+      "claim": "Click Administrator in the sidebar. You land on Organization Role Config.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "You land on the Administrator cockpit; Organization Role Config is a card. Replaced by pa-04."
+    },
+    {
+      "id": "pa-r05",
+      "claim": "Bulk path (20+ people): HR & Compliance → Bulk Employee Upload; download the template, upload; Medipyxis validates and shows row errors.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Bulk upload is disabled. Replaced by pa-06."
+    },
+    {
+      "id": "pa-r06",
+      "claim": "Expiring status is 'Expiring' and credentials will auto-alert.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functions.invoke",
+          "paths": [
+            "frontend/src/pages/HRCredentialTracker.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The label is Expiring Soon and no reminder is sent. Replaced by pa-07/pa-08."
+    },
+    {
+      "id": "pa-r07",
+      "claim": "Open Referral Intake. On first visit the system asks for your inbound Fax number and Intake email — both forward to Medipyxis's OCR pipeline.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Intake email",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No such first-visit prompt or intake email exists. Replaced by pa-09."
+    },
+    {
+      "id": "pa-r08",
+      "claim": "Open Billing Operations → Clearinghouse Config (gear icon, top-right); enroll under Billing → Enrollment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Clearinghouse Config",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Clearinghouse Config. Replaced by pa-10."
+    },
+    {
+      "id": "pa-r09",
+      "claim": "Delete the test data when you're done.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Delete Patient",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Patients cannot be deleted; archive instead. Replaced by pa-12."
+    }
+  ]
+}

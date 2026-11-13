@@ -6,8 +6,8 @@ audience: [intake, admin]
 roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-10-29
-app_route: /facility/{facility_uuid}/fax-logs
+last_reviewed: 2026-11-11
+app_route: /facility/{facility_uuid}/more/send-fax-logs
 related:
   - more-fax-overview
   - referral-intake-overview
@@ -16,57 +16,64 @@ tags: [fax, outbound, send, delivery]
 
 # Compose and send an outbound fax
 
-Send a fax directly from Medipyxis and track its delivery status from the Send Fax Logs.
+Send a fax from Medipyxis and track its delivery in **Outgoing Fax Logs**.
 
 ## Before you start
 
-- You have the recipient's fax number.
-- The document you want to fax is either stored in Medipyxis (attached to a referral or patient record) or available as a PDF on your device.
+- You have the recipient's fax number: a 10-digit US number.
+- The documents are on your device (PDF, JPG, PNG, DOC or DOCX), or on the patient's chart in Medipyxis.
 
 ## Steps
 
-1. **Open the Fax Center.**
+1. **Open Outgoing Fax Logs.** Click **Fax Center** in the sidebar, then the **Outgoing Fax Logs** tile.
 2. **Click New Fax** (top-right).
-3. **Enter the recipient fax number.** Type or paste the 10-digit number. Include area code; do not use dashes or parentheses.
-4. **Select or upload the document.**
-   - **From Medipyxis:** Click **Browse Documents** to search documents attached to referrals or patient records. Select the file from the results list.
-   - **From your device:** Click **Upload File** and select a PDF (maximum 25 MB, 100 pages).
-5. **Add a cover sheet (optional).** Toggle **Include Cover Sheet** on. Fill in:
-   - **To:** Recipient name and organization.
-   - **From:** Your name and facility (pre-populated from your profile).
-   - **Re:** Subject line.
-   - **Notes:** Free-text message body on the cover sheet.
-6. **Review the page count.** The page count shown includes the cover sheet if you toggled it on. Confirm it matches expectations before sending.
-7. **Click Send Fax.** The system queues the fax immediately.
+3. **Enter the recipient under To.** Type the fax number, or pick a number your clinic has faxed before. Spaces, dashes and brackets are fine. To fax the same documents to more people, click **Add another recipient** (up to 10). Each recipient gets their own fax and cover page.
+4. **Check From.** It shows your clinic's fax number and cannot be changed here.
+5. **Attach files.** Under **Attach Files**, click to upload or drag and drop. Each file can be up to 25 MB, and one fax up to 50 MB in total.
+6. **Add chart documents (optional).** Search for the **Patient** by name or MRN. Then tick documents under **Include other documents from the patient's chart**. Signed progress notes are listed as **Progress note**. One fax can carry up to 10 documents.
+7. **Add notes (optional).** Type up to 500 characters in **Notes**. They print on the cover page.
+8. **Click Send Now.**
+
+Medipyxis adds a cover page to every fax. It uses your clinic's **Fax Settings** (logo, practice name, return numbers) and lists the documents in the fax.
+
+**Send Later** is shown but cannot be used yet: scheduled faxing is marked as coming soon.
 
 ## Result
 
-The fax appears in the **Fax Center** with **pending** status. The fax service updates the status as it progresses:
+A message confirms "Fax submitted. Delivery shows in Fax Logs." The fax appears in **Outgoing Fax Logs**, and its status changes as the fax service reports back:
 
 | Status | Meaning |
 |---|---|
-| **pending** / **sending** | Queued or in transmission. |
-| **sent** / **delivered** | Transmitted and confirmed by the fax service. |
-| **failed** | Delivery failed after retry attempts; the log shows the failure reason. |
-| **cancelled** | You cancelled the fax before it sent. |
+| **Pending** / **Sending** | Queued or being sent. |
+| **Sent** / **Delivered** | The fax went through. |
+| **Failed** | The fax did not go through. Hover over the status to see the error. |
+| **Cancelled** | Someone cancelled the fax before it was sent. |
+
+If you faxed several recipients and some could not be sent, the New Fax window stays open and shows what happened under each number.
 
 ## Track delivery
 
-8. **Open the Fax Center** and locate your fax row.
-9. **Click the row** to see the detailed status: timestamp of each transmission attempt, error codes (if any), and the recipient number dialed.
-10. **If status is Failed:** Click **Retry** to resend, or **Edit** to correct the fax number before retrying.
+1. **Open Outgoing Fax Logs** and find your fax.
+2. **Click the row** (or **View audit history** in the Actions column) to open its audit history: each action on the fax, with its time and who did it.
+3. **If the status is Failed,** click **Retry** to send it again (up to 3 retries). To fix a wrong number, send a new fax.
 
-<Warning>
-Verify the recipient fax number before sending. Misdirected faxes containing patient information are a HIPAA breach. Double-check the number against the practice record in the CRM or the referral's Practice & PCP section.
-</Warning>
+Check the recipient fax number before you send. A fax with patient information sent to the wrong number is a HIPAA breach. Compare the number with the practice record in CRM.
+
+## Fax a signed progress note
+
+You can fax a signed progress note in two ways.
+
+1. **From the patient chart.** Open the patient’s **Progress Notes** and use **Send to Fax**. Medipyxis sends the Clinical Progress Note (without the billing sections), plus any addenda, not the stored billing copy.
+2. **From Fax Center.** Click **New Fax**, pick the **Patient**, then choose chart documents. Progress notes appear as **Progress note**.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Fax status stuck on Pending for > 30 minutes | Carrier delay or recipient machine busy | Wait 10 more minutes, then click Retry |
-| Upload fails | File exceeds 25 MB or is not PDF format | Compress or convert the file before uploading |
-| Send button disabled | No document selected | Select or upload a document before clicking Send Fax |
+| Fax still Pending after 30 minutes | The fax service has not reported back yet | Wait. A pending fax can be cancelled; Retry appears only once a fax has failed. |
+| A file is refused | Not PDF, JPG, PNG, DOC or DOCX; over 25 MB; over 50 MB in total; or more than 10 documents | Convert or shrink the file, or split the documents into two faxes |
+| "Attach a file or pick a document from the chart before sending." | No document attached | Attach a file or tick a chart document, then click Send Now |
+| "Enter a 10-digit US fax number." | The number is not a 10-digit US number | Correct the number |
 
 ## Related
 

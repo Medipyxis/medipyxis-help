@@ -1,0 +1,1957 @@
+{
+  "title": "Billing Operations overview",
+  "source": "modules/billing/overview",
+  "url": "https://help.medipyxis.com/modules/billing/overview/",
+  "claims": [
+    {
+      "id": "ovw-01",
+      "claim": "Navigate to /facility/{facility_uuid}/billing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingDashboard />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-02",
+      "claim": "The module opens on four tabs: Overview, Claims, Denials, Payments (ERA).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TabsList className=\"grid w-full grid-cols-4",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Overview|Claims|Denials)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 3
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments (ERA)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "the fourth tab label as the page writes it"
+        }
+      ],
+      "finding": "The fourth tab is labelled \"Payments\", not \"Payments (ERA)\" (BillingDashboard.tsx:2710-2718).",
+      "proposed_text": "The module opens on four tabs: Overview, Claims, Denials, and Payments. The Payments tab lists the ERAs (electronic remittance advice) received from Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TabsList className=\"grid w-full grid-cols-4",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Overview|Claims|Denials|Payments)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const data = await read({ action: 'list', facility_id: facilityId });",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The fourth tab is labelled Payments, not Payments (ERA). Replaced by ovw-31."
+    },
+    {
+      "id": "ovw-31",
+      "claim": "The module opens on four tabs: Overview, Claims, Denials, and Payments. The Payments tab lists the ERAs (electronic remittance advice) received from Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TabsList className=\"grid w-full grid-cols-4",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Overview|Claims|Denials|Payments)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const data = await read({ action: 'list', facility_id: facilityId });",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-03",
+      "claim": "Overview — High-level KPIs: total billed, pending claims, denial rate, and recent payment activity for the current period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Recent Payments",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the Overview tab shows recent payment activity"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Pending Claims$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if a Pending Claims KPI exists"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs font-medium mb-1\">Denial Rate</p>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Overview tab shows Recent Claims, Quick Actions, Performance Metrics (Payment Rate, Denial Rate, Days in AR), A/R Aging Breakdown, Unbilled Aging, Status Summary and Unsigned Records (BillingDashboard.tsx:2722-3318). There is no total-billed KPI and no recent-payment card on it, and the metrics are a rolling view of current claims, not a period. The KPI tiles above the tabs are Total Claims, Pending Submission, Total Revenue and Outstanding AR (BillingDashboard.tsx:2597-2659).",
+      "proposed_text": "Overview — Recent Claims, Quick Actions, Performance Metrics (Payment Rate, Denial Rate, Days in AR), A/R Aging Breakdown, Unbilled Aging, Status Summary and Unsigned Records. Above the tabs, tiles show Total Claims, Pending Submission, Total Revenue and Outstanding AR.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Recent Claims|Quick Actions|A/R Aging Breakdown|Unbilled Aging|Status Summary|Unsigned Records)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Performance Metrics</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<p className=\"text-xs font-medium mb-1\">(Payment Rate|Denial Rate|Days in AR)</p>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Total Claims|Pending Submission|Total Revenue|Outstanding AR)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "No total-billed or recent-payment KPI on the Overview tab. Replaced by ovw-32."
+    },
+    {
+      "id": "ovw-32",
+      "claim": "Overview — Recent Claims, Quick Actions, Performance Metrics (Payment Rate, Denial Rate, Days in AR), A/R Aging Breakdown, Unbilled Aging, Status Summary and Unsigned Records. Above the tabs, tiles show Total Claims, Pending Submission, Total Revenue and Outstanding AR.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Recent Claims|Quick Actions|A/R Aging Breakdown|Unbilled Aging|Status Summary|Unsigned Records)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-sm\">Performance Metrics</CardTitle>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<p className=\"text-xs font-medium mb-1\">(Payment Rate|Denial Rate|Days in AR)</p>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Total Claims|Pending Submission|Total Revenue|Outstanding AR)$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ovw-04",
+      "claim": "Claims — All claims in the facility, searchable and filterable by status, payer, date of service, and rendering provider.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search patient, claim #, payer...\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const matchesPayer = !payerFilter || (claim as any).payer_name === payerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(claim as any).rendering_provider_name === providerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const serviceDate = new Date(claim.date_of_service);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Statuses</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-05",
+      "claim": "Denials — Claims that have been denied, along with their denial appeal status and next action.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Appeal Status</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Deadline</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('denial_management')",
+          "paths": [
+            "frontend/src/utils/hooks/useBillingDashboard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "note": "true only if something creates a denial record for a denied claim",
+          "excludeTests": true
+        }
+      ],
+      "finding": "The Denials tab (\"Denial Management\") lists denial records with Denial Reason, Category, Appeal Status, Deadline and Actions columns (BillingDashboard.tsx:4742-4800). \"Next action\" is read as the Deadline and Actions columns.",
+      "status": "removed",
+      "reason": "Payer denials never create a denial record (no writer), so the list is not \"claims that have been denied\". Replaced by ovw-33."
+    },
+    {
+      "id": "ovw-33",
+      "claim": "Denials — Denial records with their reason, category, appeal status and deadline. Payer denials are not yet added to this list automatically, so it can be empty even when a payer has denied a claim; a fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Denial Reason</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Category</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Appeal Status</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Deadline</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "note": "nothing calls the denial-record writer",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ovw-06",
+      "claim": "Payments (ERA) — Electronic Remittance Advice records received from the clearinghouse, matched against posted claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">Match</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">EFT / Check #</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { type EraEventResult, eraDuplicates, eraLogFields, importEraEvent } from '../_shared/stediEraImport.ts';",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments (ERA)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "the tab label as the old page wrote it"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tab is labelled Payments, not Payments (ERA). Replaced by ovw-34."
+    },
+    {
+      "id": "ovw-34",
+      "claim": "Payments — ERAs received from Stedi, with each one's EFT / check number and whether it matched a claim (the Match column).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">Match</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead className=\"py-2\">EFT / Check #</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { type EraEventResult, eraDuplicates, eraLogFields, importEraEvent } from '../_shared/stediEraImport.ts';",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-07",
+      "claim": "The Billing Operations landing page. The Overview tab is active by default.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">(\"overview\");",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-08",
+      "claim": "Medipyxis connects to Stedi as the clearinghouse for electronic claim submission (837P), eligibility checks (270/271), claim status (276/277), and remittance advice (835).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/change/medicalnetwork/eligibility/v3",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "StediClaimStatusRequest",
+          "paths": [
+            "backend/supabase/functions",
+            "frontend/src"
+          ],
+          "expect": {
+            "min": 2
+          },
+          "excludeTests": true,
+          "note": "true only if a 276 claim-status inquiry is ever built (a use beyond the one type declaration)"
+        }
+      ],
+      "finding": "837P, 270/271 and 835 are wired. 276 claim-status inquiries are never sent: StediClaimStatusRequest is declared in _shared/stediTypes.ts:336 and used nowhere. Claim status comes back only as 277CA acknowledgments pushed by Stedi's webhook (_shared/stediAckImport.ts, sync-stedi-responses/index.ts:12-13).",
+      "proposed_text": "Medipyxis connects to Stedi as the clearinghouse for electronic claim submission (837P), eligibility checks (270/271), claim acknowledgments (277CA), and remittance advice (835).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/change/medicalnetwork/eligibility/v3",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.277",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No 276 claim-status inquiry is ever sent; status arrives only as 277CA. Replaced by ovw-35."
+    },
+    {
+      "id": "ovw-35",
+      "claim": "Medipyxis connects to Stedi as the clearinghouse for electronic claim submission (837P), eligibility checks (270/271), claim acknowledgments (277CA), and remittance advice (835).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/change/medicalnetwork/eligibility/v3",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.277",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transaction.x12.835",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-09",
+      "claim": "Claims that reach Exported status are sent to Stedi automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if some server path picks up exported claims and sends them"
+        }
+      ],
+      "finding": "Nothing sends Exported claims anywhere. Exported means the claim was exported as a PDF or JSON file: the Claims tab's Export PDF marks selected claims exported (BillingDashboard.tsx:1452-1457) and the status text reads \"Claim has been exported as PDF or JSON. Ready to submit.\" (BillingDashboard.tsx:1253-1256). No edge function references the exported status. Claims reach Stedi only when someone submits them (Submit Claim on the claim form, which calls submit-to-stedi).",
+      "proposed_text": "Exported means the claim was exported as a PDF or JSON file; it is not sent anywhere. A claim goes to Stedi when a biller clicks Submit Claim on the claim form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { submitToStedi } from '@/services/stediService';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Nothing sends Exported claims to Stedi. Replaced by ovw-36."
+    },
+    {
+      "id": "ovw-36",
+      "claim": "Exported means the claim was exported as a PDF or JSON file; it is not sent anywhere. A claim goes to Stedi when a biller clicks Submit Claim on the claim form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { submitToStedi } from '@/services/stediService';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-10",
+      "claim": "Status updates flow back into the Work Queue and the Payments (ERA) tab in real time, without polling.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "postgres_changes",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx",
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "present",
+          "note": "true only if the Work Queue or the Payments tab subscribes to changes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, 120_000);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if the Work Queue does not poll"
+        }
+      ],
+      "finding": "Stedi pushes 277CA acknowledgments and 835 ERAs to Medipyxis by webhook (sync-stedi-responses/index.ts:1-17), but the screens do not update in real time. The Work Queue polls: it reloads every 2 minutes while the tab is visible (BillingWorkQueuePage.tsx:957-964). The Payments tab has no subscription; its list is re-read on load or refresh (useERAs.ts:109-136). Only the KPI tiles above the tabs refresh on a billing_claims change (useBillingDashboard.ts:884-902).",
+      "proposed_text": "Stedi pushes claim acknowledgments (277CA) and remittances (835) to Medipyxis as they happen. The Work Queue picks up the change on its next refresh (every 2 minutes while the tab is visible, or click Refresh); the Payments tab shows new ERAs when it is reloaded.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Webhook receiver for Stedi Event Destinations.",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, 120_000);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (document.visibilityState === \"visible\") {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "postgres_changes",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Work Queue polls every 2 minutes; the Payments tab has no live subscription. Replaced by ovw-37."
+    },
+    {
+      "id": "ovw-37",
+      "claim": "Stedi pushes claim acknowledgments (277CA) and remittances (835) to Medipyxis as they happen. The Work Queue picks up the change on its next refresh (every 2 minutes while the tab is visible, or click Refresh); the Payments tab shows new ERAs when it is reloaded.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Webhook receiver for Stedi Event Destinations.",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, 120_000);",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (document.visibilityState === \"visible\") {",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "postgres_changes",
+          "paths": [
+            "frontend/src/utils/hooks/useERAs.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ovw-11",
+      "claim": "Stedi replaced ClaimMD in May 2026 — all new submissions go through Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "**Effective:** 2026-05-13",
+          "paths": [
+            "docs/STEDI_ONLY.md"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/submit-to-claimmd",
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "svc.claim.md",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "ovw-12",
+      "claim": "Historical ClaimMD claims remain visible for reference.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "claim_md_(status|response)",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if some screen still shows ClaimMD response data"
+        }
+      ],
+      "finding": "No screen at v1.1.345 reads the claim_md_* columns; the historical ClaimMD panel that docs/STEDI_ONLY.md lists for BillingClaimDetailPage.tsx is gone. Old claims are ordinary billing_claims rows and list like any other claim, but nothing ClaimMD-specific is displayed.",
+      "proposed_text": "Claims created before the switch stay in the Claims list like any other claim; ClaimMD's own responses are no longer shown.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "claim_md_(status|response)",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No screen shows ClaimMD response data. Replaced by ovw-38."
+    },
+    {
+      "id": "ovw-38",
+      "claim": "Claims created before the switch stay in the Claims list like any other claim; ClaimMD's own responses are no longer shown.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "claim_md_(status|response)",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "ovw-13",
+      "claim": "Your providers must be enrolled with each payer through Stedi before claims can flow.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "The gate on WHO may submit is Stedi transaction enrollment, enforced by",
+          "paths": [
+            "backend/supabase/functions/_shared/stediSubmissionMode.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${resolvedFacilityId}/billing/enrollment`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Enrollment is enforced by Stedi, not by Medipyxis code; the Payer Enrollment quick action manages it."
+    },
+    {
+      "id": "ovw-14",
+      "claim": "Contact your practice administrator if claims are not advancing past Exported.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "note": "true only if some server path advances Exported claims",
+          "excludeTests": true
+        }
+      ],
+      "finding": "Rests on the false premise that Exported claims advance automatically (see ovw-09). Exported is an end state of the PDF/JSON export; a claim leaves it only when someone submits it.",
+      "proposed_text": "An Exported claim does not move on by itself. Open it and click Submit Claim to send it to Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Exported claims never advance on their own, so the advice rests on a false premise. Replaced by ovw-39."
+    },
+    {
+      "id": "ovw-39",
+      "claim": "An Exported claim does not move on by itself. Open it and click Submit Claim to send it to Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-15",
+      "claim": "Every claim moves through a defined sequence of statuses: Draft, Pending, Needs Info, Approved, Exported, Submitted, Paid, Denied, Appealed, Cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  (draft|pending|needs_info|approved|exported|submitted|paid|denied|appealed|cancelled): \"",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 10
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^  [a-z_]+: \"",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 10
+          },
+          "note": "true only if those ten are the whole list"
+        }
+      ],
+      "finding": "The product has 16 claim statuses, not 10 (claimStatusOptions.ts:12-29). Missing from the page: Needs Coding, Coding Review, Pending Review, Needs Provider, Accepted (Legacy), Rejected. Rejected is set automatically from a 277CA rejection (migration 20261019160000_stedi_277ca_claim_status.sql).",
+      "proposed_text": "A claim carries one of 16 statuses: Draft, Pending, Needs Info, Needs Coding, Coding Review, Pending Review, Needs Provider, Approved, Exported, Submitted, Accepted (Legacy), Rejected, Paid, Denied, Appealed, Cancelled.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^  [a-z_]+: \"",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 16
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^  (needs_coding: \"Needs Coding\"|needs_coding_review: \"Coding Review\"|pending_review: \"Pending Review\"|needs_provider: \"Needs Provider\"|accepted: \"Accepted \\(Legacy\\)\"|rejected: \"Rejected\"),",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 6
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "There are 16 claim statuses, not 10. Replaced by ovw-40."
+    },
+    {
+      "id": "ovw-40",
+      "claim": "A claim carries one of 16 statuses: Draft, Pending, Needs Info, Needs Coding, Coding Review, Pending Review, Needs Provider, Approved, Exported, Submitted, Accepted (Legacy), Rejected, Paid, Denied, Appealed, Cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  [a-z_]+: \"",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 16
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^  (needs_coding: \"Needs Coding\"|needs_coding_review: \"Coding Review\"|pending_review: \"Pending Review\"|needs_provider: \"Needs Provider\"|accepted: \"Accepted \\(Legacy\\)\"|rejected: \"Rejected\"),",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": {
+            "count": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "ovw-41",
+      "claim": "Rejected — A claim acknowledgment (277CA) came back rejected. Medipyxis sets this status automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.rpc('apply_stedi_277_ack', {",
+          "paths": [
+            "backend/supabase/functions/_shared/stediAckImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await importAckEvent(supabase, config, transactionIds, { eventId: webhookId });",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rejected: \"Rejected\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-16",
+      "claim": "Draft — Claim started but not yet complete.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "draft: \"Draft\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let claimStatus = 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-17",
+      "claim": "Pending — Auto-created from a completed visit, awaiting biller review.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 'pending', // Pending status - ready for biller review",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { AutoBillingClaimService } from './autoBillingClaimService';",
+          "paths": [
+            "frontend/src/services/finalizeVisit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim is in the pending queue awaiting biller review.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-18",
+      "claim": "Needs Info — A required field is missing or a validation error must be resolved before the claim can advance.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "needs_info: \"Needs Info\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim flagged for missing or incorrect information. Edit to fix.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-19",
+      "claim": "Approved — A biller reviewed the claim and marked it ready for export.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "approved: \"Approved\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim reviewed and approved by biller. Ready for export.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-20",
+      "claim": "Exported — The claim has been exported / sent to Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "exported: \"Exported\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if an Exported claim is sent to Stedi"
+        }
+      ],
+      "finding": "Exported means exported as a PDF or JSON file (BillingDashboard.tsx:1253-1256, 1452-1457); it is not sent to Stedi. Sending to Stedi moves a claim to Submitted.",
+      "proposed_text": "Exported — The claim was exported as a PDF or JSON file. It has not been sent to Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"exported\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "Exported is a file export, not a send to Stedi. Replaced by ovw-42."
+    },
+    {
+      "id": "ovw-42",
+      "claim": "Exported — The claim was exported as a PDF or JSON file. It has not been sent to Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"exported\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ovw-21",
+      "claim": "Submitted — Marked as submitted to the clearinghouse.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "submitted: \"Submitted\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim submitted to insurance clearinghouse.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-22",
+      "claim": "Paid — The payer adjudicated the claim and an ERA has been received and posted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid: \"Paid\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "(SET|set) +status *= *'paid'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if posting an ERA moves the claim status to Paid"
+        }
+      ],
+      "finding": "No server code sets the claim status to Paid when an ERA is posted. Paid is set by a person (the Claims tab status menu, or biller-update-claim-status: backend/supabase/functions/biller-update-claim-status/index.ts:3). Posting payments updates the biller's Claim Status (manual_status) instead (migration 20261026232000_meda145_biller_post_payment_to_ar_ledger.sql:493-504).",
+      "proposed_text": "Paid — A biller marked the claim paid: payment has been received and posted.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim payment has been received and posted.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "new_status: 'paid'|'denied'|'pending_review'",
+          "paths": [
+            "backend/supabase/functions/biller-update-claim-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No server path sets Paid when an ERA posts. Replaced by ovw-43."
+    },
+    {
+      "id": "ovw-43",
+      "claim": "Paid — Someone on the billing team marked the claim paid: payment has been received and posted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim payment has been received and posted.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "new_status: 'paid'|'denied'|'pending_review'",
+          "paths": [
+            "backend/supabase/functions/biller-update-claim-status/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"paid\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "(SET|set) +status *= *'paid'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "note": "no server path sets Paid",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "ovw-23",
+      "claim": "Denied — The payer denied the claim — it enters the Denials workflow.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim denied by insurance - requires appeal or adjustment.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "note": "true only if a denied claim enters the Denials workflow",
+          "excludeTests": true
+        }
+      ],
+      "status": "removed",
+      "reason": "A denied claim does not enter the Denials list: nothing creates a denial record, and no server path sets Denied. Replaced by ovw-44."
+    },
+    {
+      "id": "ovw-44",
+      "claim": "Denied — The payer denied the claim and someone on the billing team set this status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "(SET|set) +status *= *'denied'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "note": "no server path sets Denied",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "ovw-24",
+      "claim": "Appealed — An appeal has been filed on a denied claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "appealed: \"Appealed\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Denial appeal has been submitted to insurance.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-25",
+      "claim": "Cancelled — Claim voided / cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "cancelled: \"Cancelled\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim has been cancelled and will not be submitted.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (status === \"cancelled\") return \"cancelled\";",
+          "paths": [
+            "backend/supabase/functions/_shared/claimSendGate.ts"
+          ],
+          "expect": "present",
+          "note": "a cancelled claim is refused at send"
+        }
+      ]
+    },
+    {
+      "id": "ovw-26",
+      "claim": "Separately from this system lifecycle, billers set a Claim Status on each claim in the Work Queue (Ready, Hold, Billed, Paid, Denied, Appealed, Write-Off, and more).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\{ value: '(ready|hold|billed|paid|denied|appealed|write_off)', label: '(Ready|Hold|Billed|Paid|Denied|Appealed|Write-Off)' \\}",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 7
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<StatusDropdown",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "status_write: \\[[^]]*'biller'",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present",
+          "note": "true only if the biller role may write the Claim Status"
+        }
+      ],
+      "status": "removed",
+      "reason": "Billers (the biller role) cannot set the Claim Status: status_write excludes biller. Replaced by ovw-45 and ovw-46."
+    },
+    {
+      "id": "ovw-45",
+      "claim": "Separately from this system lifecycle, each claim has a Claim Status in the Work Queue (Ready, Hold, Billed, Paid, Denied, Appealed, Write-Off, and more).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "\\{ value: '(ready|hold|billed|paid|denied|appealed|write_off)', label: '(Ready|Hold|Billed|Paid|Denied|Appealed|Write-Off)' \\}",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": {
+            "count": 7
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<StatusDropdown",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-46",
+      "claim": "Billing leads, coders, medical directors and admins can change the Claim Status. Users with the Biller role currently cannot: the change fails with an error. A fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "^\\s+\"status_write\",$",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present",
+          "note": "the Claim Status write is gated on status_write"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err?.message ?? 'Failed to update claim status. Please try again.',",
+          "paths": [
+            "frontend/src/components/billing/StatusDropdown.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-27",
+      "claim": "That manual status is the biller's working state and is what most of the queue's filters and bulk actions operate on.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if \\(r\\.claim_manual_status !== ",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          },
+          "note": "true only if most of the nine filters read the manual status"
+        }
+      ],
+      "finding": "Only one of the Work Queue's nine filters (Claim Status) reads the manual status (BillingWorkQueuePage.tsx:542-549). The others filter on the search text, date range, appointment status, the derived visit/note/readiness statuses, payer and claim age. The bulk toolbar does set the manual status (BulkActionToolbar.tsx, batch-claim-status-update).",
+      "proposed_text": "That manual status is the biller's working state. The Claim Status filter and the bulk action toolbar work on it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (r.claim_manual_status !== manualStatusFilter) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.functions.invoke('batch-claim-status-update', { body });",
+          "paths": [
+            "frontend/src/services/manualStatusService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BulkActionToolbar",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Only one of nine filters reads the manual status. Replaced by ovw-47."
+    },
+    {
+      "id": "ovw-47",
+      "claim": "That manual status is the biller's working state. The Claim Status filter and the bulk action toolbar work on it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (r.claim_manual_status !== manualStatusFilter) return false;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.functions.invoke('batch-claim-status-update', { body });",
+          "paths": [
+            "frontend/src/services/manualStatusService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BulkActionToolbar",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-28",
+      "claim": "CMS requires that claims for Medicare beneficiaries be submitted within one year of the date of service.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (lower.includes('medicare')) return 365;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Regulatory fact; the check confirms the product encodes it (365 days for Medicare payers)."
+    },
+    {
+      "id": "ovw-29",
+      "claim": "Claims that remain in Pending or Needs Info beyond your organization's internal filing deadline will be flagged in the AR Aging report.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "absent",
+          "note": "true only if the AR Aging report is not limited to submitted claims"
+        },
+        {
+          "type": "grep",
+          "pattern": "filing_deadline|internal_filing",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if an organization filing-deadline setting exists"
+        }
+      ],
+      "finding": "The AR Aging report counts only claims with status submitted, accepted or partial_payment (arAgingService.ts:105), so Pending and Needs Info claims never appear in it. There is no organization filing-deadline setting. Timely filing is shown per claim in the Coding Review drawer, using a fixed window by payer (timelyFiling.ts:1-9; CodingReviewDrawer.tsx:631-633).",
+      "proposed_text": "Pending and Needs Info claims are not in the AR Aging report, which covers submitted claims only. The Coding Review drawer shows how many days are left to file each claim, based on its payer (365 days for Medicare, 180 for Medicaid, 90 for others).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${timelyFiling.daysRemaining}d to file`",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (lower.includes('medicaid')) return 180;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Pending/Needs Info claims are never in the AR Aging report and there is no org filing-deadline setting. Replaced by ovw-48."
+    },
+    {
+      "id": "ovw-48",
+      "claim": "Pending and Needs Info claims are not in the AR Aging report, which covers submitted claims only. The Coding Review drawer shows how many days are left to file each claim, based on its payer (365 days for Medicare, 180 for Medicaid, 90 for others).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${timelyFiling.daysRemaining}d to file`",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (lower.includes('medicaid')) return 180;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ovw-30",
+      "claim": "A claim can enter the Denials workflow at any point after submission if the payer returns a denial. The claim moves to Denied (and to Appealed if you file an appeal), while the denial's own appeal status tracks separately.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return denials.filter((d) => d.appeal_status === denialsAppealStatusFilter);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "note": "denial records carry their own appeal_status"
+        },
+        {
+          "type": "grep",
+          "pattern": "(SET|set) +status *= *'denied'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if a payer denial moves the claim to Denied without a person"
+        }
+      ],
+      "finding": "Denial records (denial_management) carry their own appeal_status, as the page says. But a payer denial does not move the claim status: no server code sets status 'denied'; an ERA denial is recorded as the ERA line's outcome (migration 20261109120000_cf226_era_posting_status_and_line_match.sql:102-106). A biller sets Denied or Appealed from the Claims tab status menu or the Work Queue Claim Status.",
+      "proposed_text": "When a payer denies a claim, set the claim to Denied (and to Appealed once you file an appeal). The denial's own appeal status is tracked separately on the Denials tab.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return denials.filter((d) => d.appeal_status === denialsAppealStatusFilter);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'appealed', label: 'Appealed' },",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "A payer denial does not move the claim status; a person sets Denied/Appealed. Replaced by ovw-49."
+    },
+    {
+      "id": "ovw-49",
+      "claim": "When a payer denies a claim, set the claim to Denied (and to Appealed once you file an appeal). The denial's own appeal status is tracked separately on the Denials tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return denials.filter((d) => d.appeal_status === denialsAppealStatusFilter);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"denied\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'appealed', label: 'Appealed' },",
+          "paths": [
+            "frontend/src/components/billing/statusDropdownHelpers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

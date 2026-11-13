@@ -1,0 +1,576 @@
+{
+  "title": "Tour of your dashboard",
+  "source": "getting-started/your-dashboard",
+  "url": "https://help.medipyxis.com/getting-started/your-dashboard/",
+  "claims": [
+    {
+      "id": "yd-01",
+      "claim": "The dashboard is the first page after sign-in; the sidebar shows the modules your role can open; the dashboard cards are the same for everyone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  clinical: '/dashboard',",
+          "paths": [
+            "frontend/src/utils/auth/postAuthDestination.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const workCockpits: NavigationCard[] = [",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-02",
+      "claim": "Video: platform overview and navigation tour (external YouTube video).",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "yd-03",
+      "claim": "Welcome banner: Welcome Back with your name, and the green On Duty and HIPAA badges.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+On Duty$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+HIPAA$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-04",
+      "claim": "Four tiles: Compliance Status (credential compliance), Active Patients, Today's Schedule (today's appointments), Visits Completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Compliance Status\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Active Patients\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Today's Schedule\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Visits Completed\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value: String(dailyMetrics?.total_appointments ?? 0),",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value: String(dailyMetrics?.completed_visits ?? 0),",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-05",
+      "claim": "Your Work Cockpits: Patient Management and Clinical Workflow; a Mileage & Expenses card is shown but its page is marked Coming Soon! and is not a working tool.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Your Work Cockpits$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Patient Management\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinical Workflow\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Mileage & Expenses\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"font-medium\">Coming Soon!</span>",
+          "paths": [
+            "frontend/src/pages/MileageExpensesPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-06",
+      "claim": "Time Off Requests is not switched on: the card shows Coming Soon and the page has a Coming Soon! banner. My Credentials & Compliance opens the Credential Tracker.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Coming Soon\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"font-medium\">Coming Soon!</span>",
+          "paths": [
+            "frontend/src/pages/TimeOffRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"My Credentials & Compliance\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/hr-credential-tracker\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-07",
+      "claim": "Right column: Announcements (View Announcements & Kudos) and Recent Activity with View all activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+View Announcements & Kudos$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Recent Activity$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+View all activity$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-08",
+      "claim": "Electronic Prescribing Setup shows DoseSpot ePrescribing status: ePrescribing Active or Setup needed; EPCS Active, Setup required, or Not configured; a Not confirmed badge when DoseSpot has not confirmed the prescriber; Set Up ePrescribing / Complete EPCS Setup buttons.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Electronic Prescribing Setup$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+DoseSpot ePrescribing$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{epcsStatus?.isActive ? \"Active\" : \"Setup needed\"}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Setup required\"",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Not configured\"}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'DoseSpot has not confirmed this prescriber'",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Set Up ePrescribing$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Complete EPCS Setup$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-09",
+      "claim": "Knowledge Base & Resources links to Policies, Training Materials and Industry News.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Knowledge Base & Resources$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Policies\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Training Materials\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Industry News\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-10",
+      "claim": "Press ⌘K / Ctrl+K from anywhere to jump to a page by name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: \"Navigation\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "yd-r01",
+      "claim": "It's personalized by role — a clinician sees different widgets than a practice admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(userRole|currentRole) === \"(clinician|admin)\" \\? workCockpits",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The dashboard cards are the same for every role; only the sidebar differs. Replaced by yd-01."
+    },
+    {
+      "id": "yd-r02",
+      "claim": "Image: the home dashboard with four KPI tiles, Work Cockpits, HR Self-Service, and the Action Items + Recent Activity column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277): it never had a real data",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The screenshot showed the removed Action Items panel and old tiles; the image was removed from the page."
+    },
+    {
+      "id": "yd-r03",
+      "claim": "Welcome banner: your name, role badge (\"Licensed Healthcare Professional\"), and duty status (On Duty / Off Duty); the green HIPAA badge confirms your session is HIPAA-compliant.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Licensed Healthcare Professional",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Off Duty",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "No role badge or Off Duty state is shown. Replaced by yd-03."
+    },
+    {
+      "id": "yd-r04",
+      "claim": "KPI tiles: My Compliance Status, Unread Messages, Upcoming Events, Team Kudos; read-only summaries.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unread Messages",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Team Kudos",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tiles are Compliance Status, Active Patients, Today's Schedule and Visits Completed. Replaced by yd-04."
+    },
+    {
+      "id": "yd-r05",
+      "claim": "For admins, replace these with Oversight Cockpit and HR & Compliance.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Oversight Cockpit\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Work Cockpits list is the same for every role."
+    },
+    {
+      "id": "yd-r07",
+      "claim": "Action Items — tasks assigned to you: pending signatures, credential renewals, stuck visits, unsent faxes, with a red urgent counter. Recent Activity — the last 20 things you did.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277): it never had a real data",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Action Items panel was removed (it never had real data); the 20-item count was not confirmed. Replaced by yd-07."
+    },
+    {
+      "id": "yd-r08",
+      "claim": "At the bottom of the dashboard, the card shows a green pill for credentials and EPCS; yellow or red with a Configure button that opens DoseSpot inside an in-app frame; Open DoseSpot launches the prescribing console for the patient context.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Configure|Open DoseSpot)$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The buttons are Set Up ePrescribing and Complete EPCS Setup; there is no Configure or Open DoseSpot button on the dashboard. Replaced by yd-08."
+    },
+    {
+      "id": "yd-r09",
+      "claim": "Knowledge Base & Resources tiles open help-center destinations (Welcome to Medipyxis, Release notes, Module reference).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Release notes",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tiles are Policies, Training Materials and Industry News inside the app. Replaced by yd-09."
+    },
+    {
+      "id": "yd-r10",
+      "claim": "Press ⌘K / Ctrl+K to jump to a patient, visit, or page; customize which KPI tiles appear by role in Organization Role Config.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: \"Patient\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "KPI",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Quick jump lists pages only, and tiles are not configurable. Replaced by yd-10."
+    }
+  ]
+}

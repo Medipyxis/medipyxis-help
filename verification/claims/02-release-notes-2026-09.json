@@ -1,0 +1,645 @@
+{
+  "title": "September 2026 release notes",
+  "source": "release-notes/2026-09",
+  "url": "https://help.medipyxis.com/release-notes/2026-09/",
+  "claims": [
+    {
+      "id": "rn09-00",
+      "claim": "These changes shipped on 2026-09-18 (release v1.1.315) and are in the current release.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "anesthesia: anesthesia || NOT_DOCUMENTED",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present",
+          "ref": "v1.1.315"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const LCD_REFERENCES",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": "present",
+          "ref": "v1.1.315"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dictate your answer",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present",
+          "ref": "v1.1.315"
+        }
+      ]
+    },
+    {
+      "id": "rn09-01",
+      "claim": "Blank drug allergy and latex/adhesive rows print \"Not documented.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rows.push([\"Drug allergies\", NOT_DOCUMENTED])",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No known drug allergies",
+          "paths": [
+            "frontend/src/services/perfectNote/forbiddenPhrases.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-02",
+      "claim": "Blank debridement detail rows print \"Not documented.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "anesthesia: anesthesia || NOT_DOCUMENTED",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bleeding_hemostasis: hemostasis || NOT_DOCUMENTED",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient_tolerance: patientTolerance || NOT_DOCUMENTED",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-03",
+      "claim": "A blank same-day E/M justification prints \"Not documented.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Separate E/M evaluation: ${NOT_DOCUMENTED}",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-04",
+      "claim": "A blank homebound justification is left out of the note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!fs.homebound_basis) return;",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-05",
+      "claim": "A fully blank patient-education section prints \"Patient education not documented this visit.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient education not documented this visit.",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-06",
+      "claim": "A blank pressure-injury prevention plan is left out; the plan prints under Additional Risk Assessment only when written.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "addBold(ctx, \"Additional Risk Assessment\")",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "braden_prevention_template",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-07",
+      "claim": "If the debridement procedure narrative is empty, the procedure summary from the Procedures screen prints in its place.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "matchedEntry.pre_description || matchedEntry.genericSummary",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-08",
+      "claim": "\"Pathology sent\" and \"Post-procedure dressing\" rows no longer print.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Pathology sent\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Post-procedure dressing\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn09-09",
+      "claim": "\"Tissue present (pre-procedure)\" still prints, from this visit's wound-bed assessment, and prints \"Not documented.\" when unassessed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Tissue present (pre-procedure)\", cleanText(tissuePresentPreRow(deb, ctx.opts.formatAsOf))]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!documented) return NOT_DOCUMENTED;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-10",
+      "claim": "Six incorrect LCD IDs no longer print.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"L33831\", \"L33832\", \"L34626\", \"L33801\", \"L33777\", \"L34619\",",
+          "paths": [
+            "frontend/src/services/perfectNote/forbiddenPhrases.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "L33831|L33832|L34626|L33801|L33777|L34619",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts",
+            "frontend/src/services/perfectNote/s11_codingLedger.ts",
+            "frontend/src/services/perfectNote/s15_attestation.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn09-11",
+      "claim": "Citations come from a checked table: debridement for Novitas, WPS and CGS; skin substitutes for Novitas, First Coast and CGS; nothing prints for other contractors.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lcd_id: \"",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "service: \"debridement\"",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "service: \"ctp\"",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "macId: \"first_coast\",",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "macId: \"wps\",",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "macId: \"novitas\",",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "macId: \"cgs\",",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "rn09-12",
+      "claim": "The review screen shows the actual PDF that will be stored.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setReviewPdfBlob(pdfBlob)",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const preparedNote = pendingChartNoteRef.current;",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-13",
+      "claim": "Choosing Fabrication remediation on a wound's addendum shows a checklist naming each removed class of written-in sentence.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const FABRICATION_TAG_OPTIONS",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"nkda_default\"",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"wrong_lcd_citation\"",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"homebound_taxing_effort_default\"",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"fabrication_remediation\", label: \"Fabrication remediation\" }",
+          "paths": [
+            "frontend/src/pages/WoundDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-14",
+      "claim": "Once codes are staged the Billing step shows open documentation items with a Resolve link; the list shows what is missing, the wound, and a jump button; answer boxes show documented facts and an example; you can dictate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "documentation items open",
+          "paths": [
+            "frontend/src/components"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Resolve",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/DocumentationOpenGapsStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dictate your answer",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use this example",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue to Review",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "rn09-15",
+      "claim": "Checklist items are advisory and none of them block signing; if the check fails the wizard continues.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Documentation check unavailable — continuing.",
+          "paths": [
+            "frontend/src/components"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn09-16",
+      "claim": "On a home visit (POS 12, 13 or 14) with an E/M staged, the checklist asks why the patient needed a clinician today.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const HOME_POS_CODES = new Set([\"12\", \"13\", \"14\"])",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-17",
+      "claim": "A separate item flags a wound necessity note identical to that wound's previous-visit note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "currentNote.toLowerCase() === priorNote.toLowerCase()",
+          "paths": [
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-18",
+      "claim": "Continue anyway on a billing-relevant item requires ticking an acknowledgement box.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingAffecting: true",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapTargets.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={inFlight || (billingGaps.length > 0 && !acknowledged)}",
+          "paths": [
+            "frontend/src/components/visit-wizard/DocumentationAssistModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-19",
+      "claim": "The new-patient code check no longer runs against an empty form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "results.push(...runS13Gates({ block: note.em_level!, formData }))",
+          "paths": [
+            "frontend/src/services/perfectNoteService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn09-old-01",
+      "status": "removed",
+      "claim": "(removed) \"Tissue present pre\" no longer appears.",
+      "reason": "The row prints in v1.1.315 and v1.1.345, sourced from the wound-bed assessment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Tissue present (pre-procedure)\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent",
+          "ref": "v1.1.315"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Tissue present (pre-procedure)\"",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn09-old-02",
+      "status": "removed",
+      "claim": "(removed) \"The two verified wound-care policies remain.\"",
+      "reason": "Six verified per-contractor references are in the table at ship date and today.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lcd_id: \"",
+          "paths": [
+            "frontend/src/services/perfectNote/lcdReferences.ts"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "ref": "v1.1.315"
+        }
+      ]
+    },
+    {
+      "id": "rn09-old-03",
+      "status": "removed",
+      "claim": "(removed) \"Check Admin → About for your current app version.\"",
+      "reason": "No About screen or in-app version display exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": ">About<|\"About\"",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn09-old-04",
+      "status": "removed",
+      "claim": "(removed) Dictated answers print with their own \"dictated\" label.",
+      "reason": "Provenance labels have no dictation label; a dictated answer prints as clinician-typed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dictat",
+          "paths": [
+            "frontend/src/services/perfectNote/provenanceLabels.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,750 @@
+{
+  "title": "Post and manage announcements",
+  "source": "modules/hr-compliance/announcements",
+  "url": "https://help.medipyxis.com/modules/hr-compliance/announcements/",
+  "claims": [
+    {
+      "id": "hra-01",
+      "claim": "Everyone reads announcements on the Company Announcements page, which the View Announcements & Kudos button on the Dashboard opens.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/announcements\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AnnouncementsReaderPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Company Announcements",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "View Announcements & Kudos",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleCardClick(\"/announcements\")}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-02",
+      "claim": "Announcements broadcast a message to your team on their dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "announcement.title",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The dashboard has a card linking to Company Announcements; announcements themselves are read on that page, not shown on the dashboard."
+    },
+    {
+      "id": "hra-03",
+      "claim": "You need the admin, hr_admin, or clinical_manager role to post announcements.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "hr_admin",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "userRole === \"clinical_manager\"",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no hr_admin role; New/Edit/Delete on the Announcements page are enabled only for admin, superadmin and customer support."
+    },
+    {
+      "id": "hra-04",
+      "claim": "Creating, editing and deleting announcements on the HR & Compliance Announcements page needs an administrator role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const isAdmin = userRole === \"admin\" || userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "disabled={!isAdmin}",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-announcement-composer\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-05",
+      "claim": "Anyone who can open Company Announcements can read announcements, join the discussion, and send Kudos.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "    element: <AnnouncementsReaderPage />,",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Send Kudos",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"chat_type\", \"announcement_discussion\")",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-06",
+      "claim": "Every user in the target audience can react to announcements.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "reaction",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No reaction control exists on the reader page."
+    },
+    {
+      "id": "hra-07",
+      "claim": "Categories: Compliance, HR, Culture, Events, Operations, Kudos. The reader shows each with its own colored badge.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Compliance\">Compliance</option>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Culture\">Culture</option>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Events\">Events</option>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Operations\">Operations</option>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Kudos\">Kudos</option>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{getCategoryColor(announcement.category)}",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-08",
+      "claim": "Category guidance: Compliance for policy and regulatory updates, HR for benefits and org changes, Culture for celebrations, Events for all-hands and training sessions, Operations for workflow changes, Kudos for peer recognition.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "hra-09",
+      "claim": "Open the composer from Announcements → New announcement; the direct route is /hr-announcement-composer.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "New announcement",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Internal route removed from customer text; the button label is New Announcement."
+    },
+    {
+      "id": "hra-10",
+      "claim": "In HR & Compliance, click Announcements, then New Announcement. Write the Title (required), pick the Category, and write the Message Body (Markdown supported).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<span className=\"hidden sm:inline\">New Announcement</span>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(\"/hr-announcement-composer\");",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.error(\"Title is required\");",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Write your announcement here (Markdown supported)\"",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-11",
+      "claim": "Audience: All team, Specific roles, or Territories (narrow to a territory such as BD reps or home health regions).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "territories: [], // Territories functionality removed",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Territory targeting was removed from the composer; it always sends an empty territory list."
+    },
+    {
+      "id": "hra-12",
+      "claim": "Under Target Audience, tick Send to All Team Members or use Select Roles; the composer shows how many users each role would reach.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Target Audience",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Send to All Team Members",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Select Roles",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return count ? ` (${count} user${count !== 1 ? \"s\" : \"\"})` : \"\";",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-13",
+      "claim": "Attachments up to 25 MB; attachments appear inline on the reader page. Add a link that the reader shows as a call-to-action button.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "25 * 1024 * 1024",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "link_url",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The composer limits files to 10 MB and has no link field."
+    },
+    {
+      "id": "hra-14",
+      "claim": "Attach files if needed (PDF, JPG, PNG, DOC or DOCX, up to 10 MB each).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "accept=\".pdf,.jpg,.jpeg,.png,.doc,.docx\"",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (file.size > 10 * 1024 * 1024) {",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-15",
+      "claim": "Scheduled announcements move to a pending queue and are released at that moment; immediate ones appear on every recipient's dashboard right away.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "scheduled_time",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "hr_announcements",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Scheduled announcements are saved with status scheduled; the reader shows only status sent and nothing flips scheduled to sent (no job, no caller of sendAnnouncement in pages)."
+    },
+    {
+      "id": "hra-16",
+      "claim": "Delivery Settings: Send Immediately, or Schedule for Later with a date and time in your local time zone. A scheduled announcement is saved as Scheduled but is not released at that time, so it does not appear on Company Announcements.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Send Immediately",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Schedule for Later",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "type=\"datetime-local\"",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "scheduledTime = toUTCISOStringFromLocalInput(formData.scheduledTime);",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "status: request.delivery === \"scheduled\" ? \"scheduled\" : \"sent\",",
+          "paths": [
+            "frontend/src/services/simpleHRService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "status: \"sent\" as any,",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "sendAnnouncement(",
+          "paths": [
+            "frontend/src/pages"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "hr_announcements",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-16b",
+      "claim": "Troubleshooting: a scheduled announcement never appeared — scheduled announcements are not released automatically yet; post it again with Send Immediately.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "status: request.delivery === \"scheduled\" ? \"scheduled\" : \"sent\",",
+          "paths": [
+            "frontend/src/services/simpleHRService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "status: \"sent\" as any,",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-17",
+      "claim": "Kudos: on Company Announcements click Send Kudos, write a title and message, and send. No administrator role needed. Kudos always go to all team members and are sent immediately.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Send Kudos",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "category: \"Kudos\" as any,",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "delivery: \"immediate\",",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "all_team: true,",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(\"Kudos sent to the team!\");",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-18",
+      "claim": "Kudos are pinned at the top of the reader for a shorter window and rotate off the pin after 7 days; Every user opens Announcements from the top nav.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "pinned",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No pinning or rotation exists, and Announcements is not in the top nav; the list is newest first."
+    },
+    {
+      "id": "hra-19",
+      "claim": "Announcements are listed newest first with a category badge. Each can have a Discussion thread, which is a Team Chat conversation for that announcement.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "sort_by: \"created_at\",",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "sort_order: \"desc\",",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"team_conversations\")",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<MessageCircle className=\"h-4 w-4\" /> Discussion",
+          "paths": [
+            "frontend/src/pages/AnnouncementsReaderPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-20",
+      "claim": "Administrators edit and delete on the Announcements page: Edit opens the composer with the current content; Delete, after confirming, removes the announcement permanently.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleEditAnnouncement(n)}",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(\"/hr-announcement-composer\", {",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Are you sure you want to delete",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "async deleteAnnouncement(id: string, facilityId: string): Promise<void> {",
+          "paths": [
+            "frontend/src/services/simpleHRService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".delete()",
+          "paths": [
+            "frontend/src/services/simpleHRService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "hra-21",
+      "claim": "On retract, a delete audit row is kept for compliance.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "hr_announcements_audit",
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "announcement_audit",
+          "paths": [
+            "frontend/src/services/simpleHRService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Delete is a hard delete on hr_announcements with no audit insert."
+    },
+    {
+      "id": "hra-22",
+      "claim": "Troubleshooting: if no audience is picked, the composer says to select roles or choose Send to All Team Members.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "'Please select roles or choose \"Send to All Team Members\"'",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementComposer.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

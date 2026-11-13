@@ -6,58 +6,44 @@ audience: [bd]
 roles: [bd_rep]
 type: reference
 estimated_minutes: 2
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/bd-dashboard
 tags: [quick-reference, bd, roi]
 ---
 
 # BD rep cheat sheet
 
-Your loop: cover your practices, log every touch, let Medipyxis attribute ROI back to you.
+Your loop: cover your practices and log every touch in CRM, so your activity and referrals show on the BD Dashboard.
 
-## What gets tracked automatically
+## What the BD Dashboard shows
 
-- **Referrals received** from every practice you own.
-- **Visits completed** and **revenue** tied to those referrals.
-- **Your activities** (calls, visits, spend) logged from the quick-add strip.
-- **Cost to serve** (activity time × your loaded cost).
+- **Referrals This Month** — new patients this month credited to you (an admin can filter by rep).
+- **ROI (MTD)** — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend.
+- **Active Pipeline** — not calculated yet; it always shows $0k.
+- A quick-add strip with your month-to-date counts and spend.
 
 ## What you must do manually
 
 | Task | Cadence | Where |
 |---|---|---|
-| Log every practice touch | Same day | **CRM → practice → Log Call / New Visit / Add Spend** (or voice) |
-| Update practice contact info | As needed | **CRM → practice → Overview → Edit** |
-| Record new contacts | When met | **CRM → practice → + Add Contact** |
+| Log every practice touch | Same day | Quick-add strip on **CRM** or the **BD Dashboard**: **Log Call**, **New Visit**, **Add Spend**, or **Record Voice Note** |
+| Log a touch on one practice | Same day | **CRM** → open the practice → **Call**, **Visit** or **Note** |
+| Record new contacts | When met | **CRM** → open the practice → **Additional Contacts** → **Add** |
 
 ## KPIs to watch
 
 | KPI | Where | Target |
 |---|---|---|
-| Referrals this month | **BD Dashboard** | ↑ vs last month |
-| Conversion rate | **BD Dashboard** | > 80% |
-| Cost per converted referral | **BD Dashboard** | < $150 |
-| Inactive practices | **BD → Practices → filter: no activity 30d** | Investigate |
+| Referrals this month | **BD Dashboard** → **Referrals This Month** | ↑ vs last month |
+| Practices that need attention | **CRM** → status filter: **Follow-up Due** or **Cold** | Investigate |
 
 ## Shortcuts
 
 | Task | Shortcut |
 |---|---|
-| Log an activity quickly | Practice detail → `L` |
-| Find a practice | `⌘K` + practice name |
-| Open today's plan | `G` then `T` |
+| Find a practice | **CRM** → **Search practices...** |
+| Go to a page (CRM Home, BD Dashboard and others) | `⌘K` / `Ctrl+K` (Quick Jump), then type the page name |
 
-## Round-robin referrals
+## Round-robin
 
-When a new practice sends a referral before you've claimed it, the round-robin assigns it based on your territory. Check the **Unattributed** queue weekly on **BD → Dashboard** to claim any that routed incorrectly.
-
-## How ROI is calculated
-
-```
-Net ROI per practice =
-  (sum of paid claims for visits originated by this practice)
-  − (sum of your activity cost for this practice)
-  − (sum of rep spend budget allocated to this practice)
-```
-
-Time horizon is rolling 12 months. Ask your manager to adjust loaded cost rates in **Admin → BD Settings**.
+The BD Dashboard shows your round-robin progress: how many of your practices you have contacted in the current cycle.

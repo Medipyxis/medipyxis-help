@@ -65,61 +65,44 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item active" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Set up a facility in your first week</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-06-29</span></div>
-      <p>Complete these tasks during the first week after a new facility goes live so that referrals, billing, and scheduling work correctly from day one.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Complete these tasks during the first week after a new facility goes live so that faxes, claims, and scheduling work correctly from day one.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need the <code>admin</code> or <code>superadmin</code> role.</li>
-<li>Have the facility's main fax number, business hours, NPI, and Tax ID ready.</li>
+<li>You can open <strong>Facilities</strong> in the sidebar. Administrators always can.</li>
+<li>Have the facility's fax number, NPI, and Tax ID ready.</li>
 </ul>
 <h2 id="steps">Steps</h2>
-<h3 id="1-confirm-the-facility-uuid">1. Confirm the facility UUID</h3>
+<h3 id="1-find-the-facility-id">1. Find the facility's ID</h3>
 <ol>
-<li>Open the <strong>Organization Selector</strong> in the top-left header and select the facility.</li>
-<li>Look at the browser address bar — the URL reads <code>/facility/{uuid}/dashboard</code>. Copy the <code>uuid</code> segment.</li>
-<li>Share this UUID with any integration partners or API consumers; it is the stable identifier for this facility across all Medipyxis APIs.</li>
+<li>If you work at more than one facility, open your profile menu (top right), click <strong>Switch Facility</strong>, and pick the facility.</li>
+<li>Look at the browser address bar — the URL reads <code>/facility/{uuid}/dashboard</code>. The <code>uuid</code> part is the facility's ID. Medipyxis support may ask for it.</li>
 </ol>
 <p><img alt="Facilities list showing FACILITY, CONTACT, STATS, STATUS, and ACTIONS columns. The active/inactive badge in the STATUS column confirms a facility is live." src="/assets/facilities/list.png" />
 <em>The </em><em>Facilities</em><em> list at <code>/facilities</code>. Confirm your facility shows </em><em>Active</em><em> in the STATUS column before proceeding.</em></p>
 <h3 id="2-set-the-fax-number">2. Set the fax number</h3>
 <ol>
 <li>Navigate to <strong>Facilities</strong> in the sidebar.</li>
-<li>Click <strong>Actions → Edit</strong> next to your facility.</li>
-<li>Enter the 10-digit fax number in the <strong>Fax Number</strong> field (no dashes or spaces required).</li>
-<li>Click <strong>Save</strong>.</li>
+<li>Click the <strong>Edit</strong> button on your facility's row.</li>
+<li>Enter the facility's number in the <strong>Fax Number</strong> field.</li>
+<li>Click <strong>Save Changes</strong>.</li>
 </ol>
-<p><Note>
-The fax number entered here is the outbound caller ID shown to referring practices. Inbound faxes are routed via the More (Fax) module; this field does not change inbound routing.
-</Note></p>
+<p>This number does two jobs. Faxes sent from Medipyxis for this facility go out from it, so it must be a number set up for the facility's fax service; sending is refused while it is blank. Faxes received on that number are filed to this facility.</p>
 <h3 id="3-enter-the-facility-npi-tax-id-and-legal-name">3. Enter the facility NPI, Tax ID, and legal name</h3>
 <ol>
-<li>In the facility edit panel, enter the facility <strong>NPI</strong> and <strong>Tax ID</strong>. Both are format-validated as you type.</li>
-<li>When you enter a valid 10-digit NPI, Medipyxis performs an <strong>NPPES lookup</strong> and offers to auto-fill the facility's <strong>legal name</strong>, address, and taxonomy from the CMS registry. Accept or decline the suggested values.</li>
-<li>If NPPES cannot confirm the NPI, a <strong>Save anyway?</strong> prompt appears — you can still save, but double-check the number.</li>
-<li>Click <strong>Save</strong>. The facility <strong>legal name</strong> is what appears on payer-facing claim output.</li>
+<li>In the facility form, enter the facility <strong>NPI Code</strong> and <strong>Tax Number</strong>.</li>
+<li>When you enter a 10-digit NPI, Medipyxis looks it up in the federal NPPES registry and shows a <strong>Found in federal NPPES registry</strong> card. Click <strong>Use this info</strong> to fill the <strong>Legal / Billing Name</strong>, address and phone from the registry, or <strong>Dismiss</strong> to keep what you typed.</li>
+<li>If the registry cannot confirm the NPI, saving stops with "We can't confirm this NPI is a real registered provider" and a <strong>Save anyway</strong> button. You can still save, but double-check the number.</li>
+<li>Click <strong>Save Changes</strong>. The <strong>Legal / Billing Name</strong> is the name used on claims; if it is blank, claims use the <strong>Facility Name</strong>.</li>
 </ol>
-<h3 id="4-set-business-hours">4. Set business hours</h3>
+<h3 id="4-load-your-prices">4. Load your prices</h3>
 <ol>
-<li>In the facility edit panel, expand <strong>Business Hours</strong>.</li>
-<li>Toggle each day on or off and set <strong>Open</strong> and <strong>Close</strong> times in 30-minute increments.</li>
-<li>Business hours affect the SLA breach timer displayed on the <strong>Fax Review Queue</strong> and the <strong>Referral Intake</strong> kanban.</li>
-<li>Click <strong>Save</strong>.</li>
-</ol>
-<h3 id="5-set-intake-slas">5. Set intake SLAs</h3>
-<ol>
-<li>Navigate to <strong>Referral Intake</strong> settings (accessible from the <strong>Referral Intake</strong> module → <strong>Settings</strong> gear icon, or see the <a href="/modules/referral-intake/setup/">Referral Intake Setup</a> guide).</li>
-<li>Set the <strong>New Referral SLA</strong> (hours from fax receipt to first touch) and the <strong>Financial Clearance SLA</strong> (hours from financial column entry to clearance decision).</li>
-<li>These thresholds drive the red SLA Breach Timer shown on each referral card.</li>
-</ol>
-<h3 id="6-set-billing-defaults">6. Set billing defaults</h3>
-<ol>
-<li>Navigate to <strong>Billing → Charge Master</strong>.</li>
-<li>Confirm the facility's charge rates and, under the <strong>Templates</strong> tab, the default superbill template for this facility.</li>
-<li>Confirm the correct <strong>Default Rendering Provider</strong> NPI for this facility so it populates CMS-1500 §24J automatically on every new claim.</li>
-<li>See <a href="/admin/billing-setup/">Billing Setup</a> for full Charge Master and clearinghouse configuration.</li>
+<li>Click <strong>Billing Operations</strong> in the sidebar, then <strong>Charge Master</strong>.</li>
+<li>Add your rates in <strong>Insurance Charges</strong> and <strong>Self-Pay Charges</strong>. A claim line with no rate is priced at $0.00 and the claim cannot be sent to Stedi.</li>
+<li>See <a href="/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a> and <a href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a>.</li>
 </ol>
 <h2 id="result">Result</h2>
-<p>Your facility is Active, has a fax number, a validated NPI/Tax ID and legal name, enforces business-hour SLAs on Referral Intake, and auto-populates a default rendering provider on new claims. Users can now be invited (see <a href="/admin/user-management/">User Management</a>).</p>
+<p>Your facility is Active, has a fax number, an NPI, Tax ID and legal name, and has prices loaded. Users can now be invited (see <a href="/admin/user-management/">User Management</a>).</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
 <thead>
@@ -131,9 +114,9 @@ The fax number entered here is the outbound caller ID shown to referring practic
 </thead>
 <tbody>
 <tr>
-<td>Facility shows <strong>Inactive</strong> in the list</td>
-<td>Not yet activated by Medipyxis support</td>
-<td>Contact your implementation contact</td>
+<td>Facility is not in the list</td>
+<td>It was deactivated</td>
+<td>Open the <strong>Deactivated Facilities</strong> tab and click <strong>Reactivate</strong> on its row</td>
 </tr>
 <tr>
 <td>NPPES cannot confirm the NPI</td>
@@ -141,14 +124,14 @@ The fax number entered here is the outbound caller ID shown to referring practic
 <td>Re-check the 10-digit NPI; you can still <strong>Save anyway</strong> if it is correct</td>
 </tr>
 <tr>
-<td>SLA timer never turns red</td>
-<td>Business hours not saved, or SLA set to 0</td>
-<td>Re-check business hours and SLA fields</td>
+<td>Sending a fax fails with "Facility has no fax caller ID configured"</td>
+<td>The facility's Fax Number is blank</td>
+<td>Complete step 2</td>
 </tr>
 <tr>
-<td>Default rendering provider blank on new claims</td>
-<td>Field not set in Charge Master / facility config</td>
-<td>Complete Step 6</td>
+<td>"No price on file for CPT …" when sending a claim</td>
+<td>No rate in the Charge Master for that code</td>
+<td>Complete step 4</td>
 </tr>
 </tbody>
 </table>
@@ -159,7 +142,7 @@ The fax number entered here is the outbound caller ID shown to referring practic
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="indent-3" href="#1-confirm-the-facility-uuid">1. Confirm the facility UUID</a></li><li><a class="indent-3" href="#2-set-the-fax-number">2. Set the fax number</a></li><li><a class="indent-3" href="#3-enter-the-facility-npi-tax-id-and-legal-name">3. Enter the facility NPI, Tax ID, and legal name</a></li><li><a class="indent-3" href="#4-set-business-hours">4. Set business hours</a></li><li><a class="indent-3" href="#5-set-intake-slas">5. Set intake SLAs</a></li><li><a class="indent-3" href="#6-set-billing-defaults">6. Set billing defaults</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/facility-setup.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/facility-setup.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

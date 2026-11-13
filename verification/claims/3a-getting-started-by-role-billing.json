@@ -1,0 +1,616 @@
+{
+  "title": "Billing / RCM first hour",
+  "source": "getting-started/by-role/billing",
+  "url": "https://help.medipyxis.com/getting-started/by-role/billing/",
+  "claims": [
+    {
+      "id": "bl-01",
+      "claim": "Medipyxis drafts the claim from the signed visit; you review and submit it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 'pending', // Pending status - ready for biller review",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { AutoBillingClaimService } from './autoBillingClaimService';",
+          "paths": [
+            "frontend/src/services/finalizeVisit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Claim is in the pending queue awaiting biller review.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-02",
+      "claim": "Your role can open Billing Operations; providers are enrolled through Payer Enrollment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Billing Operations\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-03",
+      "claim": "Have at least one signed visit waiting to be billed.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "bl-04",
+      "claim": "Loop: Submit Claim sends to Stedi; acknowledgment accepted or rejected; ERA payment posts to the claim's ledger.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await supabase.rpc('apply_stedi_277_ack', {",
+          "paths": [
+            "backend/supabase/functions/_shared/stediAckImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await importAckEvent(supabase, config, transactionIds, { eventId: webhookId });",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rejected: \"Rejected\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ledger = eraId ? await postEraToLedger(supabase, eraId) : null;",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments and adjustments post to each matched claim's ledger automatically when the ERA arrives.",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-05",
+      "claim": "Billing Operations → Work Queue; one row per encounter with Visit Status, Note Status, Billing Readiness and Claim Status; Ready / Pending Doc / Pending Sig presets.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/billing/work-queue`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Ready|Pending Doc|Pending Sig|No Show|Not Seen)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{bucketCounts\\.(ready|pendingDoc|pendingSig)\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{rows\\.filter\\(\\(r\\) => r\\.visit_status === \"(No Show|Not Seen)\"\\)\\.length\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "bl-06",
+      "claim": "Users with the Biller role currently cannot change the Claim Status; a fix is being tracked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "^\\s+\"status_write\",$",
+          "paths": [
+            "backend/supabase/functions/manual-status-update/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await assertBillingAccess(supabase, user, facilityId, \"status_write\");",
+          "paths": [
+            "backend/supabase/functions/batch-claim-status-update/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err?.message ?? 'Failed to update claim status. Please try again.',",
+          "paths": [
+            "frontend/src/components/billing/StatusDropdown.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(err?.message ?? 'Batch update failed. Please try again.');",
+          "paths": [
+            "frontend/src/components/billing/BulkActionToolbar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-07",
+      "claim": "Click Edit to open the claim form, or Review for the Coding Review drawer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${facilityId}/billing/new?editClaimId=${r.claim_id}`",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const editClaimId = searchParams.get('editClaimId');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setDrawerRow(r)}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-08",
+      "claim": "Click Submit Claim — it goes to the payer through Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Saving...' : hasUnsavedChanges ? 'Save Changes' : 'No Changes'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Save changes to this claim?' : 'Save this claim as draft?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Update and submit this claim?' : 'Create and submit this claim?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-09",
+      "claim": "ERAs arrive automatically from Stedi; no file upload or sync button; matched lines post to the ledger; posting does not change the claim status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "so there is no manual \"sync\" action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cron\\.schedule.*(stedi|era|835)",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent",
+          "note": "no scheduled ERA polling job"
+        },
+        {
+          "type": "grep",
+          "pattern": "UPDATE (public\\.)?billing_claims",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations/20261024100000_ledger_era_autopost_and_eob.sql",
+            "backend/supabase/migrations/20261109120000_cf226_era_posting_status_and_line_match.sql",
+            "backend/supabase/migrations/20261005200000_stedi_era_import.sql"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments and adjustments post to each matched claim's ledger automatically when the ERA arrives.",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-10",
+      "claim": "Match Unmatched lines with Match to claim on the ERA / EOB page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { MatchEraLineDialog } from \"../components/billing/era/MatchEraLineDialog\";",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Search by claim number or patient (3+ letters)",
+          "paths": [
+            "frontend/src/components/billing/era/MatchEraLineDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-11",
+      "claim": "Denials tab: each denial carries a reason, appeal status and deadline; ERA denials are not added automatically yet (fix tracked).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Denial Reason</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Category</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Appeal Status</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<TableHead>Deadline</TableHead>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "note": "nothing calls the denial-record writer",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denial_management",
+          "paths": [
+            "backend/supabase/functions/_shared/stediEraImport.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "denied: \"Denied / $0, nothing to post\",",
+          "paths": [
+            "frontend/src/utils/eraPosting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "createDenial(",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "bl-12",
+      "claim": "Claims tab: search and filter by status, payer, date of service and rendering provider; ⌘K jumps to pages by name and does not search claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search patient, claim #, payer...\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const matchesPayer = !payerFilter || (claim as any).payer_name === payerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(claim as any).rendering_provider_name === providerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const serviceDate = new Date(claim.date_of_service);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Statuses</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: \"Navigation\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bl-r01",
+      "claim": "Your admin has added you with a biller role; Clearinghouse credentials are configured (Billing Operations → Clearinghouse Config).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Clearinghouse Config",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Clearinghouse Config; access is the Billing Operations feature."
+    },
+    {
+      "id": "bl-r02",
+      "claim": "Matched lines auto-post and advance claims to Paid.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(SET|set) +status *= *'paid'",
+          "paths": [
+            "backend/supabase/migrations",
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ],
+      "status": "removed",
+      "reason": "ERA posting does not change the claim status."
+    },
+    {
+      "id": "bl-r03",
+      "claim": "Denials are grouped by denial reason (CARC/RARC); Medipyxis shows the original claim, the rule evaluation from submission, and a suggested next action; everything is added to the claim's activity feed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "suggested next action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No grouping by CARC, no rule evaluation or suggested next action on the Denials tab."
+    },
+    {
+      "id": "bl-r04",
+      "claim": "Press ⌘K / Ctrl+K and type a patient name, claim number, or visit date; billing matches rank first in the Billing workspace.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: \"Claims\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Quick jump lists pages only."
+    },
+    {
+      "id": "bl-r05",
+      "claim": "The claim form shows a CMS-1500 layout with procedure lines you can drag to reorder; Submit Claim when clean.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onDragEnd",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Drag-to-reorder was not confirmed; Submit Claim kept as bl-08."
+    }
+  ]
+}

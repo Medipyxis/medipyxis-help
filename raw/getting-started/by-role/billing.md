@@ -6,7 +6,7 @@ audience: [billing]
 roles: [biller]
 type: quickstart
 estimated_minutes: 45
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/billing/work-queue
 related:
   - billing-work-queue
@@ -18,75 +18,58 @@ tags: [onboarding, billing, claims]
 
 # Billing / RCM first hour
 
-By the end of this hour you will understand the billing work queue, submit your first claim, post an ERA payment, and know where denials live. Medipyxis does the coding prep; you audit and submit.
+By the end of this hour you will know the Billing Work Queue, have reviewed and submitted a claim, checked posted ERA payments, and know where denials live. Medipyxis drafts the claim from the signed visit; you review and submit it.
 
 ## Before you start
 
-- Your admin has added you with a `biller` role.
-- Clearinghouse credentials are configured (**Billing Operations → Clearinghouse Config**).
-- There's at least one signed visit sitting in the unbilled queue (create a test visit if not).
+- Your role can open **Billing Operations**.
+- Your providers are enrolled with their payers through Stedi (**Billing Operations → Payer Enrollment**). See [Set up billing and the Stedi clearinghouse](/admin/billing-setup/).
+- There's at least one signed visit waiting to be billed.
 
 ## The billing loop in Medipyxis
 
-```
-Signed visit
-    ↓
-Unbilled queue  ← you audit, not build
-    ↓
-Submit to clearinghouse
-    ↓
-Clearinghouse response (accepted / rejected)
-    ↓
-Payer response (paid / denied / partial)
-    ↓
-ERA posting  →  denials routed to Denial Management
-```
+`Signed visit → claim drafted for review → you review and click Submit Claim → Stedi sends it to the payer → acknowledgment (accepted or rejected) → ERA payment posts to the claim's ledger`
 
 ## Step 1 — Tour the Work Queue (5 min)
 
-1. Click **Billing → Work Queue** in the sidebar.
-2. The Work Queue is a calendar-synced readiness board — one row per encounter — showing Visit Status, Note Status, Billing Readiness, and (once a claim exists) a **Claim Status**. Use the **Ready** / **Pending Doc** / **Pending Sig** presets and the filters to focus your day. See [Work the Billing Work Queue](../../modules/billing/work-queue.md).
+1. Click **Billing Operations** in the sidebar, then **Work Queue**.
+2. The Work Queue has one row per encounter, showing Visit Status, Note Status, Billing Readiness and, once a claim exists, a **Claim Status**. Use the **Ready** / **Pending Doc** / **Pending Sig** presets and the filters to focus your day. See [Work the Billing Work Queue](/modules/billing/work-queue/).
+
+Users with the Biller role currently cannot change the Claim Status: the change fails with an error. A fix is being tracked. Until then, ask an admin or billing lead to set it.
 
 ## Step 2 — Review and submit a claim (15 min)
 
-1. Find an encounter that's **Ready for Billing**. Click **Edit** to open the claim form (`/billing/new`), or **Review** for the coding drawer.
-2. On the claim form you see a CMS-1500 layout with:
-   - **Patient** (from the patient record)
-   - **Payer** (from insurance)
-   - **Diagnosis codes** (ICD-10, from the visit note)
-   - **Procedure lines** (CPT/HCPCS, auto-derived from documented procedures; drag to reorder)
-   - **Modifiers** (25, 59, KX, etc. where appropriate)
-3. Your job is to **audit**, not rebuild. Correct anything flagged.
-4. Click **Submit Claim** when clean — it goes to the payer through Stedi.
+1. Find an encounter that's **Ready**. Click **Edit** to open the claim form, or **Review** for the Coding Review drawer.
+2. Check the patient, payer, diagnosis codes and procedure lines, and correct anything flagged.
+3. Click **Submit Claim** when it is clean — it goes to the payer through Stedi.
 
-Detail: [Submit a claim](../../modules/billing/submit-claim.md)
+Detail: [Submit a claim](/modules/billing/submit-claim/)
 
 ## Step 3 — Review posted ERAs (10 min)
 
-1. Open the **ERA / Payments** view (`/era-eob`).
-2. ERAs (835) arrive automatically from Stedi over a webhook — there is no file to upload and no sync button. Matched lines auto-post and advance claims to **Paid**.
-3. Reconcile any **Unmatched** lines by matching them to the correct claim. See [ERA posting](../../modules/billing/era-posting.md).
+1. Open the **Payments** tab, or the **ERA / EOB** page.
+2. ERAs (835) arrive automatically from Stedi — there is no file to upload and no sync button. Matched lines post to the claim's ledger automatically. Posting does not change the claim's status.
+3. On the ERA / EOB page, match any **Unmatched** line with **Match to claim**. See [ERA posting](/modules/billing/era-posting/).
 
 ## Step 4 — Work denials (10 min)
 
-1. Open **Denial Management**. Denials are grouped by denial reason (CARC/RARC).
-2. For each denial, Medipyxis shows the original claim, the rule evaluation from submission, and a suggested next action (corrected claim, appeal, write-off).
-3. Take an action. Everything is timestamped and added to the claim's activity feed.
+1. Open the **Denials** tab in Billing Operations. Each denial record carries a reason, an appeal status and a deadline.
+2. Payer denials that arrive on an ERA are not added to the Denials tab automatically yet; a fix is being tracked. Work those from the claim.
 
-Detail: [Denial Management](../../modules/billing/denial-management.md)
+Detail: [Denial Management](/modules/billing/denial-management/)
 
 ## Step 5 — Find a claim fast (5 min)
 
-- Press ⌘K / Ctrl+K from anywhere. Type a patient name, claim number, or visit date. Medipyxis ranks billing-related matches at the top when you're in the Billing workspace.
+On the **Claims** tab, search and filter by status, payer, date of service, and rendering provider. (⌘K / Ctrl+K jumps to pages by name; it does not search claims.)
 
 ## Result
 
 - You've submitted at least one clean claim.
-- You've posted at least one ERA line.
+- You've checked how ERA payments post.
 - You know where denials live and how to work them.
 
 ## Next up
 
-- [Billing: Denial Management deep dive](../../modules/billing/denial-management.md)
-- [Work the Billing Work Queue](../../modules/billing/work-queue.md)
-- [Quick reference: biller daily](../../quick-reference/biller.md)
+- [Billing: Denial Management deep dive](/modules/billing/denial-management/)
+- [Work the Billing Work Queue](/modules/billing/work-queue/)
+- [Quick reference: biller daily](/quick-reference/biller/)

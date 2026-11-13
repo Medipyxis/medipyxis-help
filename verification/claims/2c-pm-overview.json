@@ -1,0 +1,117 @@
+{
+  "title": "Patient Management — overview",
+  "source": "modules/patient-management/overview",
+  "url": "https://help.medipyxis.com/modules/patient-management/overview/",
+  "claims": [
+    {
+      "id": "pm-ov-01",
+      "claim": "Patient Management is your working roster for patients at the current facility — the working list a clinician uses daily, opened from the Patient Management sidebar item.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Patient Management\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "My Clinical Day", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "absent", "note": "a patient roster would not be headed My Clinical Day" }
+      ],
+      "finding": "The Patient Management sidebar item (AppShell.tsx:674, /pm-clinician-dashboard) opens PmClinicianDashboard, headed \"My Clinical Day\" — \"Manage your schedule, track visits, and monitor outcomes.\" (frontend/src/pages/PmClinicianDashboard.tsx:75-79). It is a day schedule (day selector, daily schedule, map, Needs Scheduling, overdue visits), not a patient roster. The roster is All Patients.",
+      "proposed_text": "Patient Management opens My Clinical Day: your schedule for the day, patients who need scheduling, and overdue visits. The full patient list is All Patients.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "My Clinical Day", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<NeedsSchedulingAccordion", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<OverdueVisitsCard", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "import PmClinicianDashboard from \"./pages/PmClinicianDashboard.tsx\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
+      ],
+      "status": "removed",
+      "reason": "Patient Management opens My Clinical Day, a day schedule, not a patient roster. Replaced by pm-ov-08."
+    },
+    {
+      "id": "pm-ov-02",
+      "claim": "A patient appears on All Patients as soon as you click Create Patient or Approve & Create Patient in Referral Intake — not only after the referral reaches Assigned.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "patient_status: \"ACTIVE\", // FLOW6-1", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "      patient_status: \"ACTIVE\",", "paths": ["frontend/src/services/idpService.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "import Patients from \"./pages/all-patients/Patients.tsx\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" }
+      ],
+      "reason": "The page also says the patient appears on Patient Management at once; that screen is a schedule (see pm-ov-01), so only the All Patients half is checked here."
+    },
+    {
+      "id": "pm-ov-03",
+      "claim": "All Patients — the full directory, opened from the All Patients sidebar item.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"All Patients\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-04",
+      "claim": "On All Patients you can filter status to Active, On Hold, Discharged, or Archived. New patients from Referral Intake are created as Active.",
+      "checks": [
+        { "type": "grep", "pattern": "<option value=\"(active|on_hold|discharged)\">(Active|On Hold|Discharged)</option>", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": { "count": 3 } },
+        { "type": "grep", "fixed": true, "pattern": "{isOnline && <option value=\"archived\">Archived</option>}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present", "note": "Archived appears only when online" },
+        { "type": "grep", "fixed": true, "pattern": "patient_status: \"ACTIVE\", // FLOW6-1", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-05",
+      "claim": "List columns: Name / DOB (click to open the chart), MRN (assigned when the patient is created), Status (Active · On Hold · Discharged · Archived).",
+      "checks": [
+        { "type": "grep", "ignoreCase": true, "pattern": "patient\\.(mrn|dob|date_of_birth)", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
+      ],
+      "finding": "All Patients is a grid of cards, not a list with columns. Each card shows name, status pill (upper case, e.g. \"ON HOLD\"), facility, flags, age, wound count, visit count and primary condition; it shows no MRN and no DOB (frontend/src/pages/all-patients/Patients.tsx:1645-1830). The chart opens from the card's View button (:1850-1866), not by clicking the name. MRN is generated at create by the database (referralApi.ts MRN retry block) and shown in the create success message.",
+      "proposed_text": "All Patients shows one card per patient with name, status (ACTIVE, ON HOLD, DISCHARGED, or ARCHIVED), age, wounds, and visits. Click View on a card to open the chart. The MRN appears in the success message after Create Patient.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": ".toUpperCase()}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{patient.wound_count || 0}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "patientChartPath(", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "? `Referral created successfully! MRN: ${patientMrn}`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ],
+      "status": "removed",
+      "reason": "All Patients is a grid of cards with no MRN or DOB and the chart opens from View. Replaced by pm-ov-09 and pm-ov-10."
+    },
+    {
+      "id": "pm-ov-06",
+      "claim": "You cannot delete a patient. Use Archive on the patient to retire a record; archived patients are preserved.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "Delete Patient", "paths": ["frontend/src"], "excludeTests": true, "expect": "absent" },
+        { "type": "grep", "fixed": true, "pattern": "title=\"Archive patient\"", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "patient_status: \"ARCHIVED\",", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present", "note": "archive is a soft delete (deleted_at + ARCHIVED)" }
+      ]
+    },
+    {
+      "id": "pm-ov-07",
+      "claim": "You can restore an archived patient back to Active.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": ".update({ deleted_at: null, updated_at: now, patient_status: \"ACTIVE\" })", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "title=\"Unarchive patient\"", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-08",
+      "claim": "Patient Management opens My Clinical Day: your schedule for the day, patients who need scheduling, and overdue visits. Open it from the Patient Management sidebar item.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "label: \"Patient Management\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "path: \"/pm-clinician-dashboard\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "import PmClinicianDashboard from \"./pages/PmClinicianDashboard.tsx\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "My Clinical Day", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<NeedsSchedulingAccordion", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<OverdueVisitsCard", "paths": ["frontend/src/pages/PmClinicianDashboard.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-09",
+      "claim": "All Patients shows one card per patient with name, status (ACTIVE, ON HOLD, DISCHARGED, or ARCHIVED), age, number of wounds, and number of visits. The MRN is not on the card; it appears in the success message after Create Patient when available.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": ".toUpperCase()}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{patient.age}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{patient.wound_count || 0}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{visitCountFor(patient.id) ?? \"—\"}", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "ignoreCase": true, "pattern": "patient\\.(mrn|dob|date_of_birth)", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "absent", "note": "no MRN or DOB on the card" },
+        { "type": "grep", "fixed": true, "pattern": "? `Referral created successfully! MRN: ${patientMrn}`", "paths": ["frontend/src/pages/ReferralsNewPage.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "pm-ov-10",
+      "claim": "Click View on a patient's card to open the chart.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "patientChartPath(", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "<Eye size={11} className=\"mr-1\" />", "paths": ["frontend/src/pages/all-patients/Patients.tsx"], "expect": "present" }
+      ]
+    }
+  ]
+}

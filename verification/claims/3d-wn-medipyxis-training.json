@@ -1,0 +1,522 @@
+{
+  "title": "How to use Medipyxis, module by module",
+  "source": "whats-new/medipyxis-training",
+  "url": "https://help.medipyxis.com/whats-new/medipyxis-training/",
+  "claims": [
+    {
+      "id": "wnt-01",
+      "claim": "Part 1: left sidebar navigation per role; facility shown at top with switching; dashboard; areas HR and Compliance, Business Development, Inventory, Orders and DME, Billing, Oversight Cockpit, Referral Intake, Patient Management, All Patients, visit wizard; assignment pairs provider by distance and workload.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Team Chat\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Labs, imaging, DME, referrals & home health orders\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Operations KPIs\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Assign Provider</span>",
+          "paths": [
+            "frontend/src/components/AssignmentDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-02",
+      "claim": "Part 2: HR hub with Announcements, Credential Tracker, Activity Logs, New Employee Onboarding (Clinician adds provider fields), Facility Users, Education Bundle Management with Create Bundle, Training Materials.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "HR Activity Logs",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Reactivate this person from Facility Users before changing their role.",
+          "paths": [
+            "frontend/src/components/CurrentEmployeesModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Education Bundle Management",
+          "paths": [
+            "frontend/src/pages/EducationBundleManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Bundle",
+          "paths": [
+            "frontend/src/pages/EducationBundleManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Training Materials\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/pages/AnnouncementsReaderPage.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-02b",
+      "claim": "Part 2 label: the ready-made education bundles and user guides are Medipyxis-provided examples.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 9 clinical education bundles with full patient & caregiver education text",
+          "paths": [
+            "frontend/src/data/educationBundlesContent.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-03",
+      "claim": "Part 3: CRM practices assigned to BD reps with follow-ups; Business Development with route map, Log Update, Add Spend; Oversight referral trends.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Log Update\",",
+          "paths": [
+            "frontend/src/components/bd-dashboard/NextBestActionCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Spend",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "View Map",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"/OtkpiReferralHealth\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-04",
+      "claim": "Part 4 + FAQ: Referral Intake → Add New Referral → Create Patient; appears in New Referrals; then Ready for Assignment; fax intake uses Approve & Create Patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Referral",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!isOnline ? \"Save Offline\" : \"Create Patient\"}",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Referrals\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Approve & Create Patient\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-05",
+      "claim": "Part 5: Assign recommends providers by distance, availability and efficiency; then Schedule with visit type, place of service, date and time slot.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Assign Provider</span>",
+          "paths": [
+            "frontend/src/components/AssignmentDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const timeslot = `${slot.time}-${endTime}`;",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-06",
+      "claim": "Part 6 + FAQ: start a visit from Patient Management (View Patient Details), the chart (Pick a visit), or Appointment Management; Add New Wound; missing items warn but Mark as Complete continues; Biller Draft Note; Continue to Review; Sign & Lock; fax or download the PDF.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "View Patient Details",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Pick a visit or start a new one…\"",
+          "paths": [
+            "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/AppointmentManagementCard.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Wound",
+          "paths": [
+            "frontend/src/components/PatientOverviewCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Mark as Complete Button */}",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Biller Draft Note",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Continue to Review",
+          "paths": [
+            "frontend/src/components/ProgressNotePreview.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sign & Lock",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-07",
+      "claim": "Part 7: vendors added in CRM (Add Vendor); Orders and DME → Vendor Network → Manage Vendors → Form Builder.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "CRM > Vendors > + Add Vendor",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Network</h3>",
+          "paths": [
+            "frontend/src/pages/Lab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Manage Vendors</span>",
+          "paths": [
+            "frontend/src/pages/Lab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/customLabForms/FormBuilder.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-08",
+      "claim": "Part 8 + FAQ: from the chart's Orders and DME, Create {type} Order (e.g. Home Health), choose a vendor agency, fill its form, submit or send by email or fax; track status in Orders and DME.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create {type} Order",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Choose a vendor or a home health agency to create a new order",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-09",
+      "claim": "Part 9: Fleet Calendar day/week/month, provider filter, create, drag to reschedule, Edit Appointment, status colors, Mark outcome, View Map.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark outcome:",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">View Map</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Status Legend (color-coded list of active appointment statuses)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-10",
+      "claim": "Part 10: Oversight Cockpit heat map, Operations KPIs (visits, cancellations, referral sources, CPT codes), Clinician Workload Balancer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Operations KPIs\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patients per day, billing, cancellations, referral sources, and CPT",
+          "paths": [
+            "frontend/src/pages/OtkpiOperations.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinician Workload Balancer\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-11",
+      "claim": "Part 11 + FAQ: Team Chat New Conversation / Create Conversation; patient chats tied to the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Team Chat\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">New Conversation</span>",
+          "paths": [
+            "frontend/src/components/CreateOneToOneConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Create Conversation",
+          "paths": [
+            "frontend/src/components/CreateMultipleParticipantConversationDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Open Visit",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationContextBanner.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnt-12",
+      "claim": "\"Why it matters\" lines, \"Team Chat is for internal coordination and not part of the clinical chart\", and the video descriptions' demo content (made-up patients).",
+      "kind": "advice"
+    }
+  ]
+}

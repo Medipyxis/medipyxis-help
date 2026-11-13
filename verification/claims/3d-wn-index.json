@@ -1,0 +1,102 @@
+{
+  "title": "What's new, in video",
+  "source": "whats-new",
+  "url": "https://help.medipyxis.com/whats-new/",
+  "claims": [
+    {
+      "id": "wnx-01",
+      "claim": "Nursing facility rounding series: set up the facility as a building, book every resident's visit for the day, see each resident, bill with the facility on the claim, send signed notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Residential buildings (SNF/ALF) get Providers (who covers it, SNF Phase 2b), Residents and Clinical Notes (SNF Phase 7). */",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DialogTitle>Book facility day</DialogTitle>",
+          "paths": [
+            "frontend/src/components/facility-day/BookFacilityDayDialog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Service Facility */}",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Download notes (.zip)\"}",
+          "paths": [
+            "frontend/src/components/crm/PracticeClinicalNotesTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnx-02",
+      "claim": "Practice Onboarding imports records one CSV at a time, shows every row before saving, leaves out problem rows with a reason, and gives a results file.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Skip all {errorCount} error rows",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnx-03",
+      "claim": "Training series: eleven videos from navigation to Team Chat (see 3d-wn-medipyxis-training).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Team Chat\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wnx-04",
+      "claim": "Links to each video page and to the release notes resolve to pages in this repo (checked locally).",
+      "kind": "advice"
+    }
+  ]
+}

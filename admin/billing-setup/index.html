@@ -65,62 +65,31 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item active" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Set up billing and the Stedi clearinghouse</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-05-12</span></div>
-      <p>Use this guide to get your facility ready to submit claims through Medipyxis. You will configure the Code Library, Fee Schedule, and Superbill templates, enroll your providers with each payer through Stedi, and set how ERAs are posted.</p>
-<p><Note>
-Medipyxis uses <strong>Stedi</strong> as the clearinghouse for electronic claims (837P), eligibility checks (270/271), claim status (276/277), and remittance advice (835). Stedi replaced ClaimMD in May 2026. You do not need to configure Stedi yourself — Medipyxis handles the connection. Your job is to enroll your providers with each payer and keep your codes, fees, and templates up to date.
-</Note></p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 10 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Use this guide to get a facility ready to send claims through Medipyxis: load your prices in the Charge Master, enroll your providers with each payer through Stedi, and know where payments land. There is no separate billing setup screen; everything below is on the Billing Operations pages.</p>
+<p>Medipyxis uses <strong>Stedi</strong> as the clearinghouse for electronic claims (837P), eligibility checks (270/271), claim acknowledgments (277CA), and remittance advice (835). Stedi replaced ClaimMD in May 2026. Medipyxis runs the Stedi connection for you; you do not enter clearinghouse credentials. Your job is to keep your prices current and enroll your providers with each payer.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You have the <code>practice_admin</code>, <code>super_admin</code>, or <code>biller</code> role.</li>
-<li>Your facility's <strong>NPI</strong> and <strong>Tax ID</strong> are entered in <strong>Admin → Facility Setup</strong>. These travel on every claim.</li>
-<li>You know which payers your providers will bill. For each payer, you'll need to confirm enrollment for claims, ERA, and (optionally) eligibility.</li>
-<li>For Medicare patients, the patient's MBI is on file — claims for Medicare are blocked at submission if the MBI is missing or invalid.</li>
+<li>You have access to <strong>Billing Operations</strong>.</li>
+<li>The facility's <strong>NPI Code</strong>, <strong>Tax Number</strong> and <strong>Legal / Billing Name</strong> are entered on the facility (<strong>Facilities → Edit</strong>). See <a href="/admin/facility-setup/">Set up a facility in your first week</a>.</li>
+<li>You know which payers your providers will bill.</li>
+<li>For Medicare patients, the patient's MBI is on file. A claim sent to Stedi is refused if the MBI is missing or invalid.</li>
 </ul>
 <hr />
-<h2 id="1-code-library">1. Code Library</h2>
-<p>The <strong>Code Library</strong> is your master list of CPT, HCPCS, and ICD-10 codes.</p>
+<h2 id="1-charge-master">1. Load your prices in the Charge Master</h2>
 <ol>
-<li>Go to <strong>Billing → Superbill Config → Code Library</strong>.</li>
-<li>Click <strong>Add Code</strong>.</li>
-<li>Enter the code, description, default units, and whether a modifier is required (<code>25</code>, <code>59</code>, <code>KX</code>, <code>JW</code>, <code>JZ</code>).</li>
-<li>Click <strong>Save</strong>.</li>
+<li>Click <strong>Billing Operations</strong> in the sidebar, then <strong>Charge Master</strong>.</li>
+<li>On <strong>Insurance Charges</strong> (and <strong>Self-Pay Charges</strong> for self-pay patients), click <strong>Add Charge</strong>, enter the CPT/HCPCS code and the per-unit price, and click <strong>Create</strong>.</li>
+<li>Use the <strong>Templates</strong> tab to group codes into named superbill templates for the billing code picker.</li>
 </ol>
-<p>Codes you add here appear in the CPT picker inside Visit Wizard (section 13 — Billing &amp; Documentation) and on the New Claim form.</p>
-<p><Compliance>
-HCPCS codes for skin substitutes must match the product's HCPCS in the Inventory Product Catalog. Mismatches are flagged by the <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a>.
-</Compliance></p>
+<p>A claim line with no price is priced at $0.00, and a claim with a $0.00 line cannot be sent to Stedi. See <a href="/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a>.</p>
 <hr />
-<h2 id="2-fee-schedule">2. Fee Schedule</h2>
-<p>The Fee Schedule sets your allowed and charge amounts per payer or payer class.</p>
+<h2 id="2-enroll-your-providers">2. Enroll your providers with each payer</h2>
+<p>Before Stedi can send a claim to a payer, the provider must be enrolled with that payer for the transactions you want to use. Do this once per payer, per provider.</p>
 <ol>
-<li>Go to <strong>Billing → Superbill Config → Fee Schedule</strong>.</li>
-<li>Click <strong>Add Schedule</strong>.</li>
-<li>Pick the payer or payer class (<code>Medicare</code>, <code>Medicaid</code>, <code>Commercial</code>).</li>
-<li>For each code, enter the <strong>Allowed Amount</strong> and the <strong>Charge Amount</strong>.</li>
-<li>Click <strong>Save Schedule</strong>.</li>
-</ol>
-<p>The charge amount is what appears on the claim. The allowed amount drives A/R aging and your net collection rate reports.</p>
-<hr />
-<h2 id="3-superbill-templates">3. Superbill Templates</h2>
-<p>Templates bundle codes that typically appear together for a given visit type (for example, <em>Wound Care — Initial Visit</em>).</p>
-<ol>
-<li>Go to <strong>Billing → Superbill Config → Templates</strong>.</li>
-<li>Click <strong>New Template</strong> and give it a name.</li>
-<li>Add codes from the Code Library.</li>
-<li>Set a default <strong>POS</strong> code and <strong>Diagnosis pointer</strong> for each line.</li>
-<li>Mark one template as the <strong>Facility Default</strong> — it pre-populates every new claim at this facility.</li>
-<li>Click <strong>Save</strong>.</li>
-</ol>
-<h3 id="default-rendering-provider">Default rendering provider</h3>
-<p>In the Facility Default template, set the <strong>Default Rendering Provider</strong> dropdown to the NPI for this facility. This NPI lands on box 24J of the CMS-1500 for every claim, and can be overridden on an individual claim if needed.</p>
-<hr />
-<h2 id="4-enroll-your-providers-with-each-payer">4. Enroll your providers with each payer</h2>
-<p>Before Stedi can submit a claim for a payer, each rendering provider must be enrolled with that payer for the transactions you want to use. Do this once per payer, per provider.</p>
-<ol>
-<li>Go to <strong>Billing → Enrollment</strong>.</li>
-<li>Confirm the <strong>Provider</strong> card: NPI, Tax ID, and provider name (pre-filled from your facility settings — edit if needed).</li>
-<li>Pick the <strong>transactions</strong> to enroll for:</li>
+<li>Click <strong>Billing Operations</strong>, then the <strong>Payer Enrollment</strong> card.</li>
+<li>Check <strong>Provider Information</strong>: <strong>Organization / Provider Name</strong>, NPI, Tax ID, PTAN (optional) and address. These are filled in from the facility — edit if needed.</li>
+<li>Pick the <strong>Enrollment Types</strong>:</li>
 </ol>
 <table>
 <thead>
@@ -132,112 +101,39 @@ HCPCS codes for skin substitutes must match the product's HCPCS in the Inventory
 <tbody>
 <tr>
 <td><strong>Professional Claims (837P)</strong></td>
-<td>Submit claims electronically to this payer. Required for every payer you bill.</td>
-</tr>
-<tr>
-<td><strong>ERA / Remittance (835)</strong></td>
-<td>Receive payment and adjustment details from this payer electronically. Required to use ERA auto-post.</td>
+<td>Send claims electronically to this payer. On by default.</td>
 </tr>
 <tr>
 <td><strong>Eligibility (270/271)</strong></td>
-<td>Run real-time eligibility checks on patients with this payer. Optional but recommended.</td>
+<td>Run real-time eligibility checks with this payer. On by default.</td>
+</tr>
+<tr>
+<td><strong>ERA / Remittance (835)</strong></td>
+<td>Receive this payer's remittances through Stedi. Off by default: enrolling moves the payer's ERAs away from your current clearinghouse.</td>
 </tr>
 </tbody>
 </table>
 <ol start="4">
-<li>Select the payers to enroll. You can pick multiple at once.</li>
-<li>Click <strong>Submit</strong>. Each payer shows a result row.</li>
+<li>Choose the <strong>Payers</strong>. You can pick several at once.</li>
+<li>Click <strong>Enroll with N Payers</strong>.</li>
+<li>Watch the <strong>Current Enrollments</strong> panel. Each payer and transaction shows its status; click <strong>Refresh from Stedi</strong> to update it. Rejections and tasks from Stedi also appear in the <strong>Stedi Actions</strong> inbox.</li>
 </ol>
-<ul>
-<li>A green check means Stedi accepted the request and the payer is processing it.</li>
-<li>A red X means something needs to be fixed — usually a mismatched NPI or Tax ID, or a payer that Stedi cannot route to. Correct and resubmit.</li>
-</ul>
-<ol start="6">
-<li>Come back later to refresh the status. Most payers update from <strong>Submitted</strong> to <strong>Active</strong> automatically.</li>
-</ol>
-<h3 id="how-long-enrollment-takes">How long enrollment takes</h3>
-<table>
-<thead>
-<tr>
-<th>Payer type</th>
-<th>Typical time to <strong>Active</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Medicare</td>
-<td>5–10 business days</td>
-</tr>
-<tr>
-<td>Medicaid (most states)</td>
-<td>1–3 weeks</td>
-</tr>
-<tr>
-<td>Commercial (Aetna, BCBS, Cigna, etc.)</td>
-<td>Same day to 4 weeks, varies by payer</td>
-</tr>
-</tbody>
-</table>
-<p><Compliance>
-Do not submit a real production claim to a payer until that payer's enrollment row shows <strong>Active</strong>. The system does not currently block submissions on enrollment status — confirming Active is your responsibility before going live with each payer.
-</Compliance></p>
+<p>Medipyxis does not check enrollment status before it sends a claim. Do not send a real claim to a payer until that payer's enrollment is active. Enrollment can take from minutes to weeks depending on the payer. See <a href="/modules/billing/ptan-and-payer-enrollment/">PTAN and payer enrollment</a>.</p>
 <hr />
-<h2 id="5-era-auto-post">5. ERA auto-post</h2>
-<p>When <strong>ERA auto-post</strong> is on, Medipyxis automatically applies remittance advice (835) from Stedi to matching claims without manual review.</p>
-<ol>
-<li>Go to <strong>Billing → Settings → Clearinghouse</strong>.</li>
-<li>Find the <strong>ERA Auto-Post</strong> toggle.</li>
-<li>Turn it <strong>on</strong> to post automatically, or leave it <strong>off</strong> if your billing team wants to review every ERA first.</li>
-<li>Click <strong>Save</strong>.</li>
-</ol>
-<p><Note>
-Auto-post only applies when the ERA amount <strong>exactly matches</strong> the claim's expected payment. Partial payments, payer adjustments, and denials always route to the Payments (ERA) tab for manual review, regardless of this setting.
-</Note></p>
+<h2 id="3-how-payments-arrive">3. How payments arrive</h2>
+<p>There is nothing to switch on. When a payer sends an ERA through Stedi, it arrives in Medipyxis automatically, and payment lines that match a claim post to that claim's ledger automatically. Lines that match no claim wait on the <strong>ERA / EOB</strong> page for a biller to match them. See <a href="/modules/billing/era-posting/">Post and reconcile ERAs from Stedi</a>.</p>
 <hr />
 <h2 id="what-happens-after-you-submit-a-claim">What happens after you submit a claim</h2>
-<p>You don't need to know the details, but it helps to recognize what each claim status means:</p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Pending</strong></td>
-<td>Claim created from a completed visit, not yet approved.</td>
-</tr>
-<tr>
-<td><strong>Needs Info</strong></td>
-<td>Something failed validation (missing NPI, invalid MBI, NCCI/MUE edit, etc.). Fix in the <a href="/modules/billing/work-queue/">Work Queue</a>.</td>
-</tr>
-<tr>
-<td><strong>Approved</strong></td>
-<td>A biller approved the claim. It will be submitted on the next export cycle.</td>
-</tr>
-<tr>
-<td><strong>Exported</strong></td>
-<td>The claim has been sent to Stedi.</td>
-</tr>
-<tr>
-<td><strong>Submitted</strong></td>
-<td>Stedi confirms the claim was delivered to the payer.</td>
-</tr>
-<tr>
-<td><strong>Paid</strong></td>
-<td>The payer adjudicated and an ERA has posted.</td>
-</tr>
-<tr>
-<td><strong>Denied</strong></td>
-<td>The payer denied the claim — manage in <a href="/modules/billing/denial-management/">Denial Management</a>.</td>
-</tr>
-</tbody>
-</table>
-<p>Status updates flow in automatically — you do not need to refresh or poll.</p>
+<ul>
+<li><strong>Exported</strong> means the claim was exported as a PDF or JSON file. It has not been sent anywhere.</li>
+<li>A claim goes to Stedi when a biller clicks <strong>Submit Claim</strong> on the claim form.</li>
+<li>If the payer's acknowledgment (277CA) rejects the claim, Medipyxis sets it to <strong>Rejected</strong> automatically.</li>
+<li><strong>Paid</strong> and <strong>Denied</strong> are set by someone on the billing team.</li>
+</ul>
+<p>For every status, see <a href="/modules/billing/overview/">Billing Operations overview</a>.</p>
 <hr />
 <h2 id="result">Result</h2>
-<p>Your Code Library, Fee Schedule, and default template are configured. Your providers are enrolled with each payer for the transaction types you need. ERA auto-post is set to your preference. Your billing team can now work the <a href="/modules/billing/work-queue/">Work Queue</a>, and claims will move through the statuses above automatically.</p>
+<p>Your prices are loaded and your providers are enrolled with each payer for the transactions you need. Your billing team can now work the <a href="/modules/billing/work-queue/">Work Queue</a>.</p>
 <hr />
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
@@ -250,44 +146,28 @@ Auto-post only applies when the ERA amount <strong>exactly matches</strong> the 
 </thead>
 <tbody>
 <tr>
-<td>Enrollment row stays at <strong>Submitted</strong> for days</td>
-<td>The payer is still processing.</td>
-<td>Most payers clear within their typical window (see table above). If well past that window, contact Medipyxis support.</td>
+<td>An enrollment stays pending for days</td>
+<td>The payer is still processing</td>
+<td>Click <strong>Refresh from Stedi</strong>, and check the <strong>Stedi Actions</strong> inbox for a task (for example a form to sign)</td>
 </tr>
 <tr>
-<td>Enrollment failed with a red X</td>
-<td>NPI or Tax ID mismatch, or Stedi cannot route to this payer</td>
-<td>Verify the provider NPI and Tax ID under <strong>Admin → Facility Setup</strong>, fix any typos, and resubmit. If the payer is not supported by Stedi, contact Medipyxis support.</td>
+<td>An enrollment comes back with an error</td>
+<td>NPI or Tax ID mismatch, or the payer needs paperwork</td>
+<td>Check the NPI and Tax Number on the facility, fix any typos, and resubmit</td>
 </tr>
 <tr>
-<td>New claim stuck at <strong>Exported</strong></td>
-<td>Payer not yet <strong>Active</strong> for 837P, or transient outage</td>
-<td>Confirm the payer's enrollment is <strong>Active</strong> in <strong>Billing → Enrollment</strong>. If yes, contact Medipyxis support.</td>
+<td>A claim sits at <strong>Exported</strong></td>
+<td>Exporting does not send it</td>
+<td>Open the claim and click <strong>Submit Claim</strong></td>
 </tr>
 <tr>
-<td>Claims for a specific payer all rejecting on MBI</td>
-<td>Patient MBI missing or invalid on file</td>
-<td>Update the patient's Medicare MBI under <strong>Patients → Insurance</strong>. The system enforces MBI format for Medicare.</td>
-</tr>
-<tr>
-<td>Codes not appearing in CPT picker</td>
-<td>Code not added to Code Library</td>
-<td>Add via <strong>Superbill Config → Code Library</strong>.</td>
-</tr>
-<tr>
-<td>ERA posted to the wrong claim</td>
-<td>Patient name or date-of-service mismatch</td>
-<td>Turn auto-post off and review manually under <strong>Payments (ERA)</strong>.</td>
-</tr>
-<tr>
-<td>Default rendering provider blank on new claims</td>
-<td>Facility Default template not saved</td>
-<td>Re-open the template, set the default rendering provider, click <strong>Save</strong>.</td>
+<td>"No price on file for CPT …" when sending</td>
+<td>No Charge Master rate for that code</td>
+<td>Add it in <strong>Charge Master</strong></td>
 </tr>
 </tbody>
 </table>
 <h2 id="related">Related</h2>
-<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/admin/">Administrator Guide</a></li><li><a href="/admin/facility-setup/">Set up a facility in your first week</a></li><li><a href="/modules/billing/work-queue/">Work the Billing Work Queue and submit claims</a></li><li><a href="/modules/billing/submit-claim/">Submit a claim</a></li><li><a href="/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a></li><li><a href="/modules/billing/ptan-and-payer-enrollment/">PTAN and payer enrollment</a></li><li><a href="/modules/billing/stedi-actions-inbox/">Stedi Actions Inbox</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -295,7 +175,7 @@ Auto-post only applies when the ERA amount <strong>exactly matches</strong> the 
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#1-code-library">1. Code Library</a></li><li><a class="" href="#2-fee-schedule">2. Fee Schedule</a></li><li><a class="" href="#3-superbill-templates">3. Superbill Templates</a></li><li><a class="indent-3" href="#default-rendering-provider">Default rendering provider</a></li><li><a class="" href="#4-enroll-your-providers-with-each-payer">4. Enroll your providers with each payer</a></li><li><a class="indent-3" href="#how-long-enrollment-takes">How long enrollment takes</a></li><li><a class="" href="#5-era-auto-post">5. ERA auto-post</a></li><li><a class="" href="#what-happens-after-you-submit-a-claim">What happens after you submit a claim</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#1-charge-master">1. Load your prices in the Charge Master</a></li><li><a class="" href="#2-enroll-your-providers">2. Enroll your providers with each payer</a></li><li><a class="" href="#3-how-payments-arrive">3. How payments arrive</a></li><li><a class="" href="#what-happens-after-you-submit-a-claim">What happens after you submit a claim</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li><li><a class="" href="#related">Related</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/billing-setup.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/billing-setup.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

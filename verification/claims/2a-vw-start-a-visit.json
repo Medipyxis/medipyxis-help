@@ -1,0 +1,1368 @@
+{
+  "title": "Walk through a visit in the Visit Wizard",
+  "source": "modules/visit-wizard-ehr/start-a-visit",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/start-a-visit/",
+  "claims": [
+    {
+      "id": "sav-01",
+      "claim": "If you leave the Visit Wizard before Sign & Lock, the visit stays an unsigned draft.",
+      "checks": [
+        {"type": "grep", "pattern": "const isAutosave = sectionId === '__autosave__';", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "} = useWizardAutoSave({", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "kind: \"draft\",", "paths": ["frontend/src/utils/resolveWizardArrival.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-02",
+      "claim": "To remove a draft you will not finish, open the appointment card and archive the draft, then pick a reason: Duplicate of another draft, Wrong patient, Abandoned / not going to finish, or Other.",
+      "checks": [
+        {"type": "grep", "pattern": "{ value: \"duplicate\", label: \"Duplicate of another draft\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ value: \"wrong_patient\", label: \"Wrong patient\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ value: \"abandoned\", label: \"Abandoned / not going to finish\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ value: \"other\", label: \"Other\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<Archive size={14} className=\"mr-2\" /> Archive", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "import AppointmentManagementCard from \"@/components/AppointmentManagementCard\";", "paths": ["frontend/src/components/AppointmentManagementTile.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "import AppointmentManagementTile from \"@/components/AppointmentManagementTile\";", "paths": ["frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-03",
+      "claim": "If the patient was not seen, mark the appointment not seen and pick a reason, such as Patient unavailable or Patient refused.",
+      "checks": [
+        {"type": "grep", "pattern": "{ value: \"patient_unavailable\", label: \"Patient unavailable\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ value: \"patient_refused\", label: \"Patient refused\" },", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{NOT_SEEN_REASONS.map((r) => (", "paths": ["frontend/src/components/AppointmentManagementCard.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-04",
+      "claim": "Open the Visit Wizard from the Fleet Calendar or the Wound Cockpit.",
+      "checks": [
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "import AppointmentDetailsModal from \"../../components/AppointmentDetailsModal\";", "paths": ["frontend/src/pages/ops/FleetCalendarCanvas.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "import AppointmentPickerInline from '@/components/wound-cockpit/AppointmentPickerInline';", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "navigate(`/visit-wizard?${params.toString()}`);", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-05",
+      "claim": "The wizard has 17 numbered sections (Step 1 through Step 17).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Step 1", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"min": 1}},
+        {"type": "grep", "pattern": "Step 17", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Provider Attestation", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Step 2b", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "The wizard numbers Step 1-17 but also shows a 'Step 2b' Clinical History Review section (VisitWizardV4.tsx:17101-17115) and an optional Physician Sign-Off section (VisitWizardV4.tsx:18754); '17 sections' omits Step 2b.",
+      "proposed_text": "Work through the numbered sections, Step 1 to Step 17, plus Step 2b (Clinical History Review) between Steps 2 and 3.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "Step 17", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Step 2b", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Clinical History Review", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The wizard also has Step 2b Clinical History Review; 17 numbered sections omits it."
+    },
+    {
+      "id": "sav-05b",
+      "claim": "Work through the numbered sections, Step 1 to Step 17, plus Step 2b (Clinical History Review) between Steps 2 and 3.",
+      "checks": [
+        {"type": "grep", "pattern": "Step 17", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Step 2b", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Clinical History Review", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-06",
+      "claim": "Continuous autosave: each field is saved as you complete it.",
+      "checks": [
+        {"type": "grep", "pattern": "debounce so every typed change persists within ~1s, with a 30s heartbeat", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "} = useWizardAutoSave({", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-07",
+      "claim": "Before you start: your device has location services enabled (required for the GPS geofence on in-person visits).",
+      "checks": [
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "The visit timer and its GPS/geofence UI are hidden behind `{false && ...}` since 2026-05-28 (VisitWizardV4.tsx:16624-16627 and the timer modals at 20477-20479), so location is not required to document a visit.",
+      "proposed_text": "Location services are not needed to document a visit. The visit timer and its GPS geofence are switched off in the Visit Wizard.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Timer Component — UI HIDDEN 2026-05-28 (Damon): timer was unused.", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The visit timer and GPS geofence are switched off; location is not required."
+    },
+    {
+      "id": "sav-07b",
+      "claim": "Location services are not needed to document a visit. The visit timer and its GPS geofence are switched off in the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Timer Component — UI HIDDEN 2026-05-28 (Damon): timer was unused.", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-08",
+      "claim": "The Wound Cockpit has a \"Where this wound is at\" panel.",
+      "checks": [
+        {"type": "grep", "pattern": "<WoundCaseProgression", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundCaseCard", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "\"Where this wound is at\" panel for the Wound Cockpit card.", "paths": ["frontend/src/components/wound-cockpit/WoundCaseProgression.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-09",
+      "claim": "Click Fleet Calendar in the sidebar.",
+      "checks": [
+        {"type": "grep", "pattern": "label: \"Fleet Calendar\",", "paths": ["frontend/src/components/AppShell.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "() => import(\"./pages/ops/FleetCalendarCanvas.tsx\")", "paths": ["frontend/src/user-routes.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-10",
+      "claim": "The calendar opens in Day view by default.",
+      "checks": [
+        {"type": "grep", "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");", "paths": ["frontend/src/pages/ops/FleetCalendarCanvas.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-11",
+      "claim": "The calendar has swim lanes per provider.",
+      "checks": [
+        {"type": "grep", "pattern": "const handleDropOnLane = (e: React.DragEvent, providerId: string) => {", "paths": ["frontend/src/pages/ops/FleetCalendarCanvas.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-12",
+      "claim": "Tap the appointment tile. A detail popover appears with the patient name, appointment type, date, and time.",
+      "checks": [
+        {"type": "grep", "pattern": "Popover", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Tapping a tile opens the AppointmentDetailsModal dialog titled 'Appointment Details' (AppointmentDetailsModal.tsx:702; rendered at FleetCalendarCanvas.tsx:4854), not a popover.",
+      "proposed_text": "Tap the appointment tile. The Appointment Details window opens with the patient, date, and time.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AppointmentDetailsModal", "paths": ["frontend/src/pages/ops/FleetCalendarCanvas.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<div className=\"text-sm font-medium text-gray-500\">Date</div>", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<div className=\"text-sm font-medium text-gray-500\">Time</div>", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Tapping a tile opens the Appointment Details dialog, not a popover."
+    },
+    {
+      "id": "sav-12b",
+      "claim": "Tap the appointment tile. The Appointment Details window opens with the patient, date, and time.",
+      "checks": [
+        {"type": "grep", "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AppointmentDetailsModal", "paths": ["frontend/src/pages/ops/FleetCalendarCanvas.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<div className=\"text-sm font-medium text-gray-500\">Date</div>", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<div className=\"text-sm font-medium text-gray-500\">Time</div>", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-13",
+      "claim": "Click Start Visit. Specialty routing sends wound-care patients to the Wound Cockpit and primary-care patients to the Primary Care Cockpit.",
+      "checks": [
+        {"type": "grep", "pattern": "primary care cockpit|primarycarecockpit|pcp.?cockpit", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "ignoreCase": true}
+      ],
+      "finding": "Start Visit always calls openVisitWizard (AppointmentDetailsModal.tsx:1473), which navigates to /visit-wizard (openVisitWizard.ts:230); there is no Primary Care Cockpit route and no specialty branch (the PCP branch was dropped, openVisitWizard.ts:18).",
+      "proposed_text": "Click Start Visit (it reads Continue Visit or Resume Visit when a note is already in progress). The Visit Wizard opens for that patient and appointment.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "return \"Start Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "return \"Continue Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "return \"Resume Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "getActionVerb(appointment.status_key)", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "navigate(`/visit-wizard?${params.toString()}`);", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Start Visit always opens the Visit Wizard; there is no specialty routing or Primary Care Cockpit."
+    },
+    {
+      "id": "sav-13b",
+      "claim": "Click Start Visit. It reads Continue Visit or Resume Visit when a note is already in progress. The Visit Wizard opens for that patient and appointment.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "return \"Resume Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "return \"Continue Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "return \"Start Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "getActionVerb(appointment.status_key)", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "navigate(`/visit-wizard?${params.toString()}`);", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-14",
+      "claim": "From the Wound Cockpit, click Start Visit (or Continue Visit if a draft exists).",
+      "checks": [
+        {"type": "grep", "pattern": "Continue Visit", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The Wound Cockpit uses an appointment dropdown plus an 'Open' button (AppointmentPickerInline.tsx:337-368); it has no Start Visit / Continue Visit button.",
+      "proposed_text": "From the Wound Cockpit, pick the appointment in the visit picker and click Open, or choose \"+ Start visit — pick a calendar slot…\" to book one first.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "\"+ Start visit — pick a calendar slot…\"", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "          Open", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AppointmentPickerInline", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The Wound Cockpit has a visit picker with Open, not Start Visit or Continue Visit buttons."
+    },
+    {
+      "id": "sav-14b",
+      "claim": "From the Wound Cockpit, pick the appointment in the visit picker and click Open, or choose \"+ Start visit — pick a calendar slot…\" to book one first.",
+      "checks": [
+        {"type": "grep", "pattern": "\"+ Start visit — pick a calendar slot…\"", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "          Open", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AppointmentPickerInline", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-15",
+      "claim": "The Visit Wizard opens to section 1 — or to the last section you worked if you are resuming a draft.",
+      "checks": [
+        {"type": "grep", "pattern": "useState<string>(\"consentAttestation\")", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The active section starts empty — `useState<string>(\"\")` at VisitWizardV4.tsx:5665-5666 — so the wizard opens with every section collapsed; nothing stores or restores the last section worked.",
+      "proposed_text": "The wizard opens with your saved work loaded and all sections collapsed; open the section you want from the list.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "const [activeAccordionSection, setActiveAccordionSection] =", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "params.set(\"visitAction\", \"resume\");", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The wizard opens with all sections collapsed; it does not reopen section 1 or the last section worked."
+    },
+    {
+      "id": "sav-15b",
+      "claim": "The wizard opens with your saved work loaded and all sections collapsed; open the section you want from the list.",
+      "checks": [
+        {"type": "grep", "pattern": "const [activeAccordionSection, setActiveAccordionSection] =", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "params.set(\"visitAction\", \"resume\");", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-16",
+      "claim": "The Visit Timer starts automatically and appears in the top toolbar, alongside the LCD ambient badge.",
+      "checks": [
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "The VisitTimer pill is not rendered (`{false && !timer.loading && (` at VisitWizardV4.tsx:16627, hidden 2026-05-28); only the LCD ambient badge shows in the header (VisitWizardV4.tsx:16797).",
+      "proposed_text": "The LCD ambient badge appears in the wizard header. The visit timer is switched off.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "<AmbientBadgeInHeader />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The visit timer is not rendered."
+    },
+    {
+      "id": "sav-16b",
+      "claim": "The LCD ambient badge appears in the wizard header. The visit timer is switched off.",
+      "checks": [
+        {"type": "grep", "pattern": "<AmbientBadgeInHeader />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-17",
+      "claim": "For a transferred patient, a migration context banner also appears.",
+      "checks": [
+        {"type": "grep", "pattern": "{pullPatient?.onboarding_type === 'established_transfer' && isFirstMedipyxisVisit && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-18",
+      "claim": "Pull from History brings forward documented sections from the patient's prior visit (Review of Systems, Comorbidities, Allergies, Previous Treatment, historic measurements, care plan). A preview shows what will be applied before you confirm.",
+      "checks": [
+        {"type": "grep", "pattern": "Pull from History", "paths": ["frontend/src"], "expect": "present", "fixed": true}
+      ],
+      "finding": "No 'Pull from History' control exists in frontend/src at v1.1.345; carry-forward happens automatically on load via resolveWizardInitialState (VisitWizardV2Page.tsx:584, wizardPrefillCascade.ts:290).",
+      "proposed_text": "There is no Pull from History button. When you open a returning patient's visit, the wizard pre-fills the carry-forward sections from the most recent finalized visit automatically.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "Returns ALL 14", "paths": ["frontend/src/services/wizardPrefillCascade.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const result = await resolveWizardInitialState(", "paths": ["frontend/src/pages/VisitWizardV2Page.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Pull from History", "paths": ["frontend/src"], "expect": "absent", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "No Pull from History control exists; carry-forward runs automatically on load."
+    },
+    {
+      "id": "sav-18b",
+      "claim": "There is no Pull from History button. When you open a returning patient's visit, the wizard pre-fills the carry-forward sections from the most recent finalized visit automatically.",
+      "checks": [
+        {"type": "grep", "pattern": "Returns ALL 14", "paths": ["frontend/src/services/wizardPrefillCascade.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const result = await resolveWizardInitialState(", "paths": ["frontend/src/pages/VisitWizardV2Page.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Pull from History", "paths": ["frontend/src"], "expect": "absent", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-19",
+      "claim": "Smart Import (in the top-of-wizard toolbar) pulls structured clinical data the system has already extracted for this patient and maps it into the matching wizard fields.",
+      "checks": [
+        {"type": "grep", "pattern": "<span>Smart Import</span>", "paths": ["frontend/src/components/wizard-shared/SmartImportButton.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The button is 'Smart AI Import' (SmartImportButton.tsx:149); it uploads a PDF for extraction (accept .pdf, SmartImportButton.tsx:100-110) and sits in the bottom action bar (VisitWizardV4.tsx:18978), not the top toolbar (which holds Reset Form and Pull Migration Data, VisitWizardV4.tsx:16653).",
+      "proposed_text": "Smart AI Import, in the action buttons at the bottom of the wizard, reads a PDF you upload and pre-fills wound fields. Saving is held until you resolve any import warnings.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "<span>Smart AI Import</span>", "paths": ["frontend/src/components/wizard-shared/SmartImportButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "accept=\".pdf,application/pdf\"", "paths": ["frontend/src/components/wizard-shared/SmartImportButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<SmartImportButton", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "disabled={isDraftSaving || importWarnings.isSaveGated}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The button is Smart AI Import, reads an uploaded PDF, and sits in the bottom action bar."
+    },
+    {
+      "id": "sav-19b",
+      "claim": "Smart AI Import, in the action buttons at the bottom of the wizard, reads a PDF you upload and pre-fills wound fields. Saving is held until you resolve any import warnings.",
+      "checks": [
+        {"type": "grep", "pattern": "<span>Smart AI Import</span>", "paths": ["frontend/src/components/wizard-shared/SmartImportButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "accept=\".pdf,application/pdf\"", "paths": ["frontend/src/components/wizard-shared/SmartImportButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<SmartImportButton", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "disabled={isDraftSaving || importWarnings.isSaveGated}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-20",
+      "claim": "Pull Migration Data: for patients migrated from a prior EMR, pulls the imported chart data into the visit; it is in the top-of-wizard toolbar.",
+      "checks": [
+        {"type": "grep", "pattern": "Pull Migration Data</h3>", "paths": ["frontend/src/components/visit-wizard/PullMigrationDataButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Find prior visits for this patient that weren't auto-loaded.", "paths": ["frontend/src/components/visit-wizard/PullMigrationDataButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{/* Top-of-wizard actions: Reset Form + Pull Migration Data */}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<PullMigrationDataButton", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-80",
+      "kind": "advice",
+      "claim": "Carry-forward is a starting point, not a substitute for re-assessment. Always review pulled values against the patient in front of you before signing.",
+      "checks": []
+    },
+    {
+      "id": "sav-21",
+      "claim": "Section 1: present the HIPAA notice to the patient; the full HIPAA privacy notice is displayed on screen.",
+      "checks": [
+        {"type": "grep", "pattern": "HIPAA", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Section 1 is a reader of the patient-level consent record (ConsentSection.tsx:1-6, rendered at VisitWizardV4.tsx:17011); it offers Capture consent / Record signed paper / Record verbal consent (ConsentSection.tsx:125-129); it does not display a HIPAA privacy notice.",
+      "proposed_text": "Section 1 shows the consent on file for this patient. If none is on file, use Capture consent, Record signed paper, or Record verbal consent. A missing consent is advisory: the visit can still be documented and signed.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{record ? \"Re-sign consent\" : \"Capture consent\"}", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record signed paper</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record verbal consent</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AlertTitle>No consent on file</AlertTitle>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "prompt is advisory: the visit can always be documented and signed.", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ConsentSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Section 1 reads the patient's consent record; it does not display a HIPAA privacy notice."
+    },
+    {
+      "id": "sav-21b",
+      "claim": "Step 1 shows the consent on file for this patient. If none is on file, use Capture consent, Record signed paper, or Record verbal consent. A missing consent is advisory: the visit can still be documented and signed.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<ConsentSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{record ? \"Re-sign consent\" : \"Capture consent\"}", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ">Record signed paper</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ">Record verbal consent</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "prompt is advisory: the visit can always be documented and signed.", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-22",
+      "claim": "Toggle Telehealth Consent if the visit is being conducted via telehealth.",
+      "checks": [
+        {"type": "grep", "pattern": "Telehealth Consent", "paths": ["frontend/src"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Section 1 is a reader of the patient-level consent record (ConsentSection.tsx:1-6, rendered at VisitWizardV4.tsx:17011); it offers Capture consent / Record signed paper / Record verbal consent (ConsentSection.tsx:125-129); there is no Telehealth Consent toggle anywhere in frontend/src.",
+      "proposed_text": "Section 1 shows the consent on file for this patient. If none is on file, use Capture consent, Record signed paper, or Record verbal consent. A missing consent is advisory: the visit can still be documented and signed.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{record ? \"Re-sign consent\" : \"Capture consent\"}", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record signed paper</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record verbal consent</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AlertTitle>No consent on file</AlertTitle>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "prompt is advisory: the visit can always be documented and signed.", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ConsentSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no Telehealth Consent toggle (see sav-21b)."
+    },
+    {
+      "id": "sav-23",
+      "claim": "Collect patient e-signature on the signature pad, then click Confirm Signature.",
+      "checks": [
+        {"type": "grep", "pattern": "Confirm Signature", "paths": ["frontend/src"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Section 1 is a reader of the patient-level consent record (ConsentSection.tsx:1-6, rendered at VisitWizardV4.tsx:17011); it offers Capture consent / Record signed paper / Record verbal consent (ConsentSection.tsx:125-129); signatures are captured inside the ConsentCaptureDialog ('Sign consent', ConsentCaptureDialog.tsx:86) and no 'Confirm Signature' button exists.",
+      "proposed_text": "Section 1 shows the consent on file for this patient. If none is on file, use Capture consent, Record signed paper, or Record verbal consent. A missing consent is advisory: the visit can still be documented and signed.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{record ? \"Re-sign consent\" : \"Capture consent\"}", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record signed paper</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Record verbal consent</Button>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AlertTitle>No consent on file</AlertTitle>", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "prompt is advisory: the visit can always be documented and signed.", "paths": ["frontend/src/consent/ConsentSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ConsentSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no Confirm Signature button; signatures are captured in the consent dialog (see sav-21b)."
+    },
+    {
+      "id": "sav-24",
+      "claim": "Section 2: Select the Visit Type — Initial, Follow-up, Post-op, or Re-eval.",
+      "checks": [
+        {"type": "grep", "pattern": "Re-eval", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Section 2 has no visit-type picker; the visit type comes from the appointment's canonical_key passed as visitTypeKey (openVisitWizard.ts:159; PatientDemographicsVisit.tsx:61-64).",
+      "proposed_text": "The visit type comes from the appointment; Section 2 does not ask for it.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "if (canonicalKey) params.set(\"visitTypeKey\", canonicalKey);", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Section 2 has no visit-type picker; the type comes from the appointment."
+    },
+    {
+      "id": "sav-24b",
+      "claim": "The visit type comes from the appointment; Step 2 does not ask for it.",
+      "checks": [
+        {"type": "grep", "pattern": "if (canonicalKey) params.set(\"visitTypeKey\", canonicalKey);", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-25",
+      "claim": "Enter the Reason for Visit (a brief clinical summary).",
+      "checks": [
+        {"type": "grep", "pattern": "Reason for Visit", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The Section 2 field is labelled 'Chief Complaint' (PatientDemographicsVisit.tsx:1465), with a Voice dictation button.",
+      "proposed_text": "Enter the Chief Complaint (you can dictate it with Voice).",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "htmlFor=\"chief_complaint\"", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "            Chief Complaint", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The field is labelled Chief Complaint."
+    },
+    {
+      "id": "sav-25b",
+      "claim": "Enter the Chief Complaint (you can dictate it with Voice).",
+      "checks": [
+        {"type": "grep", "pattern": "htmlFor=\"chief_complaint\"", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "            Chief Complaint", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-26",
+      "claim": "Review the Allergies card in Section 2. Allergies pre-populate from prior visits and sync with DoseSpot.",
+      "checks": [
+        {"type": "grep", "pattern": "Allergies", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The Allergies card is in Step 2b Clinical History Review (ClinicalHistoryReviewStep.tsx:705, rendered at VisitWizardV4.tsx:17128), not Section 2.",
+      "proposed_text": "Review allergies in Step 2b (Clinical History Review), along with surgical, family and social history, current medications, problems and immunizations.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "title=\"Allergies\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ClinicalHistoryReviewStep", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Step 2b", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The Allergies card is in Step 2b, not Section 2."
+    },
+    {
+      "id": "sav-26b",
+      "claim": "Step 2b Clinical History Review: review allergies here, along with surgical, family and social history, current medications, problems and immunizations.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<ClinicalHistoryReviewStep", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Step 2b\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Allergies\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Surgical History\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Family History\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Social History\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Current Medications\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "title=\"Problems / Conditions\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<Card title=\"Immunizations\"", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-27",
+      "claim": "Coverage is shown in Section 2 for reference; the secondary payer is read-only.",
+      "checks": [
+        {"type": "grep", "pattern": "(from chart — view only)", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "title=\"Secondary payer is shown from the patient chart.", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<PatientDemographicsVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-28",
+      "claim": "Edit insurance on the Insurance tab, not in the wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "Insurance tab", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The wizard tells users to change insurance on the patient's Billing & Auth page (PatientDemographicsVisit.tsx:1598, 1607).",
+      "proposed_text": "Edit insurance on the patient's Billing & Auth page, not in the wizard.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "To change insurance, use the patient's Billing & Auth page.", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The wizard sends users to the Billing & Auth page, not an Insurance tab."
+    },
+    {
+      "id": "sav-28b",
+      "claim": "Edit insurance on the patient's Billing & Auth page, not in the wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "To change insurance, use the patient's Billing & Auth page.", "paths": ["frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-29",
+      "claim": "Section navigator: completed sections show a checkmark.",
+      "checks": [
+        {"type": "grep", "pattern": "<Check className=\"h-4 w-4 text-green-600\" />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const StatusIcon: React.FC<{ sectionId: string }> = ({ sectionId }) => {", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-30",
+      "claim": "Section numbering: 5 = Comorbidities / Risk Factors, 6 = Functional Status & ADLs; 11 = Procedures & Supplies, 12 = Orders & DME, 13 = Medication Management, 14 = Billing, 15 = Patient Education.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Medication Management\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "note": "the old numbering called step 13 Medication Management"},
+        {"type": "grep", "pattern": "^\\s+Billing\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "note": "the old numbering called step 14 Billing"}
+      ],
+      "finding": "Cannot be paired by a line-based grep (title and step badge are on separate JSX lines). In the live wizard Step 5 is Functional Status & ADLs (VisitWizardV4.tsx:17353-17375), Step 6 Comorbidities & Risk Factors (17430-17452), Step 11 Orders & DME (18192), Step 12 Patient Education (18266), Step 13 Procedure Supplies (18341), Step 14 Current Medication (18431), Step 15 Billing & Documentation (18514).",
+      "proposed_text": "Renumber the page to match the wizard: 5 Functional Status & ADLs, 6 Comorbidities & Risk Factors, 11 Orders & DME, 12 Patient Education, 13 Procedure Supplies, 14 Current Medication, 15 Billing & Documentation.",
+      "proposed_checks": [],
+      "status": "removed",
+      "reason": "The wizard's step badges number the sections differently (5 Functional Status, 6 Comorbidities, 13 Procedure Supplies, 14 Current Medication, 15 Billing & Documentation)."
+    },
+    {
+      "id": "sav-30b",
+      "claim": "The page's step headings follow the wizard: Step 1 Consent & Attestation, Step 2 Patient Context & Demographics, Step 2b Clinical History Review, Step 3 Review of Systems (ROS), Step 4 Objective Assessment, Step 5 Functional Status & ADLs, Step 6 Comorbidities & Risk Factors, Step 7 Wound Assessment, Step 8 Previous Treatments, Step 9 Interventions & Treatments, Step 10 Care Planning, Step 11 Orders & DME, Step 12 Patient Education, Step 13 Procedure Supplies, Step 14 Current Medication, Step 15 Billing & Documentation, Step 16 LCD Audit & Review, Step 17 Provider Attestation.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Consent & Attestation\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Patient Context & Demographics\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Clinical History Review\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Review of Systems \\(ROS\\)\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Objective Assessment\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Functional Status & ADLs\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Comorbidities & Risk Factors\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Wound Assessment\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Previous Treatments\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Interventions & Treatments\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Care Planning\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Orders & DME\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Patient Education\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Procedure Supplies\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Current Medication\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Billing & Documentation\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+LCD Audit & Review\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Provider Attestation\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Step (1[0-7]|[1-9])\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 17}},
+        {"type": "grep", "pattern": "^\\s+Step 2b\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}}
+      ]
+    },
+    {
+      "id": "sav-31",
+      "claim": "Review of Systems is pre-populated from the prior visit.",
+      "checks": [
+        {"type": "grep", "pattern": "\"section_3_review_of_systems\",", "paths": ["backend/supabase/functions/get-last-visit-snapshot/types.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const result = await resolveWizardInitialState(", "paths": ["frontend/src/pages/VisitWizardV2Page.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WizardROSVisit />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-32",
+      "claim": "Objective Assessment vitals: BP, HR, Temp, SpO₂, Respirations, Weight, Height, BMI.",
+      "checks": [
+        {"type": "grep", "pattern": "Blood Pressure", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Heart Rate</h", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Temperature</h4>", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Oxygen Saturation %</h4", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Respiratory Rate</h4>", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Weight:</", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Height:</", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "BMI Calculator & Measurements", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<VitalsAssessmentVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-33",
+      "claim": "Comorbidities / Risk Factors: DM, PAD, CVI, CHF, lymphedema, smoking status.",
+      "checks": [
+        {"type": "grep", "pattern": "label: \"Diabetes Mellitus\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Peripheral Arterial Disease\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Chronic Venous Insufficiency\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Congestive Heart Failure\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Current/Former Smoker\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "ymphedema", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "DM, PAD, CVI, CHF and smoking are on the step (WoundCaseRiskFactorsVisit.tsx:455-484, 1209-1447) but lymphedema is not offered anywhere in WoundCaseRiskFactorsVisit.tsx.",
+      "proposed_text": "Comorbidities & Risk Factors: diabetes, PAD, CVI, CHF, smoking status and other risk factors.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "label: \"Diabetes Mellitus\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Peripheral Arterial Disease\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Chronic Venous Insufficiency\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Congestive Heart Failure\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Current/Former Smoker\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundCaseRiskFactorsVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Lymphedema is not offered."
+    },
+    {
+      "id": "sav-33b",
+      "claim": "Comorbidities & Risk Factors: diabetes, PAD, CVI, CHF, smoking status and other risk factors.",
+      "checks": [
+        {"type": "grep", "pattern": "label: \"Diabetes Mellitus\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Peripheral Arterial Disease\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Chronic Venous Insufficiency\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Congestive Heart Failure\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Current/Former Smoker\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseRiskFactorsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundCaseRiskFactorsVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-34",
+      "claim": "Comorbidities feed the billing engine and stage-aware ICD-10 selection.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "icd10Resolver", "paths": ["frontend/src/services/billing"], "expect": "present", "excludeTests": true, "note": "the old sentence holds only if billing uses the stage-aware resolver"}
+      ],
+      "finding": "Data-flow claim spanning the comorbidity mapping and billing brain; a stage-aware resolver exists (canonicalize/icd10Resolver.ts:1) but the comorbidity-to-billing path cannot be proven live by a text match.",
+      "status": "removed",
+      "reason": "No wizard path links comorbidities to stage-aware ICD-10 selection."
+    },
+    {
+      "id": "sav-35",
+      "claim": "Functional Status & ADLs: ambulation, ADL independence, fall risk.",
+      "checks": [
+        {"type": "grep", "pattern": "description: \"Ambulates without assistance\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const adlActivities = [", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Fall", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true, "ignoreCase": true}
+      ],
+      "finding": "Ambulation and ADLs are on the step (WoundCaseFunctionalStatusVisit.tsx:32, 57) but there is no fall-risk field in WoundCaseFunctionalStatusVisit.tsx.",
+      "proposed_text": "Functional Status & ADLs: ambulation and ADL independence.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "description: \"Ambulates without assistance\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const adlActivities = [", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundCaseFunctionalStatusVisit />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no fall-risk field."
+    },
+    {
+      "id": "sav-35b",
+      "claim": "Functional Status & ADLs: ambulation and ADL independence.",
+      "checks": [
+        {"type": "grep", "pattern": "description: \"Ambulates without assistance\",", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const adlActivities = [", "paths": ["frontend/src/components/visit-wizard/visit/WoundCaseFunctionalStatusVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundCaseFunctionalStatusVisit />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-36",
+      "claim": "Each section saves as you complete it. The LCD ambient badge refreshes on every save.",
+      "checks": [
+        {"type": "grep", "pattern": "onSave: performPeriodicSave", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "refresh", "paths": ["frontend/src/components/lcd-navigator/AmbientBadgeMount.tsx"], "expect": "present", "fixed": true, "ignoreCase": true}
+      ],
+      "finding": "The badge re-evaluates from form state with a 1200 ms debounce (AmbientBadgeMount.tsx:27; VisitWizardV4.tsx:16469), not on save.",
+      "proposed_text": "Your work saves automatically as you type, and the LCD ambient badge re-checks about a second after each change.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "debounce so every typed change persists within ~1s, with a 30s heartbeat", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "debounceMs: 1200,", "paths": ["frontend/src/components/lcd-navigator/AmbientBadgeMount.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The badge re-checks on form changes after a debounce, not on save."
+    },
+    {
+      "id": "sav-36b",
+      "claim": "Your work saves automatically as you type, and the LCD ambient badge re-checks about a second after each change.",
+      "checks": [
+        {"type": "grep", "pattern": "debounce so every typed change persists within ~1s, with a 30s heartbeat", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "debounceMs: 1200,", "paths": ["frontend/src/components/lcd-navigator/AmbientBadgeMount.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-37",
+      "claim": "Section 7: confirm wound etiology and staging; stage drives the ICD-10 selection downstream.",
+      "checks": [
+        {"type": "grep", "pattern": "Select Wound Etiology", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "// Stage-aware ICD-10 resolver for the billing wizard.", "paths": ["frontend/src/services/canonicalize/icd10Resolver.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-38",
+      "claim": "Set the wound's Treating / Monitoring status. A wound marked Monitoring carries a yellow pill and relaxes some required fields for that visit; flip it back to Treating at any time.",
+      "checks": [
+        {"type": "grep", "pattern": "<option value=\"treating\">Treating</option>", "paths": ["frontend/src/components/WoundSwitcher.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<option value=\"monitoring\">Monitoring</option>", "paths": ["frontend/src/components/WoundSwitcher.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "? \"bg-yellow-500\"", "paths": ["frontend/src/components/WoundSwitcher.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "// Monitoring wounds: photo is optional (spec 2026-05-28).", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "updateWoundData(activeWoundIndex, \"visit_treatment_mode\", next)", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-39",
+      "claim": "Measure today: enter Length (cm), Width (cm), and Depth (cm).",
+      "checks": [
+        {"type": "grep", "pattern": "Length (cm)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Width (cm)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Depth (cm)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-40",
+      "claim": "Photo upload is required if your facility policy mandates it.",
+      "checks": [
+        {"type": "grep", "pattern": "facility.{0,40}photo.{0,40}(required|mandat)", "paths": ["frontend/src"], "expect": "present", "ignoreCase": true, "excludeTests": true}
+      ],
+      "finding": "There is no facility photo policy. 'Photo Capture' is a recommended field for every non-monitoring wound (wizardRequiredFields.ts:348-353) and enforcement is off (WIZARD_VALIDATION_DISABLED = true, wizardRequiredFields.ts:856), so it never blocks.",
+      "proposed_text": "Take or upload a wound photo. It is recommended for every wound you are treating (optional for Monitoring wounds) and does not block you from finishing.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{ path: \"wounds\", label: \"Photo Capture\", perWound: true, woundPath: \"capturedPhotos\", check: \"custom\",", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const WIZARD_VALIDATION_DISABLED = true;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no facility photo policy; a photo is recommended and never blocks."
+    },
+    {
+      "id": "sav-40b",
+      "claim": "Take or upload a wound photo. It is recommended for every wound you are treating (optional for Monitoring wounds) and does not block you from finishing.",
+      "checks": [
+        {"type": "grep", "pattern": "{ path: \"wounds\", label: \"Photo Capture\", perWound: true, woundPath: \"capturedPhotos\", check: \"custom\",", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const WIZARD_VALIDATION_DISABLED = true;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-41",
+      "claim": "Tissue percentages Granulation / Slough / Necrotic / Epithelial / Eschar must sum to 100%.",
+      "checks": [
+        {"type": "grep", "pattern": "| \"woundBed100\"  // wound bed percentages must total 100", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "(Number(bed.eschar_percent) || 0);", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "return total === 100;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Eschar (%)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<WoundTissueAssessmentVisit", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const WIZARD_VALIDATION_DISABLED = true;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "The 100% rule exists (wizardRequiredFields.ts:790-806) but validation enforcement is off (WIZARD_VALIDATION_DISABLED = true, wizardRequiredFields.ts:856), so a total other than 100% is flagged as advisory, not required.",
+      "proposed_text": "Set tissue percentages (Granulation, Slough, Necrotic, Epithelial, Eschar). They should total 100%; the wizard flags a different total but does not block you.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "return total === 100;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Eschar (%)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const WIZARD_VALIDATION_DISABLED = true;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Validation is off; a total other than 100% is flagged, not required."
+    },
+    {
+      "id": "sav-41b",
+      "claim": "Set tissue percentages (Granulation, Slough, Necrotic, Epithelial, Eschar). They should total 100%; the wizard flags a different total but does not block you.",
+      "checks": [
+        {"type": "grep", "pattern": "return total === 100;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Eschar (%)</Label>", "paths": ["frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "const WIZARD_VALIDATION_DISABLED = true;", "paths": ["frontend/src/utils/wizardRequiredFields.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-42",
+      "claim": "The location field is editable — pick from the dropdown or type the specific area (for example, Right lateral malleolus).",
+      "checks": [
+        {"type": "grep", "pattern": "{/* Specific Area is locked read-only.", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "Specific Area is locked read-only in Section 7; it can only be changed through the anatomical site picker opened by the Change button, which enforces an allow-list (CompactWoundCaseSetupVisit.tsx:4932-4950, 4866).",
+      "proposed_text": "Confirm the anatomical location. Specific Area is read-only here; click Change to pick a different site from the anatomical site picker.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{/* Specific Area is locked read-only.", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "handleChangeLocation();", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Specific Area is read-only in Section 7; it changes only through the site picker."
+    },
+    {
+      "id": "sav-42b",
+      "claim": "Confirm the anatomical location. Specific Area is read-only here; click Change to pick a different site from the anatomical site picker.",
+      "checks": [
+        {"type": "grep", "pattern": "{/* Specific Area is locked read-only.", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "handleChangeLocation();", "paths": ["frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-43",
+      "claim": "Document exudate, pain, and infection signs.",
+      "checks": [
+        {"type": "grep", "pattern": "{ field: \"pain\", label: \"Pain\" },", "paths": ["frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "aria-label=\"Infection present\"", "paths": ["frontend/src/components/visit-wizard/visit/WoundInfectionStatusSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Exudat", "paths": ["frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-44",
+      "claim": "Section 8 Previous Treatment: add prior treatments — offloading, compression, debridement history, prior grafts.",
+      "checks": [
+        {"type": "grep", "pattern": "{ type: \"offloading\", label: \"Offloading\" },", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ type: \"compression_therapy\", label: \"Compression therapy\" },", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ type: \"debridement\", label: \"Debridement\" },", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{ type: \"graft_ctp\", label: \"Graft/CTP\" },", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<PreviousTreatmentsVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-45",
+      "claim": "ABI for compression is documented in Section 8; if compression is documented without an ABI on file, the wizard raises a soft warning and records a review flag — it does not block you from proceeding.",
+      "checks": [
+        {"type": "grep", "pattern": "abi", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true, "ignoreCase": true},
+        {"type": "grep", "pattern": "\"ABI is required before compression therapy can be ordered.\";", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "absent", "fixed": true}
+      ],
+      "finding": "ABI is entered on Step 4 (AbiReviewStatus at VitalsAssessmentVisit.tsx:3397), not Section 8; adding compression with no ABI disables the intervention's Done button (compressionRecommendation.ts:381-382, 425-427), and an out-of-range ABI holds the dialog until documented (compressionRecommendation.ts:346-379).",
+      "proposed_text": "Record the ankle-brachial index on Step 4 (Objective Assessment). If you add compression therapy in Step 9 with no ABI on file, the Done button stays disabled: \"ABI is required before compression therapy can be ordered.\" An ABI below 0.50 or above 1.30, or a non-compressible result, holds the dialog until you document a vascular follow-up plan and a justification of at least 10 characters, or remove compression.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "\"ABI is required before compression therapy can be ordered.\";", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "held: fired && !(planDocumented && justificationDocumented),", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "export const COMPRESSION_ABI_FLOOR = 0.5;", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "export const COMPRESSION_ABI_CEILING = 1.3;", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "export const COMPRESSION_JUSTIFICATION_MIN_CHARS = 10;", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<CompressionDialogDoneButton", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<AbiReviewStatus />", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "ABI is entered on Step 4, not Section 8, and missing ABI disables the compression Done button rather than a soft warning."
+    },
+    {
+      "id": "sav-45b",
+      "claim": "Record the ankle-brachial index in Step 4 (Objective Assessment). If you add compression therapy in Step 9 with no ABI on file, the Done button stays disabled: \"ABI is required before compression therapy can be ordered.\"",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "\"ABI is required before compression therapy can be ordered.\";", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "return { holdsDialog: false, message: ABI_REQUIRED_MESSAGE };", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<CompressionDialogDoneButton", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "right_abi: watch(\"perfusion.right_abi\") || null,", "paths": ["frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-81",
+      "claim": "Troubleshooting: if the Done button in the compression dialog is disabled, no ABI is on file; enter the ABI in Step 4 or in the Compression Therapy card in Step 9.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "\"ABI is required before compression therapy can be ordered.\";", "paths": ["frontend/src/services/compressionRecommendation.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "ABI — right", "paths": ["frontend/src/components/visit-wizard/visit/CompressionSafetySection.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<CompressionSafetySection", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-46",
+      "claim": "Section 9: select debridement type if performed — sharp, mechanical, enzymatic, or autolytic.",
+      "checks": [
+        {"type": "grep", "pattern": "label: \"Sharp debridement\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Mechanical debridement\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Enzymatic debridement\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Autolytic debridement\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ConservativeCareInterventionsSectionVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-47",
+      "claim": "Choose dressing(s); record ultrasonic therapy (MIST / Arobella) if used.",
+      "checks": [
+        {"type": "grep", "pattern": "label: \"Dressing Type\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Ultrasonic Wound Therapy\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "options: [\"ultramist\", \"arobella\"],", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-48",
+      "claim": "Section 9: click AI draft to generate a narrative from the structured data you just entered.",
+      "checks": [
+        {"type": "grep", "pattern": "<AIDraftButton", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Step 9 (ConservativeCareInterventionVisit.tsx) has no AIDraftButton; the visit wizard's only AIDraftButton is in Care Planning (VisitWizardCarePlanningSection.tsx:1661) and its label is 'Generate Draft' (AIDraftButton.tsx:48).",
+      "proposed_text": "In Step 10 (Care Planning), click Generate Draft under the treatment plan to get an AI draft; review it and Accept, Edit before accepting, or Discard.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "<AIDraftButton", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "buttonLabel = 'Generate Draft',", "paths": ["frontend/src/components/shared/AIDraftButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Edit before accepting", "paths": ["frontend/src/components/shared/AIDraftButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<VisitWizardCarePlanningSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Step 9 has no AI draft button; the wizard's AI draft is Generate Draft in Care Planning."
+    },
+    {
+      "id": "sav-48b",
+      "claim": "In Step 10 (Care Planning), click Generate Draft under the treatment plan to get an AI draft. Review it and choose Accept, Edit before accepting, or Discard.",
+      "checks": [
+        {"type": "grep", "pattern": "<AIDraftButton", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "buttonLabel = 'Generate Draft',", "paths": ["frontend/src/components/shared/AIDraftButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Edit before accepting", "paths": ["frontend/src/components/shared/AIDraftButton.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<VisitWizardCarePlanningSection", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-49",
+      "claim": "The first time you use AI drafting in a visit, you will be asked to acknowledge the AI Disclaimer.",
+      "checks": [
+        {"type": "grep", "pattern": "AIDisclaimer", "paths": ["frontend/src/components/shared/AIDraftButton.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The AI Disclaimer is an app-wide modal (AppProvider.tsx:100) shown when the user's acknowledged version differs from the active one (AIDisclaimerModal.tsx:90); it is not tied to AI drafting in a visit.",
+      "proposed_text": "After you sign in, Medipyxis asks you to acknowledge the current AI Disclaimer whenever you have not yet accepted its latest version.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "<AIDisclaimerModal />", "paths": ["frontend/src/components/AppProvider.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "profile.ai_disclaimer_version !== disclaimer.version;", "paths": ["frontend/src/components/AIDisclaimerModal.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The AI Disclaimer is app-wide and version-based, not tied to AI drafting in a visit."
+    },
+    {
+      "id": "sav-49b",
+      "claim": "After you sign in, Medipyxis asks you to acknowledge the current AI Disclaimer whenever you have not yet accepted its latest version.",
+      "checks": [
+        {"type": "grep", "pattern": "<AIDisclaimerModal />", "paths": ["frontend/src/components/AppProvider.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "profile.ai_disclaimer_version !== disclaimer.version;", "paths": ["frontend/src/components/AIDisclaimerModal.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-50",
+      "claim": "Step 10 Care Planning: record the treatment goals, then set the Follow-up Interval and Next Visit Date.",
+      "checks": [
+        {"type": "grep", "pattern": "            Follow-up Interval", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "            Next Visit Date", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "specificHealingGoals:", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-51",
+      "claim": "Set plan-of-care dates — these satisfy LCD checklist item Plan-of-care dates.",
+      "checks": [
+        {"type": "grep", "pattern": "plan.of.care date", "paths": ["frontend/src", "backend/supabase/functions"], "expect": "present", "ignoreCase": true, "excludeTests": true}
+      ],
+      "finding": "No 'Plan-of-care dates' field or LCD checklist item exists in frontend/src or backend/supabase/functions at v1.1.345; Care Planning offers Follow-up Interval and Next Visit Date (VisitWizardCarePlanningSection.tsx:1522, 1554).",
+      "proposed_text": "Set the Follow-up Interval and Next Visit Date.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "            Follow-up Interval", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "            Next Visit Date", "paths": ["frontend/src/components/VisitWizardCarePlanningSection.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "No Plan-of-care dates field or LCD checklist item exists."
+    },
+    {
+      "id": "sav-52",
+      "claim": "Procedures & Supplies: scan UINs or enter graft SKUs and quantities.",
+      "checks": [
+        {"type": "grep", "pattern": "scan", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present", "fixed": true, "ignoreCase": true}
+      ],
+      "finding": "There is no scanner; the Box UID/UIN is typed into a text field (ProcedureSuppliesVisit.tsx:5363 'Enter Box UID/UIN'; ConservativeCareInterventionVisit.tsx:2194).",
+      "proposed_text": "Enter the Box UID/UIN, lot and quantities for grafts and supplies.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "placeholder=\"Enter Box UID/UIN\"", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "label: \"Box UID/UIN\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ProcedureSuppliesVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no scanner; the Box UID/UIN is typed in."
+    },
+    {
+      "id": "sav-52b",
+      "claim": "Enter the Box UID/UIN, lot and quantities for grafts and supplies.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Box UID/UIN <span className=\"text-red-500\">*</span>", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Tissue ID / Lot #", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-53",
+      "claim": "Wastage is calculated automatically and shown on the line item.",
+      "checks": [
+        {"type": "grep", "pattern": "calculateWaste", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx", "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Wastage is entered by hand ('Units wasted (if any)', ConservativeCareInterventionVisit.tsx:2206-2209) and copied onto the procedure (ProcedureSuppliesVisit.tsx:1696, 1708); nothing in the wizard calculates it.",
+      "proposed_text": "Enter wastage (units wasted), if any. It is optional.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "placeholder: \"Units wasted (if any)\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "newProcedure.graft_wastage = intervention.wastage || details.wastage || undefined;", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Wastage is entered by hand; nothing calculates it."
+    },
+    {
+      "id": "sav-53b",
+      "claim": "Enter wastage (units wasted), if any. It is optional.",
+      "checks": [
+        {"type": "grep", "pattern": "placeholder: \"Units wasted (if any)\",", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "newProcedure.graft_wastage = intervention.wastage || details.wastage || undefined;", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-54",
+      "claim": "Click Generate Procedure Note (in Procedures & Supplies) for a one-click procedure narrative; review and edit.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Generate Procedure Note\\s*$", "paths": ["frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"], "expect": "present", "note": "tightened 2026-11-11: the old fixed match hit only a code comment; the button is not in Procedure Supplies"}
+      ],
+      "finding": "Generate Procedure Note is in Step 9 Interventions & Treatments (ConservativeCareInterventionVisit.tsx:3799-3810), not in Procedure Supplies.",
+      "proposed_text": "In Step 9 (Interventions & Treatments), click Generate Procedure Note for a procedure narrative; review and edit it.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "                Generate Procedure Note", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ConservativeCareInterventionsSectionVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Generate Procedure Note is in Interventions & Treatments (Step 9), not Procedure Supplies."
+    },
+    {
+      "id": "sav-54b",
+      "claim": "In Step 9, click Generate Procedure Note for a procedure narrative; review and edit it.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Generate Procedure Note\\s*$", "paths": ["frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-55",
+      "claim": "On save, a tissue log entry is written and inventory is deducted automatically.",
+      "checks": [
+        {"type": "grep", "pattern": "clinic-record-use-event", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Inventory is deducted at Continue to Review (updateInventoryBatchStatuses, VisitWizardV4.tsx:8794-8800) and tissue-log use events are recorded after signing in finalizeVisit (finalizeVisit.ts:711-740), not on an ordinary save.",
+      "proposed_text": "Inventory is deducted when you press Continue to Review, and tissue-log entries are recorded when you sign the visit.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "(inventory_deduct_batch_v2 RPC at Continue-to-Review) already handled it.", "paths": ["frontend/src/services/finalizeVisit.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": ".invoke('clinic-record-use-event', {", "paths": ["frontend/src/services/finalizeVisit.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "// 1) main/clinician stock through inventory_deduct_batch_v2", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Inventory and the tissue log run at Continue to Review, not on an ordinary save."
+    },
+    {
+      "id": "sav-55b",
+      "claim": "Inventory is deducted and a tissue log entry is written when you press Continue to Review.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "📋 [CONTINUE TO REVIEW] Updating inventory batch statuses...", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const tissueResult = await writeTissueLogForVisit({", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const handleContinueToReview = useCallback(", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-56",
+      "claim": "Orders & DME: DME is a vendor-fulfilled order — there is no product picker; you order the item and it is fulfilled downstream.",
+      "checks": [
+        {"type": "grep", "pattern": "ProductPicker", "paths": ["frontend/src/components/visit-wizard/visit/OrdersDMEVisit.tsx"], "expect": "absent", "fixed": true},
+        {"type": "grep", "pattern": "import { RecipientPickerStatus } from \"@/components/orders-dme/RecipientPickerStatus\";", "paths": ["frontend/src/components/visit-wizard/visit/OrdersDMEVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<OrdersDMEVisit patientId={patientId} />", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-57",
+      "claim": "Step 14: prescribe through DoseSpot; pharmacy selection and the prescription itself are handled in the DoseSpot window.",
+      "checks": [
+        {"type": "grep", "pattern": "import DoseSpotPrescriptionDialog from \"@/components/shared/medication/DoseSpotPrescriptionDialog\";", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<MedicationManagementShared {...props} wizardMode=\"visit\" />", "paths": ["frontend/src/components/visit-wizard/visit/MedicationManagementVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<MedicationManagementVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-58",
+      "claim": "Billing section: review the Medical Necessity Statement; it is auto-generated from the clinical sections.",
+      "checks": [
+        {"type": "grep", "pattern": "Medical Necessity Statement", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The Medical Necessity Statement card is in Step 8 Previous Treatments (PreviousTreatmentsVisit.tsx:2099-2108), drafted on request with 'Summarize prior treatments'; the billing step has none.",
+      "proposed_text": "In Step 8 (Previous Treatments), review the Medical Necessity Statement; click Summarize prior treatments for a draft you must review.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "                Medical Necessity Statement", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "              Summarize prior treatments", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The Medical Necessity Statement is in Step 8 Previous Treatments, drafted on request; the billing step has none."
+    },
+    {
+      "id": "sav-58b",
+      "claim": "In Step 8, review the Medical Necessity Statement. Click Summarize prior treatments for a draft you must review.",
+      "checks": [
+        {"type": "grep", "pattern": "                Medical Necessity Statement", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "              Summarize prior treatments", "paths": ["frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-59",
+      "claim": "The CPT autocode deterministic engine runs first; if it finds no matching codes, the AI fallback engages and the billing line provenance shows AI for the relevant lines.",
+      "checks": [
+        {"type": "grep", "pattern": "suggest-ai-billing-codes", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "In the wizard's billing step, Pull Codes is a deterministic mapper with no AI call (BillingStagingWrapperVisit.tsx:332) and the brain path is off unless VITE_BRAIN_INVOCATION_ENABLED is set (featureFlags.ts:65); nothing in the step calls an AI fallback.",
+      "proposed_text": "Click Pull Codes to fill billing codes from your documentation (a rule-based mapper; no AI). Review and edit every line.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Use Pull Codes to auto-populate from documented visit data.", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Pull Codes is a deterministic mapper; there is no AI fallback."
+    },
+    {
+      "id": "sav-59b",
+      "claim": "Click Pull Codes to fill billing codes from your documentation (a rule-based mapper; no AI). Review and edit every line.",
+      "checks": [
+        {"type": "grep", "pattern": "// ─── Pull Codes (deterministic mapper, no brain call)", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Use Pull Codes to auto-populate from documented visit data.", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-60",
+      "claim": "Pull Codes can auto-populate codes from your documentation.",
+      "checks": [
+        {"type": "grep", "pattern": "Use Pull Codes to auto-populate from documented visit data.", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<BillingStagingWrapperVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-61",
+      "claim": "Verify E/M level, modifiers (25, 59, KX, JW, JZ), and POS code.",
+      "checks": [
+        {"type": "grep", "pattern": "Modifiers (optional, comma-separated)", "paths": ["frontend/src/components/billing/ManualCodeEntryDialog.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "import { determinePlaceOfService } from \"@/utils/placeOfService\";", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "isNewForEmBilling", "paths": ["frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-62",
+      "claim": "Billing lines can be dragged to reorder.",
+      "checks": [
+        {"type": "grep", "pattern": "useSortable|DndContext|draggable|onDragStart", "paths": ["frontend/src/components/billing", "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"], "expect": "present"}
+      ],
+      "finding": "No drag-and-drop code exists in frontend/src/components/billing or BillingStagingWrapperVisit.tsx at v1.1.345.",
+      "proposed_text": "(Remove this sentence.)",
+      "proposed_checks": [],
+      "status": "removed",
+      "reason": "The wizard's billing lines cannot be dragged."
+    },
+    {
+      "id": "sav-63",
+      "claim": "Read the billing line provenance panel; each line shows Deterministic or AI. Billers see the same provenance in the Work Queue.",
+      "checks": [
+        {"type": "grep", "pattern": "<BillingProvenancePanel[ />]", "paths": ["frontend/src"], "expect": "present", "note": "tightened 2026-11-11: the old fixed match hit only the component's props type; nothing renders the panel"}
+      ],
+      "finding": "BillingProvenancePanel is defined (BillingProvenancePanel.tsx:93) but rendered nowhere at v1.1.345, and its labels are AI / Inventory / Nurse etc., never 'Deterministic' (BillingProvenancePanel.tsx:38-60).",
+      "proposed_text": "(Remove the provenance-panel and AI-fallback sentences until the panel ships.)",
+      "proposed_checks": [],
+      "status": "removed",
+      "reason": "The billing provenance panel is never rendered."
+    },
+    {
+      "id": "sav-64",
+      "claim": "Patient Education: select patient education handouts.",
+      "checks": [
+        {"type": "grep", "pattern": "Switch to the Library or Care Bundles tab to assign", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Assign to Patient", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<EducationVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-65",
+      "claim": "Toggle Teach-back documented (Y / N).",
+      "checks": [
+        {"type": "grep", "pattern": "Teach-back", "paths": ["frontend/src"], "expect": "present", "fixed": true}
+      ],
+      "finding": "No Teach-back toggle exists; the education step records 'Education Topics Covered Today' and 'Patient Understanding Assessment' (EducationVisit.tsx:1083, 1101).",
+      "proposed_text": "Record Education Topics Covered Today and the Patient Understanding Assessment.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "Education Topics Covered Today", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Patient Understanding Assessment", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "There is no Teach-back toggle."
+    },
+    {
+      "id": "sav-65b",
+      "claim": "Record Education Topics Covered Today and the Patient Understanding Assessment.",
+      "checks": [
+        {"type": "grep", "pattern": "Education Topics Covered Today", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Patient Understanding Assessment", "paths": ["frontend/src/components/visit-wizard/visit/EducationVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-66",
+      "claim": "Step 16 shows the coverage-policy findings for the visit: a patient-level card and a findings row for each wound. Findings can link back to the section where the data must be entered.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<PatientComplianceCard", "paths": ["frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Per-wound findings · ", "paths": ["frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "onNavigateToSection={readOnly ? undefined : onNavigateToSection}", "paths": ["frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<LCDAuditReviewVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-67",
+      "claim": "Read the attestation sentence. The Electronic Signature Preview notes the ESIGN Act, UETA, CMS, and HIPAA standards.",
+      "checks": [
+        {"type": "grep", "pattern": "This format is legally accepted under ESIGN, UETA, CMS, and HIPAA", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "<ProviderAttestationVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-68",
+      "claim": "Sign on the signature pad.",
+      "checks": [
+        {"type": "grep", "pattern": "SignatureField|SignatureCanvas|SignaturePad", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ],
+      "finding": "Step 17 records a typed electronic signature (name, credentials, NPI) shown as 'Electronically Signed By: …' (ProviderAttestationVisit.tsx:773-791); it has no signature pad.",
+      "proposed_text": "Complete your name, credentials and NPI; the Electronic Signature Preview shows how your signature will read.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "Electronic Signature Preview", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "? `Electronically Signed By: ${", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "Step 17 has no signature pad; the signature is typed."
+    },
+    {
+      "id": "sav-68b",
+      "claim": "Complete your name, credentials and NPI. The Electronic Signature Preview shows how your signature will read. Click Complete Provider Attestation.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Electronic Signature Preview", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? `Electronically Signed By: ${", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Complete Provider Attestation", "paths": ["frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-69",
+      "claim": "Click Continue to Review, check the note preview, then click Sign & Lock. If the service date does not match the appointment date, a Date check prompt asks you to switch to the appointment date or keep your date and pick a reason.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Continue to Review$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "onContinue={openSignReview}", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "                Sign & Lock", "paths": ["frontend/src/components/MultiWoundReviewModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<MultiWoundReviewModal", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<DateMismatchAttestationModal", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Use appointment date", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "If you keep your selected date, tell us why", "paths": ["frontend/src/components/wizard/DateMismatchAttestationModal.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-70",
+      "claim": "Once locked, a Go to Billing prompt appears.",
+      "checks": [
+        {"type": "grep", "pattern": "action: { label: \"Go to Billing\", onClick: () => navigate(`/facility/${currentFacility.id}/billing`) },", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-71",
+      "claim": "Any later change requires an Addendum with a documented reason.",
+      "checks": [
+        {"type": "grep", "pattern": "const [addendumReason, setAddendumReason] = useState<string>(\"\");", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Add Addendum to Progress Note", "paths": ["frontend/src/pages/WoundDetailPage.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "A signed visit can't be edited — add an addendum if this needs to change.", "paths": ["frontend/src/components/visitLockedError.ts"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-72",
+      "claim": "The note PDF is filed in the background after Sign & Lock.",
+      "checks": [
+        {"type": "grep", "pattern": "toast.warning(\"Signed and locked — note still filing\", {", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-73",
+      "claim": "The web wizard is online-only; there is no separate offline mode.",
+      "checks": [
+        {"type": "file", "path": "frontend/src/services/wizardSafetyNet", "expect": "absent"},
+        {"type": "pr", "number": 2711, "titleMatch": "remove the wizardSafetyNet offline system"}
+      ]
+    },
+    {
+      "id": "sav-74",
+      "claim": "Drafts survive network drops and device switches: each field is saved to the server as you complete it.",
+      "checks": [
+        {"type": "grep", "pattern": "debounce so every typed change persists within ~1s, with a 30s heartbeat", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "// PR-C (spec 2026-06-01-wizard-date-integrity §7): autosave localStorage", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-75",
+      "claim": "Resume by tapping the same appointment tile on the Fleet Calendar (or opening the Wound Cockpit and clicking Continue Visit). You land back where you left off, on any device.",
+      "checks": [
+        {"type": "grep", "pattern": "Continue Visit", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "useState<string>(\"consentAttestation\")", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "Resume works from the Fleet Calendar (openVisitWizard resumes the live draft, openVisitWizard.ts:186-193), but the Wound Cockpit has no Continue Visit button (AppointmentPickerInline.tsx:337-368) and the wizard does not reopen the last section (VisitWizardV4.tsx:5665-5666).",
+      "proposed_text": "Resume by opening the same appointment from the Fleet Calendar (the button reads Continue Visit) or from the Wound Cockpit picker. Your saved work loads on any device; open the section you were on.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "params.set(\"visitAction\", \"resume\");", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "return \"Continue Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The Wound Cockpit has no Continue Visit button and the wizard does not reopen the last section."
+    },
+    {
+      "id": "sav-75b",
+      "claim": "Resume by opening the same appointment from the Fleet Calendar (the button reads Continue Visit) or from the Wound Cockpit picker. Your saved work loads on any device; open the section you were on.",
+      "checks": [
+        {"type": "grep", "pattern": "params.set(\"visitAction\", \"resume\");", "paths": ["frontend/src/utils/openVisitWizard.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "return \"Continue Visit\";", "paths": ["frontend/src/components/appointmentActionVerb.ts"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "await openVisitWizard(", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-76",
+      "claim": "Troubleshooting: the Start Visit button is grayed out when the appointment is in Canceled or No Show status.",
+      "checks": [
+        {"type": "grep", "pattern": "disabled={startingVisit ||", "paths": ["frontend/src/components/AppointmentDetailsModal.tsx"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The Fleet Calendar Start Visit button is disabled only while starting (`disabled={startingVisit}`, AppointmentDetailsModal.tsx:1454); appointment status does not disable it.",
+      "proposed_text": "(Remove this row.)",
+      "proposed_checks": [],
+      "status": "removed",
+      "reason": "Start Visit is disabled only while starting; appointment status does not grey it out."
+    },
+    {
+      "id": "sav-77",
+      "claim": "Troubleshooting: Visit Timer shows \"GPS unavailable\" when location services are disabled.",
+      "checks": [
+        {"type": "grep", "pattern": "GPS unavailable", "paths": ["frontend/src/components/timer"], "expect": "present", "fixed": true}
+      ],
+      "finding": "The string 'GPS unavailable' appears only in a console warning in routingUtils.ts:202, and the visit timer is hidden (VisitWizardV4.tsx:16627).",
+      "proposed_text": "Location services are not needed to document a visit. The visit timer and its GPS geofence are switched off in the Visit Wizard.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "{false && !timer.loading && (", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "Timer Component — UI HIDDEN 2026-05-28 (Damon): timer was unused.", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "The visit timer is hidden; GPS unavailable appears only in a console warning."
+    },
+    {
+      "id": "sav-78",
+      "claim": "Troubleshooting: the LCD ambient badge stays amber while one or more checks still need data; click the badge to re-run the check, and use the step 16 findings to jump back to the section.",
+      "checks": [
+        {"type": "grep", "pattern": "const { requestAudit } = useCarePairContext();", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "* Clicking the badge triggers an on-demand Care Pair audit and opens the drawer.", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "{/* LCD Navigator V2 — Layer 1 ambient badge (passive, debounced 1200ms).", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true},
+        {"type": "grep", "pattern": "onNavigateToSection={readOnly ? undefined : onNavigateToSection}", "paths": ["frontend/src/components/visit-wizard/visit/LCDAuditReviewVisit.tsx"], "expect": "present", "fixed": true}
+      ]
+    },
+    {
+      "id": "sav-79",
+      "claim": "Troubleshooting: PDF generation failure — the system retries automatically; if still failing, an error ID is shown.",
+      "checks": [
+        {"type": "grep", "pattern": "error ID", "paths": ["frontend/src/components/VisitWizardV4.tsx", "frontend/src/services/finalizeVisit.ts"], "expect": "present", "fixed": true, "ignoreCase": true}
+      ],
+      "finding": "No automatic retry or error-ID display for note filing exists in VisitWizardV4.tsx or finalizeVisit.ts; on a filing delay the user gets 'Signed and locked — note still filing' (VisitWizardV4.tsx:19915).",
+      "proposed_text": "If the note is still filing after Sign & Lock, you'll see \"Signed and locked — note still filing\"; the visit is locked. If the note does not appear in Progress Notes, contact support.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "toast.warning(\"Signed and locked — note still filing\", {", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "fixed": true}
+      ],
+      "status": "removed",
+      "reason": "No automatic retry or error-ID display exists; the user sees Signed and locked — note still filing."
+    },
+    {
+      "id": "sav-79b",
+      "claim": "If \"Signed and locked — note still filing\" appears after Sign & Lock, the visit is locked and the note is still being filed. If the note does not appear in Progress Notes, contact support.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "toast.warning(\"Signed and locked — note still filing\", {", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "sav-82",
+      "kind": "advice",
+      "claim": "Troubleshooting: if the wizard shows the wrong patient, close it and reopen it from the correct appointment tile.",
+      "checks": []
+    },
+    {
+      "id": "sav-83",
+      "claim": "Result: the encounter is locked, the note is filed, and a Go to Billing prompt hands the encounter off to billing.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "visit_locked: true,", "paths": ["backend/supabase/functions/finalize-visit-lock/handler.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "toast.warning(\"Signed and locked — note still filing\", {", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "action: { label: \"Go to Billing\", onClick: () => navigate(`/facility/${currentFacility.id}/billing`) },", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ audience: [admin]
 roles: [admin, superadmin]
 type: reference
 estimated_minutes: 8
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /administrator/org-role-config
 related:
   - admin-index
@@ -19,87 +19,68 @@ prerequisites:
 
 # Configure organization roles and permissions
 
-The **Organization Role Config** screen is where you control what each role can see and do across your Medipyxis organization.
+The **Organization Role Config** screen is where you choose which features each role can open across your organization.
 
 ## Before you start
 
-- Access requires a facility-admin role (admin, clinical manager, or BD manager) for at least one facility, or Medipyxis platform-level access.
-- Configuration is **per organization** — you select the organization at the top of the screen.
-- Changes take effect on an affected user's next page load.
+- The screen opens for the admin, clinical manager and BD manager roles (on at least one facility) and for Medipyxis staff. Its card on the **Administrator** cockpit is shown only to admins.
+- Settings are per organization. If you manage one organization, it is chosen for you; Medipyxis staff pick the organization from a list at the top.
 
 ## Open the screen
 
-Open the **Administrator** cockpit, then choose **Organization Role Config**. The Administrator cockpit link appears in the sidebar for admin roles, outside the facility-scoped navigation.
+Click **Administrator** in the sidebar, then choose the **Organization Role Config** card.
 
 ![Organization Role Config matrix showing rows of seeded roles (admin, clinician, biller, etc.) and columns of feature permissions with checkboxes.](../assets/admin/role-config.png)
-*The **Organization Role Config** matrix. Rows are roles; columns are features. A checked box means the role has access to that feature.*
+_The Organization Role Config matrix. Rows are roles; columns are features. A checked box means the role has access to that feature._
 
-## Seeded roles
+## Roles
 
-Medipyxis ships ten built-in roles. They cover the most common job functions and cannot be deleted, but their permissions can be adjusted.
+The matrix has one row for each of the ten roles. You cannot add or delete roles here; you change what each one can open. The row names and the names on the user form are:
 
-| Role | Primary function |
+| Row in the matrix | Role on the user form |
 |---|---|
-| Admin | Full organization access; manages all facilities and users |
-| Clinical manager | Oversees clinical staff; access to Fleet Calendar, Visit Wizard, Oversight Cockpit |
-| Medical director | Clinical sign-off; access to LCD Navigator™ audit and reporting |
-| Clinician | Visit documentation; access to Visit Wizard, patient records, orders |
-| Referral coordinator | Manages Referral Intake kanban and Fax Review Queue |
-| BD rep | Business Development; CRM, BD Dashboard, limited patient view |
-| BD manager | BD rep management; CRM, BD Dashboard, Oversight Cockpit BD metrics |
-| Finance (AP) | Accounts Payable; Billing (read), Inventory Accounts Payable |
-| Vendor coordinator | Vendor-facing inventory management; Product Catalog and inventory |
-| Biller | Billing access; Claims, Denials, Payments, and the facility Charge Master |
+| admin | Administrator |
+| clinical manager | Clinical Manager |
+| medical director | Medical Director |
+| clinician | Clinician |
+| referral coordinator | Referral Coordinator |
+| bd rep | Business Development Representative |
+| bd manager | Business Development Manager |
+| finance ap | Finance/Accounts Payable |
+| vendor coordinator | Vendor Coordinator |
+| biller | Biller |
 
-<Note>
-Platform-level roles used internally by Medipyxis staff sit above these organization roles and are not configured here.
-</Note>
+The admin role can open every feature whatever its boxes say. Unticking a box on the admin row has no effect.
 
-## Feature permission matrix
+## Feature columns
 
-The matrix uses checkboxes at the intersection of each role and feature. A checked box means the role can access that feature.
+There are 14 feature columns: HR & Compliance, Business Development, CRM, Team Chat, Referral Intake, Patient Management, All Patients, Fleet Calendar, Inventory, Oversight Cockpit, Facilities, Orders & DME, Billing Operations, and More. Billing access is the **Billing Operations** column. **More** controls the **Fax Center** link.
 
-| Feature | Typical roles with access |
-|---|---|
-| Dashboard | All roles |
-| Referral Intake | Referral coordinator, clinician, clinical manager, admin |
-| Patient Management | Clinician, clinical manager, medical director, admin |
-| Visit Wizard / EHR | Clinician, clinical manager, medical director |
-| Fleet Calendar | Clinician, clinical manager, admin |
-| Inventory | Vendor coordinator, finance (AP), clinical manager, admin |
-| Orders & DME | Clinician, clinical manager |
-| Billing | Biller, finance (AP), admin |
-| CRM | BD rep, BD manager, admin |
-| Business Development | BD rep, BD manager, admin |
-| Oversight Cockpit | Clinical manager, medical director, BD manager, admin |
-| HR & Compliance | Admin, clinical manager |
-| Administrator | Admin |
-| Team Chat | All roles |
+The Dashboard is not a column: everyone can open it.
 
-<Note>
-This matrix shows typical defaults. Your organization may have customized these — always verify the live checkboxes in Organization Role Config rather than relying on the table above.
-</Note>
+Two sidebar links follow a different box from their page. The **CRM** link shows for roles with **Business Development**, but the CRM page checks the **CRM** box. The **Team Chat** link shows for roles with **HR & Compliance**, but the Team Chat page checks the **Team Chat** box. To give a role CRM or Team Chat, tick both boxes.
+
+If the clinician, clinical manager, referral coordinator, BD rep or BD manager row has no boxes ticked at all, Medipyxis gives that role a built-in starting set of features instead of none.
 
 ## Set a permission
 
-1. Open **Organization Role Config** and select the **organization** from the dropdown at the top.
+1. Open **Organization Role Config**.
 2. Find the role row and feature column you want to change.
-3. **Check or uncheck** the box.
-4. Click **Save**. A confirmation toast appears; the change applies to affected users on their next page load.
+3. Tick or untick the box.
+4. Click **Save Changes**. A "Role configuration saved successfully" message confirms it.
 
-<Warning>
-Removing a feature from a role hides that sidebar link for every user with that role on their next load. Communicate permission changes to affected staff in advance.
-</Warning>
+Removing a feature from a role hides that sidebar link for everyone with that role. Tell affected staff before you change it.
 
 ## Billing roles are facility-scoped
 
-Billing roles (biller and related) are scoped to a specific facility — they cannot be assigned across all facilities at once. Assign the billing role at the facility where the user works. The biller role can view and edit that facility's **Charge Master**; creating and editing claim codes and claim status remains governed by the same role configuration.
+The biller role works only at the facilities where it is assigned. A biller can view and edit that facility's **Charge Master** and post payments. A biller cannot change claim codes or the **Claim Status**; a fix is being tracked for the Claim Status. Until then, ask an admin to set it.
 
 ## Worked example
 
-Scenario: give referral coordinators visibility into **Billing** so they can see claim status without creating or editing claims.
+Scenario: give referral coordinators access to **Billing Operations**.
 
-1. Open Organization Role Config and select the organization.
-2. Find the referral coordinator row and the **Billing** column and check the box.
-3. Click **Save**.
-4. Notify affected users that the Billing link is now visible in their sidebar. If you need finer-grained (read-only) billing access than the feature toggle provides, contact Medipyxis support.
+1. Open Organization Role Config.
+2. Find the **referral coordinator** row and the **Billing Operations** column, and tick the box.
+3. Click **Save Changes**.
+
+Tell the affected users that the **Billing Operations** link is now in their sidebar. If you need finer-grained (read-only) billing access than the feature box provides, contact Medipyxis support.

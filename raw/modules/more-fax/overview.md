@@ -6,8 +6,8 @@ audience: [intake, admin]
 roles: [referral_coordinator, clinician, admin]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-10-29
-app_route: /facility/{facility_uuid}/fax-logs
+last_reviewed: 2026-11-11
+app_route: /facility/{facility_uuid}/more
 related:
   - more-fax-send-fax
   - referral-intake-fax-queue-review
@@ -16,39 +16,37 @@ tags: [fax, outbound, inbound, review-queue]
 
 # More (Fax) overview
 
-The **Fax Center** is the dedicated interface for managing outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake. Faxing is available to all roles.
+The **Fax Center** item in the sidebar is where you send faxes and work with the faxes your clinic receives. The page opens with counts of **Total Faxes**, **Successful**, **Failed** and **Pending**, and four tiles.
 
 ![Fax Review Queue with incoming fax rows](../../assets/more-fax/review-queue.png)
 
-*Fax Review Queue — incoming faxes awaiting review or routing.*
+_Fax Review Queue — incoming faxes awaiting review._
 
-## Three sections
+## Four tiles
 
-| Section | Purpose |
+| Tile | Purpose |
 |---|---|
-| **Send Fax Logs** | History of all outbound faxes sent by your facility — date, recipient number, document name, page count, and delivery status. |
-| **Received Fax Logs** | History of all inbound faxes received — date, sender number, page count, and whether the fax was auto-processed or required manual review. |
-| **Fax Review Queue** | Inbound faxes that could not be automatically matched to a patient or referral. These require a staff member to review, route, or dismiss. |
+| **Outgoing Fax Logs** | Send a fax with **New Fax**, and see the faxes your clinic has sent with their delivery status. See [Compose and send an outbound fax](/modules/more-fax/send-fax/). |
+| **Received Fax Logs** | The inbox for every incoming fax. Assign a fax to a patient, file it to the patient's chart, or attach it to one of the patient's orders. See [File a received fax to a patient chart](/modules/more-fax/file-to-chart/). |
+| **Fax Review Queue** | Incoming faxes that Medipyxis has read automatically, waiting for a person to turn them into new patients. See [Review the Fax Review Queue](/modules/referral-intake/fax-queue-review/). |
+| **Fax Settings** | Your fax cover page: logo, Practice Name, Tagline, Accent Color, Return Fax Number, Return Phone Number and Facility Address. |
 
-## Using the Fax Review Queue
+Fax Center is shown to the roles that have it turned on in **Administrator → Organization Role Config**.
 
-Faxes appear in the Fax Review Queue when OCR confidence is below the auto-routing threshold or no matching patient record is found. For each queued fax:
+## How incoming faxes are handled
 
-1. **Click the row** to open the fax document in the preview pane.
-2. **Review the content.** The panel shows the OCR-extracted text alongside the original document image.
-3. **Take action:**
-   - **Link to Referral** — associates the fax with an existing referral card in Referral Intake.
-   - **Create Referral** — opens the New Referral form with OCR data pre-populated.
-   - **Dismiss** — marks the fax as reviewed and non-actionable; it moves to Received Fax Logs.
-   - **File to patient chart** — attaches the fax to an existing patient's Documents tab. See [File a received fax to a patient chart](./file-to-chart.md).
+Every fax your clinic receives is listed in **Received Fax Logs**. It is also added to the **Fax Review Queue**, where Medipyxis reads it and fills in the patient details it finds.
 
-<Note>
-Inbound fax review and referral auto-creation are handled by the Fax Review Queue in Referral Intake, a separate page from the Fax Center. See [Fax Queue Review](../referral-intake/fax-queue-review.md) for that workflow.
-</Note>
+Medipyxis never creates a patient from a fax on its own. A person opens each fax in the Fax Review Queue, with the document on one side and the extracted fields on the other, and clicks **Approve & Create Patient**, **Save Changes** or **Reject**.
 
-## Searching logs
+## Outgoing Fax Logs
 
-The Fax Center supports filtering by date range and fax number, and exporting to CSV. Outbound fax statuses include **draft**, **pending**, **sending**, **sent**, **delivered**, **failed**, and **cancelled**. Failed faxes can be **retried** (up to 3 attempts) or **cancelled**, and each fax has an audit log.
+The columns are Status, Patient, Receiving Fax, File Name, Document Type, Sent At, Created At, Sent By and Actions.
+
+- Search by patient name or file name, filter by status (Sent, Pending, Failed, Sending, Draft, Cancelled) and by date (Today, This Week, This Month).
+- **Export** downloads the filtered list as a CSV file, up to 5,000 rows.
+- A failed fax can be retried up to 3 times. A pending or draft fax can be cancelled.
+- Each row has an audit history, and a sent fax can be downloaded.
 
 ## Related
 

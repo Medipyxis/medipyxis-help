@@ -3,10 +3,10 @@ id: admin-index
 title: Administrator Guide
 module: admin
 audience: [admin]
-roles: [practice_admin, super_admin]
+roles: [admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-04-24
+last_reviewed: 2026-11-11
 app_route: /administrator
 related:
   - admin-facility-setup
@@ -23,57 +23,19 @@ related:
 tags: [admin, setup, roles, HIPAA]
 ---
 
-# Administrator Guide
+# Admin & billing
 
-This guide covers everything a `practice_admin` or `super_admin` needs to configure, maintain, and govern a Medipyxis organization — from first-day facility setup through ongoing role and security management.
+12 articles in this section.
 
-## Who should read this guide
-
-| Role | What you own |
-|---|---|
-| `super_admin` | Organization-wide settings, role definitions at `/administrator`, cross-facility reports |
-| `practice_admin` | Day-to-day configuration for one or more facilities: users, billing defaults, SLAs |
-
-Clinicians, billers, and BD reps do not need to read this guide. Direct them to the module-specific articles in their area.
-
-## How Medipyxis structures administration
-
-Medipyxis draws a deliberate line between **organization-level** settings and **facility-scoped** settings.
-
-**Organization-level (lives at `/administrator`, outside any facility context):**
-- Organization Role Config — the role × module permission matrix that governs what every user can see and do across all facilities.
-
-**Facility-scoped (accessed after selecting a facility in the Organization Selector):**
-- User invitations and assignments — **HR & Compliance → Facility Users**
-- Credential tracking, activity logs, bulk employee upload — **HR & Compliance**
-- Inventory PAR levels, product catalog, vendor relationships — **Inventory**
-- Superbill templates, fee schedules, Stedi clearinghouse credentials and enrollment — **Billing**
-- Business hours, fax numbers, intake SLAs — **Facilities**
-
-This separation means a `super_admin` configures roles once for the whole organization, while a `practice_admin` handles the day-to-day settings within their assigned facility.
-
-## Sub-pages in this guide
-
-| Page | Type | What you'll learn |
-|---|---|---|
-| [Facility Setup](./admin/facility-setup.md) | How-to | First-week tasks: UUID, fax, business hours, intake SLAs, superbill defaults |
-| [Facility Timezone](./admin/facility-timezone.md) | How-to | Pick the canonical timezone for scheduling, reminders, and chart timestamps |
-| [User Management](./admin/user-management.md) | How-to | Invite users, assign roles, bulk upload for 20+ employees |
-| [Role Config](./admin/role-config.md) | Reference + How-to | Permission matrix, toggle permissions, clone roles |
-| [Billing Setup](./admin/billing-setup.md) | How-to | Code Library, Fee Schedule, Stedi credentials + enrollment, webhooks, ERA auto-post |
-| [Notifications](./admin/notifications.md) | Reference | Channels (in-app, email, SMS), user preferences, and event families |
-| [Security & Compliance](./admin/security-and-compliance.md) | Concept | HIPAA session settings, audit logs, MFA, BAAs |
-| [Data Import & Export](./admin/data-import-export.md) | How-to | Bulk upload, ZusHealth sync, export referrals/claims, API keys |
-| [Practice Onboarding](./admin/practice-onboarding.md) | How-to | Guided 9-step CSV migration pipeline for incoming practices |
-| [Practice Data Import CSV Reference](./admin/practice-onboarding-csv-reference.md) | Reference | Column-by-column breakdown of all 9 CSV templates, prior EHR duplicate handling, and `consent_*` attestation rules |
-| [Deactivating & Archiving](./admin/deactivating-and-archiving.md) | How-to | Deactivate a facility, archive a patient, reassign work |
-
-## Before you start
-
-- Confirm your role is `practice_admin` or `super_admin`. The **Administrator** link appears in the sidebar only for those roles.
-- Have your Supabase tenant credentials ready for the verification step in Facility Setup.
-- If you are onboarding a brand-new organization, work through the sub-pages in table order — each builds on the previous.
-
-<Note>
-Changes made at `/administrator` (role permissions) propagate immediately to all logged-in users. A user whose module access is removed will lose that sidebar link on their next page load.
-</Note>
+- [Configure organization roles and permissions](/admin/role-config/) — reference · 8 min
+- [Deactivate a facility, archive a patient, and disable a user](/admin/deactivating-and-archiving/) — how-to · 6 min
+- [Import and export data](/admin/data-import-export/) — how-to · 10 min
+- [Invite users and manage facility access](/admin/user-management/) — how-to · 8 min
+- [Notification settings and channels](/admin/notifications/) — reference · 6 min
+- [Onboard a practice with the Practice Onboarding importer](/admin/practice-onboarding/) — how-to · 8 min
+- [Practice Data Import CSV templates and column reference](/admin/practice-onboarding-csv-reference/) — reference · 15 min
+- [Security settings and HIPAA compliance](/admin/security-and-compliance/) — concept · 7 min
+- [Set up a facility in your first week](/admin/facility-setup/) — how-to · 10 min
+- [Set up an organization with multiple locations](/admin/multi-location-setup/) — how-to · 9 min
+- [Set up billing and the Stedi clearinghouse](/admin/billing-setup/) — how-to · 10 min
+- [Set your facility timezone](/admin/facility-timezone/) — how-to · 5 min

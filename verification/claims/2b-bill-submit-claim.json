@@ -1,0 +1,2387 @@
+{
+  "title": "Submit a claim",
+  "source": "modules/billing/submit-claim",
+  "url": "https://help.medipyxis.com/modules/billing/submit-claim/",
+  "claims": [
+    {
+      "id": "sub-01",
+      "claim": "Walk through the New Claim form to create and submit a CMS-1500-based claim to the payer via the Stedi clearinghouse (837P JSON).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isEditMode ? '✏️ Edit Billing Claim' : 'CMS-1500 Health Insurance Claim Form'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { submitToStedi } from '@/services/stediService';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'/2024-04-01/change/medicalnetwork/professionalclaims/v3/submission';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-02",
+      "claim": "Before you start: the patient visit has been completed and signed by the rendering provider.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'No patients with billing-ready visits. A visit must have a completed, signed progress note to be eligible for claim submission.'",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-03",
+      "claim": "Before you start: diagnosis (ICD-10) and procedure (CPT/HCPCS) codes are confirmed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: 'Add at least 1 ICD-10 and 1 CPT/HCPCS code before submitting.',",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-04",
+      "claim": "Before you start: you have the biller role, or admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "hasClaimFacilityGrant(sb, userId, roles, facilityId, BILLING_SURFACE_ROLES),",
+          "paths": [
+            "backend/supabase/functions/submit-to-stedi/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "MEDICAL_ACCESS: ['admin', 'clinician', 'clinical_manager', 'medical_director', 'provider'] as string[],",
+          "paths": [
+            "backend/supabase/functions/_shared/auth-helpers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^  'biller',$",
+          "paths": [
+            "backend/supabase/functions/_shared/auth-helpers.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "finding": "Billing-lead, coder, third-party biller, clinician and other medical roles can submit too (auth-helpers.ts:332-338)."
+    },
+    {
+      "id": "sub-05",
+      "claim": "§1 Insurance Type — Insurance type selector (Medicare · Medicaid · Tricare · Champva · Group Health Plan · FECA Blk Lung · Other). (Steps: Complete §1 — Insurance Type. Select the appropriate insurance type from the dropdown. This drives payer-specific validation rules downstream. Caption: §1 Insurance Type and §2 Patient Name are the first fields.)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "FECA|CHAMPVA|Champva|Insurance Type",
+          "paths": [
+            "frontend/src/components/claims",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ],
+      "finding": "The claim form has no insurance-type selector. Its first claim fields are Payer Name, Payer ID and Insured's ID Number (BillingSubmitFormFields.tsx:151-201), after the patient picker.",
+      "proposed_text": "§1 / §1a — Payer Name, Payer ID and Insured's ID Number. There is no insurance-type selector.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Payer Name|Payer ID|Insured's ID Number)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "FECA|CHAMPVA|Champva|Insurance Type",
+          "paths": [
+            "frontend/src/components/claims",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No insurance-type selector exists. Replaced by sub-48."
+    },
+    {
+      "id": "sub-48",
+      "claim": "Section 1: Carrier information — Payer Name, Payer ID and Insured's ID Number. There is no insurance-type selector.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Payer Name|Payer ID|Insured's ID Number)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "FECA|CHAMPVA|Champva|Insurance Type",
+          "paths": [
+            "frontend/src/components/claims",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 1: Carrier information",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-06",
+      "claim": "§2 Patient Name — patient_last_name, patient_first_name, patient_middle_initial, patient_suffix.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "patient_last_name|patientLastName|patient_suffix|patientSuffix",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Box 2 is one field, \"Patient's Name (Last, First, Middle)\" (BillingSubmitFormFields.tsx:250); there are no separate last/first/middle/suffix fields.",
+      "proposed_text": "§2 Patient's Name — one field, Last, First, Middle.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient's Name \\(Last, First, Middle\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Box 2 is one name field. Replaced by sub-49."
+    },
+    {
+      "id": "sub-49",
+      "claim": "Section 2: Patient demographics — Patient's Name as one field (Last, First, Middle), Patient's Date of Birth and Patient's Sex.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient's Name \\(Last, First, Middle\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "^\\s+(Patient's Date of Birth|Patient's Sex)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 2: Patient demographics",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-07",
+      "claim": "§4 Insured Name — insured_last_name, insured_first_name, insured_middle_initial.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "insured_last_name|insuredLastName|insuredMiddle",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Box 4 is one field, \"Insured's Name (Last, First, Middle)\" (BillingSubmitFormFields.tsx:458).",
+      "proposed_text": "§4 Insured's Name — one field, Last, First, Middle.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Insured's Name \\(Last, First, Middle\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Box 4 is one name field. Replaced by sub-50."
+    },
+    {
+      "id": "sub-50",
+      "claim": "Section 4 & 7: Insured information — Insured's Name as one field (Last, First, Middle), and Insured's Address: street, city, state, ZIP code.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Insured's Name \\(Last, First, Middle\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Insured's Address \\(Street\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 4 & 7: Insured information",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-08",
+      "claim": "§5 Patient Address — patient_address, patient_city, patient_state, patient_zip, patient_phone.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "patientPhone|patient_phone",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Box 5 has Patient's Address (Street), City, State and Zip Code, but no phone field (BillingSubmitFormFields.tsx:348-417).",
+      "proposed_text": "§5 Patient's Address — street, city, state, ZIP code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient's Address \\(Street\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Zip Code$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "Box 5 has no phone field. Replaced by sub-51."
+    },
+    {
+      "id": "sub-51",
+      "claim": "Section 5: Patient address — Patient's Address: street, city, state, ZIP code.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient's Address \\(Street\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Zip Code$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 5: Patient address",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-09",
+      "claim": "Patient Relationship to Insured (Self · Spouse · Child · Other). If the patient is the subscriber, select Self. For dependents, select Spouse, Child, or Other.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient Relationship to Insured$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(SELF|SPOUSE|CHILD|OTHER)\">(Self|Spouse|Child|Other)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-10",
+      "claim": "§7 Insured Address — insured_address, insured_city, insured_state, insured_zip, insured_phone.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "insuredPhone|insured_phone",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Box 7 has Insured's Address (Street), City, State and Zip Code, but no phone field (BillingSubmitFormFields.tsx:472-531).",
+      "proposed_text": "§7 Insured's Address — street, city, state, ZIP code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Insured's Address \\(Street\\)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Box 7 has no phone field. Replaced by sub-50."
+    },
+    {
+      "id": "sub-11",
+      "claim": "§8 Reserved — Reserved field (read-only; populated per payer requirements).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Reserved",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no reserved Box 8 field. In that part of the form the biller edits Employment Status and Marital Status (BillingSubmitFormFields.tsx:591-640), which are auto-filled from the patient record.",
+      "proposed_text": "Patient status — Employment Status and Marital Status selectors, filled from the patient record.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Employment Status|Marital Status)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "maritalStatus: (selectedPatient as any).marital_status || prev.maritalStatus,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no reserved Box 8 field. Replaced by sub-52."
+    },
+    {
+      "id": "sub-52",
+      "claim": "Section 6 & 8: Relationship & status — Patient Relationship to Insured (Self · Spouse · Child · Other), plus Employment Status and Marital Status selectors, filled from the patient record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Patient Relationship to Insured$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(SELF|SPOUSE|CHILD|OTHER)\">(Self|Spouse|Child|Other)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 4
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Employment Status|Marital Status)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "maritalStatus: (selectedPatient as any).marital_status || prev.maritalStatus,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 6 & 8: Relationship & status",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-12",
+      "claim": "Section 10: Condition related to — Checkboxes: Employment (current or previous) · Auto Accident (with state) · Other Accident. Leave all boxes unchecked for standard illness/injury.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "aria-label=\"Condition related to (employment|auto accident|other accident)\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Auto Accident State$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-13",
+      "claim": "Box 17: Referring Provider — Referring Provider Name and NPI, auto-filled from the patient's referring physician on record. Correct the name and NPI if the referral is different for this claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Referring Provider Name$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "referringProviderName: (selectedPatient as any).referring_physician_name || prev.referringProviderName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "referringProviderNPI: (selectedPatient as any).referring_physician_npi || prev.referringProviderNPI,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-14",
+      "claim": "Section 21: Diagnosis codes — ICD-10 codes A through L (up to 12). Add up to 12 ICD-10 codes using the code search. The first code entered becomes pointer A and is required. Additional codes (B–L) are optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 21: Diagnosis codes (ICD-10-CM)",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{[\"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\", \"K\", \"L\"].map(",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isFieldEmpty(\"diagnosis\") && (",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisCodes.slice(0, 12)",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-15",
+      "claim": "§24A Date of Service — date_of_service_from, date_of_service_to. (Step: Enter the date of service range.)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "dateOfServiceTo|date_of_service_to|dateOfServiceFrom",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Each service line has one Date of Service (formData.dateOfService, BillingSubmitFormFields.tsx:1150-1162; line.dateOfService for added lines); there is no from/to range.",
+      "proposed_text": "§24A Date of Service — one date per service line.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.dateOfService || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "dateOfServiceTo|date_of_service_to|dateOfServiceFrom",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no date range; one date per line. Replaced by sub-53."
+    },
+    {
+      "id": "sub-53",
+      "claim": "Section 24: Service lines & charges — For each line: 24A Date of Service (one date per line), 24B Place of Service, 24D Procedures/CPT Code and one Modifier, 24E Diagnosis Pointer, 24F Charges and 24G Units.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.dateOfService || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "dateOfServiceTo|date_of_service_to|dateOfServiceFrom",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"modifier\", e.target.value.toUpperCase())",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Procedures/CPT Code$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"diagnosisPointer\", e.target.value.toUpperCase())",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"A,B,C\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+24F( \\$ Charges)?$|>24F \\$ Charges<",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Units$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 24: Service lines & charges",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-16",
+      "claim": "24B Place of Service. The Place of Service code is auto-derived from the visit's service location; override it if needed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onValueChange={(value) => onInputChange(\"pos\", value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ value: \"(11|12|31)\", label: \"(Office \\(11\\)|Home \\(12\\)|Skilled Nursing Facility \\(SNF\\) \\(31\\))\" \\},",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await posCodeForVisitFrontend({",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'placeOfServiceCode',",
+          "paths": [
+            "backend/supabase/functions/_shared/claimRequiredFields.ts"
+          ],
+          "expect": "present",
+          "note": "a missing POS is refused at submit"
+        }
+      ],
+      "finding": "The POS comes from the place of service the provider confirmed in the visit (Section 2), else the appointment's POS; there is no default (posDerivation.ts:13-28). A claim with no POS is refused at submit (PR #3854)."
+    },
+    {
+      "id": "sub-17",
+      "claim": "§24D Procedure Code + Modifiers — cpt_hcpcs_code, modifier_1, modifier_2, modifier_3, modifier_4. (Step: Enter the CPT/HCPCS code and up to four modifiers.)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "modifier_?[234]|modifier2|modifier4",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Each service line has one Procedures/CPT Code and one Modifier box of two characters (BillingSubmitFormFields.tsx:1245-1263; ServiceLine.modifier at :41).",
+      "proposed_text": "§24D — Procedure (CPT/HCPCS) code and one modifier per line.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"modifier\", e.target.value.toUpperCase())",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Procedures/CPT Code$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "One modifier box per line, not four. Replaced by sub-53."
+    },
+    {
+      "id": "sub-18",
+      "claim": "24E Diagnosis Pointer — the diagnosis pointer(s) from the codes in §21.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"diagnosisPointer\", e.target.value.toUpperCase())",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"A,B,C\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The pointer is typed as letters (e.g. A,B,C) in a text box, not picked from a list."
+    },
+    {
+      "id": "sub-19",
+      "claim": "24F Charges and 24G Units, per line.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+24F( \\$ Charges)?$|>24F \\$ Charges<",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Units$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-20",
+      "claim": "§24H EPSDT / Family Plan — EPSDT indicator checkbox. (Step: Check EPSDT if applicable.)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "epsdt.*(Checkbox|checked)|(Checkbox|checked).*epsdt",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "24H is a text box (placeholder \"E\"), hidden until \"Show Additional Charge Fields (24H–24J)\" is clicked. On line 1 it is not connected to any field, so what you type is not saved (BillingSubmitFormFields.tsx:1505-1513); on added lines it is (:1452-1458).",
+      "proposed_text": "§24H EPSDT / Family Plan — a text box under Show Additional Charge Fields (24H–24J). Only added lines (2 onward) keep a value.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => handleUpdateServiceLine(line.id, 'epsdt', e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Show Additional Charge Fields (24H–24J)",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"epsdt\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "24H is a text box, and on line 1 it is not saved. Replaced by sub-54."
+    },
+    {
+      "id": "sub-54",
+      "claim": "24H–24J — Under Show Additional Charge Fields (24H–24J). On the first line these boxes are not saved; on added lines, 24H EPSDT and 24J Rendering NPI are saved.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => handleUpdateServiceLine(line.id, 'epsdt', e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Show Additional Charge Fields (24H–24J)",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"epsdt\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => handleUpdateServiceLine(line.id, 'renderingProviderNPI', e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Override rendering provider NPI for this line\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-21",
+      "claim": "§24I ID Qualifier / §24J Rendering Provider NPI — Qualifier code for the rendering provider ID type; rendering_provider_npi. (Step: §24I / §24J: Confirm the ID qualifier and rendering provider NPI (auto-populated from the visit record).)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onInputChange\\(\"(idQualifier|lineRenderingProviderNPI|renderingNpiLine)\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if line 1's 24I/24J boxes hold a value"
+        }
+      ],
+      "finding": "Line 1's 24I \"ID Qualifier\" and 24J \"Rendering Provider NPI (line-level)\" boxes have no value or onChange: they are empty and anything typed is dropped (BillingSubmitFormFields.tsx:1515-1533). Added lines have a 24J Rendering NPI box that is saved, and no 24I box (:1461-1468). The rendering provider NPI that is auto-filled is the one in Box 31 \"Rendering Provider NPI\".",
+      "proposed_text": "The rendering provider's NPI is filled in Box 31 (Rendering Provider NPI). Added service lines can override it in 24J Rendering NPI.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.renderingProviderNPI || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => handleUpdateServiceLine(line.id, 'renderingProviderNPI', e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Line 1 24I/24J are not saved and not auto-filled. Replaced by sub-54 and sub-55."
+    },
+    {
+      "id": "sub-55",
+      "claim": "The rendering provider's NPI is filled in Box 31 (Rendering Provider NPI). Added service lines can override it in 24J Rendering NPI.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.renderingProviderNPI || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => handleUpdateServiceLine(line.id, 'renderingProviderNPI', e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-22",
+      "claim": "Tax ID Number (EIN or SSN). Verify the Tax ID is correct for the billing entity.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Tax ID Number$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(EIN|SSN)\">(EIN|SSN)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-23",
+      "claim": "Patient Account # (auto-filled from the patient's MRN).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Auto-filled from patient MRN$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientAccountNumber: selectedPatient.mrn || prev.patientAccountNumber,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-24",
+      "claim": "Accept Assignment. Confirm Accept Assignment matches your payer contract.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Accept Assignment$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(YES|NO)\">(YES|NO)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-25",
+      "claim": "§28 Total Charge is read-only and adds up every Section 24 line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-[10px] text-gray-500\">Adds up every line in Section 24</p>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.totalCharge || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-26",
+      "claim": "§29 Amount Paid — amount_paid (patient or other payer payment received prior to submission).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "amountPaid|amount_paid|Amount Paid",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The claim form has no Box 29 Amount Paid field. Section 25-30 has Tax ID Number, Patient Account #, Accept Assignment, Total Charge and Balance Due (BillingSubmitFormFields.tsx:1551-1680).",
+      "proposed_text": "There is no §29 Amount Paid field on the claim form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "amountPaid|amount_paid|Amount Paid",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Amount Paid field. Replaced by sub-56."
+    },
+    {
+      "id": "sub-56",
+      "claim": "Section 25-30: Billing information — Tax ID Number (EIN or SSN), Patient Account # (auto-filled from the patient's MRN), Accept Assignment, Total Charge and Balance Due. There is no Amount Paid field.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Tax ID Number$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(EIN|SSN)\">(EIN|SSN)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Auto-filled from patient MRN$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientAccountNumber: selectedPatient.mrn || prev.patientAccountNumber,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Accept Assignment$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "<SelectItem value=\"(YES|NO)\">(YES|NO)</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "amountPaid|amount_paid|Amount Paid",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Section 25-30: Billing information",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-27",
+      "claim": "§30 Balance Due — Calculated automatically (§28 minus §29). §28 Total Charge and §30 Balance Due are read-only calculated fields.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onInputChange(\"balance\", e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if Balance Due is not hand-editable"
+        }
+      ],
+      "finding": "Total Charge is read-only and calculated, but Balance Due is an ordinary editable box (BillingSubmitFormFields.tsx:1660-1678) that starts at 0.00 and is not calculated from anything (NewBillingSubmitPage.tsx:513).",
+      "proposed_text": "§28 Total Charge is read-only and adds up every Section 24 line. §30 Balance Due is entered by hand.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-[10px] text-gray-500\">Adds up every line in Section 24</p>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onInputChange(\"balance\", e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Balance Due is entered by hand, not calculated. Replaced by sub-56 and sub-57."
+    },
+    {
+      "id": "sub-57",
+      "claim": "§28 Total Charge is read-only and adds up every Section 24 line. §30 Balance Due is entered by hand.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-[10px] text-gray-500\">Adds up every line in Section 24</p>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onInputChange(\"balance\", e.target.value)}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-28",
+      "claim": "§31 Provider Signature — Digital provider signature captured during visit attestation.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "[Ss]ignature",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The form's Box 31 is \"31. Rendering Provider\" with Provider Name, Taxonomy and Rendering Provider NPI (BillingSubmitFormFields.tsx:1705-1745). The claim form shows no signature.",
+      "proposed_text": "§31 Rendering Provider — provider name, taxonomy and NPI.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+31\\. Rendering Provider$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.renderingProviderTaxonomy || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Box 31 is the rendering provider, with no signature. Replaced by sub-58."
+    },
+    {
+      "id": "sub-58",
+      "claim": "31. Rendering Provider — Provider Name, Taxonomy and Rendering Provider NPI.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+31\\. Rendering Provider$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.renderingProviderTaxonomy || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.renderingProviderNPI || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-29",
+      "claim": "32. Facility — The service facility's address, plus its name and 32a NPI when the place of service is a facility. Confirm the facility and billing provider addresses and NPIs match your payer enrollment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+32\\. Facility$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"font-medium\">{sf.name}</p>",
+          "paths": [
+            "frontend/src/components/claims/ServiceFacilityBox32.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{sf.npi ? `32a NPI ${sf.npi}`",
+          "paths": [
+            "frontend/src/components/claims/ServiceFacilityBox32.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.facilityAddress1 || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The facility name and 32a NPI show only when the place of service names a facility (ServiceFacilityBox32.tsx:17-18)."
+    },
+    {
+      "id": "sub-30",
+      "claim": "33. Billing Provider — Provider Name, address, Phone, Taxonomy and Billing Provider NPI.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+33\\. Billing Provider$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Billing Provider NPI|Phone)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-31",
+      "claim": "Open the claim form. Navigate to /facility/{facility_uuid}/billing/new — the New Claim form opens as a full page. (Billers also reach it by clicking Edit on a claim in the Work Queue.)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/new\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NewBillingSubmitPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${facilityId}/billing/new?editClaimId=${r.claim_id}`",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-32",
+      "claim": "Complete §2 — Patient Name. Search for the patient by last name or date of birth.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={`${patient.full_name} ${patient.dob",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the picker's search text includes the date of birth"
+        }
+      ],
+      "finding": "The patient picker searches name or MRN (\"Search patient name or MRN...\", search value = full name + MRN, BillingSubmitPatientSelector.tsx:534-544), not date of birth. It lists only patients with a billing-ready visit (a completed, signed progress note, :538).",
+      "proposed_text": "Select the patient. The picker searches by name or MRN and lists only patients with a visit that has a completed, signed progress note.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CommandInput placeholder=\"Search patient name or MRN...\" />",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={`${patient.full_name} ${patient.mrn || ''}`}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The picker searches name or MRN, not date of birth. Replaced by sub-59."
+    },
+    {
+      "id": "sub-59",
+      "claim": "Select the patient. The picker searches by name or MRN and lists only patients with a visit that has a completed, signed progress note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CommandInput placeholder=\"Search patient name or MRN...\" />",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={`${patient.full_name} ${patient.mrn || ''}`}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'No patients with billing-ready visits. A visit must have a completed, signed progress note to be eligible for claim submission.'",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitPatientSelector.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-33",
+      "claim": "Selecting an existing patient auto-fills §4 Insured Name, §5 Patient Address, §17 Referring Provider, §26 Patient Account Number, and §29 Amount Paid from the patient record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insuredName: selectedPatient.full_name || prev.insuredName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientAddress: selectedPatient.address_street || prev.patientAddress,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientAccountNumber: selectedPatient.mrn || prev.patientAccountNumber,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "amountPaid|amount_paid",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present",
+          "note": "§29 part of the sentence"
+        }
+      ],
+      "finding": "§4, §5, §17 and §26 are filled from the patient (NewBillingSubmitPage.tsx:1622-1651). There is no §29 Amount Paid field to fill. The same step also fills date of birth, sex, marital and employment status, §7 insured address, §10 conditions and §27 accept assignment.",
+      "proposed_text": "Selecting a patient fills §2 name, date of birth and sex, §4 Insured Name, §5 Patient Address, §7 Insured Address, §10 Condition Related To, §17 Referring Provider, §26 Patient Account Number and §27 Accept Assignment from the patient record.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insuredName: selectedPatient.full_name || prev.insuredName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insuredAddress: selectedPatient.address_street || prev.insuredAddress,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientBirthDate: formatDateForInput(selectedPatient.dob) || prev.patientBirthDate,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "acceptAssignment: (selectedPatient as any).accept_assignment !== false ? 'YES' : 'NO',",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "employment: (selectedPatient as any).condition_related_to_employment || prev.conditionRelated.employment,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "referringProviderName: (selectedPatient as any).referring_physician_name || prev.referringProviderName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no §29 Amount Paid field to fill. Replaced by sub-60."
+    },
+    {
+      "id": "sub-60",
+      "claim": "Selecting a patient fills §2 name, date of birth and sex, §4 Insured Name, §5 Patient Address, §7 Insured Address, §10 Condition Related To, §17 Referring Provider, §26 Patient Account Number and §27 Accept Assignment from the patient record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insuredName: selectedPatient.full_name || prev.insuredName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "insuredAddress: selectedPatient.address_street || prev.insuredAddress,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientBirthDate: formatDateForInput(selectedPatient.dob) || prev.patientBirthDate,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "acceptAssignment: (selectedPatient as any).accept_assignment !== false ? 'YES' : 'NO',",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "employment: (selectedPatient as any).condition_related_to_employment || prev.conditionRelated.employment,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "referringProviderName: (selectedPatient as any).referring_physician_name || prev.referringProviderName,",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-61",
+      "claim": "Complete Section 1. Enter or confirm the Payer Name, Payer ID and Insured's ID Number.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "^\\s+(Payer Name|Payer ID|Insured's ID Number)$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-34",
+      "claim": "Verify §4 through §8. Confirm the insured name and address match the insurance card. Correct any discrepancies before proceeding — payer rejections for demographic mismatches are common.",
+      "checks": [],
+      "finding": "Workflow advice and a payer-behavior statement; not checkable from code.",
+      "kind": "advice"
+    },
+    {
+      "id": "sub-35",
+      "claim": "Add service lines — §24A through §24J. Click + Add Line for each procedure.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Line",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button that adds a service line is labelled \"Add Charge\" (BillingSubmitFormFields.tsx:1484-1485). Line 1 is filled from the first CPT code in Billing codes & procedures.",
+      "proposed_text": "Add service lines — §24A through §24J. Click + Add Charge for each additional procedure.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Charge {additionalServiceLines.length > 0 && `(${additionalServiceLines.length + 1} lines)`}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is Add Charge, not Add Line. Replaced by sub-62."
+    },
+    {
+      "id": "sub-62",
+      "claim": "Add service lines — §24A through §24J. Click + Add Charge for each additional procedure. For each line, enter the date of service, the procedure code and modifier, the diagnosis pointer(s) from the codes in §21, the charge and the units.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Charge {additionalServiceLines.length > 0 && `(${additionalServiceLines.length + 1} lines)`}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value={formData.dateOfService || \"\"}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "dateOfServiceTo|date_of_service_to|dateOfServiceFrom",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onInputChange(\"modifier\", e.target.value.toUpperCase())",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Procedures/CPT Code$",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-36",
+      "claim": "Service lines can be dragged to reorder; the CMS-1500 Box 24 line numbering re-asserts automatically after a move.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "draggable|useSortable|DndContext",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the Section 24 service lines themselves are draggable"
+        }
+      ],
+      "finding": "The service lines in Section 24 cannot be dragged. What drags is the CPT row list in \"Billing codes & procedures\" (BillingCodeEntry.tsx, dnd-kit); a drop there re-fills Box 24 line 1 from the first CPT by position (NewBillingSubmitPage.tsx:2291-2304, computeBox24OnReorder).",
+      "proposed_text": "CPT codes in Billing codes & procedures can be dragged to reorder; after a move, Box 24 is filled again from the new order.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onReorder={handleBillingCodesReorder}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const box24 = computeBox24OnReorder(reordered, movedId);",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} from '@dnd-kit/sortable';",
+          "paths": [
+            "frontend/src/components/claims/BillingCodeEntry.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Section 24 service lines cannot be dragged. Replaced by sub-63."
+    },
+    {
+      "id": "sub-63",
+      "claim": "Reorder if needed. CPT codes in Billing codes & procedures can be dragged to reorder; after a move, Box 24 is filled again from the new order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onReorder={handleBillingCodesReorder}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const box24 = computeBox24OnReorder(reordered, movedId);",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} from '@dnd-kit/sortable';",
+          "paths": [
+            "frontend/src/components/claims/BillingCodeEntry.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-37",
+      "claim": "Complete §25 through §33. These fields are generally auto-populated from your facility and provider configuration.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { resolveBillingProvider } from '@/services/resolveBillingProvider';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { getFacilityPracticeForClaim } from '@/services/claimServiceFacility';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-38",
+      "claim": "Click Save Draft to save without submitting, or Submit Claim to send it to the payer through Stedi. (A confirmation prompt appears before either action completes.)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Save Draft'",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present",
+          "note": "the save button label as the page writes it"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Save changes to this claim?' : 'Save this claim as draft?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Update and submit this claim?' : 'Create and submit this claim?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The save button reads \"Save Changes\" (\"No Changes\" and disabled when nothing has changed), not \"Save Draft\" (NewBillingSubmitPage.tsx:5423-5435). Submit Claim and both confirmation prompts are as described.",
+      "proposed_text": "Click Save Changes to save without submitting, or Submit Claim to send it to the payer through Stedi. A confirmation prompt appears before either action completes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Saving...' : hasUnsavedChanges ? 'Save Changes' : 'No Changes'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Save changes to this claim?' : 'Save this claim as draft?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Update and submit this claim?' : 'Create and submit this claim?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The save button reads Save Changes, not Save Draft. Replaced by sub-64."
+    },
+    {
+      "id": "sub-64",
+      "claim": "Click Save Changes to save without submitting, or Submit Claim to send it to the payer through Stedi. A confirmation prompt appears before either action completes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Saving...' : hasUnsavedChanges ? 'Save Changes' : 'No Changes'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSubmitting ? 'Submitting...' : 'Submit Claim'}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Save changes to this claim?' : 'Save this claim as draft?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSavingModalMessage(isEditMode ? 'Update and submit this claim?' : 'Create and submit this claim?');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-39",
+      "claim": "The rendering provider NPI in §24J must match the NPI on file with the payer. Submitting with a group NPI in §24J instead of the individual NPI is a common rejection cause for Medicare claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   provider with an active, Medicare-enrolled, 10-digit Type-1 NPI.",
+          "paths": [
+            "backend/supabase/functions/_shared/resolveBillingProvider.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Payer rule; the check confirms the product resolves the rendering provider to an individual (Type-1) NPI."
+    },
+    {
+      "id": "sub-40",
+      "claim": "A Save Draft keeps the claim as a draft; Submit Claim sends it to Stedi and advances it toward Submitted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let claimStatus = 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimStatus = existingClaimData.status || 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if saving always leaves the claim a draft"
+        }
+      ],
+      "finding": "Saving a new claim stores it as Draft, but saving an existing claim keeps its current status (NewBillingSubmitPage.tsx:3822-3827). After a successful Stedi send the claim is Submitted; a Stedi rejection makes it Rejected (NewBillingSubmitPage.tsx:4965).",
+      "proposed_text": "Saving a new claim stores it as a draft; saving an existing claim keeps its status. Submit Claim sends it to Stedi; it becomes Submitted when Stedi accepts it, or Rejected when Stedi rejects it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let claimStatus = 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimStatus = existingClaimData.status || 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: stediStatus === 'success' ? 'submitted' : stediWasRejected ? 'rejected' : 'pending',",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Save Draft does not exist, and saving an existing claim keeps its status. Replaced by sub-65."
+    },
+    {
+      "id": "sub-65",
+      "claim": "Saving a new claim stores it as a draft; saving an existing claim keeps its status. Submit Claim sends it to Stedi; it becomes Submitted when Stedi accepts it, or Rejected when Stedi rejects it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let claimStatus = 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimStatus = existingClaimData.status || 'draft';",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: stediStatus === 'success' ? 'submitted' : stediWasRejected ? 'rejected' : 'pending',",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-41",
+      "claim": "The claim appears in the Work Queue tied to its encounter, where you can track and set its Claim Status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(patientId ? claimByPatientAndDos.get(`${patientId}__${dos}`) : null) ||",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<StatusDropdown",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "It appears only when an appointment matches it (by visit or by patient and date of service); a claim with no matching appointment in the date range does not show."
+    },
+    {
+      "id": "sub-42",
+      "claim": "Claims are generated automatically from a completed visit and appear in the Work Queue — you do not need to create them manually.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { AutoBillingClaimService } from './autoBillingClaimService';",
+          "paths": [
+            "frontend/src/services/finalizeVisit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { finalizeVisit } from \"@/services/finalizeVisit\";",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const AUTO_CLAIM_WRITE_FUNCTION = 'auto-billing-claim-write';",
+          "paths": [
+            "frontend/src/services/billing/autoClaimWriteClient.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-43",
+      "claim": "Use the claim form for claims that need to be entered or corrected outside the normal visit workflow (e.g., corrected claims, late charges), reached via Edit in the Work Queue or /billing/new.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"7\">7 — Replacement</SelectItem>",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/new\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-44",
+      "claim": "Submit Claim disabled or errors — One or more required fields missing or invalid — Scroll through the form — required fields are outlined in red.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!isFormValid() || isSubmitting}",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"border-red-400 bg-red-50\"",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sub-45",
+      "claim": "Payer rejects claim for NPI mismatch — Group NPI used in §24J instead of individual NPI — Update the rendering provider's NPI in HR & Compliance, then resubmit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"HR & Compliance\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  npi: string;",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-46",
+      "claim": "§28 Total Charge calculates as zero — No service lines added, or charge amounts left blank — Add at least one §24 line with a non-zero charge.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!formData.charges || Number(formData.charges) <= 0) missingServiceLineFields.push('Charges');",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Box 28 = total of every Section 24 line (CMS 100-04 Ch. 26 Item 28) */}",
+          "paths": [
+            "frontend/src/components/claims/BillingSubmitFormFields.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "sub-47",
+      "claim": "Claim stuck at Exported — Stedi credentials missing, webhook not wired, or payer not enrolled — Have your administrator verify the Stedi setup in Billing Setup and confirm payer enrollment is Active.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "['\"]exported['\"]",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "excludeTests": true,
+          "note": "true only if an Exported claim is waiting on a Stedi send"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing Setup",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ],
+      "finding": "Exported only means the claim was exported as a PDF or JSON file (BillingDashboard.tsx:1253-1256); no code sends Exported claims to Stedi, so credentials, webhooks and enrollment cannot keep a claim there. There is no \"Billing Setup\" screen; enrollment is on Payer Enrollment (Quick Actions), whose good state is ACTIVE (StediEnrollmentPage.tsx:292).",
+      "proposed_text": "Claim stays at Exported — exporting a PDF or JSON does not send the claim. Open it and click Submit Claim. If Stedi refuses it for enrollment, check Payer Enrollment (Quick Actions) and confirm the provider's enrollment is ACTIVE.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Payer Enrollment$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => ![\"ACTIVE\", \"LEGACY_ASSUMED_ENROLLED\"].includes((e.status || \"\").toUpperCase()),",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Exported claims are never sent, so Stedi setup cannot hold them there; there is no Billing Setup screen. Replaced by sub-66."
+    },
+    {
+      "id": "sub-66",
+      "claim": "Claim stays at Exported — exporting a PDF or JSON does not send the claim. Open it and click Submit Claim. If Stedi refuses it for enrollment, check Payer Enrollment (Quick Actions) and confirm the provider's enrollment is ACTIVE.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Payer Enrollment$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => ![\"ACTIVE\", \"LEGACY_ASSUMED_ENROLLED\"].includes((e.status || \"\").toUpperCase()),",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,990 @@
+{
+  "title": "Onboard a practice with the Practice Onboarding importer",
+  "source": "admin/practice-onboarding",
+  "url": "https://help.medipyxis.com/admin/practice-onboarding/",
+  "claims": [
+    {
+      "id": "po-01",
+      "claim": "Practice Onboarding is a guided, 9-step CSV import in the Administrator area (/administrator/practice-onboarding).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * PracticeOnboarding — Admin page for the 9-step CSV import pipeline.",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    stepNumber: 9,",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-02",
+      "claim": "Each step runs Upload → Map Columns → Confirm → Import → Results, and steps unlock in dependency order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'upload', label: 'Upload' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'mapping', label: 'Map Columns' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'confirmation', label: 'Confirm' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'importing', label: 'Import' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'results', label: 'Results' },",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (step.dependsOn.every((dep) => completedTypes.has(dep))) {",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-03",
+      "claim": "The CSV reference covers all 9 templates, including the prior_ehr_* duplicate-handling columns and the 8 consent_* columns.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'prior_ehr_system',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'prior_ehr_mrn',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ key: 'consent_",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": {
+            "count": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "po-04",
+      "claim": "You need the admin role (the Practice Onboarding card on the Administrator cockpit is shown to admins), with the facility you are importing into selected.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ORG_ADMIN_ROLES = [\"admin\"];",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!loading && facilityId && (",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-05",
+      "claim": "Each step's upload screen has a download button for its CSV template.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download {config.label} Template",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDownloadTemplate = useCallback(() => {",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-06",
+      "claim": "Export the incoming practice's data as CSV files — one file per step — and format dates as YYYY-MM-DD.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "po-07",
+      "claim": "Dates that do not exist, such as 2026-02-31, are rejected.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `Invalid calendar date \"${trimmed}\" (day does not exist in month)`;",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Invalid calendar date \"${v}\" (day does not exist in month)`,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-08",
+      "claim": "Patients is always first because every later step links its rows to the patients you imported with patient_uid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "This must be completed first — subsequent steps depend on patient UIDs.",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  producesUid: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-09",
+      "claim": "Step table: 1 Patients (patient_import_template.csv, start here, produces patient_uid); 2 Insurance; 3 Medications; 4 Allergies; 5 Comorbidities; 6 Emergency Contacts — each after Patients; 7 Wounds (after Patients, produces wound_uid); 8 Documents & Historical Wound Photos (after Patients); 9 Visit History (after Wounds).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'patient_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'insurance_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'medications_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'allergies_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'comorbidities_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'contacts_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'wounds_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'documents_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'visit_history_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    dependsOn: [],",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    dependsOn: \\['patients'\\],$",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": {
+            "count": 7
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    dependsOn: ['wounds'],",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  producesUid: 'wound_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-10",
+      "claim": "Wounds and Visit History are read-only history.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    .from('wound_import_history')",
+          "paths": [
+            "backend/supabase/functions/wound-cockpit-load/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('visit_import_history')",
+          "paths": [
+            "frontend/src/pages/PatientTimelinePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-11",
+      "claim": "Click Administrator, then the Practice Onboarding card. A bar shows how many of the 9 steps are completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Administrator\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "of {availableStepCount} steps completed",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-12",
+      "claim": "Click the Patients step card to open it. Locked steps show Locked and cannot be opened.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleStepClick(step)}",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!unlocked}",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Locked$",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-13",
+      "claim": "Upload: click Download Patients Template if needed, then drag-and-drop or select your CSV file.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  label: 'Patients',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download {config.label} Template",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Upload {config.label} CSV",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-14",
+      "claim": "prior_ehr_system and prior_ehr_mrn carry over prior chart numbers and prevent duplicate charts on re-import; duplicate_decision takes an existing patient_uid or NEW when two patients share name and date of birth.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Possible Duplicate Decision (patient_uid, or NEW)',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Prior EHR Patient ID (MRN / chart number)',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// how a re-import finds the patient it already created.",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-15",
+      "claim": "consent_on_file yes attests the practice's own signed consent; optional consent_signed_on, consent_signer_capacity (patient, poa, surrogate), consent_signer_name, consent_witnessed, consent_location, consent_photo, consent_npp_acknowledged; blank or no records nothing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_signer_capacity', label: 'Consent Signed By (patient / poa / surrogate)', required: false, type: 'text' },",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_on_file',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_signed_on',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_signer_name',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_witnessed',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_location',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_photo',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_npp_acknowledged',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  if (!normalizeBool(m.consent_on_file)) return null;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-16",
+      "claim": "Never use a nursing facility's admission paperwork for consent_on_file = yes (facility staff cannot consent for a resident).",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "po-17",
+      "claim": "Map Columns: columns are matched automatically first; adjust any that are wrong.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const autoMapped = autoMapColumns(csvHeaders, targetFields);",
+          "paths": [
+            "frontend/src/components/import/ColumnMappingScreen.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-18",
+      "claim": "Confirm: check the parsed rows and the blue banner that shows how each date column was read; fix errors inline or skip rows before importing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Preflight: how each date column was interpreted (verify before import) */}",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div className=\"rounded-md border border-blue-200 bg-blue-50 p-3 text-sm\">",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " *   - Admin can edit cells inline, toggle skip per row, or skip all errors",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-19",
+      "claim": "Results: Imported, Errors, Skipped (Reused) and Warnings counts, with a Needs Follow-Up list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-muted-foreground\">Imported:</span>",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-muted-foreground\">Errors:</span>",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Skipped (Reused):",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Warnings:",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Needs Follow-Up ({result.warnings.length})",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-20",
+      "claim": "For Patients, Download Results CSV saves patients_import_results.csv with each patient's patient_uid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const filename = `${config.importType}_import_results.csv`;",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  importType: 'patients',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-21",
+      "claim": "You can download the results again later from the completed Patients or Wounds step card (Download results CSV), even after Done or switching devices. Imports run before this was added have no saved results.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{completed && batchSummary.latest && (step.importType === 'patients' || step.importType === 'wounds') && (",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download results CSV",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info('No saved results for this import. Imports run before this update did not save them.');",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-22",
+      "claim": "Click Done and repeat for steps 2–9. Uploading the same file again does not create duplicates: rows that match existing records are reused and counted as skipped.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{onComplete && <Button onClick={onComplete}>Done</Button>}",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{' '}and reused the existing record without creating a duplicate.",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-23",
+      "claim": "Start with Patients and import it cleanly; import Wounds before Documents & Historical Wound Photos and Visit History so they can attach to wound_uid (or wound_id).",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "po-24",
+      "claim": "You can also import a whole vendor export from the Import a vendor export (all tables at once) section.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Import a vendor export (all tables at once)",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-25",
+      "claim": "Documents and historical wound photos are stored privately with the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Import prior-EHR patient documents (patient-documents private bucket) and historical wound photos (wound-images under historical/).',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-26",
+      "claim": "Imported wounds and visits are kept as history, separate from visits documented in Medipyxis, and show on the patient's Wound Cockpit and timeline.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    .from('wound_import_history')",
+          "paths": [
+            "backend/supabase/functions/wound-cockpit-load/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('visit_import_history')",
+          "paths": [
+            "frontend/src/pages/PatientTimelinePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-27",
+      "claim": "Each import is recorded per facility, so each step card shows what was loaded.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const batchSummary = summarizeStepBatches(batches, step.importType);",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{batchSummary.label}",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-28",
+      "claim": "See it on screen: the What's new video page exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "canonicalUrl",
+          "paths": [
+            "frontend/src/utils/practiceOnboardingHelpWalkthrough.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "po-r02",
+      "claim": "Review the Overall Progress bar and click Start (or Import More) on 1. Patients.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Import More",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Overall Progress",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Overall Progress label and no Start or Import More button; you click the step card. Replaced by po-11/po-12."
+    },
+    {
+      "id": "po-r03",
+      "claim": "Results: review Imported, Skipped (existing), Warnings (Needs Follow-Up), and Errors.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Skipped (existing)",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The label is Skipped (Reused). Replaced by po-19."
+    },
+    {
+      "id": "po-r04",
+      "claim": "Click Back to Overview (or Done) and repeat the flow for steps 2–9.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Back to Overview",
+          "paths": [
+            "frontend/src/components/import"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Back to Overview button. Replaced by po-22."
+    },
+    {
+      "id": "po-r05",
+      "claim": "Prior EHR documents and historical wound photos are stored in private buckets (patient-documents and wound-images) and tagged as historical records (prior_ehr_record = true); imported wounds and visits are read-only history (wound_import_history and visit_import_history) that cannot be edited, signed, or billed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "cannot be edited, signed, or billed",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Internal storage and table names removed; 'cannot be edited, signed, or billed' was not checkable. Replaced by po-25/po-26."
+    },
+    {
+      "id": "po-r06",
+      "claim": "Calendar rollover dates such as 2026-02-31 are rejected before write; each step provides a downloadable template on its upload screen; one file per domain (patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds, and visit history).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "domain (patients, insurance, medications, allergies, comorbidities, emergency contacts, wounds, and visit history)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The list left out documents; otherwise kept as po-05/po-07."
+    }
+  ]
+}

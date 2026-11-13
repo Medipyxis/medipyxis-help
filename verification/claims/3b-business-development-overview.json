@@ -1,0 +1,543 @@
+{
+  "title": "Business Development overview",
+  "source": "modules/business-development/overview",
+  "url": "https://help.medipyxis.com/modules/business-development/overview/",
+  "claims": [
+    {
+      "id": "bdo-01",
+      "claim": "The Business Development dashboard brings together outreach activity, spend tracking, today's route and route suggestions in a single screen.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<BdDashboard />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AiSuggestionsAccordion",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Today's Route",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-02",
+      "claim": "Reps see their own practices, patients, and activity; a separate BD Management surface (team dashboards, coaching, practice assignment, mileage) is not switched on yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/bdmgmt-manager-dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "A BD Management route exists (/bdmgmt-manager-dashboard) behind the Business Development feature; 'not switched on' is not shown in code. Sentence dropped; listed as a roadmap item in the report."
+    },
+    {
+      "id": "bdo-03",
+      "claim": "For a BD rep, the dashboard shows their own assigned practices and activity. Administrators and BD managers get a BD rep filter (All BD Reps, Unassigned, or one rep).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const isBdRep = role === \"BD_REP\" || role === \"bd_rep\";",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "role === \"bd_manager\" ||",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"ALL\">All BD Reps</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"UNASSIGNED\">Unassigned</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-04",
+      "claim": "Monthly Spend widget summarizes marketing and entertainment spend for the current month and links to the full spend log.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ">Monthly Spend<",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The tile is Monthly Spend Reports and opens spend reports (export to Excel); it does not summarize the month itself."
+    },
+    {
+      "id": "bdo-05",
+      "claim": "Monthly Spend Reports opens spend reports, which you can export to Excel. New Patients Queue shows how many new patients are waiting and opens the queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Monthly Spend Reports",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "View spend reports and export to Excel.",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "New Patients Queue",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "to={`/new-patients${facilityId || selectedBdRepFilter !== \"ALL\"",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-06",
+      "claim": "New Patients Queue lists recently converted referrals attributed to your outreach.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "attributed",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The tile shows a count and opens the queue; attribution to the rep's outreach is not shown in code."
+    },
+    {
+      "id": "bdo-07",
+      "claim": "Next Best Action: daily outreach suggestion from a round-robin cycle; shows progress as “X of Y this cycle”.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{dailySuggestions.cycle.practices_touched} of {dailySuggestions.cycle.practices_total} this cycle",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"Round-robin progress: practices contacted in the current cycle\"",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// round-robin suppression (practices already touched this cycle are hidden",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-08",
+      "claim": "Next Best Action shows progress as \"X of Y practices contacted\".",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "} practices contacted",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The label reads 'X of Y this cycle'."
+    },
+    {
+      "id": "bdo-09",
+      "claim": "AI Route Suggestions proposes practices worth visiting today using fixed rules. Today's Route lists the practices you've added.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const needed = 7 - suggestedPractices.length;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "openai",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span className=\"text-lg font-bold text-gray-800\">Today's Route</span>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-10",
+      "claim": "Quick-add strip: Log Call, Add Spend, New Visit, New Contact.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"spend\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"new_contact\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<BdLogCallModal",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<BdNewContactModal",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-11",
+      "claim": "Log Call form: practice, contact, outcome, next steps. New Visit: date, practice, contact, visit notes. Add Spend: category, amount, associated practice, receipt upload.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Next Steps",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Visit Date",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The call form has no contact or next-steps field (it has subject, duration, outcome, notes); the visit form has no date or contact field."
+    },
+    {
+      "id": "bdo-12",
+      "claim": "Log Call: practice, call subject, duration, outcome and call notes. Add Spend: practice, amount, category, vendor or restaurant, notes and an optional document. New Visit: practice, visit purpose, duration, outcome and visit notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Call Subject *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Duration (min) *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Call Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Amount *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Vendor/Restaurant *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "accept=\".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Visit Purpose *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Visit Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"follow_up_needed\">Follow-up Needed</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-13",
+      "claim": "New Contact adds a contact (for example a physician or referral coordinator) to a practice.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Full Name *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"physician\">Physician</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isSaving ? \"Saving...\" : \"Add Contact\"}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "bdo-14",
+      "claim": "A voice recording option captures a call or visit by voice; the recording is attached to the activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"voice\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The voice note is saved as its own activity of type voice on the chosen practice, not attached to a call or visit."
+    },
+    {
+      "id": "bdo-15",
+      "claim": "Record Voice Note records a voice note for a practice you choose; it is saved as its own Voice Note activity on that practice.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Record Voice Note\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"voice\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "subject: \"Voice Note\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "voice: \"Voice Notes\",",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,801 @@
+{
+  "title": "Create and track shipments",
+  "source": "vendor-portal/shipments",
+  "url": "https://help.medipyxis.com/vendor-portal/shipments/",
+  "claims": [
+    {
+      "id": "vps-01",
+      "claim": "A shipment is an advance ship notice that pre-stages the clinic receiving queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Advance ship notices (ASN) pre-stage the clinic receiving queue",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// then pre-stages inventory_orders_v2 + inventory_ordered_products_batches_v2",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-02",
+      "claim": "Every vendor role can open Shipments at /vendor/shipments.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/shipments\" element={<VendorIdentityGate><VendorShipmentsPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-03",
+      "claim": "Destinations must be connected clinics and SKUs must be in your catalog.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "is not a tethered clinic (connection missing or still pending)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "unknown SKU (not in catalog)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-04",
+      "claim": "Cards: In transit, Received (30d), Open discrepancies; Avg transit shows no figure.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"In transit\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Received (30d)\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Open discrepancies\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"—\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Avg transit\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-05",
+      "claim": "Tabs: All, In transit, Received, Discrepancy.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'all', label: 'All', statuses: [] as string[] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'in_transit', label: 'In transit', statuses: ['shipped'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'received', label: 'Received', statuses: ['delivered'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'discrepancy', label: 'Discrepancy', statuses: ['discrepancy'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-06",
+      "claim": "Columns Shipment, Clinic, Carrier / tracking, Expected, Lines, Status; statuses created, in transit, received, discrepancy, cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Carrier / tracking",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Expected",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'created' }",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'in transit' }",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'received' }",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'discrepancy' }",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'cancelled' }",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-07",
+      "claim": "Click a row to open the shipment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/vendor/shipments/${s.id}`)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-08",
+      "claim": "Shipments are created by bulk upload or by Ship on a clinic request.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload (Excel)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   ship    -> inventory_orders_v2.status -> Shipped(2) + a vendor_orders ASN projection",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-09",
+      "claim": "Bulk upload at /vendor/shipments/upload creates one shipment per destination clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate('/vendor/shipments/upload')",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Grouping preview: {validation.valid.length} lines →",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-10",
+      "claim": "Accepts .xlsx, .xls, .csv; Download template.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "accept=\".xlsx,.xls,.csv\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download template",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-11",
+      "claim": "Mapping by header name; table shows Spreadsheet header, Mapped field, First row value, status; unrecognized headers are ignored.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Spreadsheet header",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mapped field",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "First row value",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'— ignored —'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (aliases.some((a) => a.toLowerCase() === normalized)) {",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-12",
+      "claim": "Rejected reasons: SKU not in catalog, missing lot, invalid quantity, missing destination, not a connected clinic; Download rejected rows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason: `Missing lot number`",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason: `Invalid quantity`",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason: `Missing destination clinic`",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download rejected rows",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rows OK",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-13",
+      "claim": "Lot and expiry: flags lots expiring within 90 days and repeated lot+SKU+clinic rows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (daysLeft > 0 && daysLeft <= 90) {",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Duplicate lot+SKU+clinic rows detected'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-14",
+      "claim": "Create shipments button.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Create ${clinicGroups.length} shipments`",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-15",
+      "claim": "Recognized headers per field; required fields SKU, lot, quantity, destination clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const REQUIRED_FIELDS = ['sku', 'lot_number', 'quantity', 'destination_clinic'];",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sku: ['SKU', 'Sku', 'sku', 'Item Code', 'ItemCode', 'Product Number', 'ProductNumber', 'Product #', 'Product No', 'Item Number', 'Item #'],",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lot_number: ['Lot', 'Lot Number', 'LotNumber', 'Lot #', 'Lot No', 'Batch', 'Batch Number'],",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "expiration_date: ['Exp Date', 'Expiration', 'Expiry', 'Expiration Date', 'ExpirationDate', 'Exp', 'Expiry Date'],",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "destination_clinic: ['Ship To', 'ShipTo', 'Destination', 'Clinic', 'Facility', 'Clinic Name', 'Destination Clinic'],",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_ref: ['PO Ref', 'PO', 'PO Number', 'Reference', 'Ref', 'External Ref', 'Order Ref'],",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Shipped Qty'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Item Description'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-16",
+      "claim": "Destination must match the clinic name on your Clinics page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "for (const c of clinics) clinicByName.set(c.name.trim().toLowerCase(), c);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-17",
+      "claim": "Each shipment is staged in the clinic receiving queue and the clinic is notified; staff check it in from the clinical inventory view.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"inventory_orders_v2\")",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event_type: \"vendor_shipment_created\",",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Pending Vendor Shipments — W3 quick-receive */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-18",
+      "claim": "Shipment page: clinic, carrier/tracking, lines and units; lines table SKU, product, lot, expiration (close dates in red), qty shipped, qty received, line status; Receiving outcome shows who received it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{clinicName} · {carrierDisplay} · {lines.length} lines · {totalQty}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Qty shipped",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Qty received",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Line status",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? 'text-red-600 font-medium'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Receiving outcome",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Received by",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-19",
+      "claim": "Issue credit memo and Close discrepancy buttons do nothing yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Issue credit memo",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Close discrepancy",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => issueCreditMemo",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleCloseDiscrepancy",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vps-old-01",
+      "status": "removed",
+      "claim": "(removed) Manual single shipment (\"New shipment (manual)\") and saved column-mapping templates.",
+      "reason": "No manual-create or mapping-template control exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New shipment (manual)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save mapping as template",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-old-02",
+      "status": "removed",
+      "claim": "(removed) Expiring-soon flag at 30 days with extra confirmation for consignment.",
+      "reason": "The flag is at 90 days with no extra confirmation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "daysLeft <= 30",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentUploadPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-old-03",
+      "status": "removed",
+      "claim": "(removed) Detail drawer with Timeline, Discrepancies (photo and note), Documents (auto packing slip), and Accept and reship / short-ship / Dispute actions.",
+      "reason": "None of these exist on the shipment page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Accept and reship",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "packing slip",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentDetail.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vps-old-04",
+      "status": "removed",
+      "claim": "(removed) Draft shipments can be edited or voided from a row menu; voiding removes pre-staged clinic rows.",
+      "reason": "No void or draft-edit action exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Void",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vps-old-05",
+      "status": "removed",
+      "claim": "(removed) Notification goes to the clinic inventory admin and its assigned providers.",
+      "reason": "A single facility-scoped notification is emitted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "assigned_providers",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

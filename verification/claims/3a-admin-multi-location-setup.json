@@ -1,0 +1,1080 @@
+{
+  "title": "Set up an organization with multiple locations",
+  "source": "admin/multi-location-setup",
+  "url": "https://help.medipyxis.com/admin/multi-location-setup/",
+  "claims": [
+    {
+      "id": "ml-01",
+      "claim": "Get each of your locations added, give every one the identity payers expect, and make sure your staff can see the locations they work at.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Legal name used for insurance claims and clearinghouse",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select one or more facilities you have access to",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-02",
+      "claim": "Do this before your first claim goes out.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-03",
+      "claim": "You need the admin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// (2026-05-17): \"admin should be like superadmin of their own account, until",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-04",
+      "claim": "Your Medipyxis contact creates your organization, your first location, and your administrator login.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const ONBOARDING_ALLOWED_ROLES = [\"superadmin\", \"customersupport\"];",
+          "paths": [
+            "backend/supabase/functions/create-client-onboarding/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   4. new_client: create the auth user, mint the password-setup link, then",
+          "paths": [
+            "backend/supabase/functions/create-client-onboarding/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"MedipyxisInternal\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-05",
+      "claim": "For each additional location, have ready the NPI (10 digits), Tax ID (9 digits), phone, email, fax, and street address.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-06",
+      "claim": "Facility Name is the everyday name: what staff see in the facility switcher, what appears on screen, and what is sent to Zus.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Name <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: facilityRow?.name ?? 'Unknown Facility',",
+          "paths": [
+            "backend/supabase/functions/zus-contribute-visit/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{currentFacility.name}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-07",
+      "claim": "Legal / Billing Name is the legal business name used on insurance claims and with the clearinghouse; it should match the federal NPPES registry.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Legal / Billing Name",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Legal name used for insurance claims and clearinghouse",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_provider_name: facility?.legal_name || facility?.name || undefined,",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-08",
+      "claim": "If the Legal / Billing Name is blank, claims carry the Facility Name instead.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_provider_name: facility?.legal_name || facility?.name || undefined,",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-09",
+      "claim": "Medipyxis can fill the legal name in for you from the NPI.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "legal_name: s.organizationName || s.displayName || prev.legal_name,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-10",
+      "claim": "Do it for every location, including your first one. Keep Facility Name readable and presentable — it is the name other providers see on the shared patient record.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-11",
+      "claim": "In the left sidebar click Facilities. The page header reads Facility Management and shows a counter such as 1/12 — locations used out of the number your organization is allowed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Management",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{totalCounts.totalFacilities}/{maxFacilities}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-12",
+      "claim": "New locations are added by Medipyxis staff. For your role, Add Facility is greyed out and its tip reads \"Contact Medipyxis support to add a location\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Contact Medipyxis support to add a location\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const addLocationDisabled = isAtMaxFacilities || !canAddLocation;",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-13",
+      "claim": "Image: Facilities list with FACILITY, CONTACT, STATS, STATUS and ACTIONS columns and an Active or Inactive badge.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Contact$",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Stats$",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Status$",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Actions$",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-14",
+      "claim": "When a location is added, every administrator in your organization is given access to it automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   5. add_locations: one transactional RPC adds the locations and gives the",
+          "paths": [
+            "backend/supabase/functions/create-client-onboarding/handler.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//      organization's admins a role at each.",
+          "paths": [
+            "backend/supabase/functions/create-client-onboarding/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-15",
+      "claim": "If your organization has used all its locations, Medipyxis has to raise the limit before another one can be added.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"This organization has reached its location limit. Raise Max Locations in Organization Management first.\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isAtMaxFacilities = totalCounts.totalFacilities >= maxFacilities;",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-16",
+      "claim": "Go to Facilities, find the location, and click Edit. Enter the NPI Code.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "NPI Code",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-17",
+      "claim": "Use the location's organization NPI (Type 2). If several locations bill under one group NPI, enter that same NPI on each.",
+      "kind": "external",
+      "checks": []
+    },
+    {
+      "id": "ml-18",
+      "claim": "Wait for the Found in federal NPPES registry card to appear beneath the NPI. It shows the name, the specialty, and the address the registry holds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Found in federal NPPES registry",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{nppesSuggestion.taxonomy}",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{nppesSuggestion.address}",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Sub-10-digit edits clear stale suggestions so they don't outlive the NPI.",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-19",
+      "claim": "Use this info copies the registry's legal name into Legal / Billing Name, updates the address and phone to the registry's, and records the NPI type, taxonomy code and the time of the lookup.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use this info",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "legal_name: s.organizationName || s.displayName || prev.legal_name,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "address: s.address || prev.address,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "phone: normalizedPhone || prev.phone,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi_type: s.enumerationType === \"NPI-2\" ? 2 : 1,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "taxonomy_code: s.taxonomyCode || undefined,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "nppes_last_synced_at: new Date().toISOString(),",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-20",
+      "claim": "Legal / Billing Name stays editable after Use this info.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Optional free-text: NPPES pre-fills it via \"Use this info\", but an admin",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Entering an NPI above pre-fills this, but you can edit it.",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-21",
+      "claim": "Confirm Legal / Billing Name reads exactly what the registry shows; leave Facility Name as the everyday name.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-22",
+      "claim": "Enter the Tax Number (9 digits; a dash is allowed). Click Save Changes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"123456789 or 12-3456789\"",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-xs sm:text-sm\">Save Changes</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-23",
+      "claim": "If the registry card shows a different business, click Dismiss, confirm the number, and try again.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleDismissNppes}",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dismiss",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-24",
+      "claim": "If the address on the card is not where this location sees patients, do not click Use this info; type the Legal / Billing Name by hand.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-25",
+      "claim": "In the left sidebar click HR & Compliance. Click the New Employee Onboarding tile.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"HR & Compliance\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-26",
+      "claim": "Fill in First Name, Last Name, email, phone, Role, Job Title and Status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter email address\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Select job title\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Select role\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"Active\", label: \"Active\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err.phone = \"Phone Number is required\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-27",
+      "claim": "Provider fields (NPI, taxonomy code, state licence, DEA and signature) show for clinical, management and admin roles and are required for the Clinician role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "!!r && !(NON_CLINICAL_EXCLUDED_ROLES as readonly string[]).includes(r.toLowerCase());",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PROVIDER_CREDENTIALS_REQUIRED_ROLES = [",
+          "paths": [
+            "frontend/src/utils/providerRoleUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Taxonomy Code",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "State License",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEA Number",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Provider Signature",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-28",
+      "claim": "In Facility Assignment, pick every location this person works at. Only locations you can access yourself appear in the list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select one or more facilities you have access to",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search & select facilities...\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-29",
+      "claim": "Click Create User. One login is created, the person is given access to each location you picked, and a welcome email goes out with a link to set their password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { sendWelcomeEmail } from \"@/services/welcomeEmailService\";",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-30",
+      "claim": "To change someone's locations later: HR & Compliance → Facility Users, find the person, click the edit button on their row, adjust Facility Assignment and click Save Changes. Removing a location removes their access to it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Optional — full set of facility_ids the user should hold `role` at. */",
+          "paths": [
+            "backend/supabase/functions/admin-update-user/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-31",
+      "claim": "If the welcome email does not arrive, use Resend welcome email on their row in Facility Users, or ask the person to click Forgot Password? on the login page and enter their email.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ResendWelcomeEmailButton",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Forgot Password?",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/forgot-password\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-32",
+      "claim": "In the sidebar click Billing Operations, then the Payer Enrollment card.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payer Enrollment",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-33",
+      "claim": "Choose the Enrollment Types and the Payers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Enrollment Types</CardTitle>",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentTypesCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Payers</CardTitle>",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-34",
+      "claim": "In Provider Information, the Organization / Provider Name box is filled in with the everyday Facility Name unless a provider name was saved before.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-base\">Provider Information</CardTitle>",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization / Provider Name",
+          "paths": [
+            "frontend/src/components/billing/stedi/EnrollmentFormCards.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerName: creds.provider_name || row?.name || \"\",",
+          "paths": [
+            "frontend/src/components/billing/stedi/useFacilityEnrollmentDefaults.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-35",
+      "claim": "Replace it with the Legal / Billing Name before continuing, so enrollment and claims carry one name for the NPI.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-36",
+      "claim": "Click Enroll with N Payers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Enroll with {selectedPayerIds.length} Payer{selectedPayerIds.length !== 1 ? \"s\" : \"\"}",
+          "paths": [
+            "frontend/src/pages/StediEnrollmentPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-37",
+      "claim": "Without a charge master, claims are built at zero dollars and cannot be sent to Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"needs_pricing\",",
+          "paths": [
+            "frontend/src/lib/billing/charge_master.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `No price on file for ${label}${atFacility} — add it in Charge Master.`,",
+          "paths": [
+            "backend/supabase/functions/_shared/validateClaimLineCharges.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ml-38",
+      "claim": "Result and go-live checklist: location on Facilities, NPI and registry card reviewed, legal name matches, Tax Number, contact details, Facility Assignment, enrollment name, price list.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ml-r01",
+      "claim": "Legal / Billing Name: the exact legal business name on file with NPPES. If it does not match NPPES character for character, claims and payer enrollments for that location can be rejected. Medipyxis fills this in for you from the NPI. Do it for every location, including your first one, which starts out blank.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "legal_name: str(input.legalName) || null,",
+          "paths": [
+            "backend/supabase/functions/create-client-onboarding/validation.ts"
+          ],
+          "expect": "absent",
+          "note": "would hold if onboarding could not set a legal name"
+        }
+      ],
+      "status": "removed",
+      "reason": "The first location need not start blank: the onboarding request carries a legal name. The rest is kept as ml-07 to ml-09 and advice."
+    },
+    {
+      "id": "ml-r02",
+      "claim": "Click Add Facility. Enter the NPI Code first, then fill in Facility Name, Tax Number, Phone Number, Email Address, Fax Number and the address fields; click Save Changes. Repeat for every location.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Add Facility is available only to Medipyxis staff (superadmin, customer support). Replaced by ml-12."
+    },
+    {
+      "id": "ml-r04",
+      "claim": "If Add Facility is greyed out, you have reached the number of locations your organization is set up for. Ask your Medipyxis contact to raise it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const addLocationDisabled = isAtMaxFacilities || !canAddLocation;",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "For customer roles it is always greyed out; the location limit is a second reason. Replaced by ml-12/ml-15."
+    },
+    {
+      "id": "ml-r05",
+      "claim": "Wait for the blue card; it shows the legal business name, the provider type, and the address. Use this info copies the registry's legal name into Legal / Billing Name, updates the address to the registry's practice location, and records that the location was verified.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "phone: normalizedPhone || prev.phone,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The card shows the specialty (taxonomy), and Use this info also overwrites the phone; replaced by ml-18/ml-19."
+    },
+    {
+      "id": "ml-r06",
+      "claim": "Choosing the Clinician role reveals the provider fields — NPI, taxonomy code, state licence, DEA and signature.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "!!r && !(NON_CLINICAL_EXCLUDED_ROLES as readonly string[]).includes(r.toLowerCase());",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The provider fields show for every role except the non-clinical list, not only Clinician. Replaced by ml-27."
+    },
+    {
+      "id": "ml-r08",
+      "claim": "In Provider Information, the Organization / Provider Name box is filled in with the everyday Facility Name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerName: creds.provider_name || row?.name || \"\",",
+          "paths": [
+            "frontend/src/components/billing/stedi/useFacilityEnrollmentDefaults.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "Only when no provider name was saved for the location. Replaced by ml-34."
+    },
+    {
+      "id": "ml-r09",
+      "claim": "Troubleshooting: Add Facility is greyed out because you have reached your organization's location limit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Contact Medipyxis support to add a location\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "For customer roles it is greyed out because only Medipyxis staff can add locations."
+    }
+  ]
+}

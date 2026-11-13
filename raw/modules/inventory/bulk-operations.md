@@ -6,7 +6,7 @@ audience: [clinician, admin]
 roles: [inventory_manager, vendor_coordinator, admin]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-08-28
+last_reviewed: 2026-11-11
 app_route: /inventory-management/bulk
 related:
   - inventory-overview
@@ -16,92 +16,83 @@ related:
 tags: [inventory, bulk upload, shipment, receiving, CSV, XLSX]
 ---
 
-Bulk Inventory is the single landing page for every batch workflow — shipment logging, vendor receiving, manual receipt, and provider assignment. Each card opens a focused flow so you don't have to hunt through the main catalog for the right modal.
+Bulk Inventory is the single landing page for every batch workflow — shipment logging, vendor receiving, manual receipt, and provider assignment. Each card opens a focused flow or points you to the right tab.
 
 ## Before you start
 
-- Open **Inventory Management → Bulk** to reach `/inventory-management/bulk`. To land on a category-specific variant, use `/inventory-management/bulk/{category}` where category is `amniotic`, `biologics`, or `conservative`.
-- You need the `inventory_manager`, `vendor_coordinator`, or `admin` role for shipment and receiving. Provider assignment is available to any role with **In Stock** access.
-- Have your vendor's packing slip or invoice on hand (CSV or XLSX). Templates are provided from each modal.
+- Bulk Inventory has no menu link yet. Open it by going to `/inventory-management/bulk/amniotic`, `/inventory-management/bulk/biologics`, or `/inventory-management/bulk/conservative` in your Medipyxis web address. A fix to add a menu link is being tracked.
+- Use one of those category addresses. At `/inventory-management/bulk` with no category, **Upload Shipment** and **Upload Receiving** stay off.
+- Anyone whose role has the **Inventory** feature can open Bulk Inventory.
+- Have your vendor's packing slip or receiving report on hand (CSV or XLSX). Templates are provided from each modal.
 
 ## The four workflows
 
-| Card | What it does | When to use it |
-|---|---|---|
-| **Upload Shipment (from vendor)** | Mark items on an existing order as shipped | The vendor confirmed shipment and sent a packing list |
-| **Upload Receiving (from vendor)** | Record items received against an order. Matched lines auto-stock into **In Stock** | Physical delivery arrived and you're logging what came in |
-| **Manual Receive (no CSV)** | Receive a single ordered item by hand | Partial delivery, or the vendor didn't send a packing slip |
-| **Bulk Assign to Provider** | Hand off facility-owned stock to a provider | Provisioning a new provider or moving inventory to a mobile bag |
+- **Upload Shipment (from vendor)** — mark items on an existing order as shipped, from a packing slip. Use it when the vendor confirmed shipment.
+- **Upload Receiving (from vendor)** — record items received against an order. Matched lines auto-stock into the category's Active Inventory. Use it when the delivery arrives.
+- **Manual Receive (no CSV)** — receive items by hand. Use it for partial deliveries or when the vendor sent no packing slip.
+- **Bulk Assign to Provider** — hand off facility-owned stock to a provider.
+
+The Manual Receive and Bulk Assign to Provider cards currently open the category page on its **Products** tab, not on the tab they name. Switch to **Receiving History** or **Active Inventory** yourself, as described below.
 
 ## Upload Shipment
 
 Use this when the vendor confirms the order shipped but the boxes haven't arrived yet.
 
-1. Click **Upload Shipment**. The modal opens with a template download link.
-2. Download the template. It's pre-filled with sample rows for the current category.
-3. Fill in one row per shipped line — SKU, quantity, ship date, tracking number.
-4. Upload the file. The modal validates each row and highlights errors before the write.
-5. Confirm. The order status flips to **Shipped** and shipment lines are recorded in the audit trail.
+1. Click **Upload Shipment** and pick the order. Orders that are pending or partially shipped are listed.
+2. Under **Sample Template**, click **Download**.
+3. Fill in one row per shipped line: SKU, lot number, expiration date, and quantity. Amniotic and biologics rows also need the order ID, tissue ID, size, and HCPCS/Q code.
+4. Click **Choose File** and upload it.
+5. The summary reads "Shipment recorded: N item(s) marked as shipped". The items are now Shipped and show up in receiving once the vendor delivers.
 
 ## Upload Receiving
 
 Use this when the physical delivery arrives and you're logging what actually came in.
 
-1. Click **Upload Receiving.** Pick the order the receipt is against.
-2. Download the receiving template — it's pre-populated with the order's line items, so you only correct discrepancies.
-3. Fill in received quantity, lot number (for amniotic/biologics), and expiry date. Leave a row's quantity as zero if that item did not arrive.
-4. Upload. The modal shows a preview split into **Perfect matches** and **Exceptions** (short quantity, wrong SKU, expired lot).
-5. Confirm.
-   - **Perfect matches** land directly in **In Stock** — no operator review.
-   - **Exceptions** appear in the **Receiving History** tab under **Needs review** so someone can reconcile before the items are stocked.
+1. Click **Upload Receiving** and pick the order. Orders that are shipped or partially shipped are listed.
+2. Download the sample template from the modal, or download the order's pre-filled template with **Download Purchase Order Template** on the category's **Orders** tab.
+3. Fill in what arrived: SKU, lot number, and quantity (amniotic and biologics also need the order ID, tissue ID, expiration date, size, and HCPCS/Q code). A row with quantity 0 adds nothing; items you did not receive count as partial or missing.
+4. Upload the file. The summary shows either "Received and stocked: N item(s) now in In Stock" or "Received with issues", with matched, partial/missing, and exception counts.
+5. Matched items are stocked into the category's Active Inventory at once. Partial and exception items wait for review on the **Receiving History** tab, where you use **Resolve Exceptions**. Expired items are treated as exceptions.
 
 ## Manual Receive
 
 Use for partial deliveries or when there's no packing slip to work from.
 
-1. Click **Manual Receive.** The picker opens with your active orders filtered by category.
-2. Pick the order, then the specific line item.
-3. Enter the received quantity, lot, and expiry.
-4. Save. The item lands in **In Stock** and the order's remaining quantity is updated.
+1. Open the category tile and choose the **Receiving History** tab, then click **Manual Receive**.
+2. Choose **Receive Against Purchase Order** (shipped or partially shipped orders for that category) or **Direct to Main Stock**.
+3. Click **Add Line** and enter the lot, expiration date, and quantity received (plus tissue ID, size, and HCPCS/Q code for amniotic and biologics).
+4. Click **Create Receive**. A matched receipt is stocked at once; otherwise it waits as Pending Approval on the Receiving History tab.
 
 ## Bulk Assign to Provider
 
 Use to hand off facility-owned stock to a provider — for example, restocking a mobile clinician's bag before a route.
 
-1. Click **Bulk Assign to Provider.** The page routes to **In Stock** with the assign panel open.
-2. Pick items from the on-hand list.
-3. Pick the destination provider from the dropdown.
-4. Confirm. Each assigned item appears on that provider's dashboard for them to accept in **Received**.
+1. Open the category's **Active Inventory** tab.
+2. Select the lots with their checkboxes. Only facility stock that is Available or Unused and not already assigned can be assigned.
+3. Click **Assign to Provider**, use **Search providers...** to find the provider, and confirm.
+4. Assigned conservative items appear in the provider's **My Inventory**, where they accept them with **Received**.
 
 ## How the flows fit together
 
 - **Shipment** and **Receiving** work in sequence against the same order — shipment first when the vendor confirms, receiving second when boxes arrive.
-- **Manual Receive** is a shortcut around **Upload Receiving** when a CSV is overkill. Both write to the same **In Stock** and **Receiving History**.
-- **Bulk Assign to Provider** operates on stock that already made it into **In Stock**, regardless of which of the three receiving flows put it there.
+- **Manual Receive** is a shortcut around **Upload Receiving** when a file is overkill. Both feed the same Active Inventory and Receiving History.
+- **Bulk Assign to Provider** works on stock that is already in Active Inventory, whichever receiving flow put it there.
 
 ## Templates
 
-Every modal offers a **Download template** link. Templates are category-aware and vary by workflow:
-
-| Template | Filename pattern |
-|---|---|
-| Vendor receiving (amniotic/biologics) | `ivr_receiving_amniotic_template.xlsx` or `ivr_receiving_biologics_template.xlsx` |
-| Vendor pre-filled receiving | `vendor_template_{order-name}.xlsx` |
-| Conservative receiving | Category-neutral shipment/receiving template |
-
-The pre-filled vendor template pulls the order's line items into the sheet — you only correct discrepancies instead of typing every SKU by hand.
+- **Amniotic and biologics receiving** — `ivr_receiving_amniotic_template.xlsx` or `ivr_receiving_biologics_template.xlsx`.
+- **Pre-filled order template** — `vendor_template_{order-name}.xlsx`, from Download Purchase Order Template on the Orders tab. It pulls the order's line items into the sheet, so you only correct discrepancies.
+- **Conservative** — `order_sent_sample.xlsx` for shipments and `order_received_sample.xlsx` for receiving.
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| "Row 4: SKU not found" | SKU in the file doesn't match the master catalog | Verify the SKU in **Product Catalog**; correct the file and re-upload |
-| Receipt landed in **Needs review** instead of **In Stock** | Quantity, lot, or expiry mismatched the order | Open **Receiving History → Needs review** and reconcile the row |
-| Template columns don't match my vendor's format | Templates are Medipyxis-specific | Map vendor columns to the template offline; the upload only reads the Medipyxis column headers |
-| Manual receive picker is empty | No active orders in the current category | Confirm the order isn't fully received or archived; switch categories if needed |
+- **"Validation failed: N product(s) not found in order."** — a SKU in the file isn't on the order. Check it in Product Catalog, fix the file, and re-upload.
+- **The receipt went to Receiving History instead of stock** — quantity, lot, or expiry did not match the order. Open the row on Receiving History and use Resolve Exceptions.
+- **Template columns don't match my vendor's format** — the templates are Medipyxis-specific. Map the vendor's columns to the template before uploading.
+- **Upload Shipment and Upload Receiving are greyed out** — you opened Bulk Inventory without a category. Use one of the category addresses above.
 
 ## Related
 
-- **[Main Inventory](./main-inventory.md)** — the on-hand view and where stock lands after receiving.
-- **[Product Catalog](./product-catalog.md)** — the SKU master that bulk workflows validate against.
-- **[Amniotic / Biologics / Conservative](./amniotic-biologics-conservative.md)** — category-specific fields (lot format, expiry, HCPCS).
+- **[Main Inventory](/modules/inventory/main-inventory/)** — the Active Inventory tab and where stock lands after receiving.
+- **[Product Catalog](/modules/inventory/product-catalog/)** — the product list that bulk workflows check against.
+- **[Amniotic / Biologics / Conservative](/modules/inventory/amniotic-biologics-conservative/)** — category-specific receiving fields.

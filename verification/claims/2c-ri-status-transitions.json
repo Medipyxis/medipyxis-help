@@ -1,0 +1,103 @@
+{
+  "title": "Referral status transitions (reference)",
+  "source": "modules/referral-intake/status-transitions",
+  "url": "https://help.medipyxis.com/modules/referral-intake/status-transitions/",
+  "claims": [
+    {
+      "id": "ri-st-01",
+      "claim": "There are six referral columns on the Patient Intake board.",
+      "checks": [
+        { "type": "grep", "pattern": "^    title: \"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": { "count": 6 } }
+      ]
+    },
+    {
+      "id": "ri-st-02",
+      "claim": "Creating a patient (from Add New Referral or from the Fax Review Queue) always places the referral in New Referrals, and the patient record is created as Active.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "          status: \"NEW\",", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "patient_status: \"ACTIVE\", // FLOW6-1", "paths": ["frontend/src/services/referralApi.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "      status: \"NEW\",", "paths": ["frontend/src/services/idpService.ts"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "      patient_status: \"ACTIVE\",", "paths": ["frontend/src/services/idpService.ts"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-st-03",
+      "claim": "You move cards between columns by dragging them on the board; any column can be dragged to Non-Admit (and New Referrals → Info Needed/Financial, → Ready for Assignment by drag).",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "const isOverColumn = columns.some((col) => col.id === overId);", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "const newStatus = overId as ReferralStatus;", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present", "note": "the drop target column becomes the status; no transition table restricts it" },
+        { "type": "grep", "ignoreCase": true, "pattern": "allowedTransitions|isValidTransition|not allowed", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-st-04",
+      "claim": "Ready for Assignment → Assigned: drag the card, then use Assign on the card to pick a provider. A toast prompts you to select a provider to complete assignment.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "toast.info(\"Please select a provider to complete assignment\");", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent", "note": "the Assign button would need to show on Assigned cards for 'drag, then use Assign'" }
+      ],
+      "finding": "Dragging a card to Assigned opens the provider-assignment dialog automatically (frontend/src/pages/Referrals.tsx:2265-2281) along with the toast. The Assign button only appears on Ready for Assignment cards (:546); Assigned cards show Schedule instead (:556). Closing the dialog without picking a provider moves the card back to its previous column (:2793-2810).",
+      "proposed_text": "Drag the card to Assigned (a provider dialog opens and a toast asks you to select a provider), or click Assign on a Ready for Assignment card. If you close the dialog without choosing a provider, the card goes back to its previous column.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "// If moving to ASSIGNED, open assignment dialog", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Provider assignment cancelled - reverting to previous status\"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ],
+      "status": "removed",
+      "reason": "Dragging to Assigned opens the provider dialog itself; Assign shows only on Ready for Assignment cards. Replaced by ri-st-08."
+    },
+    {
+      "id": "ri-st-05",
+      "claim": "Assigning does not create the patient and does not remove the card from Referral Intake (card stays on the board; schedule from Fleet Calendar).",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent", "note": "the diagram says the card stays on the board" }
+      ],
+      "finding": "Assigning updates the existing patient row and keeps the card in Assigned. But the card does not stay indefinitely: after a visit is booked (status SCHEDULED, still shown under Assigned) and that appointment is more than 7 days past, it is filtered off the board (Referrals.tsx:2002-2006). Assigned cards also have their own Schedule button (:556-580), so Fleet Calendar is not the only place to book.",
+      "proposed_text": "Assigning does not create the patient. The card stays in Assigned; book the first visit with Schedule on the card or from Fleet Calendar. Once that booked visit is more than 7 days in the past, the card drops off the board.",
+      "proposed_checks": [
+        { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleScheduleClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ],
+      "status": "removed",
+      "reason": "The card drops off the board once the booked visit is more than 7 days past, and Assigned cards have their own Schedule button. Replaced by ri-st-09."
+    },
+    {
+      "id": "ri-st-06",
+      "claim": "The Fax Review Queue is a separate page, not a column or a status on this board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "path: \"/fax-review-queue\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present" },
+        { "type": "grep", "ignoreCase": true, "pattern": "id: \"[A-Z_]*FAX", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "absent" }
+      ]
+    },
+    {
+      "id": "ri-st-07",
+      "claim": "There is no separate intake coordinator role — the intake-oriented role in Medipyxis is Referral Coordinator.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "intake_coordinator", "paths": ["frontend/src", "backend/supabase/functions"], "excludeTests": true, "expect": "absent" },
+        { "type": "grep", "fixed": true, "pattern": "{ value: 'referral_coordinator', label: 'Referral Coordinator' },", "paths": ["frontend/src/constants/roles.ts"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-st-08",
+      "claim": "Ready for Assignment → Assigned: drag the card to Assigned (a provider dialog opens and a toast asks you to select a provider), or click Assign on a Ready for Assignment card. If you close the dialog without choosing a provider, the card goes back to its previous column.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "// If moving to ASSIGNED, open assignment dialog", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "toast.info(\"Please select a provider to complete assignment\");", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "\"Provider assignment cancelled - reverting to previous status\"", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    },
+    {
+      "id": "ri-st-09",
+      "claim": "Assigning does not create the patient. The card stays in Assigned; book the first visit with Schedule on the card or from Fleet Calendar. Once that booked visit is more than 7 days in the past, the card drops off the board.",
+      "checks": [
+        { "type": "grep", "fixed": true, "pattern": "status: \"ASSIGNED\" as any,", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "onClick={handleScheduleClick}", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "`/facility/${targetFacility}/ops/fleet-calendar`", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" },
+        { "type": "grep", "fixed": true, "pattern": "!(r.status === \"SCHEDULED\" && r.hasOldAppointment)", "paths": ["frontend/src/pages/Referrals.tsx"], "expect": "present" }
+      ]
+    }
+  ]
+}

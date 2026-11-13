@@ -1,0 +1,1071 @@
+{
+  "title": "Create an appointment in the Fleet Calendar",
+  "source": "modules/fleet-calendar/create-appointment",
+  "url": "https://help.medipyxis.com/modules/fleet-calendar/create-appointment/",
+  "claims": [
+    {
+      "id": "fca-01",
+      "claim": "Book a patient visit and assign it to a provider from the Fleet Calendar. The patient must already be in Medipyxis at your facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search for a patient by name or MRN...\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"patient\")",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"facility_id\", this.facilityId)",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"create-appointment\",",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-02",
+      "claim": "You must have a provider and a time slot in mind.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "fca-03",
+      "claim": "Click Fleet Calendar in the sidebar — the calendar opens in Day view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Fleet Calendar\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/ops/fleet-calendar\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-04",
+      "claim": "Click Create Appointment (top of the calendar) or click an empty slot in a provider's swim lane.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "swim",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The empty-slot action is a hover button in a provider's column, not a click on the slot; there are no swim lanes. Reworded."
+    },
+    {
+      "id": "fca-05",
+      "claim": "Click Create Appointment in the toolbar, or hover over an empty hour in a provider's column and click + Create Appointment (this fills in that provider, the day and the hour). The Create New Appointment dialog opens.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<span className=\"hidden sm:inline\">Create Appointment</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "+ Create Appointment",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Show Create Appointment button only if no visits in this hour */}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "clinicianId: providerId,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "timeSlot: timeSlot,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Create New Appointment",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-06",
+      "claim": "Select the Patient (required). Type the patient's name or MRN in the Patient field and choose the matching record from the dropdown.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Patient <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search for a patient by name or MRN...\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.error(\"Please select a patient\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-07",
+      "claim": "Visit Type options come from your organization's configured visit types.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "organization",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "tenant",
+          "paths": [
+            "frontend/src/services/schedulingService.ts"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "fetchVisitTypes reads every active visit_type row with no tenant or organization filter, so the list is shared, not configured per organization."
+    },
+    {
+      "id": "fca-08",
+      "claim": "Choose a Visit Type from the Visit Type dropdown. Pick the Place of Service (POS code) and the Discipline from their dropdowns.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"\">Select visit type...</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"\">Select POS...</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"\">Select discipline...</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "pos_code: newAppointmentData.posCode || undefined,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-09",
+      "claim": "The provider's time zone appears next to the Provider / Clinician field once selected.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{facilityTz && (",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The badge shows the facility's time zone (facilityTz), whether or not a provider is selected."
+    },
+    {
+      "id": "fca-10",
+      "claim": "Assign a Provider / Clinician (required). The facility's time zone is shown next to the field; the date and time you pick are in that time zone.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Provider / Clinician <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{(US_TIMEZONE_LABELS as Record<string, string>)[facilityTz] || facilityTz}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// 1. CALCULATE UTC MOMENTS (facility-authoritative timezone — PR-2)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.error(\"Please select a provider\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-11",
+      "claim": "Pick the Date, choose a Time Slot, and select a Duration (15, 30, 45, 60, 90, or 120 minutes).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Time Slot <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"15\">15 min</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"90\">90 min</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"120\">120 min</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-12",
+      "claim": "Notes / Purpose is visible to the assigned clinician (clinical context).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "visible to the assigned clinician",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Reworded to what the code shows: saved as the appointment's purpose and shown in Appointment Details."
+    },
+    {
+      "id": "fca-13",
+      "claim": "Notes / Purpose is saved as the appointment's purpose and shows in Appointment Details.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "purpose: newAppointmentData.notes,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "notes: appointmentData.purpose ?? appointmentData.route_notes,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "purpose: body.notes ?? \"Wound Care Visit\",",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{appointment.purpose}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-14",
+      "claim": "Set Recurrence to Daily, Weekly, Every 2 weeks, Monthly, or Custom. When recurrence is on, a Recurrence End Date is required.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"biweekly\">Every 2 weeks</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"custom\">Custom</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"monthly\">Monthly</option>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(newAppointmentData.recurrence !== \"none\" &&",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.recurrenceEndDate)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-15",
+      "claim": "Route Notes entered on the Create New Appointment dialog are saved on the appointment record for the visiting clinician.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route_notes",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The dialog's route notes are sent as `notes: purpose ?? route_notes`; purpose is always a string, so route notes are dropped, and create-appointment has no route_notes field."
+    },
+    {
+      "id": "fca-16",
+      "claim": "The Route Notes box on the create dialog is not saved with a new appointment. Open the appointment, click Edit Appointment, and fill in Route Notes there.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route_notes",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "notes: appointmentData.purpose ?? appointmentData.route_notes,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "notes: \"\",",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Edit Appointment",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, route_notes: e.target.value })",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "route_notes: updatedAppointment.route_notes,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (body.route_notes !== undefined) updates.route_notes = body.route_notes;",
+          "paths": [
+            "backend/supabase/functions/update-appointment/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-17",
+      "claim": "Click Create Appointment. The appointment is created with Scheduled status and the calendar moves to the appointment's date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "status_key: \"scheduled\" satisfies AppointmentStatusKey,",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "selectedDateISO: committedDate,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isSaving ? 'Creating...' : 'Create Appointment'}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-18",
+      "claim": "Same patient, same provider, same day: Medipyxis stops and asks you to edit the existing appointment. Same patient with another provider that day, or an overlapping appointment for the provider: Medipyxis asks you to confirm before it books.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "You already have an appointment today with this patient. Please edit the existing appointment instead.",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"This patient already has an appointment today with another provider. \" +",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"This provider already has an overlapping appointment at this time. \" +",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-19",
+      "claim": "If you set a recurrence, the series is created through the recurrence end date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const MAX_OCCURRENCES = 52;",
+          "paths": [
+            "backend/supabase/functions/_shared/recurrence-engine.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "A series is capped at 52 occurrences (MAX_OCCURRENCES), so an end date far out does not get every date."
+    },
+    {
+      "id": "fca-20",
+      "claim": "The new card appears in the assigned provider's column, tinted for Scheduled. If you set a recurrence, repeat appointments are created up to the recurrence end date, at most 52 in one series.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const MAX_OCCURRENCES = 52;",
+          "paths": [
+            "backend/supabase/functions/_shared/recurrence-engine.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (endDate && current > endDate) break;",
+          "paths": [
+            "backend/supabase/functions/_shared/recurrence-engine.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const generated = generateRecurrenceDates(startDateStr, body.recurrence);",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "end_date: appointmentData.recurrence_end_date ?? undefined,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-21",
+      "claim": "Click the appointment card after saving to open its details, where you can attach documents (order scripts, care plans) to the visit record before the clinician departs.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "type=\"file\"",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "attach",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Appointment Details has no upload or attach control."
+    },
+    {
+      "id": "fca-22",
+      "claim": "Click the appointment card to open Appointment Details, where you can review it or click Edit Appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const handleVisitClick = async (visitId: string) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Appointment\" : \"Appointment Details\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => setIsEditMode(true)}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-23",
+      "claim": "Troubleshooting: Create Appointment is greyed out when no patient or no provider is chosen, or recurrence is on without an end date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.patientId ||",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.clinicianId ||",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.recurrenceEndDate)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-24",
+      "claim": "Date, Time Slot, and Duration are all required, so the form cannot be submitted when one is empty.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.timeSlot",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!newAppointmentData.date",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The Create Appointment button is disabled only for a missing patient, provider or recurrence end date; Date/Time Slot/Duration always have defaults."
+    },
+    {
+      "id": "fca-25",
+      "claim": "Patient field returns no results: the patient is not in Medipyxis at this facility; add the patient first, for example through a referral in Referral Intake.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".eq(\"facility_id\", this.facilityId)",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Referral Intake\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-26",
+      "claim": "Provider not in list: the person has no active role at this facility. Ask your administrator to add them to this facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".from(\"user_facility_role\")",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".eq(\"active\", true);",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-27",
+      "claim": "Contact your admin to assign the provider to this facility in HR & Compliance.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "HR & Compliance",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The provider list is built from active facility roles; the screen that grants them was not verified as HR & Compliance on this path. Reworded without naming a screen."
+    },
+    {
+      "id": "fca-28",
+      "claim": "Edit Appointment lets you change the date, time, duration, purpose, notes or route notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, date",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, time",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "duration_minutes: parseInt(e.target.value),",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, purpose: e.target.value })",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, notes",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, route_notes: e.target.value })",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-29",
+      "claim": "Cancel: click Cancel Appt and confirm “Cancel this appointment?”. Mark as Rescheduled: click Rescheduled; saving it requires you to select the replacement appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{pendingOutcome === \"canceled\" ? \"Saving…\" : \"Cancel Appt\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Cancel this appointment?",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{pendingOutcome === \"rescheduled\" ? \"Saving…\" : \"Rescheduled\"}",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Mark as Rescheduled — select the replacement appointment",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-30",
+      "claim": "Dragging a visit to a new time can reschedule it; the app confirms with a “Rescheduled to …” message.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.success(`Rescheduled to ${",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": {
+            "min": 2
+          },
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The 'Rescheduled to' confirmation is only for dragging to another day in single-provider Week view. Reworded."
+    },
+    {
+      "id": "fca-31",
+      "claim": "In Day view, drag a visit to another provider's column to reassign it. In Week view with one provider selected, drag a visit to another day; the app confirms with a “Rescheduled to …” message.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.success(`Appointment assigned to provider successfully`);",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(`Rescheduled to ${toIso}`);",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onDayDrop={handleWeekDayDrop}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "fca-32",
+      "claim": "The outcome buttons are not shown once an appointment is Canceled, No Show, Rescheduled or Not Seen. A per-row Reschedule action on the appointment management card is not available yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "currentKey === \"not_seen\";",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (isTerminal) return null;",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "//   - Reschedule per-row action is DEFERRED to NIM-170.",
+          "paths": [
+            "frontend/src/components/AppointmentManagementCard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

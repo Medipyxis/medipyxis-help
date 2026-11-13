@@ -1,0 +1,352 @@
+{
+  "title": "August 2026 release notes",
+  "source": "release-notes/2026-08",
+  "url": "https://help.medipyxis.com/release-notes/2026-08/",
+  "claims": [
+    {
+      "id": "rn08-00",
+      "claim": "Changes merged between 2026-08-01 and 2026-09-01; selected changes still in the current release.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3369,
+          "titleMatch": ".",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "pr",
+          "number": 3253,
+          "titleMatch": ".",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"APRN\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-01",
+      "claim": "APRN and NP are separate attestation options. (PR #3369)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3369,
+          "titleMatch": "APRN a selectable provider credential",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"APRN\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-02",
+      "claim": "Signature timestamp readable with time zone. (PR #3363)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3363,
+          "titleMatch": "signature timestamp readably, with its timezone",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Signature timestamp\", formatSignatureTimestamp(at.signature_timestamp)]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-03",
+      "claim": "Provider credential prints on the signature line. (PR #3358)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3358,
+          "titleMatch": "provider credential on the progress note signature",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "formatSignatureName(at.provider_name, at.provider_credentials)",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-04",
+      "claim": "No made-up post-debridement measurement. (PR #3334)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3334,
+          "titleMatch": "post-debridement measurement that was never taken",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-05",
+      "claim": "Claims no longer bill $0.00; resolved charge carried onto lines; $0.00 claims not sent. (PR #3347)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3347,
+          "titleMatch": "carry the resolved charge onto 837P service lines",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-06",
+      "claim": "Retired CPT 99343 no longer suggested. (PR #3326)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3326,
+          "titleMatch": "stop emitting CPT 99343",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": [
+            "frontend/src/utils/billing/emFamily.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-07",
+      "claim": "Diagnosis codes checked against the billable code list. (PR #3323)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3323,
+          "titleMatch": "billable catalog",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!looksLikeIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-08",
+      "claim": "Coding Review drawer opens on the claim it codes. (PR #3376)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3376,
+          "titleMatch": "connect the Coding Review drawer to the claim it codes",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/CodingReviewDrawer.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-09",
+      "claim": "PTAN field in payer enrollment. (PR #3238)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3238,
+          "titleMatch": "PTAN field to payer enrollment",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/enrollment\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-10",
+      "claim": "One pull button in pre-charting with import summary. (PR #3224)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3224,
+          "titleMatch": "one pull button \\+ honest post-pull import summary",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [zusPullWarning, setZusPullWarning] = useState<string | null>(null);",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-11",
+      "claim": "Email notifications launched; SMS and push coming soon (PR #3330). Update: SMS launched Oct 30 (PR #3931); push still coming soon.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3330,
+          "titleMatch": "launch email only, gate SMS/push as \"coming soon\"",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "pr",
+          "number": 3931,
+          "titleMatch": "SMS from coming_soon to live",
+          "mergedFrom": "2026-10-30",
+          "mergedTo": "2026-10-30"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  email: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const COMING_SOON_LABEL = \"Coming soon\";",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-12",
+      "claim": "Typed-name signature as a backup way to sign a consent. (PR #3253)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3253,
+          "titleMatch": "typed-name attestation",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { normalizeTypedName, renderTypedSignatureDataUrl } from \"@/utils/typedSignature\";",
+          "paths": [
+            "frontend/src/consent/ConsentCaptureDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-13",
+      "claim": "\"Add New Agency\" in the home health picker. (PR #3353)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3353,
+          "titleMatch": "\"Add New Agency\" to the picker",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Agency",
+          "paths": [
+            "frontend/src/components/HomeHealthProviderModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

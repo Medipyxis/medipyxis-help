@@ -1,0 +1,1886 @@
+{
+  "title": "CMS-1500 and 837P fields",
+  "source": "modules/billing/cms-1500-and-837p-fields",
+  "url": "https://help.medipyxis.com/modules/billing/cms-1500-and-837p-fields/",
+  "claims": [
+    {
+      "id": "cms-01",
+      "claim": "Medipyxis submits claims electronically: a claim sent to Stedi goes as an 837P transaction. A claim can also be faxed as a CMS-1500 or marked submitted by hand.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "submitToStedi",
+          "paths": ["backend/supabase/functions/submit-to-stedi/index.ts"],
+          "expect": "present",
+          "note": "claim editor send path"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "transformToStediFormat",
+          "paths": ["backend/supabase/functions/biller-submit-claim-onbehalf/handler.ts"],
+          "expect": "present",
+          "note": "biller send path"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/functions/v1/submit-to-stedi",
+          "paths": ["frontend/src/services/stediService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send Fax",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Shared by Mark as Submitted and Fix & Resubmit",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "narrowed: not every claim leaves as an 837P (Send Fax, Mark as Submitted); added checks for those paths"
+    },
+    {
+      "id": "cms-02",
+      "status": "removed",
+      "claim": "This page is the cross-walk: what the biller sees on the claim view, what the paper form calls it, what the 837P calls it, and which table Medipyxis reads to fill it in.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if the 837P builders read the named tables (insurance_plan, claims, claim_lines, facility_billing_settings)"
+        }
+      ],
+      "finding": "Neither live 837P builder reads a database table. Both transform the claim's saved JSON snapshot (billing_claims.structured_payload): frontend/src/services/stediService.ts:67-412 and backend/supabase/functions/_shared/stediTransform.ts:112-460 (header comment lines 5-9). The 'Medipyxis source' column names tables (insurance_plan, claims, claim_lines, facility_billing_settings.pay_to_*) that the send path never reads.",
+      "proposed_text": "This page is the cross-walk: what the paper form calls each field, what the 837P calls it, and where on the saved claim Medipyxis reads it from.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_claims.structured_payload",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The 837P builders read the saved claim snapshot, not the tables the source column named. Replaced by cms-02b."
+    },
+    {
+      "id": "cms-02b",
+      "claim": "This page is the cross-walk: what the paper form calls each field, what the 837P calls it, and what on the saved claim Medipyxis fills it from.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_claims.structured_payload",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-03",
+      "status": "removed",
+      "claim": "Item 1a — Insured's ID | 2010BA NM109 (subscriber member ID) | insurance_plan.member_id | Blank rejects at the payer, not at Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "memberId: sub.memberId,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.memberId')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "absent",
+          "note": "true only if a blank member ID is allowed through to the payer"
+        }
+      ],
+      "finding": "A blank (or placeholder) member ID never reaches the payer or Stedi: assertRequiredClaimFields refuses it before the POST (backend/supabase/functions/_shared/claimRequiredFields.ts:582, called from _shared/submitToStedi.ts:249). This also contradicts the page's own pre-flight section. The member ID comes from the claim snapshot (carrier_information.insured_id / selected_insurance.member_id, claimRequiredFields.ts:413-420), not an insurance_plan table.",
+      "proposed_text": "Item 1a — Insured's ID | 2010BA NM109 (subscriber member ID) | the member ID on the patient's insurance, as saved on the claim | A blank or placeholder member ID is refused by Medipyxis before the claim reaches Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "memberId: sub.memberId,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.memberId')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "assertRequiredClaimFields(claimPayload)",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "A blank member ID is refused before Stedi; the source is the claim snapshot, not insurance_plan. Replaced by cms-03b."
+    },
+    {
+      "id": "cms-03b",
+      "claim": "Item 1a — Insured's ID | 2010BA NM109 (subscriber member ID) | the member ID on the patient's insurance, as saved on the claim | A blank or placeholder member ID is refused before the claim reaches Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "memberId: sub.memberId,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.memberId')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "assertRequiredClaimFields(claimPayload)",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-04",
+      "status": "removed",
+      "claim": "Item 2 — Patient name | 2010BA NM103/NM104 | patient.first_name, patient.last_name | Splits on the last space; hyphenated last names stay whole.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "splitFullName(",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lastName: core.slice(1).join(' ')",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "absent",
+          "note": "true only if the split is on the LAST space"
+        }
+      ],
+      "finding": "The name is one stored string (insured_name / patient_name) passed to splitFullName (claimRequiredFields.ts:425-427). For 'First Middle Last' order it splits on the FIRST space: firstName = first word, lastName = all remaining words (backend/supabase/functions/_shared/nameSplit.ts finalizeWesternOrder, 'lastName: core.slice(1).join(' ')'). 'Last, First' input is split on the comma. Hyphenated last names do stay whole (tokens split on whitespace only).",
+      "proposed_text": "Item 2 — Patient name | 2010BA NM103/NM104 | the patient name saved on the claim | 'Last, First' splits on the comma; otherwise the first word is the first name and the rest is the last name. Hyphenated last names stay whole.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lastName: core.slice(1).join(' ')",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const commaIdx = trimmed.indexOf(',');",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return s.split(/\\s+/)",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Names split on the comma or after the first word, from the single stored name. Replaced by cms-04b."
+    },
+    {
+      "id": "cms-04b",
+      "claim": "Item 2 — Patient name | 2010BA NM103/NM104 | the patient name saved on the claim | 'Last, First' splits on the comma; otherwise the first word is the first name and the rest is the last name. Hyphenated last names stay whole.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lastName: core.slice(1).join(' ')",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const commaIdx = trimmed.indexOf(',');",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return s.split(/\\s+/)",
+          "paths": ["backend/supabase/functions/_shared/nameSplit.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-05",
+      "claim": "Item 3 — Patient DOB and sex | 2010BA DMG02 (DOB), DMG03 (sex) | the patient's date of birth and sex | DOB is written YYYYMMDD on the wire.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dateOfBirth: formatStediDate(sub.dateOfBirth),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "gender: sub.gender,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dateString.slice(0, 10).replace(/-/g, '');",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "source column reworded without table names; checks unchanged"
+    },
+    {
+      "id": "cms-06",
+      "claim": "Item 5 — Patient address | 2010BA N3/N4 | the patient's address | Required by most payers even when the patient is the subscriber.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(sub.address ? { address: sub.address } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const address1 = firstNonEmpty(s.street, s.address_street, s.address1);",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present",
+          "note": "falls back to the patient snapshot's address_* columns"
+        }
+      ],
+      "reworded": "source column reworded without table names; checks unchanged"
+    },
+    {
+      "id": "cms-07",
+      "status": "removed",
+      "claim": "Item 11 — Insured's group number | 2000B SBR03 | insurance_plan.group_number or group_id | Optional at the transaction level; some payers reject when absent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "groupNumber: sub.groupNumber,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "group_id",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present",
+          "note": "true only if group_id is a source"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'groupNumber'",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "absent",
+          "note": "not a required field"
+        }
+      ],
+      "finding": "Group number is read only from group_number keys (subscriber_information / carrier_information / selected_insurance) — group_id is never read (backend/supabase/functions/_shared/claimRequiredFields.ts:543-547).",
+      "proposed_text": "Item 11 — Insured's group number | 2000B SBR03 | the insurance group number saved on the claim | Optional at the transaction level; some payers reject when absent.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "groupNumber: sub.groupNumber,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "selectedInsurance.group_number,",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "group_id is never read; the group number comes from the claim snapshot. Replaced by cms-07b."
+    },
+    {
+      "id": "cms-07b",
+      "claim": "Item 11 — Insured's group number | 2000B SBR03 | the insurance group number saved on the claim | Optional at the transaction level; some payers reject when absent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "groupNumber: sub.groupNumber,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "selectedInsurance.group_number,",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-08",
+      "status": "removed",
+      "claim": "Item 17 — Referring provider | 2310A NM1*DN | Not sent from wound-care visits. | Present in the schema, absent from the wound-care submit path.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return ref ? { referring: ref } : {};",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent",
+          "note": "true only if neither live builder emits a referring provider"
+        }
+      ],
+      "finding": "Both live builders emit a referring provider whenever the claim carries a referring provider name or NPI (section_4_cms1500_form.providers.referring_provider): backend/supabase/functions/_shared/stediTransform.ts:451-457 and frontend/src/services/stediService.ts:403-409.",
+      "proposed_text": "Item 17 — Referring provider | 2310A NM1*DN | the referring provider name and NPI entered on the claim | Sent only when the claim carries a referring provider name or NPI.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return ref ? { referring: ref } : {};",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!name && !npi) return undefined;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Both builders send a referring provider whenever the claim carries one. Replaced by cms-08b."
+    },
+    {
+      "id": "cms-08b",
+      "claim": "Item 17 — Referring provider | 2310A NM1*DN | the referring provider name and NPI entered on the claim | Sent only when the claim carries a referring provider name or NPI.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return ref ? { referring: ref } : {};",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!name && !npi) return undefined;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-09",
+      "claim": "Item 21 — Diagnosis codes | 2300 HI | the claim's diagnosis codes | First code is qualified ABK (principal), the rest ABF. Decimals are stripped for X12: L97.421 becomes L97421.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisTypeCode: index === 0 ? 'ABK' : 'ABF',",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisCode: code.replace(/\\./g, ''),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reworded": "source column reworded without table names; checks unchanged"
+    },
+    {
+      "id": "cms-10",
+      "status": "removed",
+      "claim": "Item 24A — Date(s) of service | 2400 DTP*472 per line | claims.date_of_service | Single-DOS today; the field exists per line so a future range would flow through untouched.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.serviceDate = formatStediDate(serviceDate);",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const claimLevelServiceDate = patientVisit?.selected_visit?.service_date || '';",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceDateEnd",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if an end date (range) would flow through"
+        }
+      ],
+      "finding": "Each line carries one serviceDate. Neither builder has a serviceDateEnd, so a date range would NOT flow through untouched; only the start date would be sent (backend/supabase/functions/_shared/stediTransform.ts:337-341).",
+      "proposed_text": "Item 24A — Date(s) of service | 2400 DTP*472 per line | the visit's date of service | One date per line; date ranges are not sent.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.serviceDate = formatStediDate(serviceDate);",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceDateEnd",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "There is no end date per line, so a range would not flow through. Replaced by cms-10b."
+    },
+    {
+      "id": "cms-10b",
+      "claim": "Item 24A — Date(s) of service | 2400 DTP*472 per line | the visit's date of service | One date per line; date ranges are not sent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.serviceDate = formatStediDate(serviceDate);",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceDateEnd",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "cms-11",
+      "status": "removed",
+      "claim": "Item 24B — Place of service | 2300 CLM05-1 | Derived POS code | Wound-care visits derive to 11 (office) or 12 (home) depending on the facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeOfServiceCode: claimPlaceOfService,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent",
+          "note": "true only if the builder derives POS from the facility instead of sending the selected POS"
+        }
+      ],
+      "finding": "CLM05-1 is the place of service the provider selected, stamped on the primary service line; nothing derives 11/12 from the facility and there is no default (stediTransform.ts:157-160 and 407-417; stediService.ts:113-116 and 353-363). A claim with no place of service is refused before it reaches Stedi: placeOfServiceCode is in ALWAYS_REQUIRED_CLAIM_INFORMATION_FIELDS (claimRequiredFields.ts:250). PR #3854 (merged 2026-10-27) made submit-claim refuse a missing POS as well.",
+      "proposed_text": "Item 24B — Place of service | 2300 CLM05-1 | the place of service selected for the visit | Never defaulted: a claim with no place of service is refused before it reaches Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeOfServiceCode: claimPlaceOfService,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'placeOfServiceCode',",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 3854,
+          "titleMatch": "refuse missing Place of Service",
+          "mergedFrom": "2026-10-26"
+        }
+      ],
+      "reason": "POS is the selected value, never derived from the facility; a missing POS is refused. Replaced by cms-11b."
+    },
+    {
+      "id": "cms-11b",
+      "claim": "Item 24B — Place of service | 2300 CLM05-1 | the place of service on the claim | Never defaulted: a claim with no place of service is refused before it reaches Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeOfServiceCode: claimPlaceOfService,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'placeOfServiceCode',",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 3854,
+          "titleMatch": "refuse missing Place of Service",
+          "mergedFrom": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "cms-12",
+      "claim": "Item 24D — Procedure and modifiers | 2400 SV101-2 (CPT/HCPCS), SV101-3..6 (modifiers) | each line's code and modifiers | One line per code.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const procedureCode = sl.procedure_code || sl.cpt_code || '';",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(modifiers.length > 0 ? { procedureModifiers: modifiers } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reworded": "source column reworded without table names; checks unchanged"
+    },
+    {
+      "id": "cms-13",
+      "status": "removed",
+      "claim": "HCPCS Q-codes come from tissue log entries; CPT codes come from the visit's procedure list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "tissue_log",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Not checkable from the 837P builders: they read whatever codes are on the saved claim's service lines. The upstream claim-line builders (auto claim / claim editor) were not traced in this pass, so where each code originates is unverified.",
+      "reason": "Where each code originates was not traced; the 837P builders read whatever codes are on the saved claim. Sentence deleted."
+    },
+    {
+      "id": "cms-14",
+      "status": "removed",
+      "claim": "Item 24E — Diagnosis pointer | 2400 SV107 (compositeDiagnosisCodePointers) | Current: ['1'] for every line",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisCodePointers: ['1']",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if every line is hard-coded to pointer 1"
+        }
+      ],
+      "finding": "Each line sends the diagnosis pointers the biller typed (letters A-L or numbers, with or without commas), up to four, through toDiagnosisCodePointers; '1' is only the fallback when no usable pointer was typed (backend/supabase/functions/_shared/diagnosisPointers.ts:64-71; used at stediTransform.ts:287-290 and stediService.ts:225-228).",
+      "proposed_text": "Item 24E — Diagnosis pointer | 2400 SV107 | the pointers typed on each line (Box 24E), up to four | When a line has no usable pointer, it points at diagnosis 1.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_POINTERS_PER_LINE = 4;",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return diagnosisCount > 0 ? ['1'] : [];",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toDiagnosisCodePointers(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reason": "Pointers are the biller's typed pointers (up to four); '1' is only the fallback. Replaced by cms-14b."
+    },
+    {
+      "id": "cms-14b",
+      "claim": "Item 24E — Diagnosis pointer | 2400 SV107 | the pointers typed on each line (Box 24E), up to four | When a line has no usable pointer, it points at diagnosis 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_POINTERS_PER_LINE = 4;",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return diagnosisCount > 0 ? ['1'] : [];",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toDiagnosisCodePointers(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "cms-15",
+      "status": "removed",
+      "claim": "Item 24F — Charges | 2400 SV102 (lineItemChargeAmount) | facility_charge_master.charge_amount × units | A line without a positive charge cannot leave the system.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validateClaimLineCharges(claimPayload)",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "lineItemChargeAmount: .*units",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if the builder multiplies the charge by units"
+        }
+      ],
+      "finding": "The zero-charge gate is real. But neither builder multiplies by units: SV102 is the line's stored charge sent as-is (backend/supabase/functions/_shared/stediTransform.ts:248-250, 301). The claim editor prices lines from the charge master via priceClaimLine (frontend/src/pages/NewBillingSubmitPage.tsx:1752-1790) and its own comment calls the Section 2 value 'charge (per unit)' (NewBillingSubmitPage.tsx:1748).",
+      "proposed_text": "Item 24F — Charges | 2400 SV102 (lineItemChargeAmount) | the line's charge on the claim, priced from the facility charge master | A line without a positive charge cannot leave the system.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validateClaimLineCharges(claimPayload)",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lineItemChargeAmount: chargeAmount,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { priceClaimLine } from '@/lib/billing/charge_master';",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The 837P builders do not multiply by units; they send the saved line charge. Replaced by cms-15b."
+    },
+    {
+      "id": "cms-15b",
+      "claim": "Item 24F — Charges | 2400 SV102 (lineItemChargeAmount) | the line's charge on the claim; in the claim editor this is the Charge Master per-unit price × units | Sent as saved. A line without a positive charge is refused before it reaches Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "validateClaimLineCharges(claimPayload)",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lineItemChargeAmount: chargeAmount,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { priceClaimLine } from '@/lib/billing/charge_master';",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return (Number(charge) * unitsOrOne(units)).toFixed(2);",
+          "paths": ["frontend/src/utils/billing/claimEditorLines.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "charges: extendedCharge(row.charge, row.units),",
+          "paths": ["frontend/src/utils/billing/claimEditorLines.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimEditorLines",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-16",
+      "claim": "Item 24G — Units | 2400 SV104 (serviceUnitCount) | each line's unit count | A missing unit count is sent as 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceUnitCount: units,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const units = String(sl.units || sl.service_unit_count || '1');",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reworded": "source column reworded; added the units default with a check"
+    },
+    {
+      "id": "cms-17",
+      "status": "removed",
+      "claim": "One unit per line for E/M and debridement; multi-unit for grafting is line-specific.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "maxUnitsPerLine",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Coding guidance, not product behavior. The builder sends whatever unit count is on the line and defaults a missing/zero count to 1 (stediTransform.ts:251).",
+      "reason": "Coding guidance, not product behavior; the builder sends whatever unit count is on the line. Sentence deleted."
+    },
+    {
+      "id": "cms-18",
+      "status": "removed",
+      "claim": "Item 25 — Federal Tax ID | 2010AA REF*EI | facility.tax_id (normalized) | Dashes and whitespace are stripped before the payload leaves — the wire wants nine digits and nothing else.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "employerId.*replace\\(",
+          "paths": ["backend/supabase/functions/_shared/claimProviderBlocks.ts", "backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if the send path strips non-digits from the tax ID"
+        }
+      ],
+      "finding": "The live builders send billing_information.tax_id unchanged (stediTransform.ts:398, claimProviderBlocks.ts:163-178); nothing strips dashes at send time (the only normalizer was in the retired submit-claim). The value is the facility's tax_id (frontend/src/services/billingConfigService.ts:89-102), and the facility record only accepts exactly nine digits (facility_tax_id_format_check; message at frontend/src/services/facilityService.ts:710-711), so a dash normally cannot be stored in the first place.",
+      "proposed_text": "Item 25 — Federal Tax ID | 2010AA REF*EI | facility.tax_id | Sent as stored. The facility record only accepts exactly nine digits with no dashes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingInfo.tax_id || billingInfo.ein || ''",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax ID must be exactly 9 digits (EIN/SSN, no dashes), or left blank.",
+          "paths": ["frontend/src/services/facilityService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Nothing strips dashes at send time; the facility record only accepts nine digits. Replaced by cms-18b."
+    },
+    {
+      "id": "cms-18b",
+      "claim": "Item 25 — Federal Tax ID | 2010AA REF*EI | the facility's tax ID | Sent as stored. The facility record only accepts exactly nine digits with no dashes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingInfo.tax_id || billingInfo.ein || ''",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax ID must be exactly 9 digits (EIN/SSN, no dashes), or left blank.",
+          "paths": ["frontend/src/services/facilityService.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-19",
+      "status": "removed",
+      "claim": "Item 28 — Total charge | 2300 CLM02 (claimChargeAmount) | Sum of all line charges × units | Also gated against zero.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimChargeAmount: totalCharge.toFixed(2),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!(claimTotal > 0)) {",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "return sum \\+ .*units",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if the total multiplies by units"
+        }
+      ],
+      "finding": "CLM02 is the plain sum of the line charges, not charge × units (backend/supabase/functions/_shared/stediTransform.ts:346-348). The zero gate is real (validateClaimLineCharges.ts:176).",
+      "proposed_text": "Item 28 — Total charge | 2300 CLM02 (claimChargeAmount) | Sum of all line charges | Also gated against zero.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimChargeAmount: totalCharge.toFixed(2),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!(claimTotal > 0)) {",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "CLM02 is the plain sum of line charges, not charge × units. Replaced by cms-19b."
+    },
+    {
+      "id": "cms-19b",
+      "claim": "Item 28 — Total charge | 2300 CLM02 (claimChargeAmount) | sum of all line charges | Also gated against zero.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claimChargeAmount: totalCharge.toFixed(2),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!(claimTotal > 0)) {",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-20",
+      "status": "removed",
+      "claim": "Item 32 — Service facility | 2310C NM1*77 + N3/N4 | facility.name, facility.address_* | Populated for every claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(serviceFacilityLocation ? { serviceFacilityLocation } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent",
+          "note": "true only if 2310C is sent unconditionally"
+        }
+      ],
+      "finding": "Loop 2310C is conditional and does not come from facility.name. It names the claim's service-location snapshot (billing_claims.service_facility, from the visit's service location) only when the claim's POS is a residential/facility POS (13,14,16,31,32,33,54,55,56), or the patient's home for POS 12, and only when that address differs from the billing provider's; a home without ZIP+4 is omitted (backend/supabase/functions/_shared/serviceFacility.ts:6-50, 432-442; conditional spread at stediTransform.ts:418).",
+      "proposed_text": "Item 32 — Service facility | 2310C NM1*77 + N3/N4 | the service location recorded for the visit, or the patient's home for POS 12 | Sent only when the place of service names a facility or the home and that address differs from the billing provider's.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(serviceFacilityLocation ? { serviceFacilityLocation } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const HOME_PLACE_OF_SERVICE = \"12\";",
+          "paths": ["backend/supabase/functions/_shared/serviceFacility.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medipyxisPayload.service_facility,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Loop 2310C is conditional and comes from the visit service location. Replaced by cms-20b."
+    },
+    {
+      "id": "cms-20b",
+      "claim": "Item 32 — Service facility | 2310C NM1*77 + N3/N4 | the service location recorded for the visit, or the patient's home for POS 12 | Sent only when the place of service names a facility or the home and that address differs from the billing provider's.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(serviceFacilityLocation ? { serviceFacilityLocation } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const HOME_PLACE_OF_SERVICE = \"12\";",
+          "paths": ["backend/supabase/functions/_shared/serviceFacility.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medipyxisPayload.service_facility,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-21",
+      "status": "removed",
+      "claim": "Item 33 — Billing provider | 2010AA NM1*85 + N3/N4 | facility_billing_settings.pay_to_* | The pay-to address, not the service address.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pay_to",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts", "frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present",
+          "note": "true only if the claim path reads the pay-to columns"
+        }
+      ],
+      "finding": "The 2010AA address is the facility's own address: the claim editor fills billingProviderAddress1/City/State/Zip from facility.address/city/state/zip (frontend/src/pages/NewBillingSubmitPage.tsx:2566-2570), and the builders read section_4_cms1500_form.providers.billing_provider (stediTransform.ts:139-150). facility_billing_settings.pay_to_* is read only for patient statements (backend/supabase/functions/_shared/patient-billing-helpers.ts:301-307).",
+      "proposed_text": "Item 33 — Billing provider | 2010AA NM1*85 + N3/N4 | the facility's name and address on file | The location's own address, not a separate pay-to address.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingProviderAddress1: facility?.address || prev.billingProviderAddress1,",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "address1: billingProvider.address1 || billingAddress.address1 || billingAddress.street || '',",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pay_to",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts", "frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "2010AA uses the facility address, not pay_to fields. Replaced by cms-21b."
+    },
+    {
+      "id": "cms-21b",
+      "claim": "Item 33 — Billing provider | 2010AA NM1*85 + N3/N4 | the facility's name and address on file | The location's own address, not a separate pay-to address.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billingProviderAddress1: facility?.address || prev.billingProviderAddress1,",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "address1: billingProvider.address1 || billingAddress.address1 || billingAddress.street || '',",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pay_to",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts", "frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "cms-22",
+      "status": "removed",
+      "claim": "Item 33a — Billing NPI | 2010AA NM109 | facility.npi or facility_billing_settings.billing_npi | Group NPI, not the rendering clinician's.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi: billingNpi,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_npi",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx", "frontend/src/services/billingConfigService.ts"],
+          "expect": "present",
+          "note": "true only if facility_billing_settings.billing_npi is a source"
+        }
+      ],
+      "finding": "The billing NPI comes from the facility record's npi_code only (frontend/src/services/billingConfigService.ts:49-101 → NewBillingSubmitPage.tsx:2762-2765). There is no facility_billing_settings.billing_npi fallback.",
+      "proposed_text": "Item 33a — Billing NPI | 2010AA NM109 | facility.npi_code | Group NPI, not the rendering clinician's.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi: billingNpi,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const npi = billingCredentials?.npi_number || defaultCredentials?.npi_number;",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi_number: npiStr,",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "No billing_npi fallback; the NPI comes from the facility record. Replaced by cms-22b."
+    },
+    {
+      "id": "cms-22b",
+      "claim": "Item 33a — Billing NPI | 2010AA NM109 | the NPI on the facility record | Group NPI, not the rendering clinician's.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi: billingNpi,",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const npi = billingCredentials?.npi_number || defaultCredentials?.npi_number;",
+          "paths": ["frontend/src/pages/NewBillingSubmitPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi_number: npiStr,",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-23",
+      "status": "removed",
+      "claim": "Rendering provider | 2310B NM1*82 | provider.npi, provider.full_name | Emitted at the claim level, not per line — one clinician per visit is the wound-care norm.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.renderingProvider = lineRendering;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent",
+          "note": "true only if no per-line rendering is ever emitted"
+        }
+      ],
+      "finding": "The rendering provider is emitted at claim level (2310B), but a line whose rendering NPI differs from the claim's gets its own Loop 2420A rendering provider (backend/supabase/functions/_shared/claimProviderBlocks.ts:132-160; stediTransform.ts:314-317).",
+      "proposed_text": "Rendering provider | 2310B NM1*82 | the rendering provider's NPI and name | Emitted at claim level; a line with a different rendering NPI also carries its own (Loop 2420A).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(claimRenderingBlock ? { rendering: claimRenderingBlock } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.renderingProvider = lineRendering;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reason": "A line with a different rendering NPI gets its own Loop 2420A. Replaced by cms-23b."
+    },
+    {
+      "id": "cms-23b",
+      "claim": "Rendering provider | 2310B NM1*82 | the rendering provider's NPI and name | Emitted at claim level; a line with a different rendering NPI also carries its own (Loop 2420A).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "...(claimRenderingBlock ? { rendering: claimRenderingBlock } : {}),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.renderingProvider = lineRendering;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "cms-24",
+      "claim": "Omitted when it equals the billing NPI (X12 RFI #1531/#1989).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (billing && npi === billing) return null;",
+          "paths": ["backend/supabase/functions/_shared/claimProviderBlocks.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "X12 RFI #1531 / #1989",
+          "paths": ["backend/supabase/functions/_shared/claimProviderBlocks.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-25",
+      "status": "removed",
+      "claim": "The full 837P builder is backend/supabase/functions/submit-claim/index.ts.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const SUBMIT_CLAIM_RETIRED = true;",
+          "paths": ["backend/supabase/functions/submit-claim/index.ts"],
+          "expect": "absent",
+          "note": "true only if submit-claim is a live path"
+        }
+      ],
+      "finding": "submit-claim is retired: it returns HTTP 410 'This claim path is retired' before auth (backend/supabase/functions/submit-claim/index.ts:64, 79-87). Live 837P builders are transformToStediFormat in frontend/src/services/stediService.ts (claim editor / Billing Dashboard) and backend/supabase/functions/_shared/stediTransform.ts (biller-submit-claim-onbehalf); both send through _shared/submitToStedi.ts.",
+      "proposed_text": "The 837P is built by transformToStediFormat — frontend/src/services/stediService.ts for claims sent from the Billing Dashboard and backend/supabase/functions/_shared/stediTransform.ts for biller sends — and every send goes through backend/supabase/functions/_shared/submitToStedi.ts.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export function transformToStediFormat(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { transformToStediFormat } from \"../_shared/stediTransform.ts\";",
+          "paths": ["backend/supabase/functions/biller-submit-claim-onbehalf/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const SUBMIT_CLAIM_RETIRED = true;",
+          "paths": ["backend/supabase/functions/submit-claim/index.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "submit-claim is retired (HTTP 410). Replaced by cms-25b without code paths."
+    },
+    {
+      "id": "cms-25b",
+      "claim": "Medipyxis builds the 837P from the claim as saved.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_claims.structured_payload",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export function transformToStediFormat(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "cms-26",
+      "claim": "A required-fields check runs before a payload reaches Stedi; \"What the pre-flight actually catches\" below lists what it refuses.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const requiredCheck = assertRequiredClaimFields(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "file name removed and \"most of the misses\" dropped; checks unchanged"
+    },
+    {
+      "id": "cms-27",
+      "claim": "X12 restricts the field to three values: M, F, U. Medipyxis stores four: M, F, Other, and null (unknown).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const X12_GENDER_CODES = [\"M\", \"F\", \"U\"] as const;",
+          "paths": ["backend/supabase/functions/_shared/gender.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PATIENT_SEX_CODES = [\"M\", \"F\", \"Other\"] as const;",
+          "paths": ["backend/supabase/functions/_shared/gender.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-28",
+      "claim": "The mapping: M or Male → M; F or Female → F; Other → U; null / unknown → U.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (token === \"M\" || token === \"MALE\") return \"M\";",
+          "paths": ["backend/supabase/functions/_shared/gender.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (token === \"F\" || token === \"FEMALE\") return \"F\";",
+          "paths": ["backend/supabase/functions/_shared/gender.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return \"U\";",
+          "paths": ["backend/supabase/functions/_shared/gender.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "gender: toX12Gender(",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present",
+          "note": "live: used by resolveSubscriber in both builders"
+        }
+      ],
+      "reworded": "file and function names removed; checks unchanged"
+    },
+    {
+      "id": "cms-29",
+      "claim": "Other and unknown both become U on the wire. The stored value stays as you entered it; only the outbound wire value is collapsed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "gender: toX12Gender(",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toX12Gender",
+          "paths": ["frontend/src/pages", "frontend/src/components"],
+          "expect": "absent",
+          "excludeTests": true,
+          "note": "no UI writer maps the stored value to the wire code"
+        }
+      ]
+    },
+    {
+      "id": "cms-30",
+      "status": "removed",
+      "claim": "Claim-status inquiries (276/277) refuse U. When Medipyxis pulls status on a claim submitted with U, the gender field is omitted from the 276 rather than forced to a wrong value. Some payers respond AAA*Y*72; that failure is a payer limitation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medicalnetwork/claimstatus",
+          "ignoreCase": true,
+          "paths": ["backend/supabase/functions", "frontend/src"],
+          "excludeTests": true,
+          "expect": "present",
+          "note": "true only if Medipyxis calls Stedi's 276 claim-status endpoint"
+        }
+      ],
+      "finding": "Medipyxis does not send 276 claim-status inquiries at all: no edge function calls Stedi's claim-status endpoint. Claim status arrives as 277CA acknowledgments imported by backend/supabase/functions/_shared/stediAckImport.ts. The only 276 mention is a caveat comment (backend/supabase/functions/_shared/gender.ts:42-43). There is no gender-omission logic to describe.",
+      "proposed_text": "Medipyxis does not send 276 claim-status inquiries; claim status arrives as 277CA acknowledgments from Stedi, so a claim sent with U is never re-sent with a different sex value.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medicalnetwork/claimstatus",
+          "ignoreCase": true,
+          "paths": ["backend/supabase/functions", "frontend/src"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/_shared/stediAckImport.ts",
+          "expect": "present"
+        }
+      ],
+      "reason": "Medipyxis sends no 276 inquiries; status arrives as 277CA acknowledgments. Replaced by cms-30b."
+    },
+    {
+      "id": "cms-30b",
+      "claim": "Medipyxis does not send 276 claim-status inquiries; claim status comes back from Stedi as 277CA acknowledgments.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "medicalnetwork/claimstatus",
+          "ignoreCase": true,
+          "paths": ["backend/supabase/functions", "frontend/src"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/_shared/stediAckImport.ts",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { ackLogFields, acksNeedingAttention, importAckEvent } from '../_shared/stediAckImport.ts';",
+          "paths": ["backend/supabase/functions/sync-stedi-responses/index.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-31",
+      "claim": "On the CMS-1500 it is Item 24E, and it accepts up to four pointers per line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const MAX_POINTERS_PER_LINE = 4;",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-32",
+      "status": "removed",
+      "claim": "Medipyxis today points every service line at diagnosis position 1 only (compositeDiagnosisCodePointers: { diagnosisCodePointers: ['1'] }).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisCodePointers: ['1']",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present",
+          "note": "true only if pointers are hard-coded to 1"
+        }
+      ],
+      "finding": "Same as cms-14: per-line pointers are the biller's typed letters (up to four) via toDiagnosisCodePointers (backend/supabase/functions/_shared/diagnosisPointers.ts:64-71); '1' is only the fallback.",
+      "proposed_text": "Medipyxis sends the pointers typed on each line (up to four); a line with no usable pointer points at diagnosis 1.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return diagnosisCount > 0 ? ['1'] : [];",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toDiagnosisCodePointers(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reason": "Each line sends the typed pointers; '1' is only the fallback. Replaced by cms-32b."
+    },
+    {
+      "id": "cms-32b",
+      "claim": "Medipyxis sends the pointers typed on each line (up to four); a line with no usable pointer points at diagnosis 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return diagnosisCount > 0 ? ['1'] : [];",
+          "paths": ["backend/supabase/functions/_shared/diagnosisPointers.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toDiagnosisCodePointers(",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "cms-33",
+      "status": "removed",
+      "claim": "When a visit legitimately splits between two different wounds or two different underlying diagnoses, the current single-pointer emission may under-justify the secondary line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "diagnosisCodePointers: ['1']",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Rests on the false single-pointer premise (cms-14/cms-32). The biller can point each line at its own diagnoses today (diagnosisPointers.ts:64-71). Payer denial behavior is not checkable from code.",
+      "reason": "Rests on the false single-pointer premise; the biller can point each line at its own diagnoses. Replaced by advice cms-33b."
+    },
+    {
+      "id": "cms-33b",
+      "claim": "When a visit treats two wounds or two underlying diagnoses, point each line at the diagnoses that justify it.",
+      "kind": "advice"
+    },
+    {
+      "id": "cms-34",
+      "claim": "DTP*472 is one item (24A) per line, and Medipyxis emits the visit's date of service on every line — same value, per-line placement.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sl.service_date || sl.date_of_service || claimLevelServiceDate;",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "cms-35",
+      "claim": "YYYYMMDD on the wire. Dates are stored as YYYY-MM-DD; the transform strips the dashes right before submission.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dateString.slice(0, 10).replace(/-/g, '');",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceLine.serviceDate = formatStediDate(serviceDate);",
+          "paths": ["frontend/src/services/stediService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "table name removed; checks unchanged"
+    },
+    {
+      "id": "cms-36",
+      "claim": "The 837P spec allows a date range (DTP*472*RD8*YYYYMMDD-YYYYMMDD). Wound-care visits are single-day encounters, so Medipyxis never emits a range.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceDateEnd",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "RD8",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "cms-37",
+      "claim": "Before a payload reaches Stedi, Medipyxis refuses to submit a claim missing: Payer trading-partner service ID (2010BB NM109 — the payer routing key).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('tradingPartnerServiceId');",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "file name removed; checks unchanged"
+    },
+    {
+      "id": "cms-38",
+      "claim": "[The pre-flight refuses a claim missing] Billing NPI (Item 33a).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Billing provider has no NPI. Box 33a is required",
+          "paths": ["backend/supabase/functions/_shared/validateClaimProviderBlocks.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const providerCheck = validateClaimProviderBlocks(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Refused at the same chokepoint, but by validateClaimProviderBlocks.ts, not claimRequiredFields.ts."
+    },
+    {
+      "id": "cms-39",
+      "claim": "[The pre-flight refuses a claim missing] Subscriber member ID (Item 1a).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.memberId')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-40",
+      "status": "removed",
+      "claim": "[The pre-flight refuses a claim missing] Subscriber DOB (Item 3).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "subscriber.dateOfBirth",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts", "backend/supabase/functions/_shared/submitToStedi.ts", "backend/supabase/functions/_shared/validateClaimProviderBlocks.ts"],
+          "expect": "present",
+          "note": "true only if some gate names a missing DOB"
+        }
+      ],
+      "finding": "No pre-flight gate checks the subscriber date of birth. assertRequiredClaimFields checks subscriber.memberId, subscriber.lastName and tradingPartnerServiceId plus the claimInformation list (backend/supabase/functions/_shared/claimRequiredFields.ts:581-597); a missing DOB goes to Stedi as an empty/omitted value.",
+      "proposed_text": "[The pre-flight refuses a claim missing] Subscriber last name (Item 2). A missing date of birth is not caught before Stedi.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.lastName')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "subscriber.dateOfBirth",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts", "backend/supabase/functions/_shared/submitToStedi.ts", "backend/supabase/functions/_shared/validateClaimProviderBlocks.ts"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "No pre-flight gate checks the subscriber DOB. Replaced by cms-40b."
+    },
+    {
+      "id": "cms-40b",
+      "claim": "[The pre-flight refuses a claim missing] Subscriber last name (Item 2). A missing date of birth is not caught before Stedi.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing.push('subscriber.lastName')",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "subscriber.dateOfBirth",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts", "backend/supabase/functions/_shared/submitToStedi.ts", "backend/supabase/functions/_shared/validateClaimProviderBlocks.ts"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "cms-41",
+      "claim": "[The pre-flight refuses a claim missing] Principal diagnosis (Item 21, first position) and at least one service line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  'healthCareCodeInformation',",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  'serviceLines',",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Array.isArray(value) && value.length === 0) {",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-42",
+      "status": "removed",
+      "claim": "On every service line: a procedure code (Item 24D), a positive charge amount (Item 24F — see the zero-dollar guard), and a units count > 0 (Item 24G).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "serviceUnitCount",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts", "backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present",
+          "note": "true only if a gate refuses a missing/zero unit count"
+        }
+      ],
+      "finding": "Only the positive-charge rule is a refusal. A line with no procedure code is silently dropped by the builder, not refused (stediTransform.ts:235-237), and a missing or zero unit count is replaced with 1 (stediTransform.ts:251: sl.units || sl.service_unit_count || '1'), so no units gate exists.",
+      "proposed_text": "On every service line: a positive charge amount (Item 24F — see the zero-dollar guard). Lines without a procedure code are left off the claim, and a missing unit count is sent as 1.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const units = String(sl.units || sl.service_unit_count || '1');",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sl: any) => sl && (sl.procedure_code || sl.cpt_code),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Only the positive-charge rule refuses; codeless lines are dropped and missing units become 1. Replaced by cms-42b."
+    },
+    {
+      "id": "cms-42b",
+      "claim": "On every service line: a positive charge amount (Item 24F — see the zero-dollar guard). Lines without a procedure code are left off the claim, and a missing unit count is sent as 1.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (Number.isFinite(amount) && amount > 0) return;",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const units = String(sl.units || sl.service_unit_count || '1');",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts", "frontend/src/services/stediService.ts"],
+          "expect": {"count": 2}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sl: any) => sl && (sl.procedure_code || sl.cpt_code),",
+          "paths": ["backend/supabase/functions/_shared/stediTransform.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-43",
+      "claim": "Anything else — modifiers, group number, referring provider — is optional at the transaction level even when a payer needs it, so those rejects come back from the payer, not from the pre-flight.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "'(groupNumber|procedureModifiers|referring)'",
+          "paths": ["backend/supabase/functions/_shared/claimRequiredFields.ts"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "cms-44",
+      "status": "removed",
+      "claim": "Element on the subscriber loop (NM1**IL*..., DMG*..., N3/N4) → check the patient's Insurance tab, then the patient's demographics.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Edit Insurance",
+          "paths": ["frontend/src/components/PatientInsuranceTab.tsx"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Navigation advice, not checkable by grep. Note: the patient chart Insurance tab is read-only and links to 'Manage in Billing' (frontend/src/components/PatientInsuranceTab.tsx:29-42, 170); insurance edits happen on BillingAuthPage.",
+      "reason": "The patient-chart Insurance tab is not where insurance is edited; navigation advice reworded. Replaced by advice cms-44b."
+    },
+    {
+      "id": "cms-44b",
+      "claim": "Element on the subscriber loop (NM1**IL*..., DMG*..., N3/N4) → check the patient's insurance, then the patient's demographics.",
+      "kind": "advice"
+    },
+    {
+      "id": "cms-45",
+      "status": "removed",
+      "claim": "Element on the billing loop (NM1*85*..., REF*EI*...) → check the facility's Billing Settings.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Billing Settings",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Navigation advice. Billing NPI and tax ID come from the facility record (frontend/src/services/billingConfigService.ts:49-101); a screen named 'Billing Settings' was not verified.",
+      "reason": "A screen named Billing Settings was not verified; the billing NPI and tax ID come from the facility record. Replaced by cms-45b."
+    },
+    {
+      "id": "cms-45b",
+      "claim": "Element on the billing loop (NM1*85*..., REF*EI*...) → check the NPI and tax ID on the facility record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "npi_number: npiStr,",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "tax_id: taxStr,",
+          "paths": ["frontend/src/services/billingConfigService.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-46",
+      "claim": "Element on the claim (CLM*..., HI*...) → check the coding review drawer for that claim.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/CodingReviewDrawer.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cms-47",
+      "status": "removed",
+      "claim": "Element on a service line (SV1*...) → open the claim, expand the line, check its code, modifier, and charge. If the payer names an element that isn't in the table above, send the raw payer message to Damon.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "expand the line",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Workflow advice; not checkable from code.",
+      "reason": "Named a person as the escalation contact and claimed an \"expand the line\" control that was not verified. Replaced by advice cms-47b/cms-47c."
+    },
+    {
+      "id": "cms-47b",
+      "claim": "Element on a service line (SV1*...) → open the claim and check that line's code, modifiers, and charge.",
+      "kind": "advice"
+    },
+    {
+      "id": "cms-47c",
+      "claim": "If the payer names an element that isn't in the table above, send the raw payer message to Medipyxis support.",
+      "kind": "advice"
+    }
+  ]
+}

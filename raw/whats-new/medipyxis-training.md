@@ -4,7 +4,7 @@ title: How do I use Medipyxis? Video training, from referral to signed visit
 module: getting-started
 audience: [clinician, intake, admin, billing]
 type: whats-new
-last_reviewed: 2026-10-23
+last_reviewed: 2026-11-11
 tags: [whats-new, video, training, walkthrough, intake, visit-wizard, fleet-calendar, crm, hr, oversight-cockpit, team-chat, orders]
 related:
   - whats-new
@@ -55,7 +55,7 @@ A tour of the screen: the left sidebar opens every area your role can use, the f
 
 Video (captions, no sound, 2:35): [02-hr-compliance.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/02-hr-compliance.mp4)
 
-The Human Resources Hub: post announcements, upload provider credentials in the Credential Tracker, check Activity Logs, and add a new employee in New Employee Onboarding. Choosing the Clinician role adds the provider fields (printed name, initials, NPI and state license). Facility Users, Education Bundle Management and Training Materials are shown last.
+The Human Resources Hub: post announcements, upload provider credentials in the Credential Tracker, check Activity Logs, and add a new employee in New Employee Onboarding. Choosing the Clinician role adds the provider fields (printed name, initials, NPI and state license). Facility Users, Education Bundle Management and Training Materials are shown last. The ready-made education bundles and the Medipyxis user guides shown are Medipyxis-provided and for example purposes only; your clinic's own HR records and training stay with your clinic.
 
 **Why it matters:** Staff records, provider credentials and training live in the same system as the patients they see.
 

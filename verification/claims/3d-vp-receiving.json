@@ -1,0 +1,456 @@
+{
+  "title": "Receive a vendor shipment",
+  "source": "vendor-portal/receiving",
+  "url": "https://help.medipyxis.com/vendor-portal/receiving/",
+  "claims": [
+    {
+      "id": "vpr-01",
+      "claim": "A vendor shipment arrives pre-listed by SKU, lot, expiration and quantity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// then pre-stages inventory_orders_v2 + inventory_ordered_products_batches_v2",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ls.line.lot_number && ` · lot ${ls.line.lot_number}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "` · exp ${ls.line.expiration_date}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-02",
+      "claim": "Inventory Management → Clinician Inventory View.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinician Inventory View\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/clinician-inventory-view\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ClinicianInventoryView = lazy(",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-03",
+      "claim": "Vendor Shipments Awaiting Check-In panel shows shipment number, vendor, lines, carrier/tracking, expected date; only when one is waiting.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Shipments Awaiting Check-In",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingShipments.length > 0 && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.line_count} lines",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.expected_delivery && ` · expected ${shipment.expected_delivery}`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['shipped', 'delivered'])",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-04",
+      "claim": "Check in lists each line: product, SKU, lot, expiration, shipped quantity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Check in {shipment.shipment_number} — {shipment.vendor_name}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ls.line.description ?? ls.line.sku}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-05",
+      "claim": "Set received quantity with minus/plus or typing; badge shows match, short, or over.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, -1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, 1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: 'match', color: 'bg-green-100 text-green-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: `short ${Math.abs(diff)}`,",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: `over ${diff}`, color: 'bg-yellow-100 text-yellow-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-06",
+      "claim": "Flag a line with a reason; attach a photo to the line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Flag className=\"w-3.5 h-3.5\" /> Flag",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason...\"",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ls.photos.map((f) => uploadPhoto(f, ls.line.id)),",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-07",
+      "claim": "Complete receipt.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{submitting ? 'Receiving...' : 'Complete receipt'}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-08",
+      "claim": "Save draft does not keep entries yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// TODO: persist draft state via edge function",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success('Draft saved', {",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-09",
+      "claim": "Each received lot is added as available stock.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 2, // Available (ProductStatusEnum.Available).",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-10",
+      "claim": "The shipment is marked received and the vendor is notified with expected/received totals and discrepancy count.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"delivered\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event_type: \"vendor_shipment_received\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "discrepancy_count: discrepancyCount,",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "delivered: { bg: 'bg-green-100', text: 'text-green-800', label: 'received' },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-11",
+      "claim": "Only shipped shipments can be checked in, and only once.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `Shipment is in '${shipment.status}' status — only 'shipped' shipments can be received`,",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: \"Shipment already received\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-old-01",
+      "status": "removed",
+      "claim": "(removed) A facility-wide Receiving page (Sidebar → Receiving) with KPI tiles Expected today / Awaiting check-in / Open discrepancies / Received this week.",
+      "reason": "The page component exists but no route opens it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ClinicReceivingPage",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-old-02",
+      "status": "removed",
+      "claim": "(removed) Flagged shipments move to flagged; flagged lines wait in Receiving History → Needs review; accepted lines stock immediately.",
+      "reason": "Receipt always marks the shipment delivered; no flagged/needs-review state is written.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"discrepancy\"",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-old-03",
+      "status": "removed",
+      "claim": "(removed) Vendor resolves discrepancies by Reship / Short-ship / Dispute.",
+      "reason": "No such vendor actions exist.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Accept and reship",
+          "paths": [
+            "frontend/src/pages/vendor"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-old-04",
+      "status": "removed",
+      "claim": "(removed) Escalating overdue nudges at day 1, 3 and 5.",
+      "reason": "No overdue-shipment nudge job exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "overdue",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpr-old-05",
+      "status": "removed",
+      "claim": "(removed) Photo limits: one photo per flagged line, 10 MB, PNG/JPG only.",
+      "reason": "The file input accepts any image; no size or count limit is enforced.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "10 * 1024 * 1024",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

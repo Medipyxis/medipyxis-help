@@ -1,0 +1,932 @@
+{
+  "title": "BD / CRM first hour",
+  "source": "getting-started/by-role/bd-crm",
+  "url": "https://help.medipyxis.com/getting-started/by-role/bd-crm/",
+  "claims": [
+    {
+      "id": "bd-01",
+      "claim": "By the end of the hour: find your practices in the CRM, log a first call or visit, and know what the BD dashboard shows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"CRM\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals This Month",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-02",
+      "claim": "Your admin has given you a BD rep or BD manager role, with access to Business Development and CRM.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'bd_rep', label: 'Business Development Representative' },",
+          "paths": [
+            "frontend/src/constants/roles.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'bd_manager', label: 'Business Development Manager' },",
+          "paths": [
+            "frontend/src/constants/roles.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Business Development\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-03",
+      "claim": "Know which practices you cover.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "bd-04",
+      "claim": "Click Business Development in the sidebar; a BD rep sees their own assigned practices and activity; admins and BD managers get a BD rep filter (All BD Reps, Unassigned, or one rep).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isBdRep = role === \"BD_REP\" || role === \"bd_rep\";",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "role === \"bd_manager\" ||",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"ALL\">All BD Reps</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"UNASSIGNED\">Unassigned</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-05",
+      "claim": "CRM in the sidebar is the directory of referring practices and contacts; Assigned tab lists practices with a BD rep, yours show a Me badge; Search practices... finds one.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"CRM\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"Assigned\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "practice.assignedUserId &&",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Me\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-06",
+      "claim": "To add a practice, click Add New Practice.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AddPracticeModal",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-07",
+      "claim": "Practice Overview tab shows address, phone, email and fax; Add next to Additional Contacts adds a person.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"overview\", label: \"Overview\", icon: \"🧾\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{practice.address}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{practice.fax}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"addContact\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-08",
+      "claim": "Quick-add strip on the BD dashboard or CRM: Log Call, New Visit, Add Spend, Record Voice Note; a voice note is its own activity on the practice you choose.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Log Call",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Visit",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Spend",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Record Voice Note\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activity_type: \"voice\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-09",
+      "claim": "Practice detail Call, Visit and Note buttons; the call and visit forms there let you set a follow-up date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"note\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "                Follow-up required",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "                Schedule follow-up",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Follow-up Date",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "bd-10",
+      "claim": "Saved entries appear on the practice's Activity tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} = useBdActivities(practiceId, showArchived ? \"archived\" : \"live\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-11",
+      "claim": "Referrals This Month: new patients this month credited to you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals This Month",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientQuery = patientQuery.eq(\"bd_rep_id\", user.id);",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-12",
+      "claim": "ROI (MTD) is referrals this month × $3,500, not based on paid claims or spend.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ROI (MTD)</p>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedROI = referralsThisMonth * estimatedRevenuePerReferral;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-13",
+      "claim": "Active Pipeline is not calculated yet; it always shows $0k.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Active Pipeline",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activePipeline: 0,",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activePipeline = ",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "${(kpiData.activePipeline / 1000).toFixed(0)}k",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-14",
+      "claim": "Next Best Action: daily outreach suggestion with round-robin progress 'X of Y this cycle'.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{dailySuggestions.cycle.practices_touched} of {dailySuggestions.cycle.practices_total} this cycle",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Daily \"Next Best Action\" queue from the bd-daily-suggestions edge function.",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-15",
+      "claim": "AI Route Suggestions: up to seven practices, fixed rules not an AI model; Add puts a practice on Today's Route.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const needed = 7 - suggestedPractices.length;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "openai",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functions.invoke",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Add to today's route\"",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success(`${suggestion.name} added to today's route!`);",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-16",
+      "claim": "Managers use the BD rep filter to see one rep's view, all reps, or unassigned practices.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"ALL\">All BD Reps</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"UNASSIGNED\">Unassigned</option>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userIdForFilter = selectedBdRepFilter;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-17",
+      "claim": "A separate Business Development Management area (manager dashboard, rep coaching) is coming soon; it is not in the menu yet and its pages show sample data.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/bdmgmt-manager-dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/bdmgmt-rep-coaching\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/bdmgmt",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bdmgmt",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Placeholder",
+          "paths": [
+            "frontend/src/pages/BdmgmtRepCoaching.tsx"
+          ],
+          "expect": {
+            "min": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "bd-18",
+      "claim": "Result: find and add practices in the CRM; first activity on the Activity tab; ROI (MTD) is an estimate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-01",
+      "claim": "(removed) \"Click your avatar → My BD Profile. Set your territory, target-visit cadence, and monthly goal.\"",
+      "status": "removed",
+      "reason": "There is no BD profile page with territory, cadence or goal settings.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "My BD Profile",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-02",
+      "claim": "(removed) \"BD → Practices (or CRM, same underlying data — CRM is the detail view, BD is the dashboard).\"",
+      "status": "removed",
+      "reason": "Practices are worked in the CRM; Business Development has no Practices page in the menu.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/bdmgmt-practices-page",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-03",
+      "claim": "(removed) \"Click + Add practice for one-offs, or Bulk Import for a CSV.\"",
+      "status": "removed",
+      "reason": "The button is Add New Practice; the CRM has no bulk CSV import.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk Import",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Add practice",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-04",
+      "claim": "(removed) \"For each practice, confirm the referral source category — Medicare, Medicare Advantage, commercial, SNF, home health.\"",
+      "status": "removed",
+      "reason": "The practice form has no referral source category with those payer values.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Medicare Advantage",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-05",
+      "claim": "(removed) Tip: \"Medipyxis ties every referral it receives to a practice. If your referral sources aren't loaded yet, incoming faxes will land in an Unattributed bucket until you match them.\"",
+      "status": "removed",
+      "reason": "There is no Unattributed referral bucket.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unattributed",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-06",
+      "claim": "(removed) \"Open a practice from the list → Activity tab. Click Log Call, New Visit, or Add Spend from the quick-add strip.\"",
+      "status": "removed",
+      "reason": "The practice detail page has Call, Visit and Note buttons; the quick-add strip is on the BD dashboard and the CRM list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-07",
+      "claim": "(removed) \"A manager BD Management view is not switched on yet.\" / \"Manager Dashboard and Rep Coaching under a separate BD Management surface are not switched on yet.\"",
+      "status": "removed",
+      "reason": "The BD Management pages exist behind the Business Development feature but are not in the menu and show sample data; reworded as coming soon (bd-17).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/bdmgmt-manager-dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-08",
+      "claim": "(removed) \"BD → Dashboard. Four key KPIs: Referrals received (this month vs. last), Referrals converted to visit (%), Revenue attributed (from visits + claims), Cost to serve (rep spend + time).\"",
+      "status": "removed",
+      "reason": "The KPIs are Referrals This Month, ROI (MTD) as an estimate, and Active Pipeline (not calculated).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Cost to serve",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Revenue attributed",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Conversion Rate",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-09",
+      "claim": "(removed) \"Click any practice in the list to see a per-practice ROI waterfall — referrals in, visits completed, revenue out, rep spend in.\"",
+      "status": "removed",
+      "reason": "There is no per-practice ROI waterfall.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "waterfall",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx",
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "bd-old-10",
+      "claim": "(removed) Result: \"Your rep record is live.\" / \"every incoming referral will be attributed automatically.\" / \"You've seen revenue-per-practice for the first time.\"",
+      "status": "removed",
+      "reason": "No automatic referral attribution or per-practice revenue figure exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unattributed",
+          "paths": [
+            "frontend/src/pages",
+            "frontend/src/components"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid_amount",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "bd-old-11",
+      "claim": "(removed) Next up link text \"BD: round-robin referral assignment\" (to AI Route Suggestions).",
+      "status": "removed",
+      "reason": "The linked page is AI Route Suggestions, which proposes practices to visit; it does not assign referrals.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const needed = 7 - suggestedPractices.length;",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ]
+}

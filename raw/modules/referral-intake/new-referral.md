@@ -6,7 +6,7 @@ audience: [intake]
 roles: [intake_coordinator, referral_coordinator]
 type: how-to
 estimated_minutes: 4
-last_reviewed: 2026-04-24
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/referrals
 related:
   - referral-intake-overview
@@ -14,41 +14,46 @@ related:
 tags: [referrals, new]
 ---
 
-# Create a new referral
+# Add a new patient from Referral Intake
 
-Use this flow when a referral arrives by phone or email — anything that did **not** come through the fax line. (Faxes flow through [Fax Queue Review](./fax-queue-review.md) instead.)
+Use this flow when you add a patient by hand — a phone call, an email, or a paper referral. Inbound faxes are handled in the [Fax Review Queue](/modules/referral-intake/fax-queue-review/) instead, where the action is **Approve & Create Patient**.
 
 ## Before you start
 
-- You know the patient's legal name, DOB, phone, and address.
-- You know the referring practice and PCP (or have the fax cover sheet).
-- You have the primary insurance card on hand.
+- You know the patient's first name, last name, and date of birth. Those three fields are always required. If you add insurance where the subscriber is not the patient, **Subscriber Date of Birth** is required too, and a subscriber name that does not match the patient needs a **Subscriber Relationship**.
+- Have the referring practice and insurance information if you have them. You can save the patient without them and add them later.
 
 ## Steps
 
-1. **Go to Referral Intake.** Click **Referral Intake** in the sidebar or press ⌘K and type "new referral".
-2. **Click + New Referral** in the top-right.
-3. **Fill Demographics.** Required: **First Name**, **Last Name**, **DOB**, **Phone**, **Address**. Optional: Gender, Preferred Language.
-4. **Add Practice & PCP.** Type to search — existing practices autocomplete from your CRM. New practice? Click **+ Add new practice** inline.
-5. **Add Insurance.** Start typing the payer name — the field searches the 4,118-payer catalog. Enter **Member ID** and (if present) **Group #** and Secondary Payer.
-6. **Set Urgency & Assignment.** Pick **Routine**, **Urgent**, or **STAT**. Leave Assigned Clinician blank if you want to hand off to a manager; set it now if you know who should take the case.
-7. **Clinical.** Chief Complaint, Wound Location, Wound Etiology, ICD-10 codes, Notes. Use the `Ctrl+K` ICD-10 picker to find codes by description.
-8. **Click Save & Route.** The referral drops into **New Referrals** (or **Financial** if you set insurance, depending on your org's workflow config).
+- **Open Referral Intake.** Click **Referral Intake** in the sidebar. The board heading is **Patient Intake**. You can also press ⌘K (Windows: Ctrl+K), type “referral”, and choose **Referral Intake** to open the board.
+- **Click Add New Referral** in the top-right (alongside **Fax Queue** and **Fleet Calendar**).
+- The form heading is **Add New Patient**. Work through the sections below, then click **Create Patient** at the bottom. If you are offline, the same button reads **Save Offline**.
 
-![New Referral form](../../assets/referral-intake/new-referral-form.png)
+## What the form contains
+
+Sections appear in this order. **First Name**, **Last Name**, and **Date of Birth** are always required. The form itself restates that at the bottom: “Required fields: First Name, Last Name, Date of Birth.”
+
+- **Care Type** — **Wound Care** or **Primary Care**. Helper text: “Select the type of care this patient is being referred for.”
+- **Patient Demographics** — **First Name**, **Middle Initial**, **Last Name**, **Date of Birth**, **Sex** (Male, Female, Other), **Marital Status**, **Employment Status**, **Primary Phone Number**, **Secondary Phone Number**, **Email Address**.
+- **Address Information** — **Street Address**, **Lives at** (a practice / facility the patient lives at), **City**, **State**, **ZIP Code**. Phone and address are optional — leave them blank if the patient has no personal phone or street address (common for SNF/ALF residents).
+- **Referring Information Practice & Physician** — **Referral Source** (search CRM practices), **Add New Practice**, **Referring Individual**, **Date Referral Sent**, **Referral Entry Date**, **Referral ID**, practice phone and fax, **Referring Physician** and **Referring Physician NPI**, **Assigned BD Rep**.
+- **Patient's Primary Care Physician** — **PCP Practice**, **PCP Physician**, phone, fax, and **PCP Physician NPI**.
+- **Insurance Information** — Click **Add Insurance** for each payer. Fields: **Insurance Provider**, **Policy Number / Member Number**, **Group Number** (optional), **Subscriber First Name**, **Subscriber Last Name**, **Payer ID**, **Subscriber Relationship** (Self, Spouse, Child, Other). Use **Verify** (or **Verify again**) to run eligibility. You can add more than one insurance row.
+- **Urgency** — **Referral Reason**, and **Urgency Level**: **Routine**, **Urgent**, or **Emergent**.
+- **Condition & Accident Information For Billing** — Optional checkboxes: **Related to Employment**, **Related to Auto Accident**, **Related to Other Accident**, plus **Auto Accident State** when that box is checked. Under **Billing Preferences**: **Accept Assignment of Benefits**.
+- **Insurance Verification Summary** — A recap of the insurance rows you added, if any.
+
+At the bottom you can also check **Send digital consent form via SMS upon approval**, or click **Send Consent SMS** if a primary phone number is entered. **Cancel** leaves the form without saving.
 
 ## Result
 
-A new card appears in the kanban with the patient's name, DOB, and urgency color-coded. The detail panel opens automatically — upload any documents (script, progress notes) on the **Documents** tab now.
+Clicking **Create Patient** creates the patient record immediately (status Active) and a referral in the **New Referrals** column. A success message reads “Referral created successfully!” and includes the MRN when one is assigned. After a short pause you are taken back to the Patient Intake board. The detail panel does not open by itself — click the new card if you want to add documents or notes.
 
-<Tip>
-If the patient already exists in your system, Medipyxis matches on DOB + last name + phone and warns you before creating a duplicate.
-</Tip>
+The card does not move to **Financial** automatically when insurance is present, and the patient does not wait for an **Assigned** status before appearing in All Patients.
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-|---|---|---|
-| Save button disabled | A required field is empty | Scroll up — missing fields are outlined in red |
-| Payer not found | Outdated spelling, or out-of-network payer | Click **Request payer add** — admin reviews in 1 business day |
-| Duplicate warning | Existing patient matches on DOB+name | Click **Open existing** or **Continue anyway** with supervisor note |
+- **You cannot create the patient** — First Name, Last Name, or Date of Birth is empty. Complete those three fields. The form lists any that are still missing.
+- **“Subscriber Date of Birth is required…”** — An insurance row has a subscriber who is not the patient and no subscriber date of birth. Enter **Subscriber Date of Birth** in the Insurance section, or set **Subscriber Relationship** to Self if the subscriber is the patient.
+- **“Please enter a valid phone number”** — A phone was entered in a format the form does not accept. Use (xxx) xxx-xxxx, or leave the field blank if the patient has no personal phone.
+- **The button reads Save Offline** — The browser is offline. You can save the referral offline and finish it when you reconnect.

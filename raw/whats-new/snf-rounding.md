@@ -4,7 +4,7 @@ title: How does Medipyxis handle rounding at a skilled nursing facility?
 module: getting-started
 audience: [clinician, intake, admin, billing]
 type: whats-new
-last_reviewed: 2026-10-23
+last_reviewed: 2026-11-11
 tags: [whats-new, video, snf, rounding]
 related:
   - whats-new
@@ -121,7 +121,7 @@ Look up a resident in PointClickCare, then link them to a patient here or create
 
 ### Does Medipyxis support wound care rounding at skilled nursing facilities?
 
-Yes. A skilled nursing or assisted living facility is set up in Medipyxis as a building, with the providers who round there, its current residents and its signed clinical notes. Book facility day books every resident's visit back to back, and each visit records the facility, so the claim carries place of service 31 and names the facility in Box 32. A rounding layout for the visit itself, one step per screen, is built but not switched on for customers yet.
+Yes. A skilled nursing or assisted living facility is set up in Medipyxis as a building, with the providers who round there, its current residents and its signed clinical notes. Book facility day books every resident's visit back to back, and each visit records the facility, so the claim names the facility in Box 32. The place of service (31 or 32) is recorded on the visit. A rounding layout for the visit itself, one step per screen, is built but not switched on for customers yet.
 
 ### Can I book all residents at a facility at once?
 

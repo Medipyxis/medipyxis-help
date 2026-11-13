@@ -1,0 +1,528 @@
+{
+  "title": "Terms and contracts",
+  "source": "vendor-portal/terms-and-contracts",
+  "url": "https://help.medipyxis.com/vendor-portal/terms-and-contracts/",
+  "claims": [
+    {
+      "id": "vpt-01",
+      "claim": "Terms record billing model, cadence, auto-invoice and pricing notes; default terms plus optional SKU-class terms.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Billing model\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Invoice cadence\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Auto-invoice\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label={t.sku_class || 'Default'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-02",
+      "claim": "Only an Admin can open and change terms.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/clinics/:id/terms\" element={<VendorAdminOnly><VendorTermsPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Auth: vendor_admin only (terms are vendor-controlled).",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-03",
+      "claim": "Saving needs an approved connection: \"No approved relationship with this clinic\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"No approved relationship with this clinic\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-04",
+      "claim": "Clinics → Terms opens /vendor/clinics/{clinic}/terms; Switch clinic returns to Clinics.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Link to={`/vendor/clinics/${c.clinic_facility_id}/terms`}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate('/vendor/clinics')}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-05",
+      "claim": "SKU class optional; blank = default.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Leave blank for default terms\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-06",
+      "claim": "Billing models and cadences.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consignment_use: 'Consignment — bill on use',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "net30: 'Purchase — Net 30',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prepaid: 'Prepaid',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "custom: 'Custom',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "per_use: 'Per use',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "weekly: 'Weekly',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "monthly: 'Monthly',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "net_30: 'Net 30',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "custom_day: 'Custom day',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-07",
+      "claim": "Auto-invoice on includes the clinic in automatic drafting.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "auto_invoice: boolean;",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "function shouldFireCadence(cadence: string, autoInvoice: boolean): boolean {",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-08",
+      "claim": "Pricing notes fields: Pricing tier name, Discount %, Payment terms, Title transfer, Expired stock policy, Return window.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Pricing tier name\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Discount %\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Payment terms\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Title transfer\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Expired stock policy\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FormField label=\"Return window\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-09",
+      "claim": "Change terms: Edit on the card, change fields, Save new version.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<button onClick={onEdit} className=\"text-xs text-blue-600 hover:underline\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save new version",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-10",
+      "claim": "Each save adds a new numbered version; earlier versions in Version history; drafted invoices keep their terms version.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Append-version insert into vendor_clinic_terms.",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const nextVersion = (maxRow?.version ?? 0) + 1;",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Version history</h3>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "terms_version: terms.version,",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-11",
+      "claim": "No button creates first terms; Save new version stays disabled until editing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowNewForm(true)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={isUpserting || (editingClass === null && !showNewForm)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-12",
+      "claim": "The banner says the clinic is notified, but no notification is sent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "The clinic is notified in-app when terms change.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Notification",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpt-13",
+      "claim": "Pricing tier picker, Auto-invoice examples, and Acknowledgement panel are sample text.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option>Tier A — list (0%)</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div>· CTP grafts: one draft invoice per use event, nightly 2:00a</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Acknowledgement</div>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorTermsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-14",
+      "claim": "Tell the clinic yourself when terms change; contact Medipyxis support if a clinic has no terms yet.",
+      "kind": "advice"
+    },
+    {
+      "id": "vpt-old-01",
+      "status": "removed",
+      "claim": "(removed) \"Click New terms\" to create the first terms record.",
+      "reason": "No New terms button exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setShowNewForm(true)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-old-02",
+      "status": "removed",
+      "claim": "(removed) \"The clinic is notified in-app when terms change. This is enforced by the platform.\"",
+      "reason": "The terms save sends no notification.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fireAndForgetNotification",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-old-03",
+      "status": "removed",
+      "claim": "(removed) \"The invoice engine picks the most specific matching SKU-class row\" and cadence firing times as working behavior.",
+      "reason": "Not verifiable in the drafting job; drafting does not currently run.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "most specific",
+          "paths": [
+            "backend/supabase/functions/invoice-draft-run/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpt-old-04",
+      "status": "removed",
+      "claim": "(removed) vendor_user and vendor_sales see terms read-only.",
+      "reason": "The terms page is Admin-only; others are redirected.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<VendorAdminOnly><VendorTermsPage />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ audience: [billing, admin]
 roles: [biller, admin, medical_assistant]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /patients/{patient_id}/insurance
 related:
   - billing-overview
@@ -16,24 +16,23 @@ related:
 tags: [billing, eligibility, 270, 271, Stedi, EB01, coverage-active]
 ---
 
-Eligibility verification is how you confirm — before the visit — that a patient's coverage is active for the service you plan to bill. Medipyxis sends a 270 request to Stedi, the payer answers with a 271, and Medipyxis writes both the verdict and the raw response back to the patient's insurance record. This page walks through how to run a verification and how to read the result.
+Eligibility verification is how you confirm — before the visit — that a patient's coverage is active for the service you plan to bill. Medipyxis sends a 270 request to Stedi, the payer answers with a 271, and Medipyxis writes the verdict back to the patient's insurance record — plus the raw 271 when coverage is active. This page walks through how to run a verification and how to read the result.
 
 ## Before you start
 
-- You have the biller, medical assistant, or admin role.
+- You have a billing role (biller, billing lead, coder, third-party biller), a clinical role (clinician, provider, clinical manager, medical director), or admin.
 - The patient has an insurance row with member ID, DOB, and payer ID mapped to a Stedi trading partner.
-- The rendering provider is enrolled with the payer through Stedi.
 
 ---
 
 ## Run a verification
 
-1. Open the patient chart → **Insurance**.
-2. Click **Verify** on the insurance row you want to check. Medipyxis sends a 270 request with service type 30 (Health Benefit Plan Coverage).
-3. Wait for the row's status pill to update: **Verified**, **Failed**, or **Timeout**.
-4. Click **View Verification Response** to open the raw 271 in a modal — the full payer response, formatted for reading.
+1. Open the patient's overview → **Billing & Auth**.
+2. On the insurance row you want to check, click the shield icon (tooltip: **Verify insurance coverage**). Medipyxis sends a 270 request with service type 30 (Health Benefit Plan Coverage).
+3. Wait for the row's status pill to update: **Verified**, **Failed**, **Pending**, **Pending Approval**, **Manual Required**, or **Expired** (a timed-out check shows **Expired** unless the row was already verified).
+4. Click **View Response** to open the saved 271 in a modal. The button appears only on verified rows that were checked through Stedi.
 
-You can re-verify at any time. The most recent attempt wins on the record — including a fresh **Failed** or **Timeout**, which correctly replaces a stale **Verified**.
+You can re-verify at any time. A payer answer always replaces the previous result, including an inactive answer replacing an old **Verified**. A timeout records the attempt but keeps an earlier verification.
 
 ---
 
@@ -48,7 +47,7 @@ The verdict is derived from two pieces of the 271:
 |---|---|
 | **Verified** | Stedi returned a response AND the payer reports at least one active plan. The raw 271 is saved so you can open it. |
 | **Failed** | Stedi returned a response but no active plan (terminated, cancelled, ineligible), OR any other error that is not a timeout. |
-| **Timeout** | Stedi timed out. An earlier verification is preserved — a connection failure does not erase a prior real verification. |
+| **Timeout** (the pill shows **Expired**) | Stedi timed out. An earlier verification is preserved — a connection failure does not erase a prior real verification. |
 
 ---
 
@@ -87,7 +86,7 @@ When the payer sends a Co-Payment (EB01 `B`) line, that is always the copay Medi
 
 ## Result
 
-A verified row unblocks pre-service checks in the Work Queue, feeds copay/deductible into the biller-facing claim summary, and preserves the exact 271 for audit. Re-verify before the DOS if the last check is stale — the row records the date and time of every attempt so you can tell.
+A verified row keeps the exact 271 so you can open it with **View Response**. Re-verify before the DOS if the last check is stale — the row records the date and time of every attempt so you can tell.
 
 ---
 
@@ -95,8 +94,8 @@ A verified row unblocks pre-service checks in the Work Queue, feeds copay/deduct
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| **View Verification Response** disabled | No 271 response is saved on the row. | Click **Verify** again to run a fresh 270. |
-| Status stuck at **Timeout** | Stedi timed out; existing verification is preserved on purpose. | Retry after a minute. If it keeps timing out, the payer's endpoint is slow — try later. |
+| No **View Response** button | The row is not verified, or was verified manually. | Run the check again. |
+| Notes say "Verification timed out. Retry later." | Stedi timed out; an earlier verification is kept on purpose. | Retry after a minute. If it keeps timing out, the payer's endpoint is slow — try later. |
 | Status flips **Verified → Failed** on re-verify | Coverage really did lapse, OR the member ID / DOB is mistyped. | Compare the row's notes to the raw 271. If the payer says "member not found", correct the demographics and re-verify. |
-| Copay is `$0.00` but the payer's card shows a copay | The 271 either had no Co-Payment (EB01 `B`) line or listed only family coverage. | Open **View Verification Response** and read the benefits — Medipyxis shows what the payer actually returned. |
+| Copay is blank or old but the payer's card shows a copay | The 271 had no Co-Payment (EB01 `B`) line. | Open **View Response** and read the benefits — Medipyxis shows what the payer actually returned. |
 | Row shows **Verified** but claim submission still fails on eligibility | The 270 checks base coverage, not payer enrollment through Stedi. | Contact your practice administrator — the provider may need to complete Stedi enrollment for that payer. |

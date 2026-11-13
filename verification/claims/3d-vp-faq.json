@@ -1,0 +1,546 @@
+{
+  "title": "Vendor Portal FAQ",
+  "source": "vendor-portal/faq",
+  "url": "https://help.medipyxis.com/vendor-portal/faq/",
+  "claims": [
+    {
+      "id": "vpf-01",
+      "claim": "The vendor portal lives at /vendor.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/vendor\",",
+          "paths": [
+            "frontend/src/router.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "element: <VendorShell />,",
+          "paths": [
+            "frontend/src/router.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-02",
+      "claim": "On Use Events and on invoice lines a patient appears only as initials and year of birth.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// PHI-safe: view exposes patient_initials + birth_year only.",
+          "paths": [
+            "backend/supabase/functions/vendor-list-use-events/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{line.patient_initials} {line.patient_birth_year}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-03",
+      "claim": "Three roles: Admin (vendor_admin), Staff (vendor_user), Sales (vendor_sales).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor_admin: \"Admin\",",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor_user: \"Staff\",",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor_sales: \"Sales\",",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-04",
+      "claim": "Admin-only: Staff page, API page (API keys and webhooks), and editing clinic terms.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/staff\" element={<VendorAdminOnly><VendorStaffPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/settings/api\" element={<VendorAdminOnly><VendorSettingsApiPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/clinics/:id/terms\" element={<VendorAdminOnly><VendorTermsPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"API keys and webhooks\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (ident.identity.role !== \"vendor_admin\") {",
+          "paths": [
+            "backend/supabase/functions/vendor-terms-upsert/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-05",
+      "claim": "Staff and Sales see every other page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (identity?.role === \"vendor_admin\") {",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "items.push(...VENDOR_ADMIN_NAV_ITEMS);",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-06",
+      "claim": "The Staff page invites people as Admin or Staff.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_user\">vendor_user</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_admin\">vendor_admin</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"vendor_sales\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorStaffPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpf-07",
+      "claim": "Orders clinics place with your company appear on Orders as Pending; you accept, ship with a tracking number, and mark delivered.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"pending\", // T3",
+          "paths": [
+            "backend/supabase/functions/create-vendor-order/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"vendor_orders\")",
+          "paths": [
+            "backend/supabase/functions/create-vendor-order/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Tracking #\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-08",
+      "claim": "Orders a clinic raises from a product request appear on Requests.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Product requests from your tethered clinics, attributed to your catalog.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-09",
+      "claim": "Catalog: Add Product, or click a row to edit; Push to clinic offers products to a clinic, which reviews and accepts new products.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => openEdit(item)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Push to clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Creates catalog_links rows with status='proposed' for clinic review.",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-10",
+      "claim": "You send invoices from Invoices; the clinic approves, disputes, or holds them on its accounts payable page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Send to clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Clinic AP actions on a received invoice: approve, dispute, or hold per line.",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "supabase.functions.invoke('clinic-invoice-respond'",
+          "paths": [
+            "frontend/src/services/clinic/clinicApEdgeFunctions.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-11",
+      "claim": "Use Events shows date, clinic, product, lot, quantity, and patient initials and year of birth.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Date</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Clinic</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product / SKU</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Lot</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Qty</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Patient</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-12",
+      "claim": "Clinics lists connected clinics with city/state, number of product lines switched on, date granted, and a Terms link.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">City / State</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Enabled Spokes</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Granted</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Link to={`/vendor/clinics/${c.clinic_facility_id}/terms`}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-13",
+      "claim": "Same sign-in page; a vendor account opens /vendor/home after signing in.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor: '/vendor/home',",
+          "paths": [
+            "frontend/src/utils/auth/postAuthDestination.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// There is no /vendor/login: everyone signs in at /login and postAuthDestination",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-14",
+      "claim": "Vendor accounts are managed by the company Admin on the Staff page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"Only vendor_admin can manage staff\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-invite-staff/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-old-01",
+      "status": "removed",
+      "claim": "(removed) \"The vendor portal is a separate sign-in at /vendor.\"",
+      "reason": "There is no vendor sign-in page; everyone signs in at /login.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path=\"/login\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpf-old-02",
+      "status": "removed",
+      "claim": "(removed) \"Two vendor roles: vendor_admin and vendor_user.\"",
+      "reason": "A third role, vendor_sales, exists.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor_sales",
+          "paths": [
+            "backend/supabase/functions/_shared/vendor-auth.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpf-old-03",
+      "status": "removed",
+      "claim": "(removed) \"Product changes take effect directly; there is no separate practice approval step.\"",
+      "reason": "Pushed products land as proposed links the clinic must accept.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpf-old-04",
+      "status": "removed",
+      "claim": "(removed) \"Click New SKU\" on the Catalog page.",
+      "reason": "The button is Add Product.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New SKU",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

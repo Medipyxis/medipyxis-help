@@ -1,0 +1,131 @@
+{
+  "title": "February 2026 release notes",
+  "source": "release-notes/2026-02",
+  "url": "https://help.medipyxis.com/release-notes/2026-02/",
+  "claims": [
+    {
+      "id": "rn02-00",
+      "claim": "Changes merged between 2026-02-01 and 2026-02-28; selected changes still in the current release.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "education bundles",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 9 clinical education bundles with full patient & caregiver education text",
+          "paths": [
+            "frontend/src/data/educationBundlesContent.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-01",
+      "claim": "Nine patient and caregiver education bundles were added, with a preview. (PR #1368, #1376)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "9 education bundles with preview",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "pr",
+          "number": 1376,
+          "titleMatch": "9 standardized patient/caregiver education bundles",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 9 clinical education bundles with full patient & caregiver education text",
+          "paths": [
+            "frontend/src/data/educationBundlesContent.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handlePreviewBundle(bundle)}",
+          "paths": [
+            "frontend/src/pages/EducationBundleManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-02",
+      "claim": "Future dates are blocked in Historic Measurements. (PR #1456)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1456,
+          "titleMatch": "Block future dates in Historic Measurements",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "max={formatDateInputValue(new Date())}",
+          "paths": [
+            "frontend/src/components/intake/HistoricMeasurementsIntake.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-03",
+      "claim": "A pre-charting service reads a patient's external record from ZusHealth. (PR #1345)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1345,
+          "titleMatch": "Zus Health FHIR integration - Pre-charting",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/zus-preachart-data",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} from \"@/services/zusImportService\";",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn02-old-01",
+      "status": "removed",
+      "claim": "(removed) \"This release contained no user-facing feature changes; work was limited to infrastructure maintenance, dependency updates, and back-end data migrations.\"",
+      "reason": "User-facing feature PRs merged in this month. Encoded: the listed feature PR would have to be a maintenance-only change.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1368,
+          "titleMatch": "^(chore|deps|build|ci|infra)\\b|dependenc|maintenance",
+          "mergedFrom": "2026-02-01",
+          "mergedTo": "2026-02-28"
+        }
+      ]
+    }
+  ]
+}

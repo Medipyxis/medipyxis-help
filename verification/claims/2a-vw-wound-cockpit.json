@@ -1,0 +1,299 @@
+{
+  "title": "Wound Cockpit overview",
+  "source": "modules/visit-wizard-ehr/wound-cockpit",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/wound-cockpit/",
+  "claims": [
+    {
+      "id": "wc-01",
+      "claim": "The Wound Cockpit is the patient-level wound page; it lists every wound case for the selected patient on one screen, opened from the patient chart.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "path: \"/patients/:patientId/wound-cockpit\",", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "import WoundCockpitPage from \"./pages/WoundCockpitPage\";", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<WoundCaseCard", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-02",
+      "claim": "Patient summary banner: Medications shows the count of active medications with a short list.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{patientSnapshot.medications.length} <span className=\"hidden md:inline\">Active </span>Meds", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ".slice(0, 2)", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-03",
+      "claim": "Allergies shows the known allergy count.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<>{patientSnapshot.allergies.length} <span className=\"hidden md:inline\">Known </span>Allergies</>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-04",
+      "claim": "Vitals shows today's vitals (for example, blood pressure and A1C).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"hidden md:inline\">Today's Vitals</span>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "BP: {patientSnapshot.vitals.bp} · A1C: {patientSnapshot.vitals.a1c}", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-05",
+      "claim": "Five counters summarize the caseload: Total Cases, Open Wounds, Graft Eligible, Overdue Visits, IVR Required.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "truncate\">In Protocol</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "absent", "note": "there would be no sixth counter"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">Total Cases</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ],
+      "finding": "There are six counters, labelled Cases, Open, Eligible, Overdue, IVR and In Protocol (WoundCockpitPage.tsx:2962-3033).",
+      "proposed_text": "Six counters summarize the caseload: Cases, Open, Eligible (graft eligible), Overdue, IVR (IVR required) and In Protocol.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "<div className=\"grid grid-cols-6 gap-1 md:gap-3\">", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">Cases</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">Eligible</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">In Protocol</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There are six counters: Cases, Open, Eligible, Overdue, IVR and In Protocol."
+    },
+    {
+      "id": "wc-05b",
+      "claim": "Six counters summarize the caseload: Cases, Open, Eligible (graft eligible), Overdue, IVR (IVR required) and In Protocol.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<div className=\"grid grid-cols-6 gap-1 md:gap-3\">", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">Cases</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">Eligible</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "truncate\">In Protocol</div>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-06",
+      "claim": "Top actions: Archived Wounds, Advanced Filters, Export Data.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<span>Archived Wounds ({archivedWounds.length})</span>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span>Advanced Filters</span>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span>Export Data</span>", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-07",
+      "claim": "Add Visit starts a new encounter (top action, also available on each wound card); click Add Visit on a wound card and the Visit Wizard opens with that wound selected in step 7.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Add Visit\\s*$|>\\s*Add Visit\\s*<", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"}
+      ],
+      "finding": "There is no Add Visit button on the page or on the cards. The top of the page has an appointment picker: pick a scheduled visit or \"+ Start visit — pick a calendar slot…\", then click Open (AppointmentPickerInline.tsx:352-367, rendered at WoundCockpitPage.tsx:2571). Card actions are the IVR readiness button, Details, Intake and a More actions menu (WoundCaseCard.tsx:775-795).",
+      "proposed_text": "To start or continue a visit, use the picker at the top of the page: choose a scheduled visit (an open note is marked \"note in progress\") or \"+ Start visit — pick a calendar slot…\", then click Open.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": ": \"+ Start visit — pick a calendar slot…\"}", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \" · note in progress\"", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<AppointmentPickerInline", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no Add Visit button on the page or cards; visits open from the appointment picker at the top of the page."
+    },
+    {
+      "id": "wc-07b",
+      "claim": "To start or continue a visit, use the picker at the top of the page. Choose a scheduled visit (an open note is marked \"note in progress\") or \"+ Start visit — pick a calendar slot…\", then click Open.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": ": \"+ Start visit — pick a calendar slot…\"}", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "? \" · note in progress\"", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<AppointmentPickerInline", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-08",
+      "claim": "Each wound card shows the anatomic location and an etiology badge.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{wound.site}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{wound.type}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "if (wound.wound_type) return wound.wound_type;", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-09",
+      "claim": "The card shows the internal wound record ID.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{wound.id.split(\"-\")[0]}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present", "note": "the card shows only the first block of the ID"}
+      ]
+    },
+    {
+      "id": "wc-10",
+      "claim": "Status pills: Active, plus IVR readiness (IVR: Not Ready).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "IVR: {wound.ivrStatus}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ": wound.ivr_status || \"Not Ready\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{wound.status.charAt(0).toUpperCase() +", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-11",
+      "claim": "Compliance pills on each card: Graft Eligible (purple), IVR Available (green), and LCD: Compliant (green); a not-ready wound also shows IVR Not Available.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "LCD: Compliant", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "IVR Available", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "IVR Not Available", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"}
+      ],
+      "finding": "None of these pills exist. Compliance actions return an empty list (WoundCockpitPage.tsx:2050), getLCDStatus is never called, and the card's only extra chips are \"Visit Overdue\" and \"IVR Action Required\" (WoundCockpitPage.tsx:1982-2004). Readiness is shown on the IVR readiness button.",
+      "proposed_text": "Each card has an IVR readiness button whose label and colour reflect the wound's coverage check; click it to open the readiness check. A card may also show Visit Overdue or IVR Action Required.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "title=\"Open IVR readiness check\"", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "text: \"Visit Overdue\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "text: \"IVR Action Required\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "None of these compliance pills exist; readiness is shown on the IVR readiness button, with optional Visit Overdue and IVR Action Required flags."
+    },
+    {
+      "id": "wc-11b",
+      "claim": "Each card has an IVR readiness button whose label and colour reflect the wound's coverage check. Click it to open the readiness check and see what the check still needs. A card may also show Visit Overdue or IVR Action Required.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "title=\"Open IVR readiness check\"", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "missingCriteria={ivrButtonState.missingCriteria}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "text: \"Visit Overdue\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "text: \"IVR Action Required\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-12",
+      "claim": "Photo: a thumbnail if a photo is on file, with the count.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "showCount={true}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<WoundPhotoGalleryV2", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-13",
+      "claim": "Metrics grid: Created date, number of visits, Length, Width, Depth, and Area (cm²).",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+(Created|Visits|Length|Width|Depth|Area)\\s*$", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": {"min": 6}},
+        {"type": "grep", "fixed": true, "pattern": "{areaValue === null ? \"Not measured\" : `${areaValue} cm²`}", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-14",
+      "claim": "Progress notes: the latest progress note, if any.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Latest Progress Notes\\s*$", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-15",
+      "claim": "Card actions: Add Visit, Details, Intake, and an overflow menu.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Details</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Intake</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "aria-label=\"More actions\"", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Add Visit</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ],
+      "finding": "Cards have Details, Intake and a More actions menu (Archive Wound Case), plus the IVR readiness button and, once IVR is approved, Order More (WoundCaseCard.tsx:746-811); there is no Add Visit.",
+      "proposed_text": "Card actions: the IVR readiness button, Details, Intake, a More actions menu (Archive Wound Case), and Order More once IVR is approved.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Details</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Intake</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Order More</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Archive Wound Case\\s*$", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Cards have no Add Visit action."
+    },
+    {
+      "id": "wc-15b",
+      "claim": "Card actions: the IVR readiness button, Details, Intake, a More actions menu (Archive Wound Case), and Order More once IVR is approved.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Details</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Intake</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<span className=\"truncate\">Order More</span>", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Archive Wound Case\\s*$", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-16",
+      "claim": "Drafts autosave continuously; each field is saved as you complete it.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "/** Per-field debounce window. Default 1000 ms. */", "paths": ["frontend/src/hooks/useWizardAutoSave.ts"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "useWizardAutoSave({", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-17",
+      "claim": "If a draft already exists for today, continue from the existing draft instead of starting a new one.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "? \" · note in progress\"", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-18",
+      "claim": "Roles: Clinician can view wounds and start visits; Clinical manager can view only; Medical director can view and review attested notes; Admin views everything in their facility.",
+      "checks": [
+        {"type": "grep", "ignoreCase": true, "pattern": "clinical_manager|medical_director", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx", "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present", "note": "a per-role difference would need a role check on the page"}
+      ],
+      "finding": "The page has no per-role behaviour. The route is gated only by the \"All Patients\" feature (user-routes.tsx:2569), and the cockpit page, picker and card never check a role.",
+      "proposed_text": "Anyone with access to All Patients can open the Wound Cockpit and use all of its actions; the page does not change by role.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "<FeatureAccess feature=\"All Patients\">", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
+        {"type": "grep", "ignoreCase": true, "pattern": "clinical_manager|medical_director", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx", "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "absent"}
+      ],
+      "status": "removed",
+      "reason": "The page has no per-role behaviour; it is gated only by the All Patients feature."
+    },
+    {
+      "id": "wc-18b",
+      "claim": "Anyone with access to All Patients can open the Wound Cockpit and use all of its actions. The page does not change by role.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<FeatureAccess feature=\"All Patients\">", "paths": ["frontend/src/user-routes.tsx"], "expect": "present"},
+        {"type": "grep", "ignoreCase": true, "pattern": "clinical_manager|medical_director", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx", "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "absent"}
+      ]
+    },
+    {
+      "id": "wc-19",
+      "claim": "Troubleshooting: if no wounds appear, the patient has no wound records; create a wound during intake or via the Add Wound flow.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+No Wound Cases Found\\s*$", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "return woundCasesLength > 0 ? \"add_visit\" : \"initial_evaluation\";", "paths": ["frontend/src/pages/woundCockpitCta.ts"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-20",
+      "claim": "Troubleshooting: Add Visit is disabled when a visit is already in progress for today or the wound is archived; restore the wound from Archived Wounds.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s+Add Visit\\s*$|>\\s*Add Visit\\s*<", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"}
+      ],
+      "finding": "There is no Add Visit button. The picker's Open button is disabled only until a real choice is made or while loading (AppointmentPickerInline.tsx:365). Archived wounds are restored with Unarchive in the Archived Wound Cases list.",
+      "proposed_text": "Open is disabled until you choose a visit in the picker. To work on an archived wound, open Archived Wounds and click Unarchive.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "disabled={!isRealSelection || loading}", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Unarchive\\s*$", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no Add Visit button; archived wounds are restored with Unarchive."
+    },
+    {
+      "id": "wc-20b",
+      "claim": "Open is disabled until you choose a visit in the picker. To work on an archived wound, open Archived Wounds and click Unarchive.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "disabled={!isRealSelection || loading}", "paths": ["frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s+Unarchive\\s*$", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "wc-21",
+      "claim": "Troubleshooting: the LCD: Compliant pill is missing when documentation is incomplete; IVR shows Not Ready until measurements, tissue composition and prior-treatment history are complete, and the pill updates on save.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "LCD: Compliant", "paths": ["frontend/src/pages/WoundCockpitPage.tsx", "frontend/src/components/wound-cockpit"], "expect": "present"}
+      ],
+      "finding": "There is no LCD: Compliant pill (see wc-11). \"IVR: Not Ready\" is the default when wound_data.ivr_status is empty or \"None\" (WoundCockpitPage.tsx:1567-1568); it is not derived from those documentation fields on the card.",
+      "proposed_text": "IVR shows Not Ready until an IVR status is recorded for the wound. Open the IVR readiness button on the card to see what the coverage check still needs.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": ": wound.ivr_status || \"Not Ready\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<IVRReadinessModal", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no LCD: Compliant pill, and IVR: Not Ready is the default when no IVR status is recorded, not derived from documentation fields."
+    },
+    {
+      "id": "wc-21b",
+      "claim": "IVR shows Not Ready until an IVR status is recorded for the wound. Click the IVR readiness button on the card to see what the coverage check still needs.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": ": wound.ivr_status || \"Not Ready\",", "paths": ["frontend/src/pages/WoundCockpitPage.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<IVRReadinessModal", "paths": ["frontend/src/components/wound-cockpit/WoundCaseCard.tsx"], "expect": "present"}
+      ]
+    }
+  ]
+}

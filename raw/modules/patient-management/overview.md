@@ -6,7 +6,7 @@ audience: [clinician, intake, admin]
 roles: [clinician, medical_director, referral_coordinator, admin]
 type: concept
 estimated_minutes: 3
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/all-patients
 related:
   - patient-management-zus-tefca
@@ -18,54 +18,25 @@ tags: [patients, records]
 
 # Patient Management — overview
 
-Patient Management is your single-pane roster for every active and archived patient at the current facility. Patients land here once a referral graduates from **Assigned** in Referral Intake.
+Medipyxis has two patient screens. **Patient Management** opens **My Clinical Day**: your schedule for the day, patients who need scheduling, and overdue visits. **All Patients** is the full patient list. A patient appears on All Patients as soon as you click **Create Patient** or **Approve & Create Patient** in Referral Intake — not only after the referral reaches **Assigned**.
 
-<div class="video-embed">
-  <iframe src="https://www.youtube-nocookie.com/embed/4ogjS8RBJtQ"
-          title="Create Patients & Document Wound Encounters — Mobile Wound Care EMR Demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen></iframe>
-</div>
-<span class="video-caption">Walkthrough: creating a patient and documenting a wound encounter end to end.</span>
+Walkthrough: creating a patient and documenting a wound encounter end to end.
 
 ## Two routes
 
-- **Patient Management** — the working list a clinician uses daily. Filtered to patients you have a visit or follow-up with.
-- **All Patients** — the admin-level roster with archived and non-active records.
+- **Patient Management** — opens My Clinical Day, your working schedule for the day. Open it from the **Patient Management** sidebar item.
+- **All Patients** — the full directory, opened from the **All Patients** sidebar item.
 
-## List columns
+## Patient cards and status
 
-| Column | Notes |
-|---|---|
-| **Name / DOB** | Click to open the chart |
-| **MRN** | Medipyxis-generated; unique per organization |
-| **Status** | Active · On Hold · Archived · Deceased |
-| **Primary Clinician** | Editable by admin |
-| **Next Visit** | Pulled from Fleet Calendar |
-| **Last Visit** | Most recent signed note date |
-| **Open Actions** | Count of pending items (LCD check, IVR renewal, pending signature) |
+On All Patients you can filter status to **Active**, **On Hold**, **Discharged**, or **Archived**. New patients from Referral Intake are created as Active.
+
+All Patients shows one card per patient with the patient's name, status (ACTIVE, ON HOLD, DISCHARGED, or ARCHIVED), age, number of wounds, and number of visits. The MRN is not on the card; it appears in the success message after **Create Patient** when it is available.
 
 ## Patient chart
 
-Clicking a patient opens the chart with tabs:
-
-- **Summary** — demographics, clinical (diagnoses, allergies, active medications), insurance, referral, and care-team sections. External-EHR records pulled from **ZusHealth** appear here with provenance indicators.
-- **Wounds** — the [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md), the canonical per-wound screen. One card per active wound with the last measurement trend line and the entry point for the Visit Wizard. Use the cockpit for every per-wound task.
-- **Visits** — historical visit notes, sortable by date and provider.
-- **Documents** — uploaded PDFs, consent forms, prior records.
-- **Medications** — DoseSpot integration for e-prescribing and reconciliation.
-- **Orders & DME** — open and historical orders.
-- **Billing** — claim history with links into Billing Operations.
-- **Activity** — immutable audit trail.
+Click **View** on a patient's card to open the chart. Use the chart for clinical work after intake; use Referral Intake to add the patient and to move the referral through the board.
 
 ## Archive, don't delete
 
-You cannot delete a patient. Use **Archive** on the patient header to retire a record. Archived patients are excluded from scheduling but preserved for audit and billing reconciliation.
-
-## Related
-
-- [Referral Intake → Assigned drops here](../referral-intake/status-transitions.md)
-- [Wound Cockpit](../visit-wizard-ehr/wound-cockpit.md) — the canonical wound screen.
-- [Starting a visit](../visit-wizard-ehr/start-a-visit.md)
-- [How the Visit Wizard opens](../visit-wizard-ehr/how-the-wizard-opens.md) — what happens when you tap Start Visit or Continue Visit.
-- [Note honesty guardrails](../visit-wizard-ehr/note-honesty-guardrails.md) — what the signed note will and will not add on your behalf.
+You cannot delete a patient. Use **Archive** on the patient to retire a record. Archived patients are preserved for audit and billing reconciliation. You can restore an archived patient back to Active.

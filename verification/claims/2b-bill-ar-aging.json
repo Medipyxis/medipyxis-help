@@ -1,0 +1,1010 @@
+{
+  "title": "AR Aging and Reports Center reference",
+  "source": "modules/billing/ar-aging",
+  "url": "https://help.medipyxis.com/modules/billing/ar-aging/",
+  "claims": [
+    {
+      "id": "ara-01",
+      "claim": "Aging buckets measure the number of days elapsed since the date of service for unpaid claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "calculateDaysInAR(claim.date_of_service",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present",
+          "note": "true only if the A/R Aging buckets are computed from the date of service"
+        }
+      ],
+      "finding": "The A/R Aging page measures age from the claim's submission date, not the date of service: arAgingService.ts:143-144 computes daysInAR from claim.submitted_at (calculateDaysInAR, arAgingService.ts:30-35), and only claims with status submitted, accepted or partial_payment are counted (arAgingService.ts:105). The Overview tab's A/R Aging Breakdown also ages from the submission date (BillingDashboard.tsx:448-454). Unsubmitted claims are not in any bucket.",
+      "proposed_text": "Aging buckets measure the number of days since the claim was submitted, for submitted claims (status Submitted, Accepted or partial payment) that still carry a balance.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? calculateDaysInAR(claim.submitted_at)",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ],
+      "status": "removed",
+      "reason": "Aging is measured from the submission date, not the date of service. Replaced by ara-24."
+    },
+    {
+      "id": "ara-24",
+      "claim": "Aging buckets measure the number of days since the claim was submitted, for submitted claims (status Submitted, Accepted or partial payment) that still carry a balance.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? calculateDaysInAR(claim.submitted_at)",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ara-25",
+      "claim": "Claims that have not been submitted are not in any bucket.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['submitted', 'accepted', 'partial_payment'])",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": {
+            "min": 3
+          },
+          "note": "every A/R aging query filters to these statuses"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'draft'",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ara-02",
+      "claim": "They appear in the Account Receivable report and related AR views.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"(Current|31-60|61-90|91-120|120\\+)",
+          "paths": [
+            "frontend/src/services/reportsCenterArReport.ts"
+          ],
+          "expect": "present",
+          "note": "true only if the Account Receivable report carries bucket columns"
+        }
+      ],
+      "finding": "The Account Receivable report in the Reports Center has no aging buckets; it lists claims with an \"Aging Days\" column (reportsCenterArReport.ts:16). The buckets appear on the A/R Aging page (ArAging.tsx:262-372, \"Aging Bucket Breakdown\") and in the \"A/R Aging Breakdown\" card on the Billing Operations Overview tab (BillingDashboard.tsx:3035).",
+      "proposed_text": "They appear on the A/R Aging page (Billing Operations → Quick Actions → A/R Aging) and in the A/R Aging Breakdown card on the Overview tab. The Account Receivable report in the Reports Center shows each claim's Aging Days instead of buckets.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Aging Bucket Breakdown",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "A/R Aging Breakdown",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/ar-aging`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: \"aging_days\", label: \"Aging Days\" }",
+          "paths": [
+            "frontend/src/services/reportsCenterArReport.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The Account Receivable report has no bucket columns. Replaced by ara-26."
+    },
+    {
+      "id": "ara-26",
+      "claim": "They appear on the A/R Aging page (Billing Operations → Quick Actions → A/R Aging) and in the A/R Aging Breakdown card on the Overview tab. The Account Receivable report in the Reports Center shows each claim's Aging Days instead of buckets.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Aging Bucket Breakdown",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "A/R Aging Breakdown",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/ar-aging`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: \"aging_days\", label: \"Aging Days\" }",
+          "paths": [
+            "frontend/src/services/reportsCenterArReport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Quick Actions",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-03",
+      "claim": "(Note: the Work Queue's Claim Age filter uses its own buckets measured from the claim's submission date — Not Submitted, 0–30, 31–60, 61–90, and 90+.)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const submittedAt = r.claim_submitted_at;",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!submittedAt) return ageBucketFilter === \"not_submitted\";",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"not_submitted\">Not Submitted</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"0_30\">0-30 days</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"31_60\">31-60 days</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"61_90\">61-90 days</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"90_plus\">90+ days</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-04",
+      "claim": "Bucket boundaries: 0–30 (0 to 30 days), 31–60 (31 to 60 days), 61–90 (61 to 90 days), 91–120 (91 to 120 days), 120+ (121+ days).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (days <= 30) return 'current';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (days <= 60) return 'days31to60';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (days <= 90) return 'days61to90';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (days <= 120) return 'days91to120';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Current (0-30)",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present",
+          "note": "the first bucket is labelled Current (0-30) on the page"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(31-60|61-90|91-120|120\\+)$",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ara-05",
+      "claim": "Typical priority per bucket: 0–30 Monitor — within standard payer processing time; 31–60 Review — follow up if no ERA received; 61–90 Escalate — contact payer; 91–120 High priority — approaching or past many timely-filing limits; 120+ Critical — verify timely-filing status before submitting; write-off review may be required.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Escalate",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the A/R Aging page shows a priority label per bucket"
+        }
+      ],
+      "finding": "Workflow advice, not product behavior: the A/R Aging page shows no priority labels per bucket (ArAging.tsx:262-372). Note that every claim in a bucket has already been submitted (arAgingService.ts:105), so \"before submitting\" does not apply to the 120+ bucket as written.",
+      "status": "removed",
+      "reason": "No priority labels exist in the product, and 120+ claims are already submitted. Deleted; ara-27 is plain advice."
+    },
+    {
+      "id": "ara-27",
+      "claim": "Work the oldest buckets first, and follow up with the payer on any claim that has had no response for more than 30 days.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ara-06",
+      "claim": "Most contracts have 90-day timely-filing limits.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!payerName) return 90;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present",
+          "note": "product default filing window for payers it does not recognise"
+        }
+      ],
+      "finding": "Payer-contract fact; not checkable from code. The product encodes 90 days as the default timely-filing window for any payer that is not Medicare, Medicaid, TRICARE or CHAMPVA (timelyFiling.ts:1-9), which is what the checks confirm."
+    },
+    {
+      "id": "ara-07",
+      "claim": "The AR Aging view. Each column represents one aging bucket; rows break down the outstanding balance by payer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(payer.aging.days91to120)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the by-payer table has a 91-120 column of its own"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(payer.aging.over120)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the by-payer table has a 120+ column of its own"
+        }
+      ],
+      "finding": "The by-payer table (\"Top Payers by Outstanding Balance\", ArAging.tsx:375-470) has bucket columns Current, 31-60, 61-90 and \"Over 90\"; 91-120 and 120+ are merged into Over 90 (ArAging.tsx:406, 430-432). Only the Aging Bucket Breakdown table shows all five buckets, and it is not broken down by payer.",
+      "proposed_text": "The A/R Aging page. The Top Payers by Outstanding Balance table breaks the outstanding balance down by payer, with columns Current, 31-60, 61-90 and Over 90; the Aging Bucket Breakdown table above it shows all five buckets for the facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Top Payers by Outstanding Balance",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Over 90$",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(over90)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Aging Bucket Breakdown",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The by-payer table merges 91-120 and 120+ into Over 90. Replaced by ara-28."
+    },
+    {
+      "id": "ara-28",
+      "claim": "The A/R Aging page. The Top Payers by Outstanding Balance table breaks the outstanding balance down by payer, with columns Current, 31-60, 61-90 and Over 90; the Aging Bucket Breakdown table above it shows all five buckets for the facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Top Payers by Outstanding Balance",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Over 90$",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(over90)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Aging Bucket Breakdown",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(payer.aging.current)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(payer.aging.days31to60)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatCurrency(payer.aging.days61to90)}",
+          "paths": [
+            "frontend/src/pages/ArAging.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-08",
+      "claim": "Medicare requires claims to be filed within one year (365 days) of the date of service.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (lower.includes('medicare')) return 365;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const daysSinceDos = Math.floor((today.getTime() - dos.getTime()) / 86_400_000);",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "computeTimelyFiling(",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present",
+          "note": "the rule is used by the Coding Review drawer"
+        }
+      ],
+      "finding": "Regulatory fact; the checks confirm the product encodes it (365 days from date of service for payers whose name contains Medicare)."
+    },
+    {
+      "id": "ara-09",
+      "claim": "State Medicaid programs and commercial payers often have shorter timely-filing windows — commonly 90 to 180 days.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (lower.includes('medicaid')) return 180;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!payerName) return 90;",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Payer fact; the checks confirm the product's encoded windows (Medicaid 180 days, default 90 days)."
+    },
+    {
+      "id": "ara-10",
+      "claim": "Any claim in the 120+ bucket must be reviewed against the applicable payer contract before submission.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "calculateDaysInAR(claim.date_of_service",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present",
+          "note": "the 120+ bucket could hold unsubmitted claims only if age ran from the date of service"
+        }
+      ],
+      "finding": "Workflow advice with no product check. As written it cannot apply: the 120+ bucket holds only claims that were already submitted 120+ days ago (arAgingService.ts:105, 143-146), so there is no \"before submission\" step for them.",
+      "proposed_text": "A claim in the 120+ bucket was submitted more than 120 days ago and is still unpaid. Before you resubmit or correct it, check its timely-filing window; the Coding Review drawer shows the days left to file.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${timelyFiling.daysRemaining}d to file`",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'over120';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "120+ bucket holds claims already submitted; there is no before-submission step. Replaced by ara-29."
+    },
+    {
+      "id": "ara-29",
+      "claim": "A claim in the 120+ bucket was submitted more than 120 days ago and is still unpaid. Before you resubmit or correct it, check its timely-filing window; the Coding Review drawer shows the days left to file.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${timelyFiling.daysRemaining}d to file`",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return 'over120';",
+          "paths": [
+            "frontend/src/services/arAgingService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-11",
+      "claim": "The Reports Center generates operational billing reports. Navigate to /facility/{facility_uuid}/billing/reports-center.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/reports-center\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingReportsCenterPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-12",
+      "claim": "The Reports Center. Choose a report type, set filters, run the report to preview it, then export to CSV.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Report type\"",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ReportsCenterFiltersPanel",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{running ? \"Running…\" : \"Run report\"}",
+          "paths": [
+            "frontend/src/components/billing-reports/ReportsCenterFiltersPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ReportsCenterPreviewTable result={result} loading={running} />",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Export CSV$",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-13",
+      "claim": "Patient Visit Reports — Visits/encounters over a period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Patient Visit Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"patient_visit\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-14",
+      "claim": "Claims Reports — Claims and their status across the period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"claims\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-15",
+      "claim": "Insurance Payment Reports — Payments received from payers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Insurance Payment Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"insurance_payments\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-16",
+      "claim": "Patient Payment Reports — Payments received from patients.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Patient Payment Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"patient_payments\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-17",
+      "claim": "Account Receivable Reports — Outstanding balances (AR) by payer/period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Account Receivable Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"accounts_receivable\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: \"outstanding_balance\", label: \"Outstanding Balance\" },",
+          "paths": [
+            "frontend/src/services/reportsCenterArReport.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: \"payer_name\", label: \"Payer\" },",
+          "paths": [
+            "frontend/src/services/reportsCenterArReport.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Rows are per claim with a Payer column, filterable by payer and date range; they are not grouped into payer or period totals."
+    },
+    {
+      "id": "ara-18",
+      "claim": "Patient List Reports — Patient roster for the selected criteria.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Patient List Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"patient_list\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-19",
+      "claim": "Patient Balance Reports — Outstanding patient balances.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Patient Balance Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"patient_balance\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-20",
+      "claim": "Charges Reports — Charges billed over the period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Charges Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (reportType === \"charges\") {",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-21",
+      "claim": "Set the filters (date range, payer, and other criteria in the filters panel).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Date range$",
+          "paths": [
+            "frontend/src/components/billing-reports/ReportsCenterFiltersPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(payerName) => onChange({ ...filters, payer_name: payerName })}",
+          "paths": [
+            "frontend/src/components/billing-reports/ReportsCenterFiltersPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-22",
+      "claim": "Click Run report. The results preview in a table below. Export to CSV to download the report for external distribution.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{running ? \"Running…\" : \"Run report\"}",
+          "paths": [
+            "frontend/src/components/billing-reports/ReportsCenterFiltersPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "a.download = `reports-center-${reportType}-${new Date().toISOString().split(\"T\")[0]}.csv`;",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ara-23",
+      "claim": "Reports run on demand against current data — there is no overnight batch, so a report reflects the data at the moment you run it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const { data, error } = await runReportsCenterReport(reportType, {",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present",
+          "note": "the report is computed when Run report is clicked"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"billing_claims\")",
+          "paths": [
+            "frontend/src/services/reportsCenterService.ts"
+          ],
+          "expect": {
+            "min": 1
+          },
+          "note": "reads the live claims table, not a snapshot"
+        }
+      ]
+    }
+  ]
+}

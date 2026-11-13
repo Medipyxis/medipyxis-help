@@ -1,0 +1,1528 @@
+{
+  "title": "Review coding with the Coding Review drawer",
+  "source": "modules/billing/coding-review-drawer",
+  "url": "https://help.medipyxis.com/modules/billing/coding-review-drawer/",
+  "claims": [
+    {
+      "id": "crd-01",
+      "claim": "It opens as a right-side drawer with the clinical summary on the left, the billing codes on the right",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SheetContent className=\"sm:max-w-[1200px] w-full overflow-y-auto\">",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">(({ side = 'right', className, children, ...props }, ref) => (",
+          "paths": ["frontend/src/components/ui/sheet.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* LEFT: Clinical Summary (preserved from existing) */}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* RIGHT: Code Editor (NEW) */}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-02",
+      "status": "removed",
+      "claim": "... and every override attributed and logged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "claim_status_history\"\\)\\s*\\.insert|markClaimSubmitted|coding_fact_overrides",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present",
+          "note": "would hold if overrides made in the drawer were recorded"
+        }
+      ],
+      "finding": "The drawer's only override is 'Save anyway' on the duplicate-claim dialog (force: true to update-claim-codes, CodingReviewDrawer.tsx:461-492); the drawer writes no override record. Recorded coding-fact overrides happen on the claim page's manual paths (BillingClaimDetailPage.tsx:794-870 via mark-claim-submitted).",
+      "proposed_text": "Coding-fact overrides confirmed on Mark as Submitted, Fix & Resubmit or Send Fax are attributed and recorded in the claim's history.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"claim_status_history\")",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "coding_fact_overrides: (input.overrides ?? []).map((issue) => ({",
+          "paths": ["frontend/src/services/claimSubmissionService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The drawer writes no override record; recorded overrides happen only on the manual submission paths. Replaced by crd-33b."
+    },
+    {
+      "id": "crd-03",
+      "status": "removed",
+      "claim": "You have the biller role, or admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireRole roles={[\"biller\", \"admin\"]}",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Work Queue route is gated by the \"Billing Operations\" feature (RequireFeature + FeatureAccess, frontend/src/user-routes.tsx:966-975), not a biller/admin role check; role-to-feature mapping is tenant data.",
+      "proposed_text": "You have access to Billing Operations.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingWorkQueuePage />",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Billing Operations\">",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The Work Queue is gated by the Billing Operations feature, not a biller/admin role. Replaced by crd-03b."
+    },
+    {
+      "id": "crd-03b",
+      "claim": "You have access to Billing Operations.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingWorkQueuePage />",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Billing Operations\">",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-04",
+      "claim": "A claim exists on the encounter — the drawer is reachable only when the row has a claim. From /facility/{facility_uuid}/billing/work-queue, click Review on any row that has a claim. The drawer slides in from the right.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/work-queue\",",
+          "paths": ["frontend/src/user-routes.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => setDrawerRow(r)}",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": {"count": 1}
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Review$",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-05",
+      "claim": "Use ← / → at the top to move to the previous or next claim in the current queue without closing the drawer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Previous claim (keyboard: left)\"",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Next claim (keyboard: right)\"",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onNavigate={(row) => setDrawerRow(row)}",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-06",
+      "claim": "The header shows the patient, DOS, payer, rendering clinician, and a timely-filing badge (Nd to file or Nd PAST DEADLINE).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding Review — {row?.patient_name ?? \"Unknown\"}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DOS: {row?.dos ?? \"—\"}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{row.claim_payer_name}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{row.clinician_name}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${timelyFiling.daysRemaining}d to file`",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": `${Math.abs(timelyFiling.daysRemaining)}d PAST DEADLINE`}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-07",
+      "claim": "If the visit is not signed, a red banner across the top says so",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "VISIT NOT SIGNED — this claim cannot be submitted until the",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isUnsigned = Boolean(visitData) && !isVisitSigned(visitData);",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-08",
+      "status": "removed",
+      "claim": "— the claim cannot be submitted until the provider signs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "visit_locked",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Not provable from code. New Claim offers only locked visits (frontend/src/pages/NewBillingSubmitPage.tsx:158-161), but no submit edge path (submitToStedi.ts, submit-claim, submit-to-stedi, biller-submit-claim-onbehalf) checks visit_locked, and Mark as Submitted / Send Fax do not either. Whether an existing claim on an unsigned visit can be submitted needs a browser/DB test.",
+      "reason": "No submission path checks that the visit is signed; the sentence was deleted."
+    },
+    {
+      "id": "crd-09",
+      "claim": "Left — Clinical Summary. Read-only cards pulled from the progress note that supports this claim: Wound Assessment (section 7), Procedures & Supplies (section 11), Objective Assessment (section 4), Provider Attestation (section 17).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"section_7_wound_assessment_documentation, section_11_procedures_supplies, section_4_objective_assessment, section_17_provider_attestation, visit_locked\"",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +(Wound Assessment|Procedures & Supplies|Objective Assessment|Provider Attestation)$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": {"count": 4}
+        }
+      ]
+    },
+    {
+      "id": "crd-10",
+      "claim": "View Full Note opens the PDF in a new tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +View Full Note$",
+          "paths": ["frontend/src/components/billing/CodingReviewNoteLink.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NoteLink supabaseClient={supabaseClient} note={resolvedNote} lookup={noteLookup} />",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const tab = window.open(urlFor(viewable), \"_blank\");",
+          "paths": ["frontend/src/hooks/useViewableNote.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ type: \"application/pdf\" }",
+          "paths": ["frontend/src/hooks/useViewableNote.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-11",
+      "claim": "Coding Review now resolves the correct note for a claim across three ID namespaces, not just one ... coverage on the reachable set jumped from 60 to 174 of 461 clinical notes on production.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const note = await resolveProgressNote(supabaseClient, row);",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "That matches only 60 of the 461",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "REACHABLE coverage with the three tiers below: 174 of 461.",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-12",
+      "status": "removed",
+      "claim": "Before the fix, ~87% of claims had no note surface in the drawer even when a signed note existed",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "87 ?%|of (the )?claims",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present",
+          "note": "would hold if the measurement were of claims"
+        }
+      ],
+      "finding": "The measurement is of notes, not claims: 60 of 461 visit_form + initial_evaluation notes matched, 'so for the other 401 the coder sees no note' (frontend/src/utils/billing/resolveProgressNoteFilePath.ts:7-10). 401/461 is 87% of notes.",
+      "proposed_text": "Before the fix, the drawer could find only 60 of 461 clinical notes on production; for the other 401 (about 87%) the coder saw no note.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "That matches only 60 of the 461",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "the other 401 the coder sees no note",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The measured 87% is of notes (401 of 461), not claims. Replaced by crd-12b."
+    },
+    {
+      "id": "crd-12b",
+      "claim": "Before the fix, the drawer could find only 60 of 461 clinical notes on production; for the other 401 (about 87%) the coder saw no note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "That matches only 60 of the 461",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "the other 401 the coder sees no note",
+          "paths": ["frontend/src/utils/billing/resolveProgressNoteFilePath.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-13",
+      "claim": "Right — Billing Codes. Editable: Place of Service (two-digit code, e.g. 12)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +Place of Service$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"12\"",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-14",
+      "status": "removed",
+      "claim": "Billing Codes (procedures with modifiers, units, and diagnoses; each procedure line carries its own diagnosis pointers)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "absent",
+          "note": "would hold if each line kept its own diagnoses"
+        }
+      ],
+      "finding": "On save the drawer gives every procedure line the full list of the claim's ICD-10 codes (frontend/src/utils/billing/codingReviewAdapters.ts:67-79: icd_codes: icdCodes for every line); the code entry has no per-line diagnosis control.",
+      "proposed_text": "Billing Codes (procedures with modifiers, units and charges, plus the claim's ICD-10 diagnoses; on save every procedure line points to all listed diagnoses)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const icdCodes = codes.filter(c => c.codeType === 'ICD-10').map(c => c.code);",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Every line gets all of the claim ICD-10 codes on save; there are no per-line pointers. Replaced by crd-14b."
+    },
+    {
+      "id": "crd-14b",
+      "claim": "Billing Codes (procedures with modifiers, units and charges, plus the claim's ICD-10 diagnoses; on save every procedure line points to all listed diagnoses)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const icdCodes = codes.filter(c => c.codeType === 'ICD-10').map(c => c.code);",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onUpdate(code.id, 'charge', e.target.value)}",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-15",
+      "claim": "Expected Total rolls up automatically from the line charges",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +Expected Total$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sum, c) => sum + (c.charge ?? 0) * (c.units ?? 1),",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-16",
+      "claim": "Claim Status inline dropdown mirrors the Work Queue value",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +Claim Status$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setLocalStatus(row?.claim_manual_status ?? null);",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "currentStatus={localStatus}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-17",
+      "status": "removed",
+      "claim": "Red — validation errors: The claim payload is structurally broken (missing subscriber, missing service line, etc.). Submission is blocked until you fix them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "subscriber|service line",
+          "ignoreCase": true,
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present",
+          "note": "would hold if the red banner checked payload structure"
+        }
+      ],
+      "finding": "The only error-severity rule is 'Procedure/supply codes present with no supporting ICD-10 diagnosis — guaranteed denial.' (frontend/src/utils/billing/codingValidation.ts:41-42). The drawer has no submit action, and Save is not blocked by it (CodingReviewDrawer.tsx:803).",
+      "proposed_text": "Red — error: procedure or supply codes with no ICD-10 diagnosis on the claim (a guaranteed denial). Fix it before submitting; Save stays available.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: 'Procedure/supply codes present with no supporting ICD-10 diagnosis — guaranteed denial.',",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The only error rule is codes with no ICD-10; the drawer cannot submit and Save is not blocked. Replaced by crd-17b."
+    },
+    {
+      "id": "crd-17b",
+      "claim": "Red — error: procedure or supply codes with no ICD-10 diagnosis on the claim (a guaranteed denial). Fix it before submitting; Save stays available.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: 'Procedure/supply codes present with no supporting ICD-10 diagnosis — guaranteed denial.',",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-18",
+      "status": "removed",
+      "claim": "Yellow — warnings: Codes look inconsistent with the visit (diagnosis not linked to a line, modifier missing, out-of-range units). Advisory only; save and submit are still available.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "units|not linked|pointer",
+          "ignoreCase": true,
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present",
+          "note": "would hold if warnings covered diagnosis links or units"
+        }
+      ],
+      "finding": "The warnings are: E/M with procedures but no modifier 25; a line with a $0.00 charge; a skin substitute without KX (frontend/src/utils/billing/codingValidation.ts:31-65). No diagnosis-link or units warning exists.",
+      "proposed_text": "Yellow — warnings: an E/M code billed with procedures but no modifier 25, a line with a $0.00 charge, or a skin substitute without the KX modifier. Advisory only; Save stays available.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billed with procedures but missing modifier 25.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "has $0.00 charge — check charge master.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing KX modifier — most LCDs require it.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The warnings are modifier 25, $0.00 charge and KX; no diagnosis-link or units warning. Replaced by crd-18b."
+    },
+    {
+      "id": "crd-18b",
+      "claim": "Yellow — warnings: an E/M code billed with procedures but no modifier 25, a line with a $0.00 charge, or a skin substitute without the KX modifier. Advisory only; Save stays available.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billed with procedures but missing modifier 25.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "has $0.00 charge — check charge master.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "missing KX modifier — most LCDs require it.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-19",
+      "claim": "Yellow items are worth resolving but do not block save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!row?.claim_id || !dirty) return;",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-20",
+      "claim": "Set Place of Service if the wrong value is on the claim (12 for home, 11 for office, etc.).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"12\", label: \"Home (12)\" },",
+          "paths": ["frontend/src/utils/dropdownOptions.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"11\", label: \"Office (11)\" },",
+          "paths": ["frontend/src/utils/dropdownOptions.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-21",
+      "status": "removed",
+      "claim": "Adjust the code list on the right — add or remove procedures, correct modifiers, correct units, and edit the diagnosis links on each line.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "absent",
+          "note": "would hold if diagnosis links were per line"
+        }
+      ],
+      "finding": "There is no per-line diagnosis link in the drawer; every line gets all ICD-10 codes on save (frontend/src/utils/billing/codingReviewAdapters.ts:68-75).",
+      "proposed_text": "Adjust the code list on the right — add or remove procedures and diagnoses, correct modifiers and units.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "modifier: pc.modifier ?? '',",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "units: pc.units ?? 1,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There is no per-line diagnosis link in the drawer. Replaced by crd-21b."
+    },
+    {
+      "id": "crd-21b",
+      "claim": "Adjust the code list on the right — add or remove procedures and diagnoses, correct modifiers and units.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "modifier: pc.modifier ?? '',",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "units: pc.units ?? 1,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-22",
+      "claim": "Check Expected Total — that number is what the payer will see. If it is $0.00, the claim will be refused when sent to Stedi. Type the per-unit price into the line's charge box; the drawer does not re-read Charge Master.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(sum, c) => sum + (c.charge ?? 0) * (c.units ?? 1),",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `Claim total is $${claimTotal.toFixed(2)} — nothing is being billed. Add charges in Charge Master.`,",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!(claimTotal > 0)) {",
+          "paths": ["backend/supabase/functions/_shared/validateClaimLineCharges.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "priceClaimLine|getCharge|facility_charge_master",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx", "frontend/src/utils/billing/resolveClaimCodes.ts"],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onUpdate(code.id, 'charge', e.target.value)}",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "narrowed: a $0 claim is refused only on the Stedi path, and the drawer never re-prices from Charge Master; added checks"
+    },
+    {
+      "id": "crd-23",
+      "claim": "Set Claim Status if it changed (Ready, Hold, Flag Clinical, Needs Coding, etc.).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: '(Ready|Hold|Flag Clinical|Needs Coding)' \\}",
+          "paths": ["frontend/src/components/billing/statusDropdownHelpers.ts"],
+          "expect": {"count": 4}
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{MANUAL_STATUS_OPTIONS.map((opt) => (",
+          "paths": ["frontend/src/components/billing/StatusDropdown.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-24",
+      "claim": "Click Save, or Save & Next (Ctrl+Enter) to move to the next claim in one keystroke.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((e.ctrlKey || e.metaKey) && e.key === \"Enter\") {",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Save & Next$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{saving ? \"Saving...\" : \"Save\"}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-25",
+      "claim": "Add a Biller Note if the team needs context on what you changed. Notes save separately from codes.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +Biller Notes$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activity_type: \"biller_note\",",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-26",
+      "status": "removed",
+      "claim": "Save — Persists code, POS, and diagnosis-pointer changes to the claim. Enabled only when you have edited something.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "body: { claim_id: row.claim_id, service_lines, pos },",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "absent",
+          "note": "would hold if per-line pointers were edited and saved"
+        }
+      ],
+      "finding": "Save sends codes and POS to update-claim-codes and is enabled only when dirty; there are no per-line diagnosis pointers to change — every line is saved with all ICD-10 codes (codingReviewAdapters.ts:75).",
+      "proposed_text": "Save — Persists code, diagnosis and POS changes to the claim. Enabled only when you have edited something.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "body: { claim_id: row.claim_id, service_lines, pos },",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There are no per-line diagnosis pointers to change. Replaced by crd-26b."
+    },
+    {
+      "id": "crd-26b",
+      "claim": "Save — Persists code, diagnosis and POS changes to the claim. Enabled only when you have edited something.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "body: { claim_id: row.claim_id, service_lines, pos },",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-27",
+      "claim": "Save & Next (Ctrl+Enter) — Saves and jumps to the next queue row without closing the drawer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleSaveAndNext}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onNavigate(allRows[currentIndex + 1]);",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-28",
+      "claim": "Flag for Clinical — Marks the claim's status as Flag Clinical and sends the row back to the clinical team for review.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "new_status: \"flag_clinical\",",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "async function dispatchFlagClinical(",
+          "paths": ["backend/supabase/functions/manual-status-update/handler.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +\\{flagging \\? \"Flagging\\.\\.\\.\" : \"Flag for Clinical\"\\}$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-29",
+      "claim": "Edit in Full Form — Opens /billing/new?editClaimId=… — the same claim, expanded into the full submit page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${facilityId}/billing/new?editClaimId=${row.claim_id}`",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Edit in Full Form$",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-30",
+      "claim": "Close — Closes the drawer. Unsaved edits are discarded.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onOpenChange(false)}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "window.confirm",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "absent",
+          "note": "no unsaved-changes prompt"
+        }
+      ]
+    },
+    {
+      "id": "crd-31",
+      "status": "removed",
+      "claim": "When a code triggers a coding-fact finding — MUE unit ceilings, unusual Place of Service, mutually exclusive procedures — the submitter does not silently accept it, and it also does not refuse outright. Instead: Submit stops, and a modal names every finding in the biller's words (\"CPT 97597 units exceed CMS MUE of 3 per DOS\").",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding-fact compliance: WARNING ONLY",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "absent",
+          "note": "would hold if Submit to Stedi still stopped on coding facts"
+        },
+        {
+          "type": "grep",
+          "pattern": "mutually exclusive",
+          "ignoreCase": true,
+          "paths": ["backend/supabase/functions/_shared/validateCodingFacts.ts", "backend/supabase/functions/_shared/coding"],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "Since 2026-09-02 coding facts are warning-only on Submit to Stedi: they never stop the claim (backend/supabase/functions/_shared/submitToStedi.ts:388-445). The manual paths stop with a browser confirm dialog, not a modal (BillingClaimDetailPage.tsx:801-805, :850-856). The checks are MUE 0, place-of-service restriction and MUE unit caps (validateCodingFacts.ts:115-160); there is no mutually-exclusive-procedure check.",
+      "proposed_text": "Coding-fact findings (MUE 0 codes, place-of-service restrictions, MUE unit caps) never stop Submit to Stedi; they are reported as warnings. On Mark as Submitted, Fix & Resubmit and Send Fax, a confirm dialog lists every finding before you proceed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding-fact compliance: WARNING ONLY",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`This claim has ${issues.length} coding issue${issues.length === 1 ? \"\" : \"s\"} that would block electronic submission:\\n\\n` +",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const issues = checkClaimCodingFacts(claim);",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reason": "Since 2026-09-02 coding facts never stop Submit to Stedi; manual paths use a confirm dialog; there is no mutually-exclusive check. Replaced by crd-31b, crd-31c."
+    },
+    {
+      "id": "crd-31b",
+      "claim": "Coding-fact findings (MUE 0 codes, place-of-service restrictions, MUE unit caps) never stop Submit to Stedi; they are logged as warnings and are not shown to the biller on that path.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding-fact compliance: WARNING ONLY",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "codingFactConfirmations",
+          "paths": ["frontend/src"],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "CMS MUE of 0",
+          "paths": ["backend/supabase/functions/_shared/validateCodingFacts.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "correct the place of service",
+          "paths": ["backend/supabase/functions/_shared/validateCodingFacts.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-31c",
+      "claim": "On Mark as Submitted, Fix & Resubmit and Send Fax, a confirm dialog lists every finding before you proceed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`This claim has ${issues.length} coding issue${issues.length === 1 ? \"\" : \"s\"} that would block electronic submission:\\n\\n` +",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const issues = checkClaimCodingFacts(claim);",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": {"count": 2}
+        }
+      ]
+    },
+    {
+      "id": "crd-32",
+      "status": "removed",
+      "claim": "You either fix the codes and try again, or confirm the override — \"Submit it anyway\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Submit it anyway",
+          "paths": ["frontend/src/pages", "frontend/src/components", "frontend/src/utils/billing"],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "No 'Submit it anyway' control exists. The Send Fax confirm ends '<action> anyway? Your confirmation will be recorded on the claim.' with action 'Fax it' (BillingClaimDetailPage.tsx:752, :801-805); Mark as Submitted / Fix & Resubmit use buildMarkSubmittedConfirmMessage. All are browser OK/Cancel dialogs.",
+      "proposed_text": "You either fix the codes and try again, or click OK in the confirm dialog (for a fax it asks \"Fax it anyway? Your confirmation will be recorded on the claim.\").",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`${action} anyway? Your confirmation will be recorded on the claim.`,",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const confirmedIssues = confirmCodingFactsForManualPath(\"Fax it\");",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "There is no \"Submit it anyway\" control; the manual paths use a browser confirm dialog. Replaced by crd-32b."
+    },
+    {
+      "id": "crd-32b",
+      "claim": "You either fix the codes and try again, or click OK in the confirm dialog (for a fax it asks \"Fax it anyway? Your confirmation will be recorded on the claim.\").",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`${action} anyway? Your confirmation will be recorded on the claim.`,",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const confirmedIssues = confirmCodingFactsForManualPath(\"Fax it\");",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const proceed = window.confirm(",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-33",
+      "status": "removed",
+      "claim": "If you confirm, the submission proceeds AND a row is written to claim_status_history with the method (electronic / manual / fax / resubmit), the codes overridden, and who overrode them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"electronic\"",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/logic.ts"],
+          "expect": "present",
+          "note": "would hold if an electronic override method were recorded"
+        }
+      ],
+      "finding": "Recorded methods are manual, resubmit and fax only (backend/supabase/functions/mark-claim-submitted/logic.ts:10-16); the row is written by mark-claim-submitted with the user id and the overridden codes (index.ts:141-151). Electronic submissions record no override because the findings no longer stop them.",
+      "proposed_text": "If you confirm on Mark as Submitted, Fix & Resubmit or Send Fax, a row is written to claim_status_history with the method (manual / resubmit / fax), the codes overridden, and who confirmed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export type ManualSubmissionMethod = \"manual\" | \"resubmit\" | \"fax\";",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/logic.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"claim_status_history\")",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const userId = authResult.user!.id;",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/index.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Only manual / resubmit / fax confirmations are recorded; electronic findings no longer stop the claim. Replaced by crd-33b."
+    },
+    {
+      "id": "crd-33b",
+      "claim": "If you confirm, a row is written to the claim's history with the method (manual / resubmit / fax), the codes overridden, and who confirmed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export type ManualSubmissionMethod = \"manual\" | \"resubmit\" | \"fax\";",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/logic.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"claim_status_history\")",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const userId = authResult.user!.id;",
+          "paths": ["backend/supabase/functions/mark-claim-submitted/index.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "coding_fact_overrides: (input.overrides ?? []).map((issue) => ({",
+          "paths": ["frontend/src/services/claimSubmissionService.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-34",
+      "status": "removed",
+      "claim": "The same check now runs on all four submission paths — Submit to Stedi, Mark as Submitted, Fix & Resubmit, and Send Fax — so a biller cannot walk around the electronic gate by faxing the claim off-system. Every override reads back as an attributed decision on the claim, not a silent bypass.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const codingFactCheck = validateCodingFacts(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding-fact compliance: WARNING ONLY",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "absent",
+          "note": "would hold if there were still an electronic gate to walk around"
+        }
+      ],
+      "finding": "The check runs on all four paths, but on Submit to Stedi it is warning-only since 2026-09-02 (submitToStedi.ts:388-445), so there is no electronic gate; the manual paths are now the stricter ones. Electronic findings are logged, not recorded as attributed overrides.",
+      "proposed_text": "The same check runs on all four submission paths. On Submit to Stedi it is a warning only and does not stop the claim; on Mark as Submitted, Fix & Resubmit and Send Fax the biller confirms each finding and the confirmation is recorded on the claim.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const codingFactCheck = validateCodingFacts(claimPayload);",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Coding-fact compliance: WARNING ONLY",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const issues = checkClaimCodingFacts(claim);",
+          "paths": ["frontend/src/pages/BillingClaimDetailPage.tsx"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reason": "On Submit to Stedi the check is warning-only, so there is no electronic gate. Replaced by crd-31b/crd-31c."
+    },
+    {
+      "id": "crd-35",
+      "claim": "CMS MUE values carry known errors that MACs correct out-of-band, non-Medicare payers do not adopt them uniformly, and a Place of Service can be legitimately unusual.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "These findings are strong signals, not certainties: CMS MUE values carry",
+          "paths": ["backend/supabase/functions/_shared/submitToStedi.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-36",
+      "claim": "The row in the Work Queue reflects the new codes on refresh (every 2 minutes, or Refresh to force).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, 120_000);",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Refresh work queue\"",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-37",
+      "status": "removed",
+      "claim": "Troubleshooting: Left panel says \"No note\" — The claim was created manually, or the note lives in a namespace outside the three tiers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">No note<",
+          "paths": ["frontend/src/components/billing/CodingReviewNoteLink.tsx", "frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ],
+      "finding": "The texts are \"No signed note found for this visit.\" (frontend/src/components/billing/CodingReviewNoteLink.tsx:33) and, for a manual claim, \"No visit data — claim was created manually\" (CodingReviewDrawer.tsx:686).",
+      "proposed_text": "Left panel says \"No signed note found for this visit.\" or \"No visit data — claim was created manually\".",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No signed note found for this visit.",
+          "paths": ["frontend/src/components/billing/CodingReviewNoteLink.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No visit data — claim was created manually",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The panel texts are \"No signed note found for this visit.\" and \"No visit data — claim was created manually\". Replaced by crd-37b."
+    },
+    {
+      "id": "crd-37b",
+      "claim": "Left panel says \"No signed note found for this visit.\" or \"No visit data — claim was created manually\" — no signed note could be matched to the claim, or the claim was created manually.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No signed note found for this visit.",
+          "paths": ["frontend/src/components/billing/CodingReviewNoteLink.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No visit data — claim was created manually",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-38",
+      "claim": "Troubleshooting: \"VISIT NOT SIGNED\" banner — The progress note is a draft or in-progress — Use Notify on the Work Queue row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return visitDataV2Row?.visit_locked === true;",
+          "paths": ["frontend/src/utils/billing/billingReadiness.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Notify$",
+          "paths": ["frontend/src/pages/BillingWorkQueuePage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-38b",
+      "claim": "\"VISIT NOT SIGNED\" banner — ask the provider to sign the note. Use Notify on the Work Queue row.",
+      "kind": "advice"
+    },
+    {
+      "id": "crd-39",
+      "status": "removed",
+      "claim": "Troubleshooting: Yellow warning about diagnosis pointers — A procedure line has no diagnosis linked, or points to a diagnosis you removed — Reassign the pointer on the line.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "pointer|not linked",
+          "ignoreCase": true,
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present",
+          "note": "would hold if the drawer's validator warned about diagnosis pointers"
+        }
+      ],
+      "finding": "No diagnosis-pointer warning or per-line pointer control exists in the drawer (frontend/src/utils/billing/codingValidation.ts has no such rule; BillingCodeEntry.tsx only has a drag-and-drop PointerSensor). The related check is the red error 'Procedure/supply codes present with no supporting ICD-10 diagnosis' (codingValidation.ts:41-42).",
+      "proposed_text": "Red error about a missing diagnosis — procedure codes are on the claim with no ICD-10 code. Add the diagnosis; every line will point to it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: 'Procedure/supply codes present with no supporting ICD-10 diagnosis — guaranteed denial.',",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "No diagnosis-pointer warning exists in the drawer. Replaced by crd-39b."
+    },
+    {
+      "id": "crd-39b",
+      "claim": "Red error about a missing diagnosis — procedure codes are on the claim with no ICD-10 code. Add the diagnosis; on save every line points to it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: 'Procedure/supply codes present with no supporting ICD-10 diagnosis — guaranteed denial.',",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "icd_codes: icdCodes,",
+          "paths": ["frontend/src/utils/billing/codingReviewAdapters.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-40",
+      "status": "removed",
+      "claim": "Troubleshooting: Expected Total is $0.00 — The line has no price in facility_charge_master — Open Charge Master for the facility and add the price.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "has $0.00 charge — check charge master.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "priceClaimLine|getCharge|facility_charge_master",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present",
+          "note": "would hold if adding the Charge Master price fixed the drawer's total"
+        }
+      ],
+      "finding": "Adding the price in Charge Master does not change this claim: the drawer shows the stored line charges and never reads Charge Master (CodingReviewDrawer.tsx:241-262, :399-406). The biller must also put the price on the line.",
+      "proposed_text": "Expected Total is $0.00 — the line has no charge. Add the price in Charge Master for future claims, and type it into this line's charge box, then Save.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "has $0.00 charge — check charge master.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onUpdate(code.id, 'charge', e.target.value)}",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "Adding a Charge Master price does not change this claim; the drawer shows stored line charges. Replaced by crd-40b."
+    },
+    {
+      "id": "crd-40b",
+      "claim": "Expected Total is $0.00 — the line has no charge. Add the price in Charge Master for future claims, type it into this line's charge box, then Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "has $0.00 charge — check charge master.`,",
+          "paths": ["frontend/src/utils/billing/codingValidation.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onChange={(e) => onUpdate(code.id, 'charge', e.target.value)}",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{saving ? \"Saving...\" : \"Save\"}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "crd-41",
+      "claim": "Troubleshooting: Save button disabled — You have not edited anything, or the claim row failed to load — Reopen the drawer, or use Edit in Full Form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!dirty || saving || !row?.claim_id}",
+          "paths": ["frontend/src/components/billing/CodingReviewDrawer.tsx"],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

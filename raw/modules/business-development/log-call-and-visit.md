@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: how-to
 estimated_minutes: 3
-last_reviewed: 2026-08-28
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - business-development-overview
@@ -16,71 +16,61 @@ tags: [business-development, call, visit, activity, archive]
 
 # Log a call or in-person visit
 
-Record outbound calls and in-person practice visits from the Business Development dashboard so your activity history stays current in the CRM.
+Record calls and in-person practice visits from the Business Development dashboard so your activity history stays current in the CRM.
 
 ## Before you start
 
-- The practice or contact must already exist in the CRM. If not, use **New Contact** first to add the record before logging activity against it.
+- The practice must already exist in the CRM. To add a contact first, use **New Contact** in the quick-add strip.
 
 ## Log a call
 
 1. **Open the BD dashboard.** Click **Business Development** in the sidebar.
-2. **Tap Log Call** in the quick-add strip.
-3. **Select the Practice.** Start typing to search your CRM — existing practices autocomplete.
-4. **Select the Contact** (optional but recommended). Choose the specific physician, office manager, or coordinator you reached.
-5. **Set the Call Outcome** from the dropdown (for example, whether you reached the contact, left a voicemail, or got no answer).
-6. **Enter Notes.** Summarize the conversation — key topics, objections, commitments made.
-7. **Set Next Steps** (optional). Add a follow-up date and action so the **Next Best Action** widget can surface a reminder.
-8. **Tap Save.** The call appears in the practice's **Activity** tab in the CRM.
+2. **Tap Log Call** in the quick-add strip. The **Log Call Activity** form opens.
+3. **Select the Practice** (required).
+4. **Enter the Call Subject** (required) and the **Duration** in minutes (required).
+5. **Set the Outcome**: Positive, Neutral, Negative, No Contact, or Follow-up Needed.
+6. **Enter Call Notes** (required). Summarize the conversation — key topics, objections, commitments made.
+7. **Save.** The call appears in the practice's **Activity** tab in the CRM.
 
 ## Log a visit
 
 1. **Tap New Visit** in the quick-add strip.
-2. **Select the Practice.**
-3. **Enter the Visit Date.** Defaults to today; adjust if logging retroactively.
-4. **Add Visit Notes.** Document key talking points, materials left, and any commitments.
-5. **Select the contacts you met** (optional) so individual contact engagement records stay current.
-6. **Tap Save.** The visit logs to the practice's **Activity** tab and updates your dashboard metrics.
+2. **Select the Practice** (required).
+3. **Enter the Visit Purpose** and **Duration** (both required) and pick an **Outcome**.
+4. **Add Visit Notes** (required). Document key talking points, materials left, and any commitments.
+5. **Save.** The visit is logged with today's date and appears in the practice's **Activity** tab. There is no date field, so log visits on the day they happen.
 
-<Tip>
-Prefer to talk it out? Use the **voice recording** option in the quick-add strip to capture the call or visit by voice; the recording is attached to the activity.
-</Tip>
+If you are offline, the call or visit is saved on your device and sent when you reconnect.
+
+Prefer to talk it out? The **Record Voice Note** button in the quick-add strip records a voice note for a practice. It is saved as a separate **Voice Note** activity, not attached to the call or visit.
 
 ## Result
 
-Both call and visit records are immediately visible in the CRM practice detail **Activity** tab and feed the **Next Best Action** and **AI Route Suggestions** algorithms.
-
-<Note>
-Logging activity promptly keeps your **Next Best Action** queue and **AI Route Suggestions** accurate — both recompute on demand (with a short cache), so a new call or visit is reflected almost immediately after you refresh.
-</Note>
+Call and visit records appear in the CRM practice detail **Activity** tab and count toward the **Next Best Action** cycle.
 
 ## Edit an activity
 
-An activity you already saved stays editable from either the practice's Activity tab or the BD dashboard:
+You can edit an activity you logged from the practice's **Activity** tab in the CRM. Administrators and BD managers can edit anyone's.
 
 1. Open the row's **⋯** menu.
-2. Click **Edit.** The composer reopens with the saved values.
-3. Update fields and save. The activity keeps its original date and creator; an `edited_at` timestamp is stored for the audit trail.
+2. Click **Edit note.** You can change the subject and notes.
+3. Click **Save changes**. The activity keeps its original date and creator, and the time of the edit is recorded.
+
+Spend entries cannot be edited or archived.
 
 ## Archive an activity
 
-Archiving hides an activity from the live feed without deleting it — useful for entries logged by mistake, duplicates, or activities that should not count toward dashboard metrics.
+Archiving hides an activity from the feed without deleting it — useful for entries logged by mistake or duplicates. You can archive your own activities; administrators and BD managers can archive anyone's.
 
-1. Open the row's **⋯** menu and click **Archive.**
-2. A confirm dialog explains that the activity will be excluded from Next Best Action and MTD spend calculations. Confirm.
-3. Toast confirms the archive. The row leaves the live view immediately.
-
-**Undo an archive** — the same toast shows an **Undo** button for a few seconds. If you miss it, restore the row from the archived view (below).
+1. Open the row's **⋯** menu and click **Archive note.**
+2. The **Archive this note?** dialog explains that the note leaves the activity feed and stops counting toward the practice's activity metrics. Confirm.
+3. A “Note archived” message appears with an **Undo** button.
 
 ### View archived activities
 
-- On the practice detail Activity tab, switch the view mode from **Live** to **Archived** to list every archived activity for that practice.
-- The row menu on an archived entry offers **Restore** to bring it back into the live feed.
+- On the practice's Activity tab, click the **Archived** filter to list archived activities for that practice.
+- Click **Restore** on an archived entry to bring it back. You can restore an activity you archived; administrators and BD managers can restore any.
 
-<Warning>
-Archived activities are excluded from Next Best Action, dashboard KPIs, and MTD spend rollups. They remain in the audit trail and export.
-</Warning>
+## Related
 
-## Result
-
-Both call and visit records are immediately visible in the CRM practice detail **Activity** tab and feed the **Next Best Action** and **AI Route Suggestions** algorithms.
+Auto-rendered from `related:` in frontmatter.

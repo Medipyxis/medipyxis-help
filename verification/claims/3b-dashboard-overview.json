@@ -1,0 +1,398 @@
+{
+  "title": "The Dashboard at a glance",
+  "source": "modules/dashboard/overview",
+  "url": "https://help.medipyxis.com/modules/dashboard/overview/",
+  "claims": [
+    {
+      "id": "dsh-01",
+      "claim": "The Dashboard is the first screen after login; it greets you, links to main work areas, and gathers HR self-service, announcements, recent activity and reference material.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Dashboard\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Your Work Cockpits",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HR Self-Service",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Recent Activity",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Knowledge Base & Resources",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-02",
+      "claim": "The Welcome Back banner shows your current facility; the HIPAA badge confirms your session is audit-logged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "audit",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The banner shows name, job title and role; the HIPAA badge is a static label with no audit behaviour behind it."
+    },
+    {
+      "id": "dsh-03",
+      "claim": "Welcome Back banner: your name, job title and role, an On Duty pill and a HIPAA badge.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{profile.job_title}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{profile?.role || \"Team Member\"}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HIPAA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-04",
+      "claim": "Action tiles — dynamic cards for referrals needing review, visits scheduled today, denials needing appeal, and credentials expiring; tiles surface by urgency (red border SLA breach, yellow due today, grey informational).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "denial",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "pattern": "SLA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No such action tiles or urgency ordering exist on the Dashboard."
+    },
+    {
+      "id": "dsh-05",
+      "claim": "Click the gear in any tile header to hide or pin it; click Reset in the profile menu to restore defaults.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Reset",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "pinned",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no tile gear, pin/hide, or Reset control."
+    },
+    {
+      "id": "dsh-06",
+      "claim": "Your Work Cockpits: Patient Management, Clinical Workflow and Mileage & Expenses.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title: \"Patient Management\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Clinical Workflow\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Mileage & Expenses\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-07",
+      "claim": "HR Self-Service: Time Off Requests and My Credentials & Compliance. Electronic Prescribing Setup: set up DoseSpot e-prescribing and EPCS access.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "title: \"Time Off Requests\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"My Credentials & Compliance\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Electronic Prescribing Setup",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Configure DoseSpot ePrescribing and EPCS access",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-08",
+      "claim": "Announcements: View Announcements & Kudos opens Company Announcements. Knowledge Base & Resources links to Policies, Training Materials and Industry News.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "View Announcements & Kudos",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => handleCardClick(\"/announcements\")}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Policies\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Training Materials\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Industry News\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-09",
+      "claim": "Sidebar: a biller will not see Fleet Calendar, a BD rep will not see Billing Operations.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "  biller: [",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "Visibility depends on the organization's role settings; only the default fallbacks are in code. Reworded generally."
+    },
+    {
+      "id": "dsh-10",
+      "claim": "Sidebar: you see only the modules your role can open.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "dsh-11",
+      "claim": "Top bar has an Organization Selector.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The top bar has Quick jump, notifications and the profile menu; an organization selector control was not found under that name."
+    },
+    {
+      "id": "dsh-12",
+      "claim": "Top bar: Quick jump search (⌘K or Ctrl+K), the notifications bell, and your profile menu with Sign Out.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Quick jump...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Sign Out",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

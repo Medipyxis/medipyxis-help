@@ -1,0 +1,1004 @@
+{
+  "title": "May 2026 release notes",
+  "source": "release-notes/2026-05",
+  "url": "https://help.medipyxis.com/release-notes/2026-05/",
+  "claims": [
+    {
+      "id": "rn05-00",
+      "claim": "Changes shipped between 2026-05-01 and 2026-05-31 (each cited PR's merge date is checked in its own entry).",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2333,
+          "titleMatch": ".",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1843,
+          "titleMatch": ".",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-01",
+      "claim": "Visit Wizard — Soft warnings replace hard blocks. Steps that previously hard-stopped on incomplete fields now surface a soft warning and let the clinician proceed (\"warn and proceed\"). Silent failures are now visible warnings. (PR #2333)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2333,
+          "titleMatch": "soft warnings",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sign & Lock is not blocked.",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-02",
+      "claim": "Visit Wizard — \"Sign & Lock\" close-out action. The close-out call-to-action was renamed from Save & Complete Review to Sign & Lock. (PR #2325)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2325,
+          "titleMatch": "Sign & Lock",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sign & Lock",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save & Complete Review",
+          "paths": [
+            "frontend/src/components/MultiWoundReviewModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn05-03",
+      "claim": "Visit Wizard — Smart AI Import. A new Smart Import button extracts wound and visit details from an uploaded document or photo and pre-fills wizard fields, with a banner listing anything skipped. (PR #2303, #2308)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2303,
+          "titleMatch": "Smart AI Import",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2308,
+          "titleMatch": "smart-import",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/wizard-shared/ImportWarningBanner.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Smart Import",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-04",
+      "claim": "Visit Wizard — Pull from History. Bring forward documented sections (ROS, comorbidities, functional status, exam, care plan, education, etc.) from prior visits, with preview-and-select. (PR #2360, #2350) Update (Nov 2026): Pull from History was removed on June 23 (PR #2682).",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2360,
+          "titleMatch": "pull-from-history",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2350,
+          "titleMatch": "pull-from-history",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2682,
+          "titleMatch": "open-visits docket to top",
+          "mergedFrom": "2026-06-23",
+          "mergedTo": "2026-06-23"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pull from History",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn05-05",
+      "claim": "Visit Wizard — Pull Migration Data. A Pull Migration Data button was added to the top-of-wizard toolbar in both wizards, alongside Reset Form. (PR #2311)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2311,
+          "titleMatch": "Pull Migration Data",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/visit-wizard/PullMigrationDataButton.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PullMigrationDataButton",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-06",
+      "claim": "Wound status — Treating vs. Monitoring. Each wound can be marked Treating or Monitoring. (PR #2314)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2314,
+          "titleMatch": "Monitoring wound status",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"treating\">Treating</option>",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"monitoring\">Monitoring</option>",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-07",
+      "claim": "Visit Wizard — \"Running HPI\" label. The free-text Session Context Notes field was renamed Running HPI. (PR #2300)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2300,
+          "titleMatch": "Running HPI",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Running HPI",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Session Context Notes",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn05-08",
+      "claim": "Visit Wizard — Resume Visit shortcut in the wound cockpit. A Resume Visit box is anchored first in the cockpit. (PR #2271)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2271,
+          "titleMatch": "Resume Visit",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return \"Resume Visit\";",
+          "paths": [
+            "frontend/src/components/appointmentActionVerb.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-09",
+      "claim": "Visit Wizard — Open-visits docket. An inline docket of other open visits lets clinicians switch between in-progress visits. (PR #2365, #2270) Update (Nov 2026): the open-visits docket was removed on July 13 (PR #2958).",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2365,
+          "titleMatch": "docket",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2270,
+          "titleMatch": "docket",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2958,
+          "titleMatch": "collapse divergent wizard entry points",
+          "mergedFrom": "2026-07-13",
+          "mergedTo": "2026-07-13"
+        }
+      ]
+    },
+    {
+      "id": "rn05-10",
+      "claim": "Visit Wizard — Admins can see in-progress drafts. (PR #2267)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2267,
+          "titleMatch": "admins can now see drafts",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-11",
+      "claim": "Visit Wizard — Wizard timer and Backup/Restore UI removed. Legacy timer and manual Backup/Restore retired; false \"unsaved changes\" warning fixed. (PR #2307, #2305)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2307,
+          "titleMatch": "visit timer",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2305,
+          "titleMatch": "Backup/Restore",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-12",
+      "claim": "Visit Wizard — Build version badge. Always-visible build-version badge (bottom-left) + stale-build refresh prompt. (PR #2352, #2263)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2352,
+          "titleMatch": "build version badge",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2263,
+          "titleMatch": "stale-build",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/BuildVersionBadge.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { BuildVersionBadge } from \"./components/BuildVersionBadge\";",
+          "paths": [
+            "frontend/src/AppWrapper.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-13",
+      "claim": "Visit Wizard — Topical Application Site shows body location. (PR #1973)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1973,
+          "titleMatch": "Topical Application Site",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Topical Application Site",
+          "paths": [
+            "frontend/src/components/shared/medication/MedicationManagementShared.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-14",
+      "claim": "Visit Wizard — Save toast no longer sticks. (PR #1971)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1971,
+          "titleMatch": "sticky loading toast",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-15",
+      "claim": "Visit Wizard — Clinical history carry-forward. (PR #1869)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1869,
+          "titleMatch": "clinical history carry-forward",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-16",
+      "claim": "Clinical Dashboard rebuilt with hand-off workflow. Status tiles, a work queue, and a stale-visit view. Providers can Hand off a visit to support staff, who work it from the Awaiting Documentation queue. (PR #2012, #2009)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2012,
+          "titleMatch": "Hand off",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2009,
+          "titleMatch": "clinical-workflow",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Awaiting Documentation</h2>",
+          "paths": [
+            "frontend/src/pages/ClinicalDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Hand off to staff</h2>",
+          "paths": [
+            "frontend/src/components/HandoffModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-17",
+      "claim": "Consent — SMS now sent on demand. The patient consent SMS is no longer auto-sent; triggered by a manual Send button. (PR #2331)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2331,
+          "titleMatch": "consent SMS",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-18",
+      "claim": "Intake — Unified manual and fax referral creation. Both now flow through the same shared records service. (PR #1936)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1936,
+          "titleMatch": "unify manual \\+ fax referral",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-19",
+      "claim": "Intake — Insurance drawer shows unverified coverage. (PR #1937, #1940)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1937,
+          "titleMatch": "unverified insurance",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1940,
+          "titleMatch": "drawer",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-20",
+      "claim": "Billing — ClaimMD fully replaced by Stedi. Claims and eligibility now run through Stedi, including enrollment and eligibility verification. (PR #1895, #1889, #2010)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1895,
+          "titleMatch": "remove all ClaimMD",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1889,
+          "titleMatch": "ClaimMD → Stedi",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2010,
+          "titleMatch": "Stedi",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/submit-to-stedi",
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/submit-to-claimmd",
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn05-21",
+      "claim": "Eligibility — Stedi verification with clearer errors. Errors now show the human-readable description. (PR #2000, #2013)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2000,
+          "titleMatch": "Stedi",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2013,
+          "titleMatch": "AAA description",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-22",
+      "claim": "Billing — Wound-care code catalog expanded. CPT debridement/destruction ranges and additional HCPCS Q-codes, seeded from CMS LCDs. (PR #2346, #2293, #2294, #2268)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2346,
+          "titleMatch": "wound-care codes",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2293,
+          "titleMatch": "wound-care codes",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2294,
+          "titleMatch": "wound-care codes",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2268,
+          "titleMatch": "wound-care CPT",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-23",
+      "claim": "Billing — Manual code entry persists and is searchable. Multiple codes per wound; searchable picker. (PR #2266, #2269)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2266,
+          "titleMatch": "searchable picker",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2269,
+          "titleMatch": "multiple manual codes",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-24",
+      "claim": "Billing — ICD-10 auto-fill in Generate Codes. (PR #1964)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1964,
+          "titleMatch": "ICD-10",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-25",
+      "claim": "Billing — Quantity/units on CMS-1500. (PR #2298)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2298,
+          "titleMatch": "units on CMS-1500",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-26",
+      "claim": "Billing — NPI/MBI validation at submit. (PR #1870)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1870,
+          "titleMatch": "NPI/MBI validation",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Spec: docs/superpowers/specs/2026-05-06-billing-npi-mbi-validation-design.md",
+          "paths": [
+            "backend/supabase/functions/submit-claim/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-27",
+      "claim": "Patient Management — Default status filter aligned with Fleet Calendar (All). (PR #2295)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2295,
+          "titleMatch": "default status filter",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-28",
+      "claim": "Patient Management — \"Needs Scheduling\" cleanup. Single place, auto-default provider, merges twin appointments. (PR #2322)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2322,
+          "titleMatch": "Needs Scheduling",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-29",
+      "claim": "Scheduling — Same-day scheduling supported; provider-filter fix. (PR #1883)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1883,
+          "titleMatch": "same-day scheduling",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-30",
+      "claim": "Inventory — Consolidated product catalog (catalog_v2). PRP/UM modeled as inventory categories. (PR #1929, #1927)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1929,
+          "titleMatch": "catalog_v2",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1927,
+          "titleMatch": "PRP/UM",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-31",
+      "claim": "Inventory — Vendor dropdowns point to the CRM vendor hub. (PR #2320)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2320,
+          "titleMatch": "vendor dropdowns",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-32",
+      "claim": "Fax — Cover page settings and audit trail. (PR #1882)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1882,
+          "titleMatch": "Cover Page",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Cover Page Preview",
+          "paths": [
+            "frontend/src/pages/FaxSettingsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-33",
+      "claim": "Fax — Settings access for support and admin roles; Send Fax visibility fix. (PR #1984, #2005)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1984,
+          "titleMatch": "Fax Settings access",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2005,
+          "titleMatch": "Send Fax button",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-34",
+      "claim": "DrChrono — Documents and wound cases surface in the chart. (PR #1857, #1856)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1857,
+          "titleMatch": "DrChrono",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1856,
+          "titleMatch": "DrChrono documents",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-35",
+      "claim": "DrChrono — Faster document import. (PR #1843)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1843,
+          "titleMatch": "drchrono",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-36",
+      "claim": "HR — Edit User Profile unblocked (via admin-update-user); user-creation surfaces the real error on failure. (PR #1985, #1955, #1951)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1985,
+          "titleMatch": "admin-update-user",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1955,
+          "titleMatch": "admin-create-user",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1951,
+          "titleMatch": "admin-create-user",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Route the full edit through admin-update-user.",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-37",
+      "claim": "Mobile — Daily Schedule buttons clear iOS Safari chrome. (PR #1942)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1942,
+          "titleMatch": "DailySchedule",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "env(safe-area-inset-bottom)",
+          "paths": [
+            "frontend/src/components/DailySchedule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn05-38",
+      "claim": "Progress Notes — Accuracy fixes. No hardcoded CHF from a parent flag; debridement-method fallback fixed; blank-screen fixed. (PR #1972, #1970, #1877)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1972,
+          "titleMatch": "CHF",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1970,
+          "titleMatch": "debridement-method",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1877,
+          "titleMatch": "progress notes blank screen",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-39",
+      "claim": "Security — Tightened data access policies across patient, billing, inventory, org data; administrator area locked to Medipyxis-internal users. Back-end safeguards; no workflow change. (PR #1958, #1962, #1963, #1960, #1934)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1958,
+          "titleMatch": "administrator",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1962,
+          "titleMatch": "patient-scoped",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1963,
+          "titleMatch": "billing tables",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1960,
+          "titleMatch": "inventory tables",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 1934,
+          "titleMatch": "SELECT policies",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-40",
+      "claim": "Build — Stale-build detection with one-click refresh. (PR #2285, #2291)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2285,
+          "titleMatch": "stale-build",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        },
+        {
+          "type": "pr",
+          "number": 2291,
+          "titleMatch": "stale-build",
+          "mergedFrom": "2026-05-01",
+          "mergedTo": "2026-05-31"
+        }
+      ]
+    },
+    {
+      "id": "rn05-old-01",
+      "status": "removed",
+      "claim": "(removed) Wrong PR citations: #2318 (soft warnings), #2302 (Smart Import), #2309 (Pull Migration Data), #2272 (Resume Visit).",
+      "reason": "Each PR's title is about something else.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2318,
+          "titleMatch": "soft warning|warn"
+        },
+        {
+          "type": "pr",
+          "number": 2302,
+          "titleMatch": "smart import"
+        },
+        {
+          "type": "pr",
+          "number": 2309,
+          "titleMatch": "migration data"
+        },
+        {
+          "type": "pr",
+          "number": 2272,
+          "titleMatch": "resume"
+        }
+      ]
+    },
+    {
+      "id": "rn05-old-02",
+      "status": "removed",
+      "claim": "(removed) \"Pull from History\" and the open-visits docket as current features.",
+      "reason": "Both were removed later; kept as May history with updates.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pull from History",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn05-old-03",
+      "status": "removed",
+      "claim": "(removed) \"Mark Visit Completed\" action and \"Monitoring wounds skip rules that apply to actively treated wounds.\"",
+      "reason": "No Mark Visit Completed label exists; the Monitoring PR deferred rule changes (\"brain deferred\").",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Visit Completed",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

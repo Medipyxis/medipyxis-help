@@ -1,0 +1,208 @@
+{
+  "title": "Prescribe with DoseSpot (e-prescribing)",
+  "source": "modules/visit-wizard-ehr/medication-dosespot",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/medication-dosespot/",
+  "claims": [
+    {
+      "id": "rx-01",
+      "claim": "Medipyxis uses DoseSpot for electronic prescribing.",
+      "checks": [
+        {"type": "file", "path": "backend/supabase/functions/dosespot-iframe", "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "/functions/v1/dosespot-iframe/prepare-prescription", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-02",
+      "claim": "You prescribe from the Medication Management section (section 13) of the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Medication Management\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present", "note": "the section heading a clinician sees"},
+        {"type": "grep", "pattern": "^\\s*Step 13\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}},
+        {"type": "grep", "fixed": true, "pattern": "<MedicationManagementVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "finding": "The wizard section is titled \"Current Medication\" and badged \"Step 14\" (VisitWizardV4.tsx:18449, :18456); Step 13 is a different section. \"Section 13\" is only the storage column name (section_13_medication_management).",
+      "proposed_text": "You prescribe from the Current Medication step (Step 14) of the Visit Wizard.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "^\\s*Current Medication\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}},
+        {"type": "grep", "pattern": "^\\s*Step 14\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}},
+        {"type": "grep", "fixed": true, "pattern": "<MedicationManagementVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The wizard step is titled Current Medication and badged Step 14; there is no Medication Management section 13."
+    },
+    {
+      "id": "rx-02b",
+      "claim": "You prescribe from the Current Medication step (Step 14) of the Visit Wizard.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Current Medication\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}},
+        {"type": "grep", "pattern": "^\\s*Step 14\\s*$", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": {"count": 1}},
+        {"type": "grep", "fixed": true, "pattern": "<MedicationManagementVisit", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-03",
+      "claim": "Controlled substances require a one-time EPCS setup on your account.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Complete EPCS Setup", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "file", "path": "backend/supabase/functions/dosespot-epcs", "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-04",
+      "claim": "On your Dashboard, find the Electronic Prescribing Setup card.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Electronic Prescribing Setup\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-05",
+      "claim": "If the connection is healthy, a green pill confirms your credentials and EPCS (controlled-substance) status.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "{epcsStatus?.isActive && (", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<div className=\"flex items-center space-x-2 bg-green-50 border border-green-200 rounded-full px-3 py-1\">", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-06",
+      "claim": "If credentials are missing or expired, click Configure / Set Up ePrescribing.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Set Up ePrescribing\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s*Configure\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ],
+      "finding": "The card has no Configure button: the only button when setup is not active is \"Set Up ePrescribing\" (Dashboard.tsx:1348); \"Configure\" appears only in the card subtitle \"Configure DoseSpot ePrescribing and EPCS access\" (Dashboard.tsx:1232).",
+      "proposed_text": "If ePrescribing is not active yet, click Set Up ePrescribing.",
+      "proposed_checks": [
+        {"type": "grep", "pattern": "^\\s*Set Up ePrescribing\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{!epcsStatus?.isActive && (", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "The card has no Configure button; the button is Set Up ePrescribing."
+    },
+    {
+      "id": "rx-06b",
+      "claim": "If ePrescribing is not active yet, click Set Up ePrescribing.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Set Up ePrescribing\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{!epcsStatus?.isActive && (", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-07",
+      "claim": "Click Complete EPCS Setup for controlled substances.",
+      "checks": [
+        {"type": "grep", "pattern": "^\\s*Complete EPCS Setup\\s*$", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{epcsStatus?.requiresSetup && (", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-08",
+      "claim": "DoseSpot opens in an in-app frame to finish enrollment.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "import EpcsOnboardingFlow from \"../components/EpcsOnboardingFlow\";", "paths": ["frontend/src/pages/Dashboard.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<DoseSpotIframe", "paths": ["frontend/src/components/EpcsOnboardingFlow.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<iframe", "paths": ["frontend/src/components/DoseSpotIframe.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-09",
+      "claim": "In the Visit Wizard, open Medication Management (section 13), then Launch DoseSpot to open the prescribing console for the current patient.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "Launch DoseSpot", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "patientId,", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": {"min": 1}}
+      ],
+      "finding": "There is no \"Launch DoseSpot\" button. In the Current Medication step (Step 14) you pick DoseSpot as the Delivery Method and a provider clicks \"Open DoseSpot\" (MedicationManagementShared.tsx:3336, :4124); the server first links the current patient into DoseSpot and opens the console on that patient. Non-providers see \"Prepare Order (Provider Required)\".",
+      "proposed_text": "In the Visit Wizard, open Current Medication (Step 14), choose DoseSpot as the Delivery Method, and click Open DoseSpot (providers only) to open the prescribing console for the current patient.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "? \"Open DoseSpot\"", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ": \"Prepare Order (Provider Required)\"}", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "Delivery Method", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "/functions/v1/dosespot-iframe/prepare-prescription", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "import MedicationManagementShared from \"@/components/shared/medication/MedicationManagementShared\";", "paths": ["frontend/src/components/visit-wizard/visit/MedicationManagementVisit.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "There is no Launch DoseSpot button or section 13; a provider picks DoseSpot as Delivery Method in Step 14 and clicks Open DoseSpot."
+    },
+    {
+      "id": "rx-09b",
+      "claim": "In the Visit Wizard, open Current Medication (Step 14), choose DoseSpot as the Delivery Method, and click Open DoseSpot to open the prescribing console for the current patient. Only providers can do this; other users see Prepare Order (Provider Required).",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "? \"Open DoseSpot\"", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ": \"Prepare Order (Provider Required)\"}", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": ": userRole === \"provider\"", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "{([\"fax\", \"dosespot\", \"paper\"] as const).map((method) => (", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s*Delivery Method\\s*$", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "/functions/v1/dosespot-iframe/prepare-prescription", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "import MedicationManagementShared from \"@/components/shared/medication/MedicationManagementShared\";", "paths": ["frontend/src/components/visit-wizard/visit/MedicationManagementVisit.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-10",
+      "claim": "Complete and send the prescription in the DoseSpot console.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<DoseSpotPrescriptionDialog", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "preBuiltUrl={doseSpotIframeUrl}", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "onPrescriptionComplete={handleDoseSpotComplete}", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"}
+      ],
+      "finding": "These steps happen inside DoseSpot's own console (a third-party page in an iframe); Medipyxis code does not render them, so they cannot be confirmed from the product source."
+    },
+    {
+      "id": "rx-11",
+      "claim": "Controlled substances route through the EPCS flow.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "disabled={hasControlled && method === \"fax\"}", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "^\\s*Controlled substances require DoseSpot\\s*$", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"}
+      ],
+      "reason": "Medipyxis blocks fax for controlled substances and forces DoseSpot; the EPCS signing itself happens inside DoseSpot."
+    },
+    {
+      "id": "rx-12",
+      "claim": "Medications reconcile across the chart: the wizard and Meds & Orders stay in sync.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const syncResult = await syncMedChangesToMaster(", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "} = useMasterMedications(patientId);", "paths": ["frontend/src/pages/MedicationsOrdersPage.tsx"], "expect": "present"},
+        {"type": "grep", "pattern": "<span>Meds & Orders</span>", "paths": ["frontend/src/pages/MedicationsOrdersPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-13",
+      "claim": "Pre-charting stays in sync with the medication list too.",
+      "checks": [
+        {"type": "grep", "pattern": "source_module: ['\"]pre_charting['\"]|['\"]pre_charting['\"],", "paths": ["frontend/src/components", "frontend/src/pages", "frontend/src/services"], "excludeTests": true, "expect": "present"}
+      ],
+      "finding": "Nothing writes medications from pre-charting: the 'pre_charting' source exists only as a type value (types/medication.types.ts:5) and a display label (MedicationAuditTrail.tsx:40); the pre-charting tabs (EnhancedPrechartingTab.tsx, PrechartingTabContent.tsx) do not call the medication sync service. Medications entered in the wizard's Clinical History Review are synced (ClinicalHistoryReviewStep.tsx:203).",
+      "proposed_text": "Medications reconcile across the chart: what you enter in the wizard (Clinical History Review and Current Medication) and on the Meds & Orders page is one shared medication list.",
+      "proposed_checks": [
+        {"type": "grep", "fixed": true, "pattern": "const { upsertMasterMedication } = await import('@/services/medicationSyncService');", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const syncResult = await syncMedChangesToMaster(", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "} = useMasterMedications(patientId);", "paths": ["frontend/src/pages/MedicationsOrdersPage.tsx"], "expect": "present"}
+      ],
+      "status": "removed",
+      "reason": "Nothing writes medications from pre-charting; it does not sync with the medication list."
+    },
+    {
+      "id": "rx-13b",
+      "claim": "Medications reconcile across the chart. What you enter in the wizard (Clinical History Review and Current Medication) and on the Meds & Orders page is one shared medication list.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "const { upsertMasterMedication } = await import('@/services/medicationSyncService');", "paths": ["frontend/src/components/visit-wizard/clinical-history/ClinicalHistoryReviewStep.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "const syncResult = await syncMedChangesToMaster(", "paths": ["frontend/src/components/VisitWizardV4.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "} = useMasterMedications(patientId);", "paths": ["frontend/src/pages/MedicationsOrdersPage.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-14",
+      "claim": "Prescriptions are sent through DoseSpot's console, which opens inside Medipyxis, so you prescribe without leaving the visit.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "<DoseSpotPrescriptionDialog", "paths": ["frontend/src/components/shared/medication/MedicationManagementShared.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<DoseSpotIframe", "paths": ["frontend/src/components/shared/medication/DoseSpotPrescriptionDialog.tsx"], "expect": "present"},
+        {"type": "grep", "fixed": true, "pattern": "<iframe", "paths": ["frontend/src/components/DoseSpotIframe.tsx"], "expect": "present"}
+      ]
+    },
+    {
+      "id": "rx-15",
+      "claim": "Where Medipyxis says eRx, it means DoseSpot.",
+      "checks": [
+        {"type": "grep", "fixed": true, "pattern": "eRx is unavailable right now", "paths": ["frontend/src/components/DoseSpotIframe.tsx"], "expect": "present", "note": "the one on-screen eRx label sits in the DoseSpot frame"}
+      ],
+      "finding": "A naming convention, not product behaviour. The code has renamed most \"eRx\" labels to \"DoseSpot\" (comments such as MedicationManagementShared.tsx:794 \"was eRx\"), so the term may not appear in the UI at all; it cannot be confirmed by a check."
+    }
+  ]
+}

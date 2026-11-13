@@ -1,0 +1,554 @@
+{
+  "title": "Manage orders (accept, ship, and track)",
+  "source": "vendor-portal/manage-orders",
+  "url": "https://help.medipyxis.com/vendor-portal/manage-orders/",
+  "claims": [
+    {
+      "id": "vpo-01",
+      "claim": "The Orders page of the vendor portal is at /vendor/orders.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/orders\" element={<VendorIdentityGate><VendorOrdersPage />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Orders\", path: \"/vendor/orders\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-02",
+      "claim": "Every vendor role (admin, staff, sales) can open Orders.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const allowedRoles: VendorRole[] = [\"vendor_admin\", \"vendor_user\", \"vendor_sales\"];",
+          "paths": [
+            "backend/supabase/functions/_shared/vendor-auth.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<VendorAdminOnly><VendorOrdersPage",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpo-03",
+      "claim": "Status tabs: All, Pending (pending), In Progress (accepted, in_progress), Shipped, Delivered, Cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'open',      label: 'Pending',      statuses: ['pending'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'progress',  label: 'In Progress',  statuses: ['accepted', 'in_progress'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'shipped',   label: 'Shipped',      statuses: ['shipped'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'delivered', label: 'Delivered',    statuses: ['delivered'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'cancelled', label: 'Cancelled',    statuses: ['cancelled'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'all',       label: 'All',          statuses: [] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-04",
+      "claim": "Each row shows order date, clinic, modality, order type, status, number of lines, and tracking number.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Ordered</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Clinic</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Modality</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Type</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Lines</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Tracking</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-05",
+      "claim": "The Clinic column shows the start of the clinic ID, not its name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{o.clinic_facility_id.slice(0, 8)}…",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-06",
+      "claim": "Filter by clinic ID and by modality (Amniotic, Biologics, Conservative, DME).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Filter by clinic facility id\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"amniotic\">Amniotic</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"biologics\">Biologics</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"conservative\">Conservative</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"dme\">DME</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-07",
+      "claim": "The list refreshes on its own when an order changes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`vendor:${identity.vendorId}:orders`",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-08",
+      "claim": "Order Detail shows status, order type, order date, modality, carrier, tracking, cold chain, notes and line items (SKU, description, qty, unit price, status).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<h2 className=\"text-lg font-bold\">Order Detail</h2>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Order Type:</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Carrier:</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tracking:</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Cold chain:</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Notes:</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Unit Price</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Description</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-09",
+      "claim": "Pending order: Accept.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{order.status === 'pending' && (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending:      [\"accepted\", \"cancelled\", \"backordered\"],",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-10",
+      "claim": "Accepted order: Mark In Progress (optional; an accepted order can also ship directly).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark In Progress",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "accepted:     [\"in_progress\", \"shipped\", \"cancelled\", \"backordered\"],",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-11",
+      "claim": "Ship: tracking number required, carrier optional, then Ship.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Carrier (optional)\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!trackingNumber || updateStatus.isPending}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Ship</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-12",
+      "claim": "On a shipped order, Mark Delivered.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "shipped:      [\"delivered\"],",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-13",
+      "claim": "Cancel an unshipped order with an optional reason.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{['pending','accepted','in_progress','backordered'].includes(order.status) && (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "cancellation_reason: cancelReason || undefined",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-14",
+      "claim": "A move the status does not allow is refused with \"Invalid transition\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `Invalid transition: ${order.status} → ${nextStatus}`,",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-15",
+      "claim": "Each status change is recorded in the audit log.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "action: \"order_status_updated\",",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpo-old-01",
+      "status": "removed",
+      "claim": "(removed) \"The order completes as Delivered once the clinic confirms receipt on their side.\"",
+      "reason": "The vendor marks the order delivered from Order Detail; there is no clinic confirmation step on this order flow.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "vpo-old-02",
+      "status": "removed",
+      "claim": "(removed) \"You are signed in with a vendor_admin or vendor_user account\" (implying sales accounts cannot use Orders).",
+      "reason": "vendor_sales accounts pass the same identity gate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"vendor_sales\"",
+          "paths": [
+            "backend/supabase/functions/_shared/vendor-auth.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ]
+}

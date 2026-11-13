@@ -1,0 +1,859 @@
+{
+  "title": "Retired CPT guard",
+  "source": "modules/billing/retired-cpt-guard",
+  "url": "https://help.medipyxis.com/modules/billing/retired-cpt-guard/",
+  "claims": [
+    {
+      "id": "rcpt-01",
+      "status": "removed",
+      "claim": "the coder can never pick one from a dropdown or receive one as a suggestion, but the system will still recognize a retired code on a signed historical note so old records resolve correctly.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "emFamily|emCatalogEntry|recommend|retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present",
+          "note": "would hold if the coder's code picker filtered retired codes"
+        }
+      ],
+      "finding": "Suggestions/recommendations exclude 99343 and recognition keeps it. But the claim code picker (BillingCodeEntry, used by the Coding Review drawer) lists the facility's client_superbill_code rows with no retired-code filter (frontend/src/components/claims/BillingCodeEntry.tsx:175-176); whether 99343 can be picked depends on facility data.",
+      "proposed_text": "The system never suggests or recommends a retired code, but still recognizes one on a signed historical note so old records resolve correctly.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99343', 'home', 'new', [], 'moderate', 'New patient, home visit, moderate MDM (CPT retired 2023-01-01)', 45, { recommend: false, source: AMA_2023 }),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The claim code picker has no retired-code filter. Replaced by rcpt-01b."
+    },
+    {
+      "id": "rcpt-01b",
+      "claim": "The system never suggests or recommends a retired code, but still recognizes one on a signed historical note so old records resolve correctly.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99343', 'home', 'new', [], 'moderate', 'New patient, home visit, moderate MDM (CPT retired 2023-01-01)', 45, { recommend: false, source: AMA_2023 }),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-02",
+      "status": "removed",
+      "claim": "The code is removed from every dropdown, suggestion, and recommender. Coders cannot select it.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "emFamily|emCatalogEntry|recommend|retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present",
+          "note": "would hold if the code picker blocked retired codes"
+        }
+      ],
+      "finding": "No dropdown filter exists: BillingCodeEntry searches client_superbill_code (facility data) and accepts typed codes with no retired-code check (frontend/src/components/claims/BillingCodeEntry.tsx:175). The coded suggestion list (medicalCodingService.ts:55) and recommender do exclude it.",
+      "proposed_text": "The code is removed from the coded suggestion list and the E/M recommender. The claim code picker lists the facility's superbill codes and does not block retired codes, so keep them out of the facility's superbill list.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 99343 deleted by AMA effective 2023-01-01 — removed so it is never suggested.",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        }
+      ],
+      "reason": "No dropdown filter exists; the picker lists facility superbill codes. Replaced by rcpt-02b."
+    },
+    {
+      "id": "rcpt-02b",
+      "claim": "The code is removed from the coded suggestion list and the E/M recommender. The claim code picker lists the facility's superbill codes and does not block retired codes, so keep them out of the facility's superbill list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 99343 deleted by AMA effective 2023-01-01 — removed so it is never suggested.",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-03",
+      "claim": "The E/M recommender never emits it. The auto-coder never returns it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return emCodeFor(settingType, visitClass, \"moderate\");",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "99343",
+          "paths": ["backend/supabase/functions"],
+          "excludeTests": true,
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: '99343'",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-04",
+      "claim": "The code is kept in the code table Medipyxis uses to read notes. If a note was signed carrying that code ... the note still resolves to the correct MDM level and correct description when a biller opens it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99343', 'home', 'new', [], 'moderate', 'New patient, home visit, moderate MDM (CPT retired 2023-01-01)', 45, { recommend: false, source: AMA_2023 }),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALL_EM_CODES = new Set(EM_CATALOG.map((e) => e.code));",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts", "frontend/src/services/perfectNote/s11_codingLedger.ts"],
+          "expect": {"count": 2}
+        }
+      ],
+      "reworded": "\"recognition tables\" reworded; checks unchanged"
+    },
+    {
+      "id": "rcpt-05",
+      "claim": "CPT 99343 — retired 2023-01-01. 99343 was the moderate-MDM new-patient home-visit code.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99343', 'home', 'new', [], 'moderate', 'New patient, home visit, moderate MDM (CPT retired 2023-01-01)'",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-06",
+      "claim": "The pre-2023 five-rung ladder (99341/99342/99343/99344/99345) was compressed to four rungs, with 99344 promoted to the moderate slot and 99345 remaining the high-complexity code.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99344', 'home', 'new', ['moderate'], 'moderate',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99345', 'home', 'new', ['high'], 'high',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-07",
+      "claim": "The corrected 2023 ladder for new patient, home visit (POS 12/13/14/16): 99341 straightforward, 99342 low, 99344 moderate, 99345 high.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99341', 'home', 'new', ['straightforward'], 'straightforward',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99342', 'home', 'new', ['low'], 'low',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99344', 'home', 'new', ['moderate'], 'moderate',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99345', 'home', 'new', ['high'], 'high',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Home or residence (POS 12/13/14/16/33/55).",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-08",
+      "claim": "Established-patient home visits (99347/99348/99349/99350) were not affected by the 2023 change.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "entry\\('993(47|48|49|50)', 'home', 'established', \\['[a-z]+'\\]",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": {"count": 4}
+        }
+      ]
+    },
+    {
+      "id": "rcpt-09",
+      "status": "removed",
+      "claim": "Removed from the coder dropdown (frontend/src/utils/dropdownOptions.ts) — the E/M home-visit block skips 99343 explicitly.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "9934[1-9]|99350",
+          "paths": ["frontend/src/utils/dropdownOptions.ts"],
+          "expect": "present",
+          "note": "would hold if dropdownOptions had an E/M home-visit block"
+        }
+      ],
+      "finding": "dropdownOptions.ts holds no E/M codes at all (no 9934x/99350). The claim code picker reads the facility's superbill codes (frontend/src/components/claims/BillingCodeEntry.tsx:175).",
+      "proposed_text": "There is no fixed E/M dropdown to edit: the claim code picker lists the facility's superbill codes (Charge Master → Templates codes).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "9934[1-9]|99350",
+          "paths": ["frontend/src/utils/dropdownOptions.ts"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "dropdownOptions.ts holds no E/M codes. Replaced by rcpt-09b."
+    },
+    {
+      "id": "rcpt-09b",
+      "claim": "Not blocked in the claim code picker — the picker lists your facility's superbill codes (Charge Master → Templates), so keep 99343 out of that list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "retired",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<LayoutTemplate className=\"h-4 w-4\" /> Templates",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "It ONLY touches client_superbill_config / client_superbill_code.",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-10",
+      "claim": "Removed from the E/M recommender — new-patient home moderate now returns 99344.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return emCodeFor(settingType, visitClass, \"moderate\");",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "entry('99344', 'home', 'new', ['moderate'], 'moderate',",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "file name removed; checks unchanged"
+    },
+    {
+      "id": "rcpt-11",
+      "status": "removed",
+      "claim": "Removed from the downcode suggestion (s13_emLevel.ts W9 gate) — a note billed too high for its documented time is downcoded to 99344, not 99343.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "it does not change the code.",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "absent",
+          "note": "would hold if W9 changed (downcoded) the billed code"
+        }
+      ],
+      "finding": "W9 is a warning only and does not change the code (frontend/src/services/perfectNote/s13_emLevel.ts:634-645). When documented minutes fall short it names the highest code those minutes meet, chosen only from recommended entries (frontend/src/services/perfectNote/emTimeStatement.ts:320-330) — so never 99343, but not necessarily 99344.",
+      "proposed_text": "Excluded from the W9 time warning: when documented minutes fall short of the billed code, the warning names a code those minutes meet, picked only from recommended codes, so never 99343. The warning does not change the code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "it does not change the code.",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!entry.recommend || entry.setting !== billed.setting || entry.status !== billed.status) continue;",
+          "paths": ["frontend/src/services/perfectNote/emTimeStatement.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "W9 warns only and names a code from recommended entries, not necessarily 99344. Replaced by rcpt-11b."
+    },
+    {
+      "id": "rcpt-11b",
+      "claim": "Excluded from the time warning — when documented minutes fall short of the billed code, the warning names a code those minutes meet, picked only from recommended codes, so never 99343. The warning does not change the code.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "it does not change the code.",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!entry.recommend || entry.setting !== billed.setting || entry.status !== billed.status) continue;",
+          "paths": ["frontend/src/services/perfectNote/emTimeStatement.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-12",
+      "claim": "Removed from the coded suggestion list — the code is not offered as a suggestion.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 99343 deleted by AMA effective 2023-01-01 — removed so it is never suggested.",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: '99343'",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "absent"
+        }
+      ],
+      "reworded": "file name removed; checks unchanged"
+    },
+    {
+      "id": "rcpt-13",
+      "status": "removed",
+      "claim": "Kept in the recognition set (s11_codingLedger.ts EM_CODES_NEW_HOME, s13_emLevel.ts NEW_PATIENT_CODES / TIME_THRESHOLDS / EM_MDM_LABELS). A biller opening a historical note billed with 99343 sees \"New patient, home visit, moderate MDM (CPT retired 2023-01-01)\".",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "EM_CODES_NEW_HOME|NEW_PATIENT_CODES|TIME_THRESHOLDS|EM_MDM_LABELS",
+          "paths": ["frontend/src/services/perfectNote/s11_codingLedger.ts", "frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'New patient, home visit, moderate MDM (CPT retired 2023-01-01)'",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Those tables no longer exist. Since the SNF Phase 4a refactor, the recognition set is the shared EM_CATALOG in frontend/src/utils/billing/emFamily.ts:104-143, read by s11 (s11_codingLedger.ts:47, :58) and s13 (s13_emLevel.ts:61-71). The description string is right.",
+      "proposed_text": "Kept in the recognition set: the shared visit-code table EM_CATALOG (frontend/src/utils/billing/emFamily.ts), which s11_codingLedger.ts and s13_emLevel.ts both read. A note billed with 99343 shows \"New patient, home visit, moderate MDM (CPT retired 2023-01-01)\".",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { EM_CATALOG, emCatalogEntry } from \"../../utils/billing/emFamily\";",
+          "paths": ["frontend/src/services/perfectNote/s11_codingLedger.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALL_EM_CODES = new Set(EM_CATALOG.map((e) => e.code));",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'New patient, home visit, moderate MDM (CPT retired 2023-01-01)'",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The named tables no longer exist; recognition is the shared visit-code table. Replaced by rcpt-13b."
+    },
+    {
+      "id": "rcpt-13b",
+      "claim": "Kept in the shared visit-code table Medipyxis uses to read notes. A note billed with 99343 shows \"New patient, home visit, moderate MDM (CPT retired 2023-01-01)\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { EM_CATALOG, emCatalogEntry } from \"../../utils/billing/emFamily\";",
+          "paths": ["frontend/src/services/perfectNote/s11_codingLedger.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALL_EM_CODES = new Set(EM_CATALOG.map((e) => e.code));",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'New patient, home visit, moderate MDM (CPT retired 2023-01-01)'",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-14",
+      "claim": "The change shipped on 2026-08-25 (\"stop emitting CPT 99343, retired by the AMA on 2023-01-01\").",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3326,
+          "titleMatch": "stop emitting CPT 99343, retired by the AMA on 2023-01-01",
+          "mergedFrom": "2026-08-25",
+          "mergedTo": "2026-08-25",
+          "note": "PR #3326 contains commit 0f880abfc (gh api commits/0f880abfc/pulls)"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 99343 deleted by AMA effective 2023-01-01 — removed so it is never suggested.",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "commit hash removed; checks unchanged"
+    },
+    {
+      "id": "rcpt-15",
+      "status": "removed",
+      "claim": "Production carried three real notes billed with 99343 between 2026-07-04 and 2026-07-21, before the code was removed from the recommender. Those notes are signed clinical records tied to submitted claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "2026-07-04",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "Production data fact; needs a DB query. The code only records that 'prod still holds notes billed with it' (frontend/src/utils/billing/emFamily.ts:119), with no count or dates.",
+      "reason": "The count and dates are a production-data fact not recorded in code; replaced by rcpt-15b, which the code records."
+    },
+    {
+      "id": "rcpt-15b",
+      "claim": "Production still holds signed notes billed with 99343.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// prod still holds notes billed with it, so it is recognised, never",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-16",
+      "claim": "If Medipyxis stopped recognizing the code, it would stop trusting the stored value and substitute a different CPT when the note is re-rendered.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const staged = !!(emLine?.code && ALL_EM_CODES.has(emLine.code.trim()));",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "emCode = recommendEMCode(visitClass, settingType);",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "function name removed; checks unchanged"
+    },
+    {
+      "id": "rcpt-17",
+      "status": "removed",
+      "claim": "When the AMA retires a code: Remove the code from the dropdowns (frontend/src/utils/dropdownOptions.ts).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "9934[1-9]|99350|99[23][0-9]{2}'",
+          "paths": ["frontend/src/utils/dropdownOptions.ts"],
+          "expect": "present",
+          "note": "would hold if dropdownOptions held CPT/E-M codes"
+        }
+      ],
+      "finding": "dropdownOptions.ts holds modifiers and place-of-service options, not CPT codes (frontend/src/utils/dropdownOptions.ts:36, :162-168). The coder's picker reads client_superbill_code.",
+      "proposed_text": "Remove the code from the facility superbill code lists the claim code picker reads (client_superbill_code, managed in Charge Master → Templates).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "It ONLY touches client_superbill_config / client_superbill_code.",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "dropdownOptions.ts holds no CPT codes; the picker reads facility superbill codes. Replaced by rcpt-17b."
+    },
+    {
+      "id": "rcpt-17b",
+      "claim": "Remove the code from your facility's superbill codes in Charge Master → Templates. The claim code picker lists those codes and does not block retired ones.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "retired",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<LayoutTemplate className=\"h-4 w-4\" /> Templates",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "It ONLY touches client_superbill_config / client_superbill_code.",
+          "paths": ["frontend/src/pages/ChargeMasterPage.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-18",
+      "status": "removed",
+      "claim": "Remove the code from the recommender surface — for E/M codes, that is frontend/src/services/perfectNote/s13_emLevel.ts (the \"NEW_\" and \"ESTABLISHED_\" maps that get read by recommendEMCode), plus the downcode suggestions in the W9 gate.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "NEW_PATIENT_CODES|ESTABLISHED_PATIENT_CODES|const NEW_|const ESTABLISHED_",
+          "paths": ["frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "recommendEMCode calls emCodeFor over EM_CATALOG (s13_emLevel.ts:304-309, emFamily.ts:152-155); the W9 alternative also reads EM_CATALOG (emTimeStatement.ts:320-330). No NEW_/ESTABLISHED_ maps remain in s13.",
+      "proposed_text": "Set recommend: false on the code's EM_CATALOG entry in frontend/src/utils/billing/emFamily.ts. recommendEMCode (s13) and the W9 time warning read only recommended entries.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!entry.recommend || entry.setting !== billed.setting || entry.status !== billed.status) continue;",
+          "paths": ["frontend/src/services/perfectNote/emTimeStatement.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "No NEW_/ESTABLISHED_ maps remain; the recommender reads the shared visit-code table. Developer step replaced by customer advice rcpt-18b."
+    },
+    {
+      "id": "rcpt-18b",
+      "claim": "Ask Medipyxis support to stop the code being suggested or recommended. Do not ask for it to be deleted outright: notes already signed with it must keep resolving correctly.",
+      "kind": "advice"
+    },
+    {
+      "id": "rcpt-19",
+      "status": "removed",
+      "claim": "Remove the code from the deterministic coding service (frontend/src/services/procedureBillingService.ts) if it is offered there.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'99343':",
+          "paths": ["frontend/src/services/procedureBillingService.ts"],
+          "expect": "absent",
+          "note": "the 99343 retirement did not follow this step"
+        }
+      ],
+      "finding": "The suggestion list is medicalCodingService.ts (where 99343 was removed). procedureBillingService.ts still carries a 99343 rate row ($155.00, line 119); it is a rate lookup, and no code path emits 99343 from it.",
+      "proposed_text": "Remove the code from the suggestion list in frontend/src/services/medicalCodingService.ts and from the rate table in frontend/src/services/procedureBillingService.ts.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 99343 deleted by AMA effective 2023-01-01 — removed so it is never suggested.",
+          "paths": ["frontend/src/services/medicalCodingService.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "private readonly CPT_RATES: Record<string, { description: string; rate: number }> = {",
+          "paths": ["frontend/src/services/procedureBillingService.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "procedureBillingService.ts still carries a 99343 rate row; the suggestion list is elsewhere. Developer step deleted."
+    },
+    {
+      "id": "rcpt-20",
+      "status": "removed",
+      "claim": "Do not remove the code from the recognition sets — EM_CODES_*, EM_MDM_LEVEL, EM_MDM_LABELS, EM_DESCRIPTIONS, TIME_THRESHOLDS, NEW_PATIENT_CODES, ESTABLISHED_PATIENT_CODES. Add a comment naming the retirement date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "EM_CODES_|EM_MDM_LEVEL|EM_MDM_LABELS|EM_DESCRIPTIONS|TIME_THRESHOLDS|NEW_PATIENT_CODES|ESTABLISHED_PATIENT_CODES",
+          "paths": ["frontend/src/services/perfectNote/s11_codingLedger.ts", "frontend/src/services/perfectNote/s13_emLevel.ts"],
+          "expect": "present"
+        }
+      ],
+      "finding": "None of those tables exist at v1.1.345; recognition is the single EM_CATALOG in frontend/src/utils/billing/emFamily.ts, where 99343 keeps its entry with recommend: false and a dated comment (emFamily.ts:118-123).",
+      "proposed_text": "Do not remove the code's EM_CATALOG entry in frontend/src/utils/billing/emFamily.ts; set recommend: false, and put the retirement date in its description and a comment.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Home or residence (POS 12/13/14/16/33/55). 99343 was deleted 2023-01-01;",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ recommend: false, source: AMA_2023 }),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        }
+      ],
+      "reason": "None of the named recognition tables exist. Developer step deleted."
+    },
+    {
+      "id": "rcpt-22",
+      "status": "removed",
+      "claim": "Adding a code to a claim. The dropdown skips retired codes. If a coder types the retired code directly, the field validates against the current ladder and rejects with a message naming the current equivalent.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "retired|emCatalogEntry|recommend",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present",
+          "note": "would hold if the code field validated retired codes"
+        }
+      ],
+      "finding": "The claim code field (frontend/src/components/claims/BillingCodeEntry.tsx) has no retired-code validation or message; it lists facility superbill codes and accepts typed codes.",
+      "proposed_text": "Adding a code to a claim: the code picker lists the facility's superbill codes and does not check for retired codes. Keep retired codes out of the facility's superbill list.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ],
+      "reason": "The claim code field has no retired-code validation or message. Replaced by rcpt-22b."
+    },
+    {
+      "id": "rcpt-22b",
+      "claim": "Adding a code to a claim: the code picker lists the facility's superbill codes and does not check for retired codes. Keep retired codes out of the facility's superbill list.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "retired",
+          "ignoreCase": true,
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('client_superbill_code')",
+          "paths": ["frontend/src/components/claims/BillingCodeEntry.tsx"],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rcpt-23",
+      "claim": "Opening a historical claim. The claim renders with the retired code intact. The MDM level and description come from the visit-code table. A small \"(CPT retired YYYY-MM-DD)\" trailer is appended to the description.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'New patient, home visit, moderate MDM (CPT retired 2023-01-01)'",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const entry = emCatalogEntry(code);",
+          "paths": ["frontend/src/services/perfectNote/s11_codingLedger.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "emCatalogEntry(suggestion.cpt)?.description",
+          "paths": ["frontend/src/services/billing/pullCodesMapper.ts"],
+          "expect": "present"
+        }
+      ],
+      "reworded": "\"recognition set\" reworded; checks unchanged"
+    },
+    {
+      "id": "rcpt-24",
+      "claim": "Auto-coding a new visit. The E/M recommender never emits a retired code. The time warning never suggests one. The auto-coder never returns one.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": ["frontend/src/utils/billing/emFamily.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!entry.recommend || entry.setting !== billed.setting || entry.status !== billed.status) continue;",
+          "paths": ["frontend/src/services/perfectNote/emTimeStatement.ts"],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "99343",
+          "paths": ["backend/supabase/functions"],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ],
+      "reworded": "\"W9 downcode gate\" reworded (it warns, it does not downcode); checks unchanged"
+    }
+  ]
+}

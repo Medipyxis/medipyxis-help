@@ -1,0 +1,887 @@
+{
+  "title": "File a received fax to a patient chart",
+  "source": "modules/more-fax/file-to-chart",
+  "url": "https://help.medipyxis.com/modules/more-fax/file-to-chart/",
+  "claims": [
+    {
+      "id": "ftc-20",
+      "claim": "Every fax your clinic receives is listed in Received Fax Logs. Filing a fax to a patient's chart puts a copy on the patient's Documents page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Central inbox for all incoming faxes - triage, assign, and route",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "document_type: \"received_fax\",",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"received_fax\">Received Fax</SelectItem>",
+          "paths": [
+            "frontend/src/pages/PatientDocumentsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/patients/${patientId}/documents`)}",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/PatientOverviewPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-21",
+      "claim": "The patient already exists in Medipyxis; a fax cannot be filed to a chart that does not exist.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return jsonResponse({ error: \"Patient not found\" }, 404, cors);",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-22",
+      "claim": "You have a clinical, billing, admin or referral coordinator role, with access to both the fax's facility and the patient's facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[...BILLING_SURFACE_ROLES, \"referral_coordinator\"],",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "MEDICAL_ACCESS: ['admin', 'clinician', 'clinical_manager', 'medical_director', 'provider'] as string[],",
+          "paths": [
+            "backend/supabase/functions/_shared/auth-helpers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You do not have access to this fax's facility.\"",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You do not have access to this patient's facility.\"",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-23",
+      "claim": "Open Received Fax Logs: click Fax Center in the sidebar, then the Received Fax Logs tile.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Received Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-24",
+      "claim": "Click the fax row, or Triage & Assign in the row's Actions. The Triage Fax panel opens with the fax details (sender, fax number, pages) and a View PDF button.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "canOpenTriage(fax) && handleTriageFax(fax)",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Triage & Assign\"",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FaxTriagePanel",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Triage Fax",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fax Number:",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pages:",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "View PDF",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-25",
+      "claim": "Under 1. Select Patient, search by name, date of birth or MRN, and pick the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "1. Select Patient",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by name, DOB, or MRN...\"",
+          "paths": [
+            "frontend/src/components/PatientSearch.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-26",
+      "claim": "Under File Name (Optional), type a name. Leave it empty to keep the fax's file name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "File Name (Optional)",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Leave empty to use default filename:",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-27",
+      "claim": "Notes are saved on the fax and shown on its row in Received Fax Logs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".update({ notes: triageNote, updated_at: new Date().toISOString() })",
+          "paths": [
+            "frontend/src/services/receivedFaxService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// The reader is the Received Fax Log row, NOT the triage panel.",
+          "paths": [
+            "frontend/src/services/receivedFaxService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fax.notes",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-28",
+      "claim": "Click File to Chart. The panel shows \"Fax successfully filed to patient chart! You can also attach it to an order below.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "File to Chart",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Fax successfully filed to patient chart! You can also attach it to an order below.\"",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-29",
+      "claim": "If the fax already has a patient assigned, you can click File to chart in the row's Actions and confirm. A copy goes into that patient's documents; the fax stays in the list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{canFileToChart(fax) && fax.patient_id && (",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"File to chart\"",
+          "paths": [
+            "frontend/src/pages/received-fax-log/FileToChartButton.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "A copy goes into their documents; the fax stays here.",
+          "paths": [
+            "frontend/src/pages/received-fax-log/FileToChartButton.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-30",
+      "claim": "The copy has the document type Received Fax and the file name you chose.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "document_type: \"received_fax\",",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "file_name: fileName,",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "custom_file_name",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-31",
+      "claim": "The fax's status in Received Fax Logs becomes Completed, unless it is attached to an order.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"completed\",",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartRouting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (fax.routed_to === \"lab_order\") return base;",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartRouting.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Completed\"",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-32",
+      "claim": "The fax's audit log records that it was filed to the chart, and by whom.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "action: \"filed_to_chart\",",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "performed_by: userId,",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-33",
+      "claim": "You can file a fax only when you have access to both the fax's facility and the patient's facility. A fax already on one patient's chart cannot be filed to another patient's chart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: \"FAX_FACILITY_DENIED\",",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: \"PATIENT_FACILITY_DENIED\",",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: \"FAX_ON_OTHER_PATIENTS_CHART\",",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-34",
+      "claim": "Filing the same fax to the same patient again does not add a second copy; Medipyxis shows \"This fax was already on the patient chart.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "already_filed: true,",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"This fax was already on the patient chart. You can also attach it to an order below.\"",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success(\"This fax was already on the patient chart.\")",
+          "paths": [
+            "frontend/src/pages/received-fax-log/useFileFaxToChart.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-35",
+      "claim": "If the fax was filed but could not be marked as routed, filing it again retries that step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"it will still appear in the queue. Filing it again will retry that step.\"",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-36",
+      "claim": "With the patient selected, Attach to an Order lists the patient's orders: lab, DME, imaging, home health or specialist referral. The order number tells similar orders apart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Attach to an Order",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "— lab, DME, imaging, home health or specialist referral",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "loadLabOrders(selectedPatient.patient_id);",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{order.order_number && (",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-37",
+      "claim": "Click Attach to Order. The fax is listed with that order on the patient's Orders & DME page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Attach to Order",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const faxes = await ReceivedFaxService.getAttachedFaxesForOrder(",
+          "paths": [
+            "frontend/src/pages/PatientOrdersDmePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-38",
+      "claim": "You can file to the chart and attach to an order in the same panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onSuccess(); // Refresh the list but keep panel open",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-39",
+      "claim": "Troubleshooting: \"Document filed to the patient chart, but this fax could not be marked as routed\" — file it again; filing again retries that step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Document filed to the patient chart, but this fax could not be marked as routed — \"",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-40",
+      "claim": "Troubleshooting: \"You do not have access to this fax's facility.\" or \"You do not have access to this patient's facility.\" — your role does not cover that facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You do not have access to this fax's facility.\"",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You do not have access to this patient's facility.\"",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "err instanceof Error && err.message",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-41",
+      "claim": "Troubleshooting: \"This fax is attached to an order for … It can only be filed to that patient's chart.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"It can only be filed to that patient's chart.\",",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-42",
+      "claim": "Troubleshooting: \"Unable to open fax — no viewable document available\" — no stored document for this fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(\"Unable to open fax — no viewable document available\")",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ftc-43",
+      "claim": "Patient search returns no results: create the patient first. Filed fax not visible: reload the patient's Documents page.",
+      "kind": "advice",
+      "checks": []
+    },
+    {
+      "id": "ftc-01",
+      "claim": "Every fax stays in the Received Fax queue until you triage it; filing stops it appearing in the queue and starts it appearing on the chart's Documents tab under Faxes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Faxes",
+          "paths": [
+            "frontend/src/pages/PatientDocumentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Filed faxes stay listed in Received Fax Logs (status Completed); on the chart the document type is Received Fax, not a Faxes section. Replaced by ftc-20/30/31."
+    },
+    {
+      "id": "ftc-02",
+      "claim": "Open Received Fax from More → Received Fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Received Fax\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The tile is Received Fax Logs under Fax Center. Replaced by ftc-23."
+    },
+    {
+      "id": "ftc-03",
+      "claim": "Click the fax row. The triage panel opens on the right with the fax preview, sender number, page count, and received timestamp.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<iframe",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Received:",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The panel shows a View PDF button rather than an inline preview, and no received timestamp. Replaced by ftc-24."
+    },
+    {
+      "id": "ftc-05",
+      "claim": "Notes are stored on the audit trail and visible to anyone reviewing the chart later.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "triage_notes",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The note is saved on the fax row and shown in Received Fax Logs; it is not written to the audit log or the chart. Replaced by ftc-27."
+    },
+    {
+      "id": "ftc-06",
+      "claim": "Click File to Patient Chart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">File to Patient Chart<",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The button is File to Chart (File to Patient Chart is the option heading). Replaced by ftc-28."
+    },
+    {
+      "id": "ftc-07",
+      "claim": "The fax appears on the patient's Documents tab with a link back to the original queue entry.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "received_fax_id",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The chart document does not link back to the fax. Replaced by ftc-30."
+    },
+    {
+      "id": "ftc-08",
+      "claim": "The Received Fax queue removes the row from the pending list. Search All faxes or Filed faxes to find it again.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Filed faxes",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The filter has All Statuses, Pending, In Progress, Completed, Archived and Failed; there is no All faxes or Filed faxes view. Replaced by ftc-31."
+    },
+    {
+      "id": "ftc-09",
+      "claim": "The audit log records who filed the fax, when, and the triage notes you added.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "triage_notes",
+          "paths": [
+            "backend/supabase/functions/_shared/fileFaxToChartCore.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The audit entry records who and when, not the notes. Replaced by ftc-32."
+    },
+    {
+      "id": "ftc-10",
+      "claim": "You can only file a fax to patients in the facility that received it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient.facility_id !== fax.facility_id",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The check is that you have access to both facilities, not that they are the same. Replaced by ftc-33."
+    },
+    {
+      "id": "ftc-11",
+      "claim": "After filing to chart, the triage panel loads the patient's open lab orders; the fax appears as a result on that order in Orders & DME.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (filedToChart) loadLabOrders",
+          "paths": [
+            "frontend/src/components/FaxTriagePanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Orders load as soon as a patient is selected, and cover all order types. Replaced by ftc-36/37."
+    },
+    {
+      "id": "ftc-12",
+      "claim": "\"You do not have access to this fax\" — switch to that facility from the Organization Selector, then reopen the fax.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"You do not have access to this fax\"",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The message is \"You do not have access to this fax's facility.\"; replaced by ftc-40."
+    },
+    {
+      "id": "ftc-13",
+      "claim": "No PDF preview shown: the fax file did not finish uploading from the fax vendor. Wait 30 seconds and reload.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "did not finish uploading",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No retry-after-30-seconds behaviour exists; the panel says no viewable document is available. Replaced by ftc-42."
+    }
+  ]
+}

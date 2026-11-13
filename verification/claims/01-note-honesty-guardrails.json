@@ -1,0 +1,323 @@
+{
+  "title": "Note honesty guardrails",
+  "source": "modules/visit-wizard-ehr/note-honesty-guardrails",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/note-honesty-guardrails/",
+  "claims": [
+    {
+      "id": "nhg-01",
+      "claim": "The note never copies the pre-debridement area into the post-debridement row; no post-debridement area is synthesised.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure = preMeasure",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": {
+            "count": 1
+          },
+          "note": "the only remaining hit is the comment that records the removed line"
+        }
+      ]
+    },
+    {
+      "id": "nhg-02",
+      "claim": "An unmeasured post-debridement row prints \"Not measured\", and so does an unmeasured pre-debridement row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  pre-debridement\", deb.measure_pre_cm2 != null ? `${deb.measure_pre_cm2} cm²` : \"Not measured\"]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Wound area  -  post-debridement\", deb.measure_post_cm2 != null",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-03",
+      "claim": "The \"(auto: baseline)\" and \"(auto: this visit)\" labels no longer print.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "auto: baseline|auto: this visit",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "nhg-04",
+      "claim": "The post-larger-than-pre check (gate W8) can fire when both a real pre and a real post measurement exist.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const passed = post <= pre;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Post-debridement wound area (${post} cm2) > pre-debridement area",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-05",
+      "claim": "Diabetes with no documented type prints as \"Diabetes mellitus\" with no type.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return dt ? `Diabetes mellitus (${dt})` : \"Diabetes mellitus\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-06",
+      "claim": "Kidney disease with no documented stage prints as \"Chronic kidney disease\" with no stage.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return kt ? `Chronic kidney disease (${kt})` : \"Chronic kidney disease\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-07",
+      "claim": "Malnutrition with no documented type prints as \"Malnutrition\" with no type.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return clean ? `${clean} malnutrition` : \"Malnutrition\";",
+          "paths": [
+            "frontend/src/services/perfectNote/s04_comorbidities.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-08",
+      "claim": "The progress note shown and stored is drawn by this renderer (the checks above test the live path).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "renderLegalDefenseNote",
+          "paths": [
+            "frontend/src/services/perfectNote/buildVisitNotePdf.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "from ['\"].*perfectNote/buildVisitNotePdf['\"]|buildVisitNotePdf\\(",
+          "paths": [
+            "frontend/src/components",
+            "frontend/src/pages"
+          ],
+          "excludeTests": true,
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "nhg-09",
+      "claim": "Pull Codes can suggest type-specific codes when the type was left blank: Type 2 for diabetes with a foot or leg wound, moderate protein-calorie malnutrition, and end-stage renal disease for kidney disease with a wound (tracked as MEDA-380).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.621\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "primaryICD10: \"E11.622\"",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"E44.0\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "secondaryICD10: [\"N18.6\"]",
+          "paths": [
+            "frontend/src/services/comorbidityMappingService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { COMORBIDITY_ICD10_RULES } from \"@/services/comorbidityMappingService\";",
+          "paths": [
+            "frontend/src/services/billing/pullCodesMapper.ts"
+          ],
+          "expect": "present",
+          "note": "the rules feed Pull codes"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Use Pull Codes to auto-populate from documented visit data.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/BillingStagingWrapperVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-10",
+      "claim": "A code you keep from Pull Codes prints in the note's diagnosis table: \"Diagnosis with ICD-10 Codes\", or the Plan of Care summary in the provider version.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "function collectICD10Codes",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "billingStaging",
+          "paths": [
+            "frontend/src/services/perfectNote/s02_diagnoses.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sectionBanner(ctx, \"Diagnosis with ICD-10 Codes\", 22);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "renderDiagnosisTable(ctx, ctx.note.diagnoses.diagnosis_rows);",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-11",
+      "claim": "Medipyxis does not currently flag a missing diabetes type, kidney disease stage, or malnutrition type.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "diabetes_type|kidney_disease_type|malnutrition_type",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts",
+            "frontend/src/components/claims",
+            "frontend/src/services/documentationAssist",
+            "frontend/src/services/perfectNote/gapGates.ts"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "nhg-12",
+      "claim": "Correcting a signed note uses an addendum, and the addendum records the nature of the amendment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (typeof body.nature_of_amendment !== \"string\")",
+          "paths": [
+            "backend/supabase/functions/create-progress-note-addendum/handler.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nhg-old-01",
+      "status": "removed",
+      "claim": "(removed) \"When you leave it blank, the diagnosis-code validation drawer flags the matching ICD-10 gap.\"",
+      "reason": "No check reads the documented subtype; the claim validator only tests whether a code is billable. The check below encodes the old claim and fails.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "diabetes_type|kidney_disease_type|malnutrition_type",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts",
+            "frontend/src/components/claims"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

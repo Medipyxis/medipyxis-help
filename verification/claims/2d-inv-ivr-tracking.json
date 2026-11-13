@@ -1,0 +1,1141 @@
+{
+  "title": "Track Insurance Verification Requests (IVRs)",
+  "source": "modules/inventory/ivr-tracking",
+  "url": "https://help.medipyxis.com/modules/inventory/ivr-tracking/",
+  "claims": [
+    {
+      "id": "inv-ivr-01",
+      "claim": "The vendor_coordinator or practice_admin role is required to create and update IVRs.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "practice_admin",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "No practice_admin role exists. IVR Tracking is gated by the Inventory feature only (user-routes.tsx:2164-2168); status changes go through update_ivr_order_status_v2 with no role list in the page.",
+      "proposed_text": "Anyone whose role has the Inventory feature can update IVRs in IVR Tracking.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<IVRManagementPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No practice_admin role exists; IVR Tracking is gated by the Inventory feature only. Replaced by inv-ivr-14."
+    },
+    {
+      "id": "inv-ivr-02",
+      "claim": "The product must exist in the Product Catalog with a valid HCPCS code; the Product dropdown lists only Active products with a HCPCS code, and the HCPCS populates automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".not(\"hcpcs_code\", \"is\", null)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The IVR request product list filters by facility, category, vendor, status 0 and is_deleted — not by is_active or HCPCS (IVRInventoryRequestModal.tsx:467-476).",
+      "proposed_text": "Pick a product from the selected vendor's catalog for the chosen category; its HCPCS shows when the catalog has one.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".eq(\"vendor_id\", selectedVendor)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HCPCS: {product.hcpcs_code}",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The request's product list is not limited to active products with an HCPCS code. Replaced by inv-ivr-15 and inv-ivr-17."
+    },
+    {
+      "id": "inv-ivr-03",
+      "claim": "IVR statuses move Submitted → Pending → Approved, or → Declined → Agreed.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "'submitted'",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a Submitted status"
+        }
+      ],
+      "finding": "The statuses are Pending, Incomplete, Agreed, Approved, Declined (IVRStatusUpdateModal.tsx statusOptions; update_ivr_order_status_v2 allows pending|incomplete|agreed|approved|declined). There is no Submitted status, and the page omits Incomplete. A new request starts as Pending (no outcome).",
+      "proposed_text": "IVR statuses: Pending (new), Incomplete, Approved, Declined, and Agreed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "const statusOptions: CanonicalIvrStatus[] = [",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "incomplete: 'Incomplete',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no Submitted status; the statuses are Pending, Incomplete, Agreed, Approved, Declined. Replaced by inv-ivr-19."
+    },
+    {
+      "id": "inv-ivr-04",
+      "claim": "Agreed means the patient and provider agreed to proceed at the patient's financial responsibility after a Declined decision, or the payer issued a formal agreement letter.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "financial",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "note": "a defined meaning for Agreed would appear in the status dialog",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The code stores Agreed as an outcome with no stated meaning (IVRStatusUpdateModal.tsx; update_ivr_order_status_v2). The definition cannot be checked from code.",
+      "status": "removed",
+      "reason": "The product stores Agreed with no stated meaning; the definition was not product behaviour. Deleted."
+    },
+    {
+      "id": "inv-ivr-05",
+      "claim": "Open IVR Tracking from the Inventory Management hub.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-06",
+      "claim": "Create an IVR with New IVR in the upper-right of the IVR Tracking table: select the patient (search by last name or DOB), select the product, enter the planned date of service, attach documents with Attach Documents, and click Submit IVR.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "New IVR",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Attach Documents",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Submit IVR\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "IVR Tracking has no create button (only Refresh, Filters, View, Update Status, Upload Response). IVR requests are created from the Wound Cockpit (WoundCockpitPage.tsx:51 lazy-loads IVRInventoryRequestModal) for the wound's patient: pick Product Category (Amniotic or Biologics), vendor, product, wound area, ICD-10, Clinical Justification, notes, then \"Submit IVR Request\". No date-of-service or Attach Documents step.",
+      "proposed_text": "Create an IVR from the patient's wound in the Wound Cockpit: pick the category, vendor and product, enter the wound area, diagnosis and clinical justification, and click Submit IVR Request. Track it in IVR Tracking.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ": \"Submit IVR Request\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const IVRInventoryRequestModal = lazy(",
+          "paths": [
+            "frontend/src/pages/WoundCockpitPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "IVR Tracking has no New IVR button; requests are created from the Wound Cockpit with a different form. Replaced by inv-ivr-17 and inv-ivr-18."
+    },
+    {
+      "id": "inv-ivr-07",
+      "claim": "When the payer acknowledges, set the status to Pending and enter the payer's reference number; when approved, set Approved and enter the authorization number.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "reference|authorization",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The status modal has the five status buttons, Outcome Notes, and a vendor-response file upload; no reference-number or authorization-number field (IVRStatusUpdateModal.tsx:300-470).",
+      "proposed_text": "Open Update Status, pick the new status, add Outcome Notes (e.g. reference or authorization numbers), and optionally upload the vendor response.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Outcome Notes",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Update outcome and upload vendor response",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The status dialog has no reference or authorization number fields. Replaced by inv-ivr-22 and inv-ivr-23."
+    },
+    {
+      "id": "inv-ivr-08",
+      "claim": "Use Outcome Notes for anything you need to keep, such as a reference or authorization number or the reason for a decline.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "reason for decline",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-09",
+      "claim": "Setting Approved clears the product for use at the scheduled visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "ivr_outcome|ivrOutcome",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx",
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "clearing a product for use would need the Visit Wizard to read the IVR outcome",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Approval auto-creates an inventory order and a pending receiving row (update_ivr_order_status_v2, migration 20261021120000 'On approval, auto-create the inventory order AND a pending receiving'). No code gates Visit Wizard use on an Approved IVR, so 'cleared for application' cannot be confirmed.",
+      "proposed_text": "Setting Approved creates an inventory order and a pending receiving for the product.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "-- On approval, auto-create the inventory order AND a pending receiving.",
+          "paths": [
+            "backend/supabase/migrations/20261021120000_meda41_inventory_ivr_baseline.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Approval creates an order and a draft receiving; nothing in the Visit Wizard checks IVR approval. Replaced by inv-ivr-20."
+    },
+    {
+      "id": "inv-ivr-10",
+      "claim": "With an Approved or Agreed IVR, the product is highlighted at step 13 (Procedure Supplies) of the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "section_13_procedure",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Procedures & Supplies is section 11 (section_11_procedures_supplies, VisitWizardV4.tsx:845-848); section 13 is Medication Management. No IVR-based highlight in ProcedureSuppliesVisit.tsx was found.",
+      "proposed_text": "Remove, or: Approved IVR stock allocated to the patient is offered in the Visit Wizard's Conservative Care & Interventions picker.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "visitData.section_11_procedures_supplies,",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "No IVR-based highlight exists in Procedures & Supplies, which is not step 13. Replaced by inv-ivr-25."
+    },
+    {
+      "id": "inv-ivr-11",
+      "claim": "The IVR Tracking table supports filtering by status, payer, and date range.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"all\">All Statuses</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"month\">Last 30 Days</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "payer",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Filters are status, submission method (Fax, Email, Manual) and date range (IVRTrackingDashboard.tsx:443-485); no payer filter.",
+      "proposed_text": "The IVR Tracking table can be filtered by status, submission method, and date range, and searched by patient, wound, vendor, order ID, request ID, or product.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"all\">All Methods</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search by patient, wound, vendor, order ID, request ID, or product...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "There is no payer filter; filters are status, method and date. Replaced by inv-ivr-21."
+    },
+    {
+      "id": "inv-ivr-12",
+      "claim": "An IVR is a prior-authorization record tracking whether a payer approved a graft product for a patient encounter.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "payer|insurance",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx",
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The product describes IVR Tracking as \"Inventory Vendor Requests\" — \"Monitor and manage inventory vendor requests for wound care products\" (IVRTrackingDashboard.tsx:377-379; hub tile text). Outcomes come from the vendor response; no payer field exists on the tracking screens.",
+      "proposed_text": "An IVR is a request to the product vendor to verify coverage for a graft for a patient; IVR Tracking records the vendor's outcome and response.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Monitor and manage inventory vendor requests for wound care products",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "status": "removed",
+      "reason": "The product describes IVRs as inventory vendor requests with vendor outcomes, not payer prior-authorization records. Replaced by inv-ivr-16."
+    },
+    {
+      "id": "inv-ivr-13",
+      "claim": "Status cannot be advanced from Declined to Approved until the payer issues a reversal.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "FUNCTION public.is_ivr_status_transition_allowed_v2",
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "present",
+          "note": "the rule would need to be defined in the release"
+        }
+      ],
+      "finding": "Transitions are enforced by is_ivr_status_transition_allowed_v2 (raises IVR_STATUS_TRANSITION_INVALID), whose definition was not found in v1.1.345 migrations; cannot confirm which transitions are allowed.",
+      "status": "removed",
+      "reason": "The transition rule is not defined in the release, so this stated rule cannot be shown. Replaced by the general wording in inv-ivr-19."
+    },
+    {
+      "id": "inv-ivr-14",
+      "claim": "Your role needs the Inventory feature to open IVR Tracking and update IVRs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<IVRManagementPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"Inventory\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "role",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "absent",
+          "note": "no role check in the status dialog"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-15",
+      "claim": "The patient must have a rendering provider assigned on their record. Without one, the request form shows \"No rendering provider assigned to this patient.\" and cannot be submitted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "No rendering provider assigned to this patient.",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!providerId && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-16",
+      "claim": "An IVR is a request for graft products (amniotic or biologic) for a specific patient's wound, sent to the product's vendor. IVR Tracking describes these as \"inventory vendor requests for wound care products\" and records the vendor's outcome and response.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Monitor and manage inventory vendor requests for wound care products",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Submit inventory request for wound case treatment",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "option.value === ProductCategoryEnum.Amniotic ||",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "option.value === ProductCategoryEnum.Biologics",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Upload Vendor Response Document",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-17",
+      "claim": "Create an IVR from the wound's card in the Wound Cockpit: click the IVR action button (shown only when the wound's status calls for it; its label depends on the coverage check, for example Ready for next step or Review LCD Gaps), review the IVR readiness check, and click Proceed with IVR Request.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "data-testid=\"ivr-submit-button\"",
+          "paths": [
+            "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!ivrButtonState.show) return null;",
+          "paths": [
+            "frontend/src/components/wound-cockpit/WoundCaseCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const READY_LABEL = 'Ready for next step';",
+          "paths": [
+            "frontend/src/utils/compressNextAction.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "needs_documentation: () => 'Review LCD Gaps',",
+          "paths": [
+            "frontend/src/utils/compressNextAction.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Proceed with IVR Request",
+          "paths": [
+            "frontend/src/components/wound-cockpit/IVRReadinessModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<IVRInventoryRequestModal",
+          "paths": [
+            "frontend/src/pages/WoundCockpitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-18",
+      "claim": "The IVR Inventory Request form asks for Product Category (Amniotic or Biologics), Area (cm²), Select Vendor (then shows the vendor's fax or email, or Manual Submission Required), Select Products (one or more; search by name, SKU, brand, or HCPCS code), Diagnosis Code (ICD-10) and Clinical Justification (both required), the coverage attestations (\"No\" and \"Not applicable\" are valid answers), and optional Request Notes. Click Submit IVR Request; the request appears in IVR Tracking as Pending.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "IVR Inventory Request",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Product Category <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Area (cm²) <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select Vendor <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Will send via fax",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Submission Required",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Multiple products allowed",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search products by name, SKU, brand, or HCPCS code...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.diagnosisCode = \"Diagnosis code (ICD-10) is required\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.clinicalJustification = \"Clinical justification is required\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"No\" and \"Not applicable\" are valid answers and will let you submit.",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Request Notes",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Submit IVR Request\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending: requests.filter(r => !r.ivr_outcome || r.ivr_outcome === 'Pending' || r.ivr_outcome === 'In Progress').length,",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-19",
+      "claim": "An IVR is Pending until someone records an outcome. Update Status offers Pending, Incomplete, Agreed, Approved, and Declined. Some status changes are not allowed; Medipyxis then shows an error and keeps the current status.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  '(pending|incomplete|agreed|approved|declined)',$",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": {
+            "count": 5
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pending: 'Pending',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "incomplete: 'Incomplete',",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'IVR_STATUS_TRANSITION_INVALID: transition from \"%\" to \"%\" is not allowed.',",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(message);",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-20",
+      "claim": "Setting Approved automatically creates an inventory order and a draft receiving for the requested products; the Fulfillment column then shows how many ordered items have been stocked.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "-- On approval, auto-create the inventory order AND a Draft receiving.",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "IF v_next_status = 'approved' THEN",
+          "paths": [
+            "backend/supabase/migrations/20261021120100_meda41_inventory_ivr_fixes.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{request.fulfillment.totalStocked} of {request.fulfillment.totalOrdered} stocked",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Fulfillment",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-21",
+      "claim": "IVR Tracking is headed IVR Request Tracking, with counts for Total Requests, Pending, Approved, Declined, and Agreed. Search by patient, wound, vendor, order ID, request ID, or product; Filters adds status, method (Fax, Email, Manual), and date (All Time, Today, Last 7 Days, Last 30 Days).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<h1 className=\"text-2xl font-bold text-gray-900\">IVR Request Tracking</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Total Requests</div>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Declined</div>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Agreed</div>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by patient, wound, vendor, order ID, request ID, or product...\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"manual\">Manual</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"week\">Last 7 Days</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"month\">Last 30 Days</option>",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Filters",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "payer",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "absent",
+          "note": "no payer filter",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-22",
+      "claim": "Click Update Status in the row's actions, pick the new status, add Outcome Notes, optionally use Upload Vendor Response Document, and click Update Status. Upload Response opens the same dialog for rows with no vendor response yet. View Details shows the full request.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Update Status\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Outcome Notes",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Upload Vendor Response Document",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Update Status",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!request.vendor_response_url && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Upload Response\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handleUpdateStatus(requestId);",
+          "paths": [
+            "frontend/src/pages/inventory-management/IVRManagementPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View Details\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-23",
+      "claim": "The status dialog has no reference-number or authorization-number field, so record those in Outcome Notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "authorization number|reference number",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Add notes about this outcome (e.g., reason for decline, approval conditions, next steps...)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRStatusUpdateModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-24",
+      "claim": "The table columns are Patient & Wound, Vendor & Method, Product(s), Submitted, Status, Fulfillment, Response, and Actions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^ +(Patient & Wound|Vendor & Method|Product\\(s\\)|Submitted|Status|Fulfillment|Response|Actions)$",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRTrackingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-25",
+      "claim": "Lots allocated to the patient, including allocations made through an IVR, are offered in the Visit Wizard's Interventions & Treatments step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// 3. Everything allocated to this patient (MEDA-43): manual and IVR",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fetchPatientAllocations({",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "conservativeCare: \"Interventions & Treatments\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ivr-26",
+      "claim": "Troubleshooting: Submit IVR Request shows errors until area, vendor, at least one product, diagnosis code, clinical justification, and every coverage attestation are complete.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.requiredArea = \"Required wound area must be greater than 0\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.vendor = \"Please select a vendor\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.products = \"Please select at least one product\";",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isSubmissionBlocked(attestations)) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

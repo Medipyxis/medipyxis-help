@@ -6,7 +6,7 @@ audience: [bd]
 roles: [bd_rep, bd_manager]
 type: quickstart
 estimated_minutes: 45
-last_reviewed: 2026-07-08
+last_reviewed: 2026-11-11
 app_route: /facility/{facility_uuid}/bd-dashboard
 related:
   - business-development-overview
@@ -18,55 +18,60 @@ tags: [onboarding, bd, crm, roi]
 
 # BD / CRM first hour
 
-By the end of this hour you will have your rep list configured, logged a practice visit, and learned how to read the ROI report that ties referral sources to revenue.
+By the end of this hour you will have found your practices in the CRM, logged your first call or visit, and know what the Business Development dashboard shows.
 
 ## Before you start
 
-- Your admin has added you with a `bd_rep` or `bd_manager` role.
-- You have a list of your assigned practices (or the CSV is ready to upload).
+- Your admin has given you a BD rep or BD manager role, with access to Business Development and CRM.
+- Know which practices you cover.
 
-## Step 1 — Set up your rep profile (5 min)
+## Step 1 — Open the Business Development dashboard (5 min)
 
-1. Open **Business Development** in the sidebar.
-2. Click your avatar → **My BD Profile**. Set your territory, target-visit cadence, and monthly goal.
+1. Click **Business Development** in the sidebar.
+2. As a BD rep, you see your own assigned practices and activity. Admins and BD managers also get a BD rep filter: **All BD Reps**, **Unassigned**, or one rep.
 
-## Step 2 — Load your practices (15 min)
+See [Business Development overview](/modules/business-development/overview/).
 
-1. **BD → Practices** (or **CRM**, same underlying data — CRM is the detail view, BD is the dashboard).
-2. Click **+ Add practice** for one-offs, or **Bulk Import** for a CSV.
-3. For each practice, confirm: NPI, address, phone, primary contact, and (critically) **referral source category** — Medicare, Medicare Advantage, commercial, SNF, home health.
+## Step 2 — Find and add your practices (15 min)
 
-<Tip>
-Medipyxis ties every referral it receives to a practice. If your referral sources aren't loaded yet, incoming faxes will land in an **Unattributed** bucket until you match them.
-</Tip>
+1. Click **CRM** in the sidebar. The CRM is the directory of referring practices and their contacts.
+2. Open the **Assigned** tab. It lists practices that have a BD rep; the ones assigned to you show a **Me** badge. Use **Search practices...** to find one by name.
+3. To add a practice, click **Add New Practice**.
+4. Open a practice to check its address, phone, email and fax on the **Overview** tab. To add a person, click **Add** next to **Additional Contacts**.
+
+See [Work with a practice detail record](/modules/crm/practice-detail/).
 
 ## Step 3 — Log your first activity (5 min)
 
-1. Open a practice from the list → **Activity** tab.
-2. Click **Log Call**, **New Visit**, or **Add Spend** from the quick-add strip. You can also capture the activity by **voice recording**.
-3. Add notes and any follow-up date. The activity rolls up into your manager's BD Management view.
+1. On the BD dashboard or the CRM, use the quick-add strip: **Log Call**, **New Visit**, **Add Spend**, or **Record Voice Note**. A voice note is saved as its own activity on the practice you choose.
+2. Or open a practice in the CRM and use the **Call**, **Visit** or **Note** button at the top. The call and visit forms there let you set a follow-up date.
+3. Save. The entry appears on the practice's **Activity** tab.
 
-## Step 4 — Read your ROI (10 min)
+See [Log a call or in-person visit](/modules/business-development/log-call-and-visit/).
 
-1. **BD → Dashboard** (`bd-dashboard`). Four key KPIs at the top:
-   - **Referrals received** (this month vs. last)
-   - **Referrals converted to visit** (%)
-   - **Revenue attributed** (from visits + claims tied to each practice)
-   - **Cost to serve** (your rep spend + time)
-2. Click any practice in the list to see a per-practice ROI waterfall — referrals in, visits completed, revenue out, rep spend in.
+## Step 4 — Read your dashboard (10 min)
+
+Open **Business Development** again. It shows:
+
+- **Referrals This Month** — new patients this month credited to you.
+- **ROI (MTD)** — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend.
+- **Active Pipeline** — not calculated yet; it always shows $0k.
+- **Next Best Action** — your daily outreach suggestion, with your round-robin progress shown as "X of Y this cycle".
+- **AI Route Suggestions** — up to seven practices worth visiting today. Despite the name, it uses fixed rules, not an AI model. Click **Add** to put a practice on **Today's Route**.
 
 ## Step 5 — Manager view (5 min, managers only)
 
-1. **BD → Manager Dashboard**. See your team's rollup.
-2. **BD → Rep Coaching**. For each rep: visits logged, practices covered, 30-day activity trend, ROI of their book.
+1. Use the BD rep filter on the dashboard to see one rep's view, all reps, or unassigned practices.
+2. A separate Business Development Management area (manager dashboard, rep coaching) is coming soon. It is not in the menu yet, and its pages show sample data.
 
 ## Result
 
-- Your rep record is live.
-- Your practices are loaded and every incoming referral will be attributed automatically.
-- You've seen revenue-per-practice for the first time.
+- You can find your practices in the CRM and add new ones.
+- You've logged your first activity, and it shows on the practice's Activity tab.
+- You know what the dashboard's numbers mean, including that ROI (MTD) is an estimate.
 
 ## Next up
 
-- [CRM: practice detail deep dive](../../modules/crm/practice-detail.md)
-- [BD: round-robin referral assignment](../../modules/business-development/ai-route-suggestions.md)
+- [CRM: practice detail deep dive](/modules/crm/practice-detail/)
+- [BD: AI Route Suggestions](/modules/business-development/ai-route-suggestions/)
+- [Quick reference: BD rep cheat sheet](/quick-reference/bd-rep/)

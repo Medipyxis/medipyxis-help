@@ -1,0 +1,617 @@
+{
+  "title": "Financial Performance section reference",
+  "source": "modules/oversight-cockpit/financial-performance",
+  "url": "https://help.medipyxis.com/modules/oversight-cockpit/financial-performance/",
+  "claims": [
+    {
+      "id": "oc-fp-20",
+      "claim": "Financial performance in the Oversight Cockpit is the Billed by zip view of the Heat Map: dollars billed on claims sent to payers, grouped by the patient's ZIP code. It does not show payments received. Open the Heat Map tile and select Billed by zip in the Metric selector.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: 'Dollars billed on claims sent to payers, by patient zip.',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown: payment posting isn&apos;t connected yet.",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<MetricSelector value={metric} onChange={setMetric} />",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-21",
+      "claim": "Each bubble is one ZIP code. Size and color scale with the dollars billed there in the selected period, from small green (low billed zip) to large red (top billed zip).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const radius = 8 + Math.round(22 * b.intensity); // 8-30 px",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hue = 120 - Math.round(120 * b.intensity); // green→red",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Small green<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Low billed zip<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Large red<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Top billed zip<",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "intensity: a.totalDollars / maxDollars,",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-22",
+      "claim": "Click a bubble to see its billed total, city, and how many patients and claims it covers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Popup",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{b.city ? ` · ${b.city}` : ''}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient{b.patientCount === 1 ? '' : 's'}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claim{b.claimCount === 1 ? '' : 's'}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{formatUsd(b.totalDollars)}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-23",
+      "claim": "A claim counts as sent once it has a submission date. Cancelled claims are left out.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return !!c.submitted_at;",
+          "paths": [
+            "frontend/src/services/cockpitClaimRules.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const live = claimsRaw.filter((c) => !isCancelledClaim(c.status));",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const sentClaims = live.filter((c) => isSentClaim(c));",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-24",
+      "claim": "Status strip: billed (total dollars billed on the sent claims shown on the map), zips, patients (on those claims), sent claims (shown on the map).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-gray-600\">billed</span>",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "zip{revenueData.bubbles.length === 1 ? '' : 's'}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-gray-600\">patients</span>",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-gray-600\">sent claims</span>",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const totalDollars = bubbles.reduce((s, b) => s + b.totalDollars, 0);",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const totalClaims = bubbles.reduce((s, b) => s + b.claimCount, 0);",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-25",
+      "claim": "Not sent yet: dollars and number of claims not yet sent to a payer; they are not mapped; shown only when there are some.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.notSentClaimCount > 0 && (",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Not sent yet: {formatUsd(revenueData.meta.notSentDollars)} on{' '}",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.notSentClaimCount === 1 ? '' : 's'} (not mapped)",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-26",
+      "claim": "claims missing zip/coords: sent claims whose patient has no ZIP code or map coordinates, so they could not be placed; shown only when there are some.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.ungeocodedClaimCount > 0 && (",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{revenueData.meta.ungeocodedClaimCount} claims missing zip/coords",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!patient || !patient.zip) {",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (patient.lat == null || patient.lng == null) {",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-27",
+      "claim": "The strip also says \"Payments received are not shown: payment posting isn't connected yet.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown: payment posting isn&apos;t connected yet.",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-28",
+      "claim": "Use the date-range selector to scope the view by date of service: Last 30d, Last 90d (the default), Last 180d, Last year, or YTD. The map and the status strip both update to the selected window.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".gte('date_of_service', fromDate)",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '30d', label: 'Last 30d' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: '365d', label: 'Last year' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: 'ytd', label: 'YTD' },",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useState<RevenueDateRange>('90d');",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "}, [metric, facilityId, revenueRange]);",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-29",
+      "claim": "For claim-level reporting (claims, insurance payments, accounts receivable, charges), use the Reports Center in Billing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Insurance Payment Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Account Receivable Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Charges Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "oc-fp-01",
+      "claim": "Financial performance is shown as Revenue by Zip — a geographic view of insurance payments received. Select Revenue by Zip in the metric selector.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Revenue by Zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Payments received are not shown",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "status": "removed",
+      "reason": "The view is Billed by zip and plots dollars billed on sent claims; payments received are not shown. Replaced by oc-fp-20."
+    },
+    {
+      "id": "oc-fp-02",
+      "claim": "Each bubble is sized and colored by the insurance payments received there over the selected period. Hover a bubble to see its detail.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "era_payments",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "eventHandlers={{ mouseover",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Bubbles scale with dollars billed, and detail opens on click. Replaced by oc-fp-21/22."
+    },
+    {
+      "id": "oc-fp-03",
+      "claim": "Dollars received: total insurance payments posted for the period.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "received</span>",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The strip shows dollars billed, not received. Replaced by oc-fp-24."
+    },
+    {
+      "id": "oc-fp-04",
+      "claim": "Claims: number of paid claims represented.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid claims",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The count is of sent claims. Replaced by oc-fp-24."
+    },
+    {
+      "id": "oc-fp-05",
+      "claim": "Pending claims: claims not yet paid (excluded from the received total).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pending claims",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The strip shows Not sent yet (claims not yet sent to a payer). Replaced by oc-fp-25."
+    },
+    {
+      "id": "oc-fp-06",
+      "claim": "Ungeocoded: claims that couldn't be mapped because their address didn't resolve.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Ungeocoded",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The label is claims missing zip/coords. Replaced by oc-fp-26."
+    },
+    {
+      "id": "oc-fp-07",
+      "claim": "Date range options: Last 30 days, 90 days, 180 days, this year, or year-to-date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'This year'",
+          "paths": [
+            "frontend/src/pages/oversight/HeatMapOversightPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "Options are Last 30d, Last 90d, Last 180d, Last year, YTD. Replaced by oc-fp-28."
+    },
+    {
+      "id": "oc-fp-08",
+      "claim": "Revenue by Zip reflects insurance payments received (ERA-posted). Pending claims and payments that haven't posted yet appear in the pending tally.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "claim_ledger",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "status": "removed",
+      "reason": "The view reads billed claims, not ERA postings. Replaced by oc-fp-20/27."
+    }
+  ]
+}

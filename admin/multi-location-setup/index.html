@@ -65,11 +65,11 @@
 <div class="layout"><aside class="sidebar"><div class="sidebar-group"><a class="sidebar-item" href="/admin/role-config/">Configure organization roles and permissions</a><a class="sidebar-item" href="/admin/deactivating-and-archiving/">Deactivate a facility, archive a patient, and disable a user</a><a class="sidebar-item" href="/admin/data-import-export/">Import and export data</a><a class="sidebar-item" href="/admin/user-management/">Invite users and manage facility access</a><a class="sidebar-item" href="/admin/notifications/">Notification settings and channels</a><a class="sidebar-item" href="/admin/practice-onboarding/">Onboard a practice with the Practice Onboarding importer</a><a class="sidebar-item" href="/admin/practice-onboarding-csv-reference/">Practice Data Import CSV templates and column reference</a><a class="sidebar-item" href="/admin/security-and-compliance/">Security settings and HIPAA compliance</a><a class="sidebar-item" href="/admin/facility-setup/">Set up a facility in your first week</a><a class="sidebar-item active" href="/admin/multi-location-setup/">Set up an organization with multiple locations</a><a class="sidebar-item" href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a><a class="sidebar-item" href="/admin/facility-timezone/">Set your facility timezone</a></div></aside><div class="content">
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/admin/">Admin & billing</a></p>
       <h1>Set up an organization with multiple locations</h1>
-      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 9 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-09-30</span></div>
-      <p>Add each of your locations, give every one the identity payers expect, and make sure your staff can see the locations they work at. Do this before your first claim goes out.</p>
+      <div class="article-meta"><span class="meta-pill meta-pill--type">how-to</span> <span class="meta-pill">⏱ 9 min read</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Updated 2026-11-11</span></div>
+<p>Get each of your locations added, give every one the identity payers expect, and make sure your staff can see the locations they work at. Do this before your first claim goes out.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li>You need the <code>admin</code> role.</li>
+<li>You need the admin role.</li>
 <li>Your Medipyxis contact creates your organization, your first location, and your administrator login. Everything on this page assumes that is done and you can sign in.</li>
 <li>For each additional location, have ready: the <strong>NPI</strong> (10 digits), <strong>Tax ID</strong> (9 digits), phone, email, fax, and the street address.</li>
 </ul>
@@ -91,36 +91,33 @@
 </tr>
 <tr>
 <td><strong>Legal / Billing Name</strong></td>
-<td>The exact legal business name on file with the federal NPPES registry</td>
+<td>The legal business name used on insurance claims and with the clearinghouse. It should match the federal NPPES registry</td>
 <td>Payers and the clearinghouse</td>
 </tr>
 </tbody>
 </table>
-<p>If the <strong>Legal / Billing Name</strong> does not match NPPES character for character, claims and payer enrollments for that location can be rejected. Medipyxis fills this in for you from the NPI — step 2 shows how. Do it for every location, including your first one, which starts out blank.</p>
+<p>If the <strong>Legal / Billing Name</strong> is blank, claims carry the <strong>Facility Name</strong> instead. Medipyxis can fill the legal name in for you from the NPI — step 2 shows how. Do it for every location, including your first one.</p>
 <p>Keep <strong>Facility Name</strong> readable and presentable. It is the name other providers see on the shared patient record, so it should be the name you would want a referring practice to recognise.</p>
 <h2 id="steps">Steps</h2>
-<h3 id="1-add-each-additional-location">1. Add each additional location</h3>
+<h3 id="1-add-each-additional-location">1. Ask Medipyxis to add each additional location</h3>
 <ol>
 <li>In the left sidebar click <strong>Facilities</strong>. The page header reads <strong>Facility Management</strong> and shows a counter such as <strong>1/12</strong> — locations used out of the number your organization is allowed.</li>
-<li>Click <strong>Add Facility</strong>.</li>
-<li>Enter the <strong>NPI Code</strong> first, then fill in <strong>Facility Name</strong>, <strong>Tax Number</strong>, <strong>Phone Number</strong>, <strong>Email Address</strong>, <strong>Fax Number</strong> and the address fields. Entering the NPI first lets the registry card appear so it can fill the legal name for you in step 2.</li>
-<li>Click <strong>Save Changes</strong>.</li>
+<li>New locations are added by Medipyxis staff. For your role, <strong>Add Facility</strong> is greyed out and its tip reads "Contact Medipyxis support to add a location". Send your Medipyxis contact the details listed above for each location.</li>
 </ol>
-<p>Repeat for every location.</p>
 <p><img alt="Facilities list showing FACILITY, CONTACT, STATS, STATUS, and ACTIONS columns, with an active or inactive badge in the STATUS column for each location." src="/assets/facilities/list.png" />
 <em>The </em><em>Facilities</em><em> list at <code>/facilities</code>. The counter in the header tells you how many locations you have used.</em></p>
-<p>Every administrator in your organization is given access to the new location automatically — you do not need to add them one at a time.</p>
-<p>If <strong>Add Facility</strong> is greyed out, you have reached the number of locations your organization is set up for. Ask your Medipyxis contact to raise it.</p>
+<p>When a location is added, every administrator in your organization is given access to it automatically — you do not need to add them one at a time.</p>
+<p>If your organization has used all its locations, Medipyxis has to raise the limit before another one can be added.</p>
 <h3 id="2-set-each-locations-payer-facing-identity">2. Set each location's payer-facing identity</h3>
 <p>Do this once for every location, including the first one.</p>
 <ol>
 <li>Go to <strong>Facilities</strong>, find the location, and click <strong>Edit</strong>.</li>
 <li>Enter the <strong>NPI Code</strong>. Use the location's organization NPI (Type 2). If several locations bill under one group NPI, enter that same NPI on each.</li>
-<li>Wait for the blue <strong>Found in federal NPPES registry</strong> card to appear beneath the NPI. It shows the legal business name, the provider type, and the address the registry holds.</li>
-<li>Check the card is the right entity, then click <strong>Use this info</strong>. This copies the registry's legal name into <strong>Legal / Billing Name</strong>, updates the address to the registry's practice location, and records that the location was verified.</li>
+<li>Wait for the <strong>Found in federal NPPES registry</strong> card to appear beneath the NPI. It shows the name, the specialty, and the address the registry holds.</li>
+<li>Check the card is the right entity, then click <strong>Use this info</strong>. This copies the registry's legal name into <strong>Legal / Billing Name</strong>, updates the address and phone to the registry's, and records the NPI type, taxonomy code and the time of the lookup.</li>
 <li>Confirm <strong>Legal / Billing Name</strong> now reads exactly what the registry shows. You can still edit it, but it should match character for character.</li>
 <li>Leave <strong>Facility Name</strong> as the everyday name your staff use. It does not have to match the registry.</li>
-<li>Enter the <strong>Tax Number</strong> (9 digits).</li>
+<li>Enter the <strong>Tax Number</strong> (9 digits; a dash is allowed).</li>
 <li>Click <strong>Save Changes</strong>.</li>
 </ol>
 <p>If the registry card shows a different business, the NPI is wrong or belongs to an individual provider rather than the practice. Click <strong>Dismiss</strong>, confirm the number, and try again.</p>
@@ -129,32 +126,32 @@
 <ol>
 <li>In the left sidebar click <strong>HR &amp; Compliance</strong>.</li>
 <li>Click the <strong>New Employee Onboarding</strong> tile.</li>
-<li>Fill in <strong>First Name</strong>, <strong>Last Name</strong>, email, <strong>Role</strong>, <strong>Job Title</strong>, <strong>Status</strong> and the address fields. Choosing the <strong>Clinician</strong> role reveals the provider fields — NPI, taxonomy code, state licence, DEA and signature. Complete those for anyone who will sign visits.</li>
-<li>In <strong>Facility Assignment</strong>, tick every location this person works at. Someone who covers three locations gets three ticks. Only locations you can access yourself appear in the list.</li>
+<li>Fill in <strong>First Name</strong>, <strong>Last Name</strong>, email, phone, <strong>Role</strong>, <strong>Job Title</strong> and <strong>Status</strong>. Provider fields (NPI, taxonomy code, state licence, DEA and signature) show for clinical, management and admin roles and are required for the <strong>Clinician</strong> role. Complete them for anyone who will sign visits.</li>
+<li>In <strong>Facility Assignment</strong>, pick every location this person works at. Someone who covers three locations gets three. Only locations you can access yourself appear in the list.</li>
 <li>Click <strong>Create User</strong>.</li>
 </ol>
-<p>One login is created, the person is given access to each location you ticked, and a welcome email goes out with a link to set their password.</p>
-<p>To change someone's locations later, go to <strong>HR &amp; Compliance → Facility Users</strong>, find the person, click <strong>Edit User</strong>, adjust the ticks in <strong>Facility Assignment</strong> and click <strong>Save Changes</strong>. Removing a tick removes their access to that location.</p>
-<p>If the welcome email does not arrive, ask the person to open the Medipyxis login page, click <strong>Forgot password</strong> and enter their email address. That sends them a working link to set their password.</p>
+<p>One login is created, the person is given access to each location you picked, and a welcome email goes out with a link to set their password.</p>
+<p>To change someone's locations later, go to <strong>HR &amp; Compliance → Facility Users</strong>, find the person, click the edit button on their row, adjust <strong>Facility Assignment</strong> and click <strong>Save Changes</strong>. Removing a location removes their access to it.</p>
+<p>If the welcome email does not arrive, use <strong>Resend welcome email</strong> on their row in <strong>Facility Users</strong>, or ask the person to open the Medipyxis login page, click <strong>Forgot Password?</strong> and enter their email address.</p>
 <h3 id="4-prepare-each-location-for-billing">4. Prepare each location for billing</h3>
 <p>Each location needs this separately.</p>
 <ol>
 <li>In the sidebar click <strong>Billing Operations</strong>, then the <strong>Payer Enrollment</strong> card.</li>
 <li>Choose the <strong>Enrollment Types</strong> and the <strong>Payers</strong>.</li>
-<li>In <strong>Provider Information</strong>, look at the <strong>Organization / Provider Name</strong> box. It is filled in with the everyday <strong>Facility Name</strong>. Replace it with the <strong>Legal / Billing Name</strong> you set in step 2 before continuing — otherwise your enrollment and your claims will carry two different names for the same NPI.</li>
+<li>In <strong>Provider Information</strong>, look at the <strong>Organization / Provider Name</strong> box. Unless a provider name was saved before, it is filled in with the everyday <strong>Facility Name</strong>. Replace it with the <strong>Legal / Billing Name</strong> you set in step 2 before continuing — otherwise your enrollment and your claims will carry two different names for the same NPI.</li>
 <li>Click <strong>Enroll with N Payers</strong>.</li>
-<li>Load a price list for the location. Without a charge master, claims are built at zero dollars. See <a href="/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a> and <a href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a>.</li>
+<li>Load a price list for the location. Without a charge master, claims are built at zero dollars and cannot be sent to Stedi. See <a href="/modules/billing/charge-master-and-zero-dollar-guard/">Charge Master and the $0.00 claim guard</a> and <a href="/admin/billing-setup/">Set up billing and the Stedi clearinghouse</a>.</li>
 </ol>
 <h2 id="result">Result</h2>
-<p>Every location exists under your organization, carries a verified legal name that matches the federal registry, and has its staff assigned. Your people see the locations they work at when they use the facility switcher, and each location is enrolled with its payers under the right name.</p>
+<p>Every location exists under your organization, carries a legal name that matches the federal registry, and has its staff assigned. Your people see the locations they work at when they switch facility, and each location is enrolled with its payers under the right name.</p>
 <p>Run through this for each location before going live on billing:</p>
 <ul>
-<li>The location appears under the correct organization on the <strong>Facilities</strong> page</li>
+<li>The location appears on the <strong>Facilities</strong> page</li>
 <li>NPI entered and the registry card reviewed</li>
 <li><strong>Legal / Billing Name</strong> matches the registry character for character</li>
 <li><strong>Tax Number</strong> entered</li>
 <li>Phone, email, fax and address complete</li>
-<li>Everyone who works there has this location ticked in <strong>Facility Assignment</strong></li>
+<li>Everyone who works there has this location in <strong>Facility Assignment</strong></li>
 <li>Payer enrollment submitted with the <strong>Legal / Billing Name</strong> in <strong>Organization / Provider Name</strong></li>
 <li>Price list loaded</li>
 </ul>
@@ -171,8 +168,8 @@
 <tbody>
 <tr>
 <td><strong>Add Facility</strong> is greyed out</td>
-<td>You have reached your organization's location limit</td>
-<td>Ask your Medipyxis contact to raise it</td>
+<td>Only Medipyxis staff can add locations</td>
+<td>Ask your Medipyxis contact to add the location</td>
 </tr>
 <tr>
 <td>The registry card shows a different business</td>
@@ -186,13 +183,13 @@
 </tr>
 <tr>
 <td>A staff member cannot see one of your locations</td>
-<td>That location is not ticked for them</td>
-<td><strong>HR &amp; Compliance → Facility Users → Edit User → Facility Assignment</strong></td>
+<td>That location is not in their Facility Assignment</td>
+<td><strong>HR &amp; Compliance → Facility Users →</strong> edit → <strong>Facility Assignment</strong></td>
 </tr>
 <tr>
 <td>Welcome email never arrived</td>
 <td>—</td>
-<td>Have the person use <strong>Forgot password</strong> on the login page</td>
+<td>Use <strong>Resend welcome email</strong>, or have the person use <strong>Forgot Password?</strong> on the login page</td>
 </tr>
 <tr>
 <td>Claims rejected for a name mismatch</td>
@@ -208,7 +205,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#every-location-has-two-names">Every location has two names</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="indent-3" href="#1-add-each-additional-location">1. Add each additional location</a></li><li><a class="indent-3" href="#2-set-each-locations-payer-facing-identity">2. Set each location's payer-facing identity</a></li><li><a class="indent-3" href="#3-add-your-people-and-choose-their-locations">3. Add your people and choose their locations</a></li><li><a class="indent-3" href="#4-prepare-each-location-for-billing">4. Prepare each location for billing</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#before-you-start">Before you start</a></li><li><a class="" href="#every-location-has-two-names">Every location has two names</a></li><li><a class="" href="#steps">Steps</a></li><li><a class="" href="#result">Result</a></li><li><a class="" href="#troubleshooting">Troubleshooting</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/admin/multi-location-setup.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/admin/multi-location-setup.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
