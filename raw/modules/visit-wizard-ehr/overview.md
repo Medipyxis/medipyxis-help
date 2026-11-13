@@ -39,7 +39,7 @@ You can open a visit from:
 - **All Patients → Appointment Management** — select the visit date, then click **Open Visit**.
 - **Wound Cockpit** — choose a visit from **Pick a visit or start a new one** in the upper-right corner, then click **Open**.
 
-When opened, the wizard is tied to the selected patient and appointment. See [How the Visit Wizard opens](./how-the-wizard-opens.md).
+When opened, the wizard is tied to the selected patient and appointment. See How the Visit Wizard opens.
 
 ---
 
@@ -50,7 +50,7 @@ When opened, the wizard is tied to the selected patient and appointment. See [Ho
 - **Warnings, not blocks** — most missing items raise a warning and let you continue. Before signing, a final review lists open gaps so you can resolve them or continue anyway.
 - **Carry-forward** — information from earlier visits carries into sections such as Review of Systems, and **Pull Migration Data** brings forward data from a previous Medipyxis visit you choose.
 - **Per-wound documentation** — interventions, care plans, procedures, and billing are documented separately for each active wound.
-- **LCD support** — the [LCD Navigator](./lcd-navigator.md) tracks Medicare LCD documentation requirements as you work, and Section 16 shows any remaining gaps.
+- **LCD support** — the LCD Navigator tracks Medicare LCD documentation requirements as you work, and Section 16 shows any remaining gaps.
 - **Drafting help** — **Summarize prior treatments**, **Generate Procedure Note**, **Generate Draft** (care plan), and **Generate Compliance Note** create starting text from what you documented. You review and edit it; you can also keep your own procedure wording with **Use My Exact Procedure Note**.
 - **Billing codes from documentation** — **Pull Codes** suggests ICD-10-CM, CPT, HCPCS, and E/M codes from your documentation for review before signing.
 
@@ -67,16 +67,16 @@ When opened, the wizard is tied to the selected patient and appointment. See [Ho
 | 4 | **Objective Assessment** | Vitals, vascular and perfusion exam, edema and circumference measurements, ABI/TBI, vascular studies, HbA1c, vascular follow-up plan. |
 | 5 | **Functional Status & ADLs** | Mobility, daily activities, fall risk. |
 | 6 | **Comorbidities & Risk Factors** | Conditions that contribute to the wound or slow healing. |
-| 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and **Treating / Monitoring** status. See [Wound Assessment](./wound-assessment.md). |
+| 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and **Treating / Monitoring** status. See Wound Assessment. |
 | 8 | **Previous Treatments** | Prior wound care, chronicity, medical necessity statement, supporting documents. |
 | 9 | **Interventions & Treatments** | Interventions performed per wound, procedure note, contributing factors. |
 | 10 | **Care Planning** | Per-wound follow-up interval, next visit date, treatment plan narrative. |
 | 11 | **Orders & DME** | DME, labs, imaging, referrals, and home health orders, sent by fax or email. |
 | 12 | **Patient Education** | Education library, care bundles, topics covered, patient understanding, next-visit goals. |
 | 13 | **Procedures & Supplies** | Final review of the procedures from Section 9, missing fields, procedure and compliance notes, supplies. |
-| 14 | **Current Medication** | Active prescriptions, medication status, allergies, reconciliation, **DoseSpot** e-prescribing. See [Prescribe with DoseSpot](./medication-dosespot.md). |
+| 14 | **Current Medication** | Active prescriptions, medication status, allergies, reconciliation, **DoseSpot** e-prescribing. See Prescribe with DoseSpot. |
 | 15 | **Billing & Documentation** | Per-wound and visit-level codes, modifiers, and the CMS-1500 claim preview. |
-| 16 | **LCD Audit & Review** | Documentation gaps against the applicable LCD. See [LCD Navigator](./lcd-navigator.md). |
+| 16 | **LCD Audit & Review** | Documentation gaps against the applicable LCD. See LCD Navigator. |
 | 17 | **Provider Attestation** | Attestation, E/M time, final review, progress note preview, and **Sign & Lock**. See [Sign Off](./sign-off.md). |
 
 ---
@@ -109,16 +109,13 @@ CMS requires that the rendering provider be physically present at the place of s
 
 ## Offline documentation
 
-The web Visit Wizard is online-only and saves continuously to the server. See [Document a visit offline](./work-offline.md) for what this means for field visits.
+The web Visit Wizard is online-only and saves continuously to the server. See Document a visit offline for what this means for field visits.
 
 ---
 
 ## Related modules
 
 - [Wound Cockpit](./wound-cockpit.md) — the wound screen and between-visit hub.
-- [How the Visit Wizard opens](./how-the-wizard-opens.md) — what the wizard shows when you open a visit.
-- [Note honesty guardrails](./note-honesty-guardrails.md) — what Medipyxis will and will not add to your signed note.
-- [LCD Navigator](./lcd-navigator.md) — LCD documentation requirements as you work.
 - [Sign Off](./sign-off.md) — provider attestation, addenda, and audit log.
 - [How your progress note is written](./progress-note.md) — what the note prints, and the documentation checklist before it.
 
