@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-11-12
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -96,11 +96,41 @@ If your practice requires a physician co-signature, use the optional **Physician
 
 ---
 
-## Add an addendum after signing
+## Add an addendum to a signed note
 
-Once a note is signed, the visit is read-only. Every change is made with an addendum, which you file from the wound's page.
+A signed note can't be edited. To correct it or add information, add an addendum. You start the addendum from the signed visit, and it is saved with the wound's notes.
 
-### 1. Find the signed visit
+1. Open the signed visit from the patient chart's **Appointment Management** card (**Open visit**), from the appointment's details window in **Fleet Calendar**, or from the visit picker in the **Wound Cockpit**.
+2. The screen **This visit is signed and locked** appears. Click **Add an addendum**.
+
+   ![The "This visit is signed and locked" screen with the Add an addendum, Add a wound by addendum, Review signed note, and Back to patient chart buttons](../../assets/visit-wizard/21_signed_and_locked.png)
+
+   *The **This visit is signed and locked** screen.*
+
+3. The **Add Addendum to Progress Note** form opens. In **Addendum Note**, enter the additional documentation.
+4. In **Select Progress Note**, check that the right signed note is selected. Each note shows the visit date, who signed it and when, and the wounds on the visit. A banner confirms the visit date the addendum will be attached to.
+5. Choose the **Type of Addendum**: **Correction**, **Clarification**, **Late entry**, or **Other**. This is required by CMS.
+6. In **Reason**, briefly explain why you are adding the addendum (at least 10 characters).
+
+   ![Top of the Add Addendum to Progress Note form, showing the Addendum Note field and the Attach Files area](../../assets/visit-wizard/22_addendum_form_top.png)
+
+   *The top of the **Add Addendum to Progress Note** form.*
+
+   ![Middle of the Add Addendum to Progress Note form, showing the Select Progress Note dropdown, the banner confirming the visit date, the Type of Addendum dropdown, and the Reason field](../../assets/visit-wizard/24_addendum_form_middle.png)
+
+   *Select Progress Note, Type of Addendum, and Reason.*
+
+7. Sign in **Provider Signature** with your mouse or finger. Click **Clear** to start over.
+8. In **Electronic Signature by**, enter the signer's full name. **Signed Date** is filled in with today's date.
+9. Click **Submit Addendum**. A message confirms *Addendum filed and PDF generated.*
+
+   ![Bottom of the Add Addendum to Progress Note form, showing the Provider Signature pad with a Clear button, the Electronic Signature by and Signed Date fields, and the Submit Addendum button](../../assets/visit-wizard/23_addendum_form_signature.png)
+
+   *The signature fields and **Submit Addendum**.*
+
+You can't attach files to an addendum. Only the text is saved. The addendum prints on its own page after the signed note.
+
+### Other ways to find a signed visit
 
 **From the patient's chart (visits from the past year):**
 
@@ -108,10 +138,6 @@ Once a note is signed, the visit is read-only. Every change is made with an adde
 2. Click the **Appointment Management** tile.
 3. Click the **Past** filter. A signed visit has a **Signed** badge and shows *visit note attached*.
 4. Click **Open visit** on that row. The screen shows *This visit is signed and locked*.
-
-![A patient's chart with the Appointment Management panel open on the Past filter. The 10/22/26 Initial Evaluation row has a green Signed badge, the label visit note attached, and an Open visit link.](../../assets/visit-wizard/21_addendum_signed_visit_list.png)
-
-*Past visits in Appointment Management. A signed visit shows the Signed badge.*
 
 **From the Fleet Calendar (when you know the visit date):**
 
@@ -124,41 +150,17 @@ Once a note is signed, the visit is read-only. Every change is made with an adde
 2. On the wound's card, click **Details**.
 3. Click the **Timeline** tab, find the visit by its date, and click **Addendum** on that visit. The addendum form opens with that visit's signed note selected.
 
-### 2. Open the addendum form
-
-On the *This visit is signed and locked* screen, click **Add an addendum**. It is the first button under the message, next to **Add a wound by addendum**, **Review signed note**, and **Back to patient chart**.
-
-![A Wound Care Visit marked Signed & Locked. The message This visit is signed and locked appears above four buttons: Add an addendum, Add a wound by addendum, Review signed note, and Back to patient chart.](../../assets/visit-wizard/22_addendum_signed_locked_screen.png)
-
-*Opening a signed visit shows this screen instead of the wizard.*
-
-The wound's page opens on **Timeline → Notes**, with the **Add Addendum to Progress Note** form at the top and the signed note already chosen under **Select Progress Note**.
-
-If the screen says *The signed note couldn't be loaded here*, the button isn't shown. Open the note from the patient's **Progress Notes**, and add the addendum from the wound's page as described above.
+If the screen says *The signed note couldn't be loaded here*, the **Add an addendum** button isn't shown. Open the note from the patient's **Progress Notes**, and add the addendum from the wound's page as described above.
 
 Anyone whose role can open patient charts sees **Add an addendum** on a signed visit and can file an addendum for notes at their own facility.
 
-### 3. Fill in and submit the addendum
+### Where to find an addendum
 
-![The Add Addendum to Progress Note form. The Addendum Note box is empty, a notice says file attachments are not supported yet, and the signed 10/22/2026 Sacrum visit note is already chosen under Select Progress Note. Below are Type of Addendum, Reason, Provider Signature, Electronic Signature by, and Signed Date.](../../assets/visit-wizard/23_addendum_form.png)
+Addendums are listed under **Progress Note Addendums** on the wound's page: open the **Wound Cockpit**, then **Wound Detail**, the **Timeline** tab, and **Notes**.
 
-*The addendum form opens with the signed note already selected.*
+### Add a wound you missed
 
-1. **Addendum Note** — describe what changed and why. Do not re-state the original note; it stays as signed.
-2. **Select Progress Note** — check that it shows the note you are amending.
-3. **Type of Addendum** — pick the addendum type that fits, such as *Correction*, *Clarification*, *Late entry*, or *Other*.
-4. **Reason** — enter at least 10 characters.
-5. Sign in the **Provider Signature** box.
-6. Enter the signer's full name in **Electronic Signature by**, and check the **Signed Date**.
-7. Click **Submit Addendum**. A message confirms *Addendum filed and PDF generated.*
-
-Pick the type and reason that name what you are correcting. A reviewer reads them alongside the addendum text, so a precise reason is worth more than a general one. The addendum prints on its own page after the signed note.
-
-Attaching files to an addendum: **Not switched on yet**. The form shows **Attach Files (Optional)**, but files are not saved with the addendum.
-
-<Warning>
-Addendum content is permanently appended to the encounter record and is visible in audit logs. Do not use an addendum to alter the clinical meaning of a note after the fact without a legitimate clinical or administrative reason.
-</Warning>
+To document a wound you assessed at this visit that isn't in the signed note, click **Add a wound by addendum** on the **This visit is signed and locked** screen. Don't start a new visit for it.
 
 ---
 
@@ -171,5 +173,7 @@ Addendum content is permanently appended to the encounter record and is visible 
 | *You are not the provider in the attestation* appears at Sign & Lock | Step 17 names a different provider from the person signed in | Click **Go back and update provider**, or ask the provider named in step 17 to sign in and sign |
 | Step 17 is view only | You are finishing a visit the provider handed off to you | The provider completes step 17 |
 | Appointment still shows Draft Saved after signing | The calendar has not refreshed | Refresh the Fleet Calendar |
+| **Submit Addendum** is grayed out | A required field is empty, or **Reason** is shorter than 10 characters | Complete **Addendum Note**, **Select Progress Note**, **Type of Addendum**, **Reason**, **Provider Signature**, and **Electronic Signature by** |
 | **Add an addendum** is not available | The note is not signed yet, or the signed note couldn't be loaded on that screen | Finish the visit with **Sign & Lock** first. If it is signed, open the wound's page from the **Wound Cockpit**, click **Details**, then **Timeline**, and click **Addendum** on the visit |
 | The signed visit isn't on the Fleet Calendar | The calendar shows one day at a time | Open the patient's chart, click **Appointment Management**, and use the **Past** filter |
+| The Visit Wizard opens instead of "This visit is signed and locked" | The visit is not signed yet (still a draft) | Complete Provider Attestation and **Sign & Lock** first |

@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 20
-last_reviewed: 2026-11-12
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -22,7 +22,7 @@ tags: [visit-wizard, cancel-visit, not-seen, consent, pull-migration-data, DoseS
 
 # Walk through a visit in the Visit Wizard
 
-Open the visit, work through the Visit Wizard's 17 sections, and finish with **Sign & Lock**. If you started a visit that won't be finished, mark the appointment **Not Seen** or cancel it — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started).
+Open the visit, work through the Visit Wizard's 17 sections, and finish with **Sign & Lock**. To stop a visit you already started and do not intend to finish, cancel or delete the appointment — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started).
 
 ## Before you start
 
@@ -62,7 +62,7 @@ Use **Pull Migration Data** to bring documentation forward from this patient's e
 2. A window lists the earlier visits by date, with the sections that contain data.
 3. Click **Pull this visit** next to the visit you want. A message confirms how many fields were pulled and from which visit date.
 
-If no earlier visits are found on this patient's record, click **Search by name + DOB** to look for visits saved under another record with the same name and date of birth. Those results are marked *other patient record*. Confirm it is the same person before you pull.
+If the patient has no previous visits, the window says: *"No prior visits found on this patient's record. Would you like to search by name + date of birth instead?"* Click **Search by name + DOB** to look for visits saved under another record with the same name and date of birth. Those results are marked *other patient record*. Confirm it is the same person before you pull.
 
 Pull Migration Data lists visits already stored in Medipyxis. It does not connect to another EHR.
 
@@ -360,38 +360,14 @@ Once signed, the note is the finalized record for the visit; later changes need 
 
 ## Stop or cancel a visit you started
 
-If you leave the Visit Wizard before **Sign & Lock**, your work stays saved as an unsigned draft. Closing the wizard doesn't change the appointment.
+If you exit the Visit Wizard before completing **Sign & Lock**, the visit stays saved as an unsigned draft. If you don't intend to finish the visit, follow these steps so it doesn't stay in the system as an unfinished note:
 
-If the visit won't be finished, update the appointment. Choose the option that matches what happened.
+1. Open the patient's appointment card from **Fleet Calendar**, **Patient Management > My Clinical Day**, or **All Patients > Appointment Management**.
+2. Select **Cancel Appointment** or **Delete Appointment**, as appropriate.
+3. Enter a reason for canceling the visit you started.
+4. If the patient was not seen, mark the appointment **Not Seen** and choose a reason, such as *Patient Unavailable* or *Patient Refused*.
 
-### If the patient was not seen: mark the appointment Not Seen
-
-Use **Not Seen** when the visit didn't take place, for example because the patient was unavailable or refused. The unsigned draft stays saved, and you can still open it from the appointment.
-
-1. Click **Fleet Calendar** in the left menu and go to the date of the visit.
-2. Click the patient's appointment tile. The appointment window opens.
-3. In the **Mark outcome** row, click **Not Seen**.
-4. Choose a reason: *Patient unavailable*, *Patient refused*, *Facility issue*, *Scheduling issue*, *Provider unable to complete visit*, *Clinical reason*, or *Other*. **Additional detail** is optional, except for *Other*.
-5. Click **Save Not Seen**.
-
-### If the visit will not go ahead: cancel the appointment
-
-Canceling doesn't delete or change the visit note. The unsigned draft is kept. A canceled appointment can't be reopened in the app, and the draft can't be opened from that appointment. If the patient has no other open appointments, they move back to needs scheduling.
-
-**From the Fleet Calendar:**
-
-1. Go to the date of the visit and click the patient's appointment tile.
-2. In the **Mark outcome** row, click **Cancel Appt**.
-3. Click **Yes, cancel**.
-
-**From the patient's chart:**
-
-1. Click **All Patients** in the left menu, find the patient, and click **View**.
-2. Click the **Appointment Management** tile. A panel lists every appointment for the patient.
-3. Find the visit by its date and click the **Cancel visit** button (the X icon) on that row. On a phone, tap **⋮** on the row and choose **Cancel visit**.
-4. Enter a **Reason** if you want to (optional), then click **Cancel visit**.
-
-An appointment that has a visit note can't be deleted. Cancel it instead.
+**Important:** Cancel or update the appointment status instead of just closing the Visit Wizard, so the visit doesn't stay open as an unfinished draft.
 
 ---
 
