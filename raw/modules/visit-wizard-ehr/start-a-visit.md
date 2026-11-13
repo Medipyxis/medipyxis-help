@@ -22,7 +22,7 @@ tags: [visit-wizard, cancel-visit, not-seen, consent, pull-migration-data, DoseS
 
 # Walk through a visit in the Visit Wizard
 
-Open the visit, work through the Visit Wizard's 17 sections, and finish with **Sign & Lock**. To stop a visit you already started and do not intend to finish, cancel or delete the appointment — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started).
+Open the visit, work through the Visit Wizard's 17 sections, and finish with **Sign & Lock**. To stop a visit you already started and do not intend to finish, mark the appointment **Not Seen** or cancel it — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started).
 
 ## Before you start
 
@@ -363,9 +363,11 @@ Once signed, the note is the finalized record for the visit; later changes need 
 If you exit the Visit Wizard before completing **Sign & Lock**, the visit stays saved as an unsigned draft. If you don't intend to finish the visit, follow these steps so it doesn't stay in the system as an unfinished note:
 
 1. Open the patient's appointment card from **Fleet Calendar**, **Patient Management > My Clinical Day**, or **All Patients > Appointment Management**.
-2. Select **Cancel Appointment** or **Delete Appointment**, as appropriate.
+2. Select **Cancel Appointment**.
 3. Enter a reason for canceling the visit you started.
 4. If the patient was not seen, mark the appointment **Not Seen** and choose a reason, such as *Patient Unavailable* or *Patient Refused*.
+
+You can't delete an appointment once it has a visit note. **Delete** on the **Fleet Calendar** cancels the appointment instead, and it stays in the patient's chart as **Canceled**.
 
 **Important:** Cancel or update the appointment status instead of just closing the Visit Wizard, so the visit doesn't stay open as an unfinished draft.
 
