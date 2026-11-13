@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 6
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -95,25 +95,47 @@ If your facility uses a co-signature workflow (for example, an NP supervised by 
 
 ---
 
-## Adding an addendum after signing
+## Add an addendum to a signed note
 
-Once a note is signed, the encounter is read-only. To correct or add information, use the **Addendum** process.
+A signed note can't be edited. To correct it or add information, add an addendum. You start the addendum from the signed visit, and it is saved with the wound's notes.
 
-1. **Open the locked encounter** from the patient chart or Fleet Calendar.
-2. **Click Addendum** in the top action bar.
-3. **Select an addendum reason** from the dropdown. The list covers three kinds of correction:
+1. Open the signed visit from the patient chart's **Appointment Management** card (**Open visit**), from the appointment's details window in **Fleet Calendar**, or from the visit picker in the **Wound Cockpit**.
+2. The screen **This visit is signed and locked** appears. Click **Add an addendum**.
 
-   - **Clinical corrections** — a correction to clinical documentation, or additional findings documented after the visit.
-   - **Billing corrections** — a billing code correction, which you should coordinate with your biller.
-   - **Corrections to written-in language** — reasons that name a specific kind of sentence in a signed note that you did not write, for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. Use these when a signed note contains a sentence you did not write.
+   ![The "This visit is signed and locked" screen with the Add an addendum, Add a wound by addendum, Review signed note, and Back to patient chart buttons](../../assets/visit-wizard/21_signed_and_locked.png)
 
-   Pick the reason that names what you are correcting. A reviewer reads the reason alongside the addendum text, so a precise reason is worth more than a general one.
-4. **Enter the addendum text.** Describe what changed and why. Do not delete or re-state the original note — the addendum appears as a dated attachment below the original signed note.
-5. **Click Save Addendum.** The addendum is appended to the encounter record with your name, credential, and a new timestamp.
+   *The **This visit is signed and locked** screen.*
 
-<Warning>
-Addendum content is permanently appended to the encounter record and is visible in audit logs. Do not use the Addendum field to alter the clinical meaning of a note after the fact without a legitimate clinical or administrative reason.
-</Warning>
+3. The **Add Addendum to Progress Note** form opens. In **Addendum Note**, enter the additional documentation.
+4. In **Select Progress Note**, check that the right signed note is selected. Each note shows the visit date, who signed it and when, and the wounds on the visit. A banner confirms the visit date the addendum will be attached to.
+5. Choose the **Type of Addendum**: **Correction**, **Clarification**, **Late entry**, **Fabrication remediation**, or **Other**. This is required by CMS.
+6. In **Reason**, briefly explain why you are adding the addendum (at least 10 characters).
+
+   ![Top of the Add Addendum to Progress Note form, showing the Addendum Note field and the Attach Files area](../../assets/visit-wizard/22_addendum_form_top.png)
+
+   *The top of the **Add Addendum to Progress Note** form.*
+
+   ![Middle of the Add Addendum to Progress Note form, showing the Select Progress Note dropdown, the banner confirming the visit date, the Type of Addendum dropdown, and the Reason field](../../assets/visit-wizard/24_addendum_form_middle.png)
+
+   *Select Progress Note, Type of Addendum, and Reason.*
+
+7. Sign in **Provider Signature** with your mouse or finger. Click **Clear** to start over.
+8. In **Electronic Signature by**, enter the signer's full name. **Signed Date** is filled in with today's date.
+9. Click **Submit Addendum**.
+
+   ![Bottom of the Add Addendum to Progress Note form, showing the Provider Signature pad with a Clear button, the Electronic Signature by and Signed Date fields, and the Submit Addendum button](../../assets/visit-wizard/23_addendum_form_signature.png)
+
+   *The signature fields and **Submit Addendum**.*
+
+You can't attach files to an addendum. Only the text is saved.
+
+### Where to find an addendum
+
+Addendums are listed under **Progress Note Addendums** on the wound's page: open the **Wound Cockpit**, then **Wound Detail**, the **Timeline** tab, and **Notes**.
+
+### Add a wound you missed
+
+To document a wound you assessed at this visit that isn't in the signed note, click **Add a wound by addendum** on the **This visit is signed and locked** screen. Don't start a new visit for it.
 
 ---
 
@@ -125,8 +147,8 @@ Addendum content is permanently appended to the encounter record and is visible 
 | A window lists documentation gaps after **Continue Review** | Sections still have missing or incomplete items | Click **Resolve This** for each, or **Continue Anyway** if you have decided they don't prevent finalizing |
 | **Provider Attestation** step is not accessible | Your account is not a rendering provider | Ask the rendering provider to sign in and complete step 17 |
 | Appointment still shows `Draft Saved` after signing | Browser did not sync the status update | Refresh the Fleet Calendar |
-| Addendum reason dropdown is empty | Organization has not configured addendum reasons | Contact your administrator to configure addendum reason codes |
-| **Addendum** button not visible | Encounter note is not yet signed (still in draft) | Complete Provider Attestation first |
+| **Submit Addendum** is grayed out | A required field is empty, or **Reason** is shorter than 10 characters | Complete **Addendum Note**, **Select Progress Note**, **Type of Addendum**, **Reason**, **Provider Signature**, and **Electronic Signature by** |
+| The Visit Wizard opens instead of "This visit is signed and locked" | The visit is not signed yet (still a draft) | Complete Provider Attestation and **Sign & Lock** first |
 
 ## Related
 

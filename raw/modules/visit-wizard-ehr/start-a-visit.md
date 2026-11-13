@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: how-to
 estimated_minutes: 20
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-overview
@@ -61,6 +61,8 @@ Each section has a **Mark as Complete** button. In the section navigator, comple
 1. Click **Pull Migration Data** in the wizard's top toolbar.
 2. A window lists the patient's previous visits by date, with a summary of the sections that contain data.
 3. Pick the most recent or most relevant visit and click **Pull this visit**.
+
+If the patient has no previous visits, the window says: *"No prior visits found on this patient's record. Would you like to search by name + date of birth instead?"*
 
 Pull Migration Data only uses visits documented in Medipyxis. It does not import records from another EHR.
 
@@ -357,16 +359,14 @@ Once signed, the note is the finalized record for the visit; later changes need 
 
 ## Stop or cancel a visit you started
 
-If you leave the Visit Wizard before **Sign & Lock**, the visit stays saved as an unsigned draft.
+If you exit the Visit Wizard before completing **Sign & Lock**, the visit stays saved as an unsigned draft. If you don't intend to finish the visit, follow these steps so it doesn't stay in the system as an unfinished note:
 
-If you won't complete the visit, update the appointment so it isn't left as an unfinished draft:
-
-1. Open the patient's appointment card.
+1. Open the patient's appointment card from **Fleet Calendar**, **Patient Management > My Clinical Day**, or **All Patients > Appointment Management**.
 2. Select **Cancel Appointment** or **Delete Appointment**, as appropriate.
-3. Enter the reason for canceling the visit.
-4. If the patient was not seen, mark the appointment **Not Seen** and choose the reason, such as *Patient Unavailable* or *Patient Refused*.
+3. Enter a reason for canceling the visit you started.
+4. If the patient was not seen, mark the appointment **Not Seen** and choose a reason, such as *Patient Unavailable* or *Patient Refused*.
 
-Closing the wizard on its own does not cancel the visit.
+**Important:** Cancel or update the appointment status instead of just closing the Visit Wizard, so the visit doesn't stay open as an unfinished draft.
 
 ---
 
