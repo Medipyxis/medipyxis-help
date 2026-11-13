@@ -66,88 +66,162 @@
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/modules/">Modules</a> / <a href="/modules/visit-wizard-ehr/">Visit wizard / EHR</a></p>
       <h1>Visit Wizard overview</h1>
       <div class="article-meta"><span class="meta-pill meta-pill--type">concept</span> <span class="meta-pill">⏱ 6 min read</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Updated 2026-11-11</span></div>
-      <p>The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through <strong>17 sections</strong> — from consent to provider attestation — supporting documentation completeness, real-time LCD compliance, and clean billing-code generation before a note is signed.</p>
+      <p>The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through <strong>17 sections</strong> — from consent to provider attestation — so the note is complete, meets Medicare LCD documentation needs, and produces billing codes for review before it is signed.</p>
+<p>For a section-by-section walkthrough, see <a href="/modules/visit-wizard-ehr/start-a-visit/">Walk through a visit in the Visit Wizard</a>.</p>
 <hr />
-<h2 id="how-the-visit-wizard-fits-into-the-workflow">How the Visit Wizard fits into the workflow</h2>
-<p>The Visit Wizard opens from the <strong>Fleet Calendar</strong> (tap the appointment, then <strong>Start Visit</strong>), from the <strong>Wound Cockpit</strong>, or from the Patient Chart's Appointment Management card. All three behave the same way, so a live draft is resumed no matter which surface you came from. See <a href="/modules/visit-wizard-ehr/how-the-wizard-opens/">How the Visit Wizard opens</a> for the route-on-arrival behavior.</p>
-<p>When opened, the wizard loads the selected patient and appointment. You can still correct the date of service in Section 2. Start Visit on the Fleet Calendar opens the Visit Wizard for the appointment.</p>
-<hr />
-<h2 id="how-the-visit-wizard-is-structured">How the Visit Wizard is structured</h2>
-<p>The Visit Wizard uses <strong>17 sections</strong> that mirror the structure auditors expect. Notable behaviors:</p>
+<h2 id="where-to-open-it">Where to open it</h2>
+<p>You can open a visit from:</p>
 <ul>
-<li><strong>Continuous autosave</strong> — each field is saved as you complete it, so drafts survive network drops and device switches. There is no separate offline mode in the web app.</li>
-<li><strong>Warn-and-proceed</strong> — sections with incomplete fields show what is missing and let you continue; nothing stops documentation. If the service date does not match the appointment date, a Date check prompt at Sign &amp; Lock asks you to switch to the appointment date or keep your date and give a reason.</li>
-<li><strong>Clinical history carry-forward</strong> — comorbidities, allergies, prior treatments, and historic measurements pre-populate from the prior visit. A <strong>Pull Migration Data</strong> panel (<strong>Find Prior Visits</strong>) lists prior visits for this patient that were not auto-loaded, and lets you pull one into this visit.</li>
-<li><strong>LCD Navigator ambient badge</strong> — real-time Medicare compliance status at the top of the wizard. See <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a>.</li>
-<li><strong>ABI documentation for compression</strong> — the wizard flags a compression order that lacks a documented ankle-brachial index.</li>
-<li><strong>AI-assisted drafting</strong> — generate section text from structured data, with guardrails.</li>
-<li><strong>Medical necessity in your own words</strong> — the note prints the necessity narrative you wrote, and prompts you for one when it is missing. It is not generated for you. See <a href="/modules/visit-wizard-ehr/progress-note/">How your progress note is written</a>.</li>
-<li><strong>Pull Codes</strong> — fills in billing codes from the documentation using a deterministic mapper. There is no AI code fallback.</li>
-<li><strong>LCD checks as you work</strong> — the ambient badge re-checks the visit about a second after you stop typing, and saving re-runs the wound-level LCD audit shown in the Wound Cockpit.</li>
+<li><strong>Fleet Calendar</strong> — tap the appointment, then <strong>Start Visit</strong>.</li>
+<li><strong>Patient Management (My Clinical Day)</strong> — open the scheduled visit.</li>
+<li><strong>All Patients → Appointment Management</strong> — select the visit date, then click <strong>Open Visit</strong>.</li>
+<li><strong>Wound Cockpit</strong> — choose a visit from <strong>Pick a visit or start a new one</strong> in the upper-right corner, then click <strong>Open</strong>.</li>
+</ul>
+<p>When opened, the wizard is tied to the selected patient and appointment. See <a href="/modules/visit-wizard-ehr/how-the-wizard-opens/">How the Visit Wizard opens</a>.</p>
+<hr />
+<h2 id="how-it-works">How it works</h2>
+<ul>
+<li><strong>Mark as Complete</strong> — finish each section with <strong>Mark as Complete</strong>. In the section navigator, completed sections are green with a checkmark, and sections that still need documentation or review are red.</li>
+<li><strong>Continuous autosave</strong> — each field is saved as you complete it, so drafts survive network drops and device switches. The web app is online-only.</li>
+<li><strong>Warnings, not blocks</strong> — most missing items raise a warning and let you continue. Before signing, a final review lists open gaps so you can resolve them or continue anyway.</li>
+<li><strong>Carry-forward</strong> — information from earlier visits carries into sections such as Review of Systems, and <strong>Pull Migration Data</strong> brings forward data from a previous Medipyxis visit you choose.</li>
+<li><strong>Per-wound documentation</strong> — interventions, care plans, procedures, and billing are documented separately for each active wound.</li>
+<li><strong>LCD support</strong> — the <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a> tracks Medicare LCD documentation requirements as you work, and Section 16 shows any remaining gaps.</li>
+<li><strong>Drafting help</strong> — <strong>Summarize prior treatments</strong>, <strong>Generate Procedure Note</strong>, <strong>Generate Draft</strong> (care plan), and <strong>Generate Compliance Note</strong> create starting text from what you documented. You review and edit it; you can also keep your own procedure wording with <strong>Use My Exact Procedure Note</strong>.</li>
+<li><strong>Billing codes from documentation</strong> — <strong>Pull Codes</strong> suggests ICD-10-CM, CPT, HCPCS, and E/M codes from your documentation for review before signing.</li>
 </ul>
 <hr />
 <h2 id="the-17-sections">The 17 sections</h2>
-<p>Sections are numbered as the wizard shows them. Step 2b sits between Step 2 and Step 3.</p>
-<ul>
-<li><strong>1 Consent &amp; Attestation</strong> — reads the patient's consent record: consent to treatment and to bill (the signed consent includes a telehealth paragraph), HIPAA notice acknowledgment, photo consent, and the patient's e-signature.</li>
-<li><strong>2 Patient Context &amp; Demographics</strong> — date of service, place of service, provider, facility, Chief Complaint and Running HPI. Insurance is shown here; the <strong>secondary payer is read-only</strong>. Edit insurance on the patient's Billing &amp; Auth page.</li>
-<li><strong>2b Clinical History Review</strong> — allergies and medications are reviewed here.</li>
-<li><strong>3 Review of Systems (ROS)</strong> — body-system checklist; carries forward from prior visit.</li>
-<li><strong>4 Objective Assessment</strong> — vitals: <strong>BP</strong>, <strong>HR</strong>, <strong>Temp</strong>, <strong>SpO₂</strong>, <strong>Respirations</strong>, <strong>Weight</strong>, <strong>Height</strong>, <strong>BMI</strong>.</li>
-<li><strong>5 Functional Status &amp; ADLs</strong> — mobility level and activities of daily living (ADLs).</li>
-<li><strong>6 Comorbidities &amp; Risk Factors</strong> — diabetes, PAD, CVI, CHF, chronic kidney disease, smoking status and other healing risk factors. Feeds the billing engine.</li>
-<li><strong>7 Wound Assessment</strong> — each wound carries a <strong>Treating / Monitoring</strong> status. See <a href="/modules/visit-wizard-ehr/wound-assessment/">Wound Assessment</a>.</li>
-<li><strong>8 Previous Treatments</strong> — prior interventions (offloading, compression, debridement history, prior grafts).</li>
-<li><strong>9 Interventions &amp; Treatments</strong> — debridement type, dressing selection, ultrasonic therapy (MIST / Arobella), AI-assisted draft available. <strong>Generate Procedure Note</strong> is here.</li>
-<li><strong>10 Care Planning</strong> — treatment goals progress, follow-up interval and Next Visit Date.</li>
-<li><strong>11 Orders &amp; DME</strong> — clinical orders and DME. DME is a vendor-fulfilled order. There is <strong>no product picker</strong> here; clinicians order and the item is fulfilled downstream.</li>
-<li><strong>12 Patient Education</strong> — education topics covered, handouts from the Education Library, patient understanding, and next-visit education goals.</li>
-<li><strong>13 Procedure Supplies</strong> — graft SKU + UIN and quantities. You can enter wastage units; they are recorded for inventory audit only and are not billed.</li>
-<li><strong>14 Current Medication</strong> — medications and <strong>DoseSpot</strong> e-prescribing (pharmacy selection and prescription handled in the DoseSpot modal).</li>
-<li><strong>15 Billing &amp; Documentation</strong> — E/M level, modifiers, POS code, medical necessity narrative. <strong>Pull Codes</strong> fills in billing codes from the documentation. Staging codes here opens the documentation checklist. See <a href="/modules/visit-wizard-ehr/progress-note/">How your progress note is written</a>.</li>
-<li><strong>16 LCD Audit &amp; Review</strong> — LCD Navigator final review. See <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a>.</li>
-<li><strong>17 Provider Attestation</strong> — ESIGN/UETA/CMS/HIPAA attestation and <strong>Sign &amp; Lock</strong>. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Section</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Consent &amp; Attestation</strong></td>
+<td>Patient consent: electronic signature, signed paper consent, or verbal consent. Consent can also be collected beforehand from the patient chart.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Patient Context / Demographics</strong></td>
+<td>Visit type, chief complaint, and insurance (read-only here — edit it on the <strong>Insurance</strong> tab).</td>
+</tr>
+<tr>
+<td>2B</td>
+<td><strong>Clinical History Review</strong></td>
+<td>Allergies and medical history.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Review of Systems</strong></td>
+<td>Body-system review; carries forward from earlier visits.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Objective Assessment</strong></td>
+<td>Vitals, vascular and perfusion exam, edema and circumference measurements, ABI/TBI, vascular studies, HbA1c, vascular follow-up plan.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Functional Status &amp; ADLs</strong></td>
+<td>Mobility, daily activities, fall risk.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Comorbidities &amp; Risk Factors</strong></td>
+<td>Conditions that contribute to the wound or slow healing.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Wound Assessment</strong></td>
+<td>Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and <strong>Treating / Monitoring</strong> status. See <a href="/modules/visit-wizard-ehr/wound-assessment/">Wound Assessment</a>.</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Previous Treatments</strong></td>
+<td>Prior wound care, chronicity, medical necessity statement, supporting documents.</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Interventions &amp; Treatments</strong></td>
+<td>Interventions performed per wound, procedure note, contributing factors.</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Care Planning</strong></td>
+<td>Per-wound follow-up interval, next visit date, treatment plan narrative.</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Orders &amp; DME</strong></td>
+<td>DME, labs, imaging, referrals, and home health orders, sent by fax or email.</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Patient Education</strong></td>
+<td>Education library, care bundles, topics covered, patient understanding, next-visit goals.</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>Procedures &amp; Supplies</strong></td>
+<td>Final review of the procedures from Section 9, missing fields, procedure and compliance notes, supplies.</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>Current Medication</strong></td>
+<td>Active prescriptions, medication status, allergies, reconciliation, <strong>DoseSpot</strong> e-prescribing. See <a href="/modules/visit-wizard-ehr/medication-dosespot/">Prescribe with DoseSpot</a>.</td>
+</tr>
+<tr>
+<td>15</td>
+<td><strong>Billing &amp; Documentation</strong></td>
+<td>Per-wound and visit-level codes, modifiers, and the CMS-1500 claim preview.</td>
+</tr>
+<tr>
+<td>16</td>
+<td><strong>LCD Audit &amp; Review</strong></td>
+<td>Documentation gaps against the applicable LCD. See <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a>.</td>
+</tr>
+<tr>
+<td>17</td>
+<td><strong>Provider Attestation</strong></td>
+<td>Attestation, E/M time, final review, progress note preview, and <strong>Sign &amp; Lock</strong>. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="can-i-customize-the-charting">Can I customize the charting?</h2>
+<p>Not per practice. The Visit Wizard's sections, fields, and templates are the same for every organization, so documentation follows one clinical structure.</p>
+<p>If your practice needs a field or a change to support a clinical workflow, documentation quality, or compliance, send the request to your Medipyxis contact. Requests are reviewed, and changes that fit the clinical documentation structure can be added for everyone.</p>
 <hr />
 <h2 id="autosave-and-drafts">Autosave and drafts</h2>
-<p>The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. Draft visits appear on the <strong>Fleet Calendar</strong> with a draft status and can be resumed on any device.</p>
+<p>The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. A visit you leave before <strong>Sign &amp; Lock</strong> stays an unsigned draft that you can resume on any device. To stop a visit you won't finish, cancel or delete the appointment — see <a href="/modules/visit-wizard-ehr/start-a-visit/#stop-or-cancel-a-visit-you-started">Stop or cancel a visit you started</a>.</p>
+<p>Always review carried-forward and pulled values — they are a starting point, not a substitute for re-assessment.</p>
 <hr />
-<h2 id="clinical-history-carry-forward">Clinical history carry-forward</h2>
-<p>When you open a follow-up visit, the wizard pre-populates from the prior visit: Review of Systems, Comorbidities, Allergies, Previous treatments, Historic measurements (used to compute % area change), and the care plan. The <strong>Pull Migration Data</strong> panel lists prior visits for this patient that were not auto-loaded, and lets you pull one into this visit.</p>
-<p>Always review pre-populated values — carry-forward is a starting point, not a substitute for re-assessment.</p>
-<hr />
-<h2 id="lcd-navigator-ambient">LCD Navigator (ambient)</h2>
-<p>The LCD badge sits in the LCD Compliance Status header at the top of the wizard:</p>
-<ul>
-<li><strong>Green</strong> — all checks pass.</li>
-<li><strong>Amber</strong> — at least one item to review.</li>
-<li><strong>Grey</strong> — still checking.</li>
-</ul>
-<p>The badge never turns red and never blocks Sign &amp; Lock. Click the badge to run the compliance check on demand. Full guide: <a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a>.</p>
-<hr />
-<h2 id="ai-assisted-drafting">AI-assisted drafting</h2>
-<p>Several sections expose an <strong>AI-assisted draft</strong> button. The model drafts a clinical narrative from the structured data you have entered. Read the draft and edit anything inaccurate. You acknowledge the <strong>AI Disclaimer</strong> once, and again whenever a new version is published. It appears after you sign in, not per visit.</p>
-<p>Anything left in an AI draft becomes part of your signed note, so review it carefully before attestation. The progress note itself prints only what you documented: where a field is blank it says "Not documented." rather than supplying a sentence. See <a href="/modules/visit-wizard-ehr/progress-note/">How your progress note is written</a>.</p>
-<hr />
-<h2 id="procedure-supplies">Procedure Supplies</h2>
-<p>The Procedure Supplies section records the products, quantities and box UID/UIN used. You can enter wastage units; they are recorded for inventory audit only and are not billed. <strong>Generate Procedure Note</strong> is in Interventions &amp; Treatments. Inventory is deducted and a <strong>tissue log</strong> entry is written when you press <strong>Continue to Review</strong>.</p>
-<hr />
-<h2 id="provider-attestation-and-sign-lock">Provider Attestation and Sign &amp; Lock</h2>
-<p>The final section captures the rendering provider's electronic signature under the ESIGN Act, UETA, CMS, and HIPAA disclosure standards. Complete the visit with <strong>Sign &amp; Lock</strong>; a <strong>Go to Billing</strong> prompt then appears. After sign-off, the note is locked and changes require an <strong>Addendum</strong> with a documented reason. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</p>
+<h2 id="sign-lock">Sign &amp; Lock</h2>
+<p>Section 17 records the rendering provider's attestation and electronic signature. After a final review and a preview of the progress note PDF, <strong>Sign &amp; Lock</strong> finalizes the note. Later changes require an <strong>Addendum</strong> with a documented reason. The signed PDF is saved to the patient's <strong>Progress Notes</strong>, and the billing information goes to Billing Operations as a pre-filled CMS-1500 claim. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</p>
+<p><Compliance>
+CMS requires that the rendering provider be physically present at the place of service for in-person procedure codes. The encounter record is part of the audit trail and may be requested during a Medicare audit.
+</Compliance></p>
 <hr />
 <h2 id="offline-documentation">Offline documentation</h2>
-<p>The web Visit Wizard is online-only and saves continuously to the server; there is no Work Offline toggle. See <a href="/modules/visit-wizard-ehr/work-offline/">Document a visit offline</a> for what this means for field visits.</p>
+<p>The web Visit Wizard is online-only and saves continuously to the server. See <a href="/modules/visit-wizard-ehr/work-offline/">Document a visit offline</a> for what this means for field visits.</p>
 <hr />
 <h2 id="related-modules">Related modules</h2>
 <ul>
-<li><a href="/modules/visit-wizard-ehr/wound-cockpit/">Wound Cockpit</a> — the canonical wound screen and between-visit hub.</li>
-<li><a href="/modules/visit-wizard-ehr/how-the-wizard-opens/">How the Visit Wizard opens</a> — route-on-arrival: draft resume, fresh start, and the signed-visit screen.</li>
+<li><a href="/modules/visit-wizard-ehr/wound-cockpit/">Wound Cockpit</a> — the wound screen and between-visit hub.</li>
+<li><a href="/modules/visit-wizard-ehr/how-the-wizard-opens/">How the Visit Wizard opens</a> — what the wizard shows when you open a visit.</li>
 <li><a href="/modules/visit-wizard-ehr/note-honesty-guardrails/">Note honesty guardrails</a> — what Medipyxis will and will not add to your signed note.</li>
-<li><a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a> — the LCD Compliance Status bar, badge, and step 16 review.</li>
-<li><a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a> — provider attestation and addenda.</li>
+<li><a href="/modules/visit-wizard-ehr/lcd-navigator/">LCD Navigator</a> — LCD documentation requirements as you work.</li>
+<li><a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a> — provider attestation, addenda, and audit log.</li>
 <li><a href="/modules/visit-wizard-ehr/progress-note/">How your progress note is written</a> — what the note prints, and the documentation checklist before it.</li>
-<li><a href="/modules/visit-wizard-ehr/work-offline/">Document a visit offline</a> — how offline field visits are handled.</li>
 </ul>
+<h2 id="related">Related</h2>
+<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/modules/visit-wizard-ehr/start-a-visit/">Walk through a visit in the Visit Wizard</a></li><li><a href="/modules/visit-wizard-ehr/how-the-wizard-opens/">How the Visit Wizard opens (route-on-arrival)</a></li><li><a href="/modules/visit-wizard-ehr/note-honesty-guardrails/">Note honesty guardrails</a></li><li><a href="/modules/visit-wizard-ehr/progress-note/">How your progress note is written</a></li><li><a href="/modules/visit-wizard-ehr/wound-assessment/">Complete the Wound Assessment (section 7)</a></li><li><a href="/modules/visit-wizard-ehr/lcd-navigator/">Use the LCD compliance status and review</a></li><li><a href="/modules/visit-wizard-ehr/wound-cockpit/">Wound Cockpit overview</a></li><li><a href="/modules/visit-wizard-ehr/work-offline/">Document a visit offline</a></li><li><a href="/modules/visit-wizard-ehr/sign-off/">Sign off on a visit with Provider Attestation (step 17)</a></li><li><a href="/modules/visit-wizard-ehr/medication-dosespot/">Prescribe with DoseSpot (e-prescribing)</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -155,7 +229,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#how-the-visit-wizard-fits-into-the-workflow">How the Visit Wizard fits into the workflow</a></li><li><a class="" href="#how-the-visit-wizard-is-structured">How the Visit Wizard is structured</a></li><li><a class="" href="#the-17-sections">The 17 sections</a></li><li><a class="" href="#autosave-and-drafts">Autosave and drafts</a></li><li><a class="" href="#clinical-history-carry-forward">Clinical history carry-forward</a></li><li><a class="" href="#lcd-navigator-ambient">LCD Navigator (ambient)</a></li><li><a class="" href="#ai-assisted-drafting">AI-assisted drafting</a></li><li><a class="" href="#procedure-supplies">Procedure Supplies</a></li><li><a class="" href="#provider-attestation-and-sign-lock">Provider Attestation and Sign &amp; Lock</a></li><li><a class="" href="#offline-documentation">Offline documentation</a></li><li><a class="" href="#related-modules">Related modules</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#where-to-open-it">Where to open it</a></li><li><a class="" href="#how-it-works">How it works</a></li><li><a class="" href="#the-17-sections">The 17 sections</a></li><li><a class="" href="#can-i-customize-the-charting">Can I customize the charting?</a></li><li><a class="" href="#autosave-and-drafts">Autosave and drafts</a></li><li><a class="" href="#sign-lock">Sign &amp; Lock</a></li><li><a class="" href="#offline-documentation">Offline documentation</a></li><li><a class="" href="#related-modules">Related modules</a></li><li><a class="" href="#related">Related</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/modules/visit-wizard-ehr/overview.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/modules/visit-wizard-ehr/overview.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

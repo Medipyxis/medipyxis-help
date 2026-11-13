@@ -21,17 +21,21 @@ The Provider Attestation block on every signed progress note prints when the not
 
 For a signed note, the timestamp line reads:
 
-`Aug 25, 2026, 11:07 PM EDT`
+```
+Aug 25, 2026, 11:07 PM EDT
+```
 
 Three parts, all load-bearing:
 
 - **The date** — the calendar day of signing, not the date of service. When the two differ, the signing day is what prints, and that difference is a normal and expected part of the record.
 - **The time** — hour and minute, no seconds.
-- **The timezone abbreviation** — `EDT`, `PDT`, `CST`, whatever the printing device's clock is set to. The abbreviation is printed whenever the signature was recorded with a time, which is every signature made in the Visit Wizard. If you regenerate the same note from a different computer set to a different zone, you will get a different reading of the same instant, and the two abbreviations will both be truthful descriptions of the same moment.
+- **The timezone abbreviation** — `EDT`, `PDT`, `CST`, whatever the printing device's clock is set to. The abbreviation is always printed. If you regenerate the same note from a different computer set to a different zone, you will get a different reading of the same instant, and the two abbreviations will both be truthful descriptions of the same moment.
 
 For an unsigned note, the line reads:
 
-`Not recorded`
+```
+Not recorded
+```
 
 That value is a legal statement about the record, not a placeholder. The note has never been signed. Medipyxis never prints a substitute signature date on an unsigned note.
 
@@ -53,6 +57,8 @@ If a Home Health agency, auditor, or payer questions why two copies of the same 
 
 There is nothing to reconcile in the underlying data.
 
-The signature timestamp is written when the provider clicks Complete Provider Attestation in step 17 of the Visit Wizard.
+<Note>The signature timestamp is written when the provider clicks **Sign & Lock** in step 17 of the Visit Wizard. If a note shows `Not recorded`, it has not been signed yet — open the visit and complete step 17. See [Sign Off](./sign-off.md).</Note>
 
-If the line reads Not recorded, Provider Attestation was not completed in step 17. The timestamp comes from the attestation. Sign & Lock then signs and locks the visit in one step.
+## Related
+
+Auto-rendered from `related:` in frontmatter.
