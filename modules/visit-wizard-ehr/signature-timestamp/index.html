@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <!-- seo:start -->
-<meta name="description" content="The Provider Attestation block on every signed progress note prints when the note was signed and in which timezone. This page explains what the printed…">
+<meta name="description" content="The Provider Attestation block on every signed progress note prints when the provider attested and in which timezone. This page explains what the printed…">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://help.medipyxis.com/modules/visit-wizard-ehr/signature-timestamp/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -17,7 +17,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Medipyxis Help">
 <meta property="og:title" content="How the signature timestamp prints on a signed note — Medipyxis Help">
-<meta property="og:description" content="The Provider Attestation block on every signed progress note prints when the note was signed and in which timezone. This page explains what the printed…">
+<meta property="og:description" content="The Provider Attestation block on every signed progress note prints when the provider attested and in which timezone. This page explains what the printed…">
 <meta property="og:url" content="https://help.medipyxis.com/modules/visit-wizard-ehr/signature-timestamp/">
 <meta property="og:image" content="https://medipyxis.com/images/og-default.png">
 <meta property="og:image:width" content="1200">
@@ -25,7 +25,7 @@
 <meta property="og:image:alt" content="How the signature timestamp prints on a signed note — Medipyxis Help">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How the signature timestamp prints on a signed note — Medipyxis Help">
-<meta name="twitter:description" content="The Provider Attestation block on every signed progress note prints when the note was signed and in which timezone. This page explains what the printed…">
+<meta name="twitter:description" content="The Provider Attestation block on every signed progress note prints when the provider attested and in which timezone. This page explains what the printed…">
 <meta name="twitter:image" content="https://medipyxis.com/images/og-default.png">
 <!-- seo:end -->
 </head>
@@ -66,26 +66,26 @@
       <p class="breadcrumb"><a href="/">Help</a> / <a href="/modules/">Modules</a> / <a href="/modules/visit-wizard-ehr/">Visit wizard / EHR</a></p>
       <h1>How the signature timestamp prints on a signed note</h1>
       <div class="article-meta"><span class="meta-pill meta-pill--type">reference</span> <span class="meta-pill">⏱ 5 min read</span> <span class="meta-pill">Clinician</span> <span class="meta-pill">Admin</span> <span class="meta-pill">Billing</span> <span class="meta-pill">Updated 2026-11-11</span></div>
-      <p>The Provider Attestation block on every signed progress note prints when the note was signed and in which timezone. This page explains what the printed value means and why it may not match your local clock exactly.</p>
+      <p>The Provider Attestation block on every signed progress note prints when the provider attested and in which timezone. This page explains what the printed value means and why it may not match your local clock exactly.</p>
 <h2 id="what-the-signature-line-prints">What the signature line prints</h2>
 <p>For a signed note, the timestamp line reads:</p>
 <pre><code>Aug 25, 2026, 11:07 PM EDT
 </code></pre>
-<p>Three parts, all load-bearing:</p>
+<p>It has three parts:</p>
 <ul>
-<li><strong>The date</strong> — the calendar day of signing, not the date of service. When the two differ, the signing day is what prints, and that difference is a normal and expected part of the record.</li>
+<li><strong>The date</strong> — the calendar day the provider completed the attestation in step 17, not the date of service. When the two differ, the attestation day is what prints, and that difference is a normal and expected part of the record.</li>
 <li><strong>The time</strong> — hour and minute, no seconds.</li>
 <li><strong>The timezone abbreviation</strong> — <code>EDT</code>, <code>PDT</code>, <code>CST</code>, whatever the printing device's clock is set to. The abbreviation is always printed. If you regenerate the same note from a different computer set to a different zone, you will get a different reading of the same instant, and the two abbreviations will both be truthful descriptions of the same moment.</li>
 </ul>
-<p>For an unsigned note, the line reads:</p>
+<p>When no attestation has been recorded, the line reads:</p>
 <pre><code>Not recorded
 </code></pre>
-<p>That value is a legal statement about the record, not a placeholder. The note has never been signed. Medipyxis never prints a substitute signature date on an unsigned note.</p>
+<p>It means no provider attestation was recorded for the visit. Medipyxis never prints a substitute date in its place.</p>
 <h2 id="why-device-timezone-not-facility-timezone">Why device timezone, not facility timezone</h2>
 <p>The timestamp prints in the timezone of the device that generates the PDF, not in the facility's timezone.</p>
 <p>The device clock is chosen because it needs no supporting data to be right. The zone abbreviation is what makes the choice safe: every printed copy is a self-describing statement about the same instant. Two copies with different abbreviations still describe the same moment; the reader can reconstruct one from the other.</p>
 <h2 id="what-this-means-when-you-compare-two-copies-of-the-same-note">What this means when you compare two copies of the same note</h2>
-<p>Occasionally a note is downloaded twice from two different devices set to two different zones. Near midnight, two US timezones can disagree on the calendar day. Both copies are correct. Both are legally defensible. The zone abbreviation is how you tell they describe the same instant — line up the two strings, apply the offset, they match.</p>
+<p>Occasionally a note is downloaded twice from two different devices set to two different zones. Near midnight, two US timezones can disagree on the calendar day. Both copies are correct. The zone abbreviation is how you tell they describe the same instant — line up the two strings, apply the offset, they match.</p>
 <p>If a Home Health agency, auditor, or payer questions why two copies of the same signed note carry different times, the answer is:</p>
 <ul>
 <li>Both were generated from the same immutable stored instant.</li>
@@ -93,9 +93,7 @@
 <li>The zone abbreviation on each is the correct description of that reading.</li>
 </ul>
 <p>There is nothing to reconcile in the underlying data.</p>
-<p><Note>The signature timestamp is written when the provider clicks <strong>Sign &amp; Lock</strong> in step 17 of the Visit Wizard. If a note shows <code>Not recorded</code>, it has not been signed yet — open the visit and complete step 17. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</Note></p>
-<h2 id="related">Related</h2>
-<p>Auto-rendered from <code>related:</code> in frontmatter.</p>
+<p><Note>The signature timestamp is recorded when the provider clicks <strong>Complete Provider Attestation</strong> in step 17 of the Visit Wizard; <strong>Sign &amp; Lock</strong> then signs the visit. If the note preview shows <code>Not recorded</code>, go back and complete step 17 before you sign. See <a href="/modules/visit-wizard-ehr/sign-off/">Sign Off</a>.</Note></p>
       <div class="related-block"><h3>Related articles</h3><ul><li><a href="/modules/visit-wizard-ehr/sign-off/">Sign off on a visit with Provider Attestation (step 17)</a></li><li><a href="/modules/visit-wizard-ehr/aprn-credential/">APRN as a signature credential</a></li><li><a href="/modules/visit-wizard-ehr/note-honesty-guardrails/">Note honesty guardrails</a></li></ul></div>
       <div class="feedback">
         <span>Was this article helpful?</span>
@@ -103,7 +101,7 @@
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#what-the-signature-line-prints">What the signature line prints</a></li><li><a class="" href="#why-device-timezone-not-facility-timezone">Why device timezone, not facility timezone</a></li><li><a class="" href="#what-this-means-when-you-compare-two-copies-of-the-same-note">What this means when you compare two copies of the same note</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#what-the-signature-line-prints">What the signature line prints</a></li><li><a class="" href="#why-device-timezone-not-facility-timezone">Why device timezone, not facility timezone</a></li><li><a class="" href="#what-this-means-when-you-compare-two-copies-of-the-same-note">What this means when you compare two copies of the same note</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/modules/visit-wizard-ehr/signature-timestamp.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/modules/visit-wizard-ehr/signature-timestamp.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>

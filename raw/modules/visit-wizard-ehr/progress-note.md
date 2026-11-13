@@ -21,7 +21,7 @@ tags: [progress-note, documentation, Medicare, medical-necessity, debridement, a
 
 Your progress note prints what you documented. Where you left a field blank, it says **"Not documented."** It does not write clinical sentences on your behalf. Before the note is created, Medipyxis shows you a short list of anything a Medicare reviewer would look for, and lets you fix it in a click.
 
-Nothing blocks you. You can always continue.
+Nothing on that list blocks you. You can always continue.
 
 ---
 
@@ -33,9 +33,9 @@ Medicare's Program Integrity Manual — the chapter that tells reviewers how to 
 - Reviewers are told to be suspicious of **template and cloned language**, meaning the same sentence appearing on every note.
 - An attestation on its own — "I confirm this was medically necessary" — proves nothing.
 
-See also [Note honesty guardrails](./note-honesty-guardrails.md).
+See also [Note honesty guardrails](/modules/visit-wizard-ehr/note-honesty-guardrails/).
 
-The note cites only the two verified wound-care policies.
+Where the note cites a Medicare coverage policy, it cites only a verified policy that applies to the patient's Medicare contractor and to the services billed on the visit. Citations appear in the billing section, which provider copies leave out.
 
 ---
 
@@ -44,16 +44,16 @@ The note cites only the two verified wound-care policies.
 ### Blank means blank
 
 | Where | What prints |
-|---|---|
+| --- | --- |
 | **Allergies** | "Not documented." on each allergy item, until you record it |
 | **Debridement** | "Not documented." on each detail you leave blank. The depth is whatever you recorded |
-| **Pressure-injury risk** | "Prevention plan: Not documented." The Braden score and risk band print as documented |
+| **Pressure-injury risk** | The Braden total and risk band print as documented. Write the prevention plan in the risk-assessment notes box — the wizard reminds you when the Braden total is 12 or below — and it prints under **Additional Risk Assessment** |
 | **Same-day visit and procedure** | "Separate E/M evaluation: Not documented." — unless you answer the checklist item |
 | **Medical necessity** | The findings themselves, for example "Devitalized tissue present: Yes — slough 20% on left heel" |
 | **Home visits** | Nothing, unless you typed a homebound justification — which prints exactly as you wrote it |
-| **Patient education** | What you write in **Education Topics Covered Today** and **Patient Understanding Assessment** (Section 12). Describe how you taught — for example teach-back or a return demonstration — in the understanding assessment; otherwise the teaching method prints "Not documented." |
+| **Patient education** | What you write in **Education Topics Covered Today** and **Patient Understanding Assessment** (Section 12), printed as topics taught and understanding / response, with materials and next-visit education goals. A blank item prints "Not documented."; if no education is documented at all, the note says "Patient education not documented this visit." Describe how you taught — for example teach-back or a return demonstration — in the understanding assessment. |
 
-The debridement section does not include **Pathology sent**, **Tissue present pre**, or **Post-procedure dressing**, because no screen in Medipyxis asks for them.
+The debridement section does not include **Pathology sent** or **Post-procedure dressing**, because no screen in Medipyxis asks for them. **Tissue present (pre-procedure)** prints from this visit's wound-bed assessment. Post-debridement area prints "Not measured."
 
 ---
 
@@ -73,7 +73,7 @@ If an item affects what can be billed — a debridement missing the elements the
 
 ## Why the visit was necessary
 
-Medicare's rule for home visits is that **each visit** needs its medical necessity documented, or a reviewer treats it as a social visit. Medipyxis asks once per visit: *"Why did this patient need you — not a nurse — today?"* Your answer prints in the note with a small label showing whether you typed it, dictated it, or adapted an example.
+Medicare's rule for home visits is that **each visit** needs its medical necessity documented, or a reviewer treats it as a social visit. Medipyxis asks once per visit: *"Why did this patient need you — not a nurse — today?"* Your answer prints in the note with a small label showing how it was written — for example *Clinician-typed*, or *AI-assisted draft, edited and affirmed by provider* when you adapted the example.
 
 The question is **not** asked per wound. If a wound's necessity note is word-for-word identical to the last visit's, a separate item says so — identical text visit after visit is what a reviewer calls cloned documentation. Update it or clear it; either resolves the item.
 
@@ -89,7 +89,7 @@ In Section 13 you can also click **Generate Compliance Note** for an additional 
 
 ## Preview before you sign
 
-After you click **Continue Review** in step 17, the **Wound Care Progress Note Preview** shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](./sign-off.md) for the attestation step itself.
+After you click **Continue to Review** in step 17, the **Preview — Review Before Signing** screen shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](/modules/visit-wizard-ehr/sign-off/) for the attestation step itself.
 
 ---
 
@@ -99,9 +99,9 @@ After you click **Continue Review** in step 17, the **Wound Care Progress Note P
 
 **Can my signed note change?** No. The note you signed is a permanent file, and opening it from the patient's **Progress Notes** list shows you that exact file, unchanged.
 
-The **Download Clinical Note** action builds a fresh provider copy from the visit's recorded data, following the rules on this page, so it can read differently from the version you signed. Your signed note is still the signed note; the fresh copy is a fresh copy.
+The **Download Clinical Note** action builds a fresh provider copy, without the billing sections, from the visit's recorded data. It keeps the format your note had when you signed it. Your signed note is still the signed note; the fresh copy is a fresh copy.
 
-**What if a signed note contains a sentence I did not write?** File an addendum naming the specific kind of sentence being corrected. The addendum reason list covers each kind — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. See [Sign Off](./sign-off.md).
+**What if a signed note contains a sentence I did not write?** File an addendum naming the specific kind of sentence being corrected. The addendum reason list covers each kind — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. See [Sign Off](/modules/visit-wizard-ehr/sign-off/).
 
 **Do I have to answer the checklist?** No. Every item is advisory and none of them stop you signing.
 
@@ -124,9 +124,5 @@ The **Download Clinical Note** action builds a fresh provider copy from the visi
 For questions about what a particular item is asking for, or whether something should be documented differently for your payer, contact your Medipyxis contact. If something in the note looks wrong for a real patient, say so — with the patient and the visit date — and it will be investigated.
 
 <Compliance>
-Medipyxis is documentation support software. It does not decide coverage, and it never blocks a clinician from signing a note. The criteria it references come from CMS manuals and your MAC's published policies.
+Medipyxis is documentation support software. It does not decide coverage, and the documentation checklist never blocks a clinician from signing a note. The criteria it references come from CMS manuals and your MAC's published policies.
 </Compliance>
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
