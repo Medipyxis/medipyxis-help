@@ -1,0 +1,606 @@
+{
+  "title": "How Medipyxis validates ICD-10 diagnosis codes",
+  "source": "modules/billing/diagnosis-code-validation",
+  "url": "https://help.medipyxis.com/modules/billing/diagnosis-code-validation/",
+  "claims": [
+    {
+      "id": "dx-01",
+      "claim": "Medipyxis checks every diagnosis code on a claim against the official CDC ICD-10-CM billable catalog for FY2026 — not against a pattern. That means a code either exists as a billable leaf in the catalog or it does not.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SVC004A — membership in the FY2026 billable catalog.",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (catalogLoaded && !isBillableIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present",
+          "note": "catalog check runs only for codes that pass the shape check"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!looksLikeIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "absent",
+          "note": "true only if no pattern check runs"
+        }
+      ],
+      "finding": "A loose ICD-10 shape check (SVC004C, looksLikeIcd10) runs first, on every code, whether or not the catalog loaded; only codes that pass it are tested for catalog membership (frontend/src/services/claimValidationService.ts:709-757). So the check is a pattern AND catalog membership, not catalog alone.",
+      "proposed_text": "Medipyxis checks every diagnosis code on a claim in two steps: a loose ICD-10 shape check, then membership in the CDC ICD-10-CM FY2026 billable catalog.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!looksLikeIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (catalogLoaded && !isBillableIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-02",
+      "claim": "When you open a claim in New Claim or Edit in Full Form, the ClaimValidationPanel on the right runs a set of pre-flight checks.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ClaimValidationPanel",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Claim",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Edit in Full Form",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Panel position ('on the right') is layout and not checked."
+    },
+    {
+      "id": "dx-03",
+      "claim": "One of those checks — internally called SVC004A — tests each ICD-10 code on the claim for membership in the billable catalog.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "code: `SVC004A_${index}`,",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-04",
+      "claim": "The catalog is loaded once when the page opens, from an edge function that returns the full public.icd10_codes table.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "hydrateBillableIcd10Set();",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'icd10-billable-codes',",
+          "paths": [
+            "frontend/src/services/icd10BillableSet.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"icd10_codes\")",
+          "paths": [
+            "backend/supabase/functions/icd10-billable-codes/index.ts"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "dx-05",
+      "claim": "For FY2026 that table holds 74,719 rows — every billable, leaf-level ICD-10-CM code the CDC publishes. Parent categories and non-billable stems are excluded on purpose.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "74,719",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present",
+          "note": "code comment records the catalog size; the live row count needs a DB query"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "29 NON-BILLABLE PARENT codes",
+          "paths": [
+            "backend/supabase/migrations/20260824120000_reconcile_icd10_catalog_to_cdc_2026.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Row count is evidenced by code comments (74,706 + 13 QA0 codes per the migration), not by a live count."
+    },
+    {
+      "id": "dx-06",
+      "claim": "Not in the catalog → Yellow warning: Diagnosis code \"L98.4\" was not found in the FY2026 ICD-10-CM billable set — check for a typo, or choose a more specific code (parent/category codes are not billable).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `Diagnosis code \"${code}\" was not found in the FY2026 ICD-10-CM billable set — check for a typo, or choose a more specific code (parent/category codes are not billable).`,",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "            severity: 'warning',",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-07",
+      "claim": "Catalog unavailable → Blue disclosure: ICD-10 billable-code check unavailable. The catalog failed to load. The check is skipped, not spoofed — the panel says so.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ICD-10 billable-code check unavailable",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The check is skipped and disclosed, but the text is 'ICD-10 billability check unavailable — diagnosis codes were not verified against the billable code set.' in small gray italic (text-gray-500 italic), not a blue disclosure (frontend/src/components/claims/ClaimValidationPanel.tsx:158-162).",
+      "proposed_text": "Catalog unavailable → a gray note under the panel heading: \"ICD-10 billability check unavailable — diagnosis codes were not verified against the billable code set.\" The check is skipped, not spoofed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ICD-10 billability check unavailable — diagnosis codes were not verified against the billable code set.",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!isBillableSetHydrated() && (",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-08",
+      "claim": "The warning is advisory, not blocking. You can still save and submit, but a code that is not in the billable catalog will be denied by the payer.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "warnings.push({",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.warning(`Submitting claim with ${validationCheck.warnings.length} warning(s)`",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Payer denial outcome is not checkable from code."
+    },
+    {
+      "id": "dx-09",
+      "claim": "Before 2026-08-25, Medipyxis validated ICD-10 codes with a format regex: /^[A-Z]\\d{2}(\\.\\d{1,4})?$/. Measured against the clean FY2026 catalog, the regex rejects 51,428 of 74,719 codes — 68.8%. On live production claims it flagged 15 codes; 14 were valid (S81.812A, S51.812D, T81.31XA, L24.A0 …). The 15th, L98.A22, was a non-billable parent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// SVC004A replaced a format regex, /^[A-Z]\\d{2}(\\.\\d{1,4})?$/, which",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rejected 51,428 of the 74,719 codes in that catalog",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "them perfectly valid (S81.812A, S51.812D, T81.31XA, L24.A0",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-10",
+      "claim": "It only works because migration 20260824120000 reconciled the icd10_codes table to the CDC billable leaf set on 2026-08-24 — before that reconciliation, membership alone would have passed non-billable parents like L98.4.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "backend/supabase/migrations/20260824120000_reconcile_icd10_catalog_to_cdc_2026.sql",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e.g. L98.4 with 64 children in-catalog",
+          "paths": [
+            "backend/supabase/migrations/20260824120000_reconcile_icd10_catalog_to_cdc_2026.sql"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-11",
+      "claim": "The same defect existed in EditAuthorizationModal, where the regex pushed rejections into errors instead of warnings. That path BLOCKED the save. Both surfaces now use the same catalog membership check, and both now warn rather than block.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!isBillableIcd10(code)) {",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.push(`Diagnosis code ${code} was not found in the FY2026",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if the modal warns instead of adding a blocking error"
+        }
+      ],
+      "finding": "EditAuthorizationModal now uses the catalog, but a code not in the catalog is still pushed to `errors` (frontend/src/components/EditAuthorizationModal.tsx:231-236), and handleSubmit returns early on any error (EditAuthorizationModal.tsx:245-250). The save is still BLOCKED, not warned. Only the false rejections of valid codes were fixed. The block is skipped when the catalog did not load.",
+      "proposed_text": "EditAuthorizationModal now uses the same catalog check, so valid codes like S81.812A are no longer rejected. A code that is not in the billable catalog still blocks the authorization save there (it is a warning only on the claim). If the catalog cannot load, the modal skips the check.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.push(`Diagnosis code ${code} was not found in the FY2026",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isBillableSetHydrated()) {",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-12",
+      "claim": "The icd10_codes table is seeded from the CDC's official FY2026 ICD-10-CM release — the icd10cm_codes_2026.txt file. Only billable leaves land in the table; parent categories are filtered out during seeding.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ONLY billable leaf codes — the CDC `icd10cm-codes-2026.txt` file",
+          "paths": [
+            "backend/supabase/migrations/20260824120000_reconcile_icd10_catalog_to_cdc_2026.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The bulk import was applied out-of-band (migration header); the source file is the leaf file, so parents never enter. File name in code is icd10cm-codes-2026.txt (hyphens)."
+    },
+    {
+      "id": "dx-13",
+      "claim": "An edge function (icd10-billable-codes) hands the table to the frontend in paginated batches and proves completeness against an exact row count. If the count and the returned rows disagree the edge function returns HTTP 500 rather than hand back a partial catalog.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"code\", { count: \"exact\", head: true });",
+          "paths": [
+            "backend/supabase/functions/icd10-billable-codes/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);",
+          "paths": [
+            "backend/supabase/functions/icd10-billable-codes/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (codes.length !== expected) {",
+          "paths": [
+            "backend/supabase/functions/icd10-billable-codes/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ status: 500, headers: { ...cors, \"Content-Type\": \"application/json\" } },",
+          "paths": [
+            "backend/supabase/functions/icd10-billable-codes/index.ts"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dx-14",
+      "claim": "Search in the code picker. The picker only surfaces catalog leaves — starting from the picker instead of typing rules out most typos.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('icd10_codes')",
+          "paths": [
+            "frontend/src/services/medicalCodesService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "searchICD10Codes(",
+          "paths": [
+            "frontend/src/components/SearchableMedicalCodeInput.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-15",
+      "claim": "It does not check payer-specific coverage. A billable ICD-10 leaf can still be denied under a payer's LCD/NCD. That is a separate check.",
+      "checks": [],
+      "finding": "Describes what SVC004A does not do and payer behavior; the separate LCD check was not traced in this pass."
+    },
+    {
+      "id": "dx-16",
+      "claim": "It does not check the ICD-10 ↔ CPT pair. The diagnosis pointer on each procedure line is validated separately (see Coding Review drawer).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "pointer",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present",
+          "note": "true only if the Coding Review drawer validates pointers"
+        }
+      ],
+      "finding": "Pointer validation lives in Validate Claim (frontend/src/services/claimValidationService.ts:17-19 imports readDiagnosisPointers; :824-830 'Diagnosis Pointer' check) and is shown in the ClaimValidationPanel. CodingReviewDrawer.tsx has no pointer logic.",
+      "proposed_text": "It does not check the ICD-10 ↔ CPT pair. The diagnosis pointer on each procedure line is checked separately in the same validation panel.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "readDiagnosisPointers,",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "field: 'diagnosis_pointer',",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-17",
+      "claim": "It is fail-open, disclosed. If the catalog cannot load, the SVC004A check is skipped and the panel says so. It does not manufacture \"not billable\" from a failed fetch.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const catalogLoaded = isBillableSetHydrated();",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billableCodes = null;",
+          "paths": [
+            "frontend/src/services/icd10BillableSet.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{!isBillableSetHydrated() && (",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-18",
+      "claim": "Troubleshooting: Warning on L98.4, I83.0, E11.62, or similar 3–5 character stems — these are parent categories, not billable leaves. Choose a more specific child code (L98.499, I83.019, E11.628).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "I83.0/I83.2 with 24 each, E11.62 with 5",
+          "paths": [
+            "backend/supabase/migrations/20260824120000_reconcile_icd10_catalog_to_cdc_2026.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Parents removed from the catalog per the migration; child codes' existence is a CDC fact, not checked here."
+    },
+    {
+      "id": "dx-19",
+      "claim": "Blue disclosure \"ICD-10 billable-code check unavailable\" → The icd10-billable-codes edge function failed to return a complete catalog. Reload the page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ICD-10 billable-code check unavailable",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Same label error as dx-07: the panel says 'ICD-10 billability check unavailable — diagnosis codes were not verified against the billable code set.' (ClaimValidationPanel.tsx:158-162).",
+      "proposed_text": "Gray note \"ICD-10 billability check unavailable\" → the icd10-billable-codes edge function failed to return a complete catalog. Reload the page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ICD-10 billability check unavailable",
+          "paths": [
+            "frontend/src/components/claims/ClaimValidationPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "dx-20",
+      "claim": "EditAuthorizationModal used to block a save on a valid code → Old regex was in errors, not warnings. Fixed since 2026-08-25. If you still see a hard block, refresh the browser to pick up the latest client.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.push(`Diagnosis code ${code} was not found in the FY2026",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "absent",
+          "note": "true only if a hard block can no longer happen"
+        }
+      ],
+      "finding": "A hard block still happens by design for any code not in the catalog (EditAuthorizationModal.tsx:231-236, 245-250). Refreshing will not remove it; the fix only stopped valid codes being blocked.",
+      "proposed_text": "EditAuthorizationModal used to block valid codes like S81.812A → fixed: it now uses the catalog. It still blocks a code that is not in the billable catalog; choose a billable child code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!isBillableIcd10(code)) {",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errors.push(`Diagnosis code ${code} was not found in the FY2026",
+          "paths": [
+            "frontend/src/components/EditAuthorizationModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

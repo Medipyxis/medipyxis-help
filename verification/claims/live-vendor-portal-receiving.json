@@ -1,0 +1,1039 @@
+{
+  "title": "Receive a vendor shipment",
+  "source": "vendor-portal/receiving",
+  "url": "https://help.medipyxis.com/vendor-portal/receiving/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "vpr-01",
+      "claim": "Every shipment a tethered vendor sends you shows up in your Receiving queue pre-staged with lot, expiration, and quantity — you don't type any of it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// then pre-stages inventory_orders_v2 + inventory_ordered_products_batches_v2",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ls.line.lot_number && ` · lot ${ls.line.lot_number}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "` · exp ${ls.line.expiration_date}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-02",
+      "claim": "Check-in is match-and-confirm, from either the facility's central Receiving page or straight out of a provider's inventory view.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ClinicReceivingPage",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No route opens a facility-wide Receiving page (ClinicReceivingPage is not routed in user-routes.tsx at v1.1.345). Check-in lives in Inventory Management → Clinician Inventory View, in the Vendor Shipments Awaiting Check-In panel.",
+      "proposed_text": "Open Inventory Management → Clinician Inventory View. When a vendor shipment is waiting, a Vendor Shipments Awaiting Check-In panel lists it with the shipment number, vendor, number of lines, carrier and tracking, and expected date.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinician Inventory View\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/clinician-inventory-view\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ClinicianInventoryView = lazy(",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Shipments Awaiting Check-In",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingShipments.length > 0 && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.line_count} lines",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.expected_delivery && ` · expected ${shipment.expected_delivery}`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['shipped', 'delivered'])",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-03",
+      "claim": "Any provider at your facility can receive a shipment; you don't need the inventory_manager role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Auth: any facility provider can receive (locked decision #4).",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Any role with INVENTORY_ACCESS can receive (locked decision #4)",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Any role with inventory access at the facility can receive."
+    },
+    {
+      "id": "vpr-04",
+      "kind": "advice",
+      "claim": "Have the physical boxes on hand and a camera ready — discrepancy photos are how you flag exceptions back to the vendor."
+    },
+    {
+      "id": "vpr-05",
+      "claim": "Two surfaces write through the same edge function: the Receiving page (Sidebar → Receiving) and the Provider inventory view (Patient Management → Inventory tab, Pending Vendor Shipments section). Both save through clinic-receive-shipment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ClinicReceivingPage",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pending Vendor Shipments",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No route opens a facility-wide Receiving page (ClinicReceivingPage is not routed in user-routes.tsx at v1.1.345). Check-in lives in Inventory Management → Clinician Inventory View, in the Vendor Shipments Awaiting Check-In panel. No 'Pending Vendor Shipments' section exists, and the view is under Inventory Management, not Patient Management.",
+      "proposed_text": "Open Inventory Management → Clinician Inventory View. When a vendor shipment is waiting, a Vendor Shipments Awaiting Check-In panel lists it with the shipment number, vendor, number of lines, carrier and tracking, and expected date.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinician Inventory View\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/clinician-inventory-view\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ClinicianInventoryView = lazy(",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Shipments Awaiting Check-In",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingShipments.length > 0 && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.line_count} lines",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.expected_delivery && ` · expected ${shipment.expected_delivery}`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['shipped', 'delivered'])",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-06",
+      "claim": "Sidebar → Receiving opens a facility-scoped view with four KPI tiles (Expected today, Awaiting check-in, Open discrepancies, Received this week) and an All shipments table with vendor, shipment number, line count, expected delivery and status badge (in transit, checking in, received).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ClinicReceivingPage",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No route opens a facility-wide Receiving page (ClinicReceivingPage is not routed in user-routes.tsx at v1.1.345). Check-in lives in Inventory Management → Clinician Inventory View, in the Vendor Shipments Awaiting Check-In panel.",
+      "proposed_text": "(Remove the Receiving page section.)"
+    },
+    {
+      "id": "vpr-07",
+      "claim": "Open the shipment. The check-in modal opens with the vendor name and shipment number and every line the vendor shipped — SKU, product name, lot, expiration, and expected quantity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Check in {shipment.shipment_number} — {shipment.vendor_name}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ls.line.description ?? ls.line.sku}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// then pre-stages inventory_orders_v2 + inventory_ordered_products_batches_v2",
+          "paths": [
+            "backend/supabase/functions/vendor-create-shipments/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ls.line.lot_number && ` · lot ${ls.line.lot_number}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "` · exp ${ls.line.expiration_date}`}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-08",
+      "claim": "Confirm each line: if it matches, leave Received quantity at the pre-filled value; if not, edit the number and check the discrepancy option (short, damaged, wrong SKU, expired).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, -1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, 1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: 'match', color: 'bg-green-100 text-green-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: `short ${Math.abs(diff)}`,",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: `over ${diff}`, color: 'bg-yellow-100 text-yellow-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "wrong SKU|damaged",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Quantities are set with minus/plus or typing and a badge shows match, short or over; a line is flagged with a free-text reason. There is no short/damaged/wrong SKU/expired option list (VendorShipmentCheckInModal.tsx).",
+      "proposed_text": "Set the received quantity for each line with the minus and plus buttons or by typing; a badge shows match, short, or over. To report a problem with a line, click Flag and type a reason.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, -1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleQtyChange(index, 1)}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: 'match', color: 'bg-green-100 text-green-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: `short ${Math.abs(diff)}`,",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { label: `over ${diff}`, color: 'bg-yellow-100 text-yellow-800' };",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Flag className=\"w-3.5 h-3.5\" /> Flag",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason...\"",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ls.photos.map((f) => uploadPhoto(f, ls.line.id)),",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-09",
+      "claim": "Photograph any discrepancy. The modal accepts one photo per flagged line. This becomes the evidence attached to the exception on the vendor's side.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Flag className=\"w-3.5 h-3.5\" /> Flag",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason...\"",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ls.photos.map((f) => uploadPhoto(f, ls.line.id)),",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "10 * 1024 * 1024",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Photos can be attached to a line, but no one-photo or size limit is enforced (VendorShipmentCheckInModal.tsx).",
+      "proposed_text": "You can attach photos to a line.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Flag className=\"w-3.5 h-3.5\" /> Flag",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason...\"",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ls.photos.map((f) => uploadPhoto(f, ls.line.id)),",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-10",
+      "claim": "Add notes (optional) for the vendor's ops team.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "notes?: string;",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "A notes field exists in the modal state; how it reaches the vendor is not checked."
+    },
+    {
+      "id": "vpr-11",
+      "claim": "Confirm receipt. The shipment moves to received (perfect match) or flagged (any line has a discrepancy). The accepted quantities stock immediately, only the flagged units wait.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{submitting ? 'Receiving...' : 'Complete receipt'}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"discrepancy\"",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Complete receipt always marks the shipment delivered ('received') and adds each received lot as available stock; no flagged state or held units are written (clinic-receive-shipment/index.ts).",
+      "proposed_text": "Click Complete receipt. Each received lot is added to inventory as available stock, the shipment is marked received, and the vendor is told the expected and received totals and how many lines had a discrepancy.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{submitting ? 'Receiving...' : 'Complete receipt'}",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 2, // Available (ProductStatusEnum.Available).",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"delivered\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event_type: \"vendor_shipment_received\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "discrepancy_count: discrepancyCount,",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "delivered: { bg: 'bg-green-100', text: 'text-green-800', label: 'received' },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorShipmentsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-12",
+      "claim": "Accepted lines create inventory_product_batches_v2 rows and become on-hand stock in Main Inventory → In Stock the moment you confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 2, // Available (ProductStatusEnum.Available).",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-13",
+      "claim": "Flagged lines land in Receiving History → Needs review so an inventory admin can reconcile before those units stock.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"discrepancy\"",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No needs-review state is written on receipt.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpr-14",
+      "claim": "Consignment lots are stocked with ownership_model = consignment so they show on the vendor's consignment position report but count against your on-hand for wizard availability.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ownership_model",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "clinic-receive-shipment does not set ownership_model (no occurrence at v1.1.345).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpr-15",
+      "claim": "The Provider inventory view (Patient Management → Inventory tab) surfaces pending shipments in a Pending Vendor Shipments card, filtered to shipments where you are on the delivery list; Check in opens the same modal.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pending Vendor Shipments",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "delivery_list|deliveryList",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The panel is 'Vendor Shipments Awaiting Check-In' in Inventory Management → Clinician Inventory View, and it lists the facility's shipped/delivered shipments with no delivery-list filter (useClinicVendorReceiving.ts).",
+      "proposed_text": "Open Inventory Management → Clinician Inventory View. When a vendor shipment is waiting, a Vendor Shipments Awaiting Check-In panel lists it with the shipment number, vendor, number of lines, carrier and tracking, and expected date.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Clinician Inventory View\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/clinician-inventory-view\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ClinicianInventoryView = lazy(",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Shipments Awaiting Check-In",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingShipments.length > 0 && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.line_count} lines",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.expected_delivery && ` · expected ${shipment.expected_delivery}`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['shipped', 'delivered'])",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-16",
+      "kind": "advice",
+      "claim": "Useful when a graft was just-in-time couriered for a patient you're about to see."
+    },
+    {
+      "id": "vpr-17",
+      "claim": "Once you flag a line, the vendor's shipment moves to flagged on their side and lands in their Requests inbox with your photo and note. They resolve by Reship, Short-ship accepted, or Dispute. You're notified in the bell or Messages whenever the vendor responds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Accept and reship",
+          "paths": [
+            "frontend/src/pages/vendor"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"discrepancy\"",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No flagged state is written and no Reship / Short-ship / Dispute actions exist on the vendor side (frontend/src/pages/vendor at v1.1.345).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpr-18",
+      "claim": "Pending shipments overdue more than 24 hours send escalating nudges: day 1 to the facility inventory admin, day 3 to the vendor plus a red flag, day 5 to your facility admin. Overdue shipments do not auto-close.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "overdue",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No overdue-shipment nudge job exists at v1.1.345.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpr-19",
+      "claim": "Troubleshooting: shipment not in queue — vendor hasn't marked it shipped yet.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Vendor Shipments Awaiting Check-In",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pendingShipments.length > 0 && (",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.line_count} lines",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{shipment.expected_delivery && ` · expected ${shipment.expected_delivery}`}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in('status', ['shipped', 'delivered'])",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `Shipment is in '${shipment.status}' status — only 'shipped' shipments can be received`,",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: \"Shipment already received\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpr-20",
+      "claim": "Troubleshooting: cannot open the check-in modal — another provider is checking in the same shipment; if the shipment is now received, someone beat you to it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: `Shipment is in '${shipment.status}' status — only 'shipped' shipments can be received`,",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: \"Shipment already received\",",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "A second receipt is refused (\"Shipment already received\"); a modal lock is not checked."
+    },
+    {
+      "id": "vpr-21",
+      "claim": "Troubleshooting: photo won't attach — file over 10 MB or unsupported format; PNG/JPG only.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "10 * 1024 * 1024",
+          "paths": [
+            "frontend/src/components/inventory/shared/VendorShipmentCheckInModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No size or format limit is enforced by the check-in modal.",
+      "proposed_text": "(Remove this row.)"
+    },
+    {
+      "id": "vpr-22",
+      "claim": "Troubleshooting: received quantity doesn't decrement in Main Inventory — stocking write failed; line landed in Needs Review.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"discrepancy\"",
+          "paths": [
+            "backend/supabase/functions/clinic-receive-shipment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No Needs Review state exists.",
+      "proposed_text": "(Remove this row.)"
+    },
+    {
+      "id": "vpr-23",
+      "claim": "Troubleshooting: provider view doesn't show a shipment — you are not on the delivery list; use the facility Receiving page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ClinicReceivingPage",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No route opens a facility-wide Receiving page (ClinicReceivingPage is not routed in user-routes.tsx at v1.1.345). Check-in lives in Inventory Management → Clinician Inventory View, in the Vendor Shipments Awaiting Check-In panel. There is no delivery list.",
+      "proposed_text": "(Remove this row.)"
+    },
+    {
+      "id": "vpr-24",
+      "kind": "advice",
+      "claim": "Related: Create and track shipments; Main Inventory; Bulk inventory workflows — receiving without a vendor shipment.",
+      "reason": "Cross-links."
+    }
+  ]
+}

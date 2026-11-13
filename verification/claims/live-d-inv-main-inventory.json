@@ -1,0 +1,703 @@
+{
+  "title": "Main Inventory reference",
+  "source": "modules/inventory/main-inventory",
+  "url": "https://help.medipyxis.com/modules/inventory/main-inventory/",
+  "claims": [
+    {
+      "id": "inv-mi-01",
+      "claim": "Main Inventory is the authoritative, real-time list of every inventory unit across all product categories at your facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: \"/inventory/active\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "an all-category on-hand list behind the Main Inventory tile"
+        }
+      ],
+      "finding": "The Main Inventory hub tile opens /inventory/reorder-requests, the \"Clinician Fulfillment Request queue\" (InventoryManagement.tsx). On-hand units are listed per category on the Active Inventory tab of each category tile (ProductBatchesManagement.tsx tabs; ActiveProducts.tsx). No single all-category unit list is linked from the hub.",
+      "proposed_text": "Each category tile's Active Inventory tab lists the stock on hand for that category at your facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: TabTypes.ACTIVE_INVENTORY, label: 'Active Inventory', icon: Activity },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-02",
+      "claim": "A unit appears here as soon as it is received through a category tile (Amniotic / Advance Treatment, Biologics / Matrix, Conservative Care Products, PRP, or Ultrasonic Mist).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Go to Receiving tab to approve.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "receipts would never wait for approval"
+        }
+      ],
+      "finding": "A receipt is auto-stocked only when it matches; otherwise it waits (e.g. Pending Approval or Exception) and must be approved on the Receiving History tab (ManualReceiveModal.tsx:461-467; BulkUploadOrderModal.tsx:1593).",
+      "proposed_text": "A unit appears once its receipt is stocked. Receipts with exceptions wait on the Receiving History tab until approved.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Go to Receiving tab to approve.",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ id: TabTypes.RECEIVING, label: 'Receiving History', icon: PackageCheck },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-03",
+      "claim": "Active Inventory flat view columns: UIN, LOT #, TISSUE ID, EXP DATE, SIZE, HCPCS, SKU, STATUS.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "UIN",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a UIN column header in the flat view"
+        },
+        {
+          "type": "grep",
+          "pattern": "Lot #",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Exp Date",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Tissue ID",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The flat view (ActiveProducts.tsx:890-950) shows Product Name, Lot #, Tissue ID, Exp Date, Size, HCPCS, SKU, Status, Actions. There is no UIN column. Tissue ID, Size and HCPCS show only for Amniotic and Biologics (isPatientBased, ActiveProducts.tsx:80).",
+      "proposed_text": "Active Inventory flat view columns: Product Name, Lot #, Exp Date, SKU, Status; Amniotic and Biologics also show Tissue ID, Size and HCPCS.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Lot #",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Exp Date",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const isPatientBased = categoryEnum === ProductCategoryEnum.Amniotic || categoryEnum === ProductCategoryEnum.Biologics;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-04",
+      "claim": "UIN — the system-generated identifier assigned to this specific physical unit at receiving; no two units share a UIN; this is the value scanned or entered in the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "the receiving edge function would write a per-unit UIN",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Receiving (inventory-import-batches) writes no UIN. inventory_product_catalog_v2 has a product-level uin column that is never rendered. The Visit Wizard's \"Box UID/UIN\" field is free text with no inventory lookup (ProcedureSuppliesVisit.tsx:5346-5363).",
+      "proposed_text": "Remove the UIN row. Units are identified by lot number (and tissue ID for amniotic and biologics).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-05",
+      "claim": "LOT # is the manufacturer's lot number as entered during receiving, and includes the product's LOT SUFFIX.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "including the suffix would append or check it"
+        }
+      ],
+      "finding": "The lot is stored exactly as typed. The catalog Lot No. Suffix only makes a lot number required on bulk upload (BulkUploadOrderModal.tsx:1158-1183); nothing appends or checks the suffix.",
+      "proposed_text": "LOT # — the manufacturer's lot number as entered during receiving.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.error(`Lot number is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-06",
+      "claim": "TISSUE ID is populated for amniotic and advance-treatment products; blank for biologics and conservative care products.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "categoryEnum === ProductCategoryEnum.Biologics;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "biologics would not be in the tissue-ID category set"
+        }
+      ],
+      "finding": "Biologics require a Tissue ID at receiving like amniotic: isPatientBasedCategory = Amniotic || Biologics (ManualReceiveModal.tsx:86-88) and the save is refused without it (line 394).",
+      "proposed_text": "TISSUE ID — required and shown for Amniotic and Biologics; not collected for Conservative Care, PRP or UM.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "categoryEnum === ProductCategoryEnum.Biologics;",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-07",
+      "claim": "Expired units are blocked from selection in the Visit Wizard; near-expiry units are flagged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Cannot use expired batch",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "This batch expires in {daysUntil} days. Confirm usage is intended.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-08",
+      "claim": "Expiration is a date, not a status — an expired unit keeps its status (e.g. Available).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Expired = ",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Available = 2,",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-09",
+      "claim": "SIZE is the graft dimensions or package quantity as entered during receiving; HCPCS is pulled from the Product Catalog at receiving time; SKU is inherited from the Product Catalog entry.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Size (e.g. 2x3 cm)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "product_code: catalogItem.hcpcs_code || \"\",",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Size",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HCPCS",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-10",
+      "claim": "HCPCS is passed to the billing engine when the unit is applied.",
+      "checks": [],
+      "finding": "No path was found that carries the unit's stored hcpcs_code (inventory_product_batches_v2) into claim building; visit-inventory returns it for display but autoBillingClaimService builds HCPCS lines from visit data. Cannot be confirmed from code."
+    },
+    {
+      "id": "inv-mi-11",
+      "claim": "STATUS values: Ordered, Shipped, Available, Unused, Reserved, Used, Transferred, Returned, Rejected, Damaged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Ordered, label: \"Ordered\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Shipped, label: \"Shipped\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Available, label: \"Available\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Unused, label: \"Unused\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Reserved, label: \"Reserved\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Used, label: \"Used\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Transferred, label: \"Transferred\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Returned, label: \"Returned\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Rejected, label: \"Rejected\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Damaged, label: \"Damaged\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-12",
+      "claim": "STATUS value \"Hold / Release\": amniotic/biologics hold-and-release control.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Hold, label: \"Hold\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Release, label: \"Release\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The Release status (12) is labelled \"Receive\" in the UI: Enums.ts:836 { value: ProductStatusEnum.Release, label: \"Receive\" }. Users never see the word Release.",
+      "proposed_text": "Hold / Receive — amniotic and biologics hold control; Receive marks a held unit as released.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Hold, label: \"Hold\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Release, label: \"Receive\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-13",
+      "claim": "Reserved means held for an IVR or a scheduled wound-case visit; Unused is treated the same as Available for the in-stock view.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Reserved = 10, // Items reserved for IVR/wound case visits",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Unused = 3,",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-14",
+      "claim": "Used — applied to a patient; the UIN links to the encounter record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "the receiving edge function would write a per-unit UIN",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No per-unit UIN exists on the live path (see inv-mi-04).",
+      "proposed_text": "Used — applied to a patient at a visit.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{ value: ProductStatusEnum.Used, label: \"Used\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-15",
+      "claim": "Discarded graft amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "graft_wastage?: number;",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "JW/JZ",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-16",
+      "claim": "Document the reason whenever a unit is marked Damaged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.error(\"Please select a reason for the adjustment\");",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/AdjustInventoryModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-17",
+      "claim": "In Procedures & Supplies the clinician sees a product search field and a Scan UIN button, and scans the UIN barcode with a device camera or barcode reader or types it into the search field.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "[Ss]can",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Procedures & Supplies has no scan control and no inventory search; it has a free-text \"Box UID/UIN\" input, required for a skin-substitute application (ProcedureSuppliesVisit.tsx:3597, 5346-5363).",
+      "proposed_text": "For a skin-substitute application, Procedures & Supplies requires the Box UID/UIN typed from the package.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Enter Box UID/UIN\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<li>Box UID/UIN is required</li>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-18",
+      "claim": "The system validates that the scanned UIN exists in Main Inventory for the facility, has status Available or Reserved, has not passed its EXP DATE, and has an Approved or Agreed IVR if required; if validation fails it shows the reason (expired, wrong facility, no IVR).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "inventory_product_batches_v2",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "validation of the entered UIN would query inventory"
+        }
+      ],
+      "finding": "The Box UID/UIN text is not validated against inventory. Stock validation happens in the Conservative Care & Interventions lot picker: it lists facility stock with status Available/Unused (ConservativeCareInterventionVisit.tsx:718-745), plus patient allocations, and blocks expired batches (\"Cannot use expired batch\").",
+      "proposed_text": "Stock is picked in Conservative Care & Interventions from your facility's Available stock and the patient's allocations; expired batches cannot be picked.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Cannot use expired batch",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ConservativeCareInterventionsSectionVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-19",
+      "claim": "If validation passes, the unit is added to the encounter's supply record; its status updates to Used when the visit is signed and locked.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "updateInventoryBatchStatuses|deduct",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "deduction at sign/lock would run from the Provider Attestation (sign) step"
+        }
+      ],
+      "finding": "Inventory is deducted when the clinician clicks Continue to Review, before signing: VisitWizardV4.tsx:10204-10212 calls updateInventoryBatchStatuses (\"[CONTINUE TO REVIEW] Updating inventory batch statuses...\"), skipped when offline. The sign step (ProviderAttestationVisit.tsx) does not deduct.",
+      "proposed_text": "Picked stock is deducted from inventory when you click Continue to Review (online only), not when the visit is signed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"📋 [CONTINUE TO REVIEW] Updating inventory batch statuses...\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await updateInventoryBatchStatuses(",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-mi-20",
+      "claim": "Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim.",
+      "checks": [],
+      "finding": "Advice about audit risk, not product behaviour; no code check possible."
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

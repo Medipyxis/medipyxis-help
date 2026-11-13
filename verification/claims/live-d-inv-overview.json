@@ -1,0 +1,801 @@
+{
+  "title": "Inventory Management overview",
+  "source": "modules/inventory/overview",
+  "url": "https://help.medipyxis.com/modules/inventory/overview/",
+  "claims": [
+    {
+      "id": "inv-ov-01",
+      "claim": "A UIN (Unique Inventory Number) is a system-generated identifier assigned to a single physical unit of a product at the moment it is received into inventory; no two units share a UIN.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "the receiving edge function (inventory-import-batches, used by Manual Receive and bulk receiving) would write a per-unit UIN"
+        }
+      ],
+      "finding": "The hub tiles route to /inventory-management/product-batches/<category> (InventoryManagement.tsx). That receiving path writes inventory_product_batches_v2, which has no UIN column (types/supabase.ts inventory_product_batches_v2 Row: lot_number, tissue_id, hcpcs_code, q_code, quantity …). A per-unit UIN exists only on the legacy amniotic_inventory_items / biologics_inventory_items tables and legacy pages. inventory_product_catalog_v2 does carry a product-level uin column (one value per catalog product, not per unit); ActiveProducts.tsx:339 and UsedProducts.tsx:152 read it but never render it (UsedProducts.tsx:219 formatUIN is never called).",
+      "proposed_text": "Each received lot is stored as an inventory record with its lot number, expiration date and quantity; amniotic and biologic receipts also carry a tissue ID, size and HCPCS/Q code.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`Lot number is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-02",
+      "claim": "The UIN travels with the item and is scanned in the Procedures & Supplies section of the Visit Wizard to link the unit to a clinical encounter.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "[Ss]can",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "a scan control would appear in Procedures & Supplies"
+        }
+      ],
+      "finding": "Procedures & Supplies has a free-text \"Box UID/UIN\" input (ProcedureSuppliesVisit.tsx:5346-5363, placeholder \"Enter Box UID/UIN\") with no scan control and no lookup against inventory. Units are picked from stock in the Conservative Care & Interventions section's lot picker (ConservativeCareInterventionVisit.tsx), and deducted when sections are saved (VisitWizardV4.tsx updateInventoryBatchStatuses).",
+      "proposed_text": "Stock is picked by lot in the Visit Wizard's Conservative Care & Interventions section. For a graft, Procedures & Supplies also records the Box UID/UIN typed from the package.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter Box UID/UIN\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ConservativeCareInterventionsSectionVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-03",
+      "claim": "When stock falls to or below the PAR level, the system surfaces a replenishment alert so a vendor_coordinator or admin can reorder before a stockout occurs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lowStock: 0,",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ActiveProducts.tsx"
+          ],
+          "expect": "absent",
+          "note": "the in-stock Low Stock counter would be computed, not hard-coded"
+        },
+        {
+          "type": "grep",
+          "pattern": "nightly-par-check",
+          "paths": [
+            "backend/supabase/migrations",
+            ".github"
+          ],
+          "expect": "present",
+          "note": "the nightly PAR job would be scheduled"
+        }
+      ],
+      "finding": "The Active Inventory \"Low Stock\" tile is always 0: ActiveProducts.tsx:410 sets lowStock: 0 and nothing computes it. nightly-par-check reads legacy ${category}_par_levels tables (nightly-par-check/index.ts:68-70) and no cron or workflow schedules it. A PAR level can be entered on the product (AddEditProduct.tsx par_level), but no live alert fires from it.",
+      "proposed_text": "You can record a PAR level on a product. Medipyxis does not yet raise a replenishment alert when stock falls to it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name=\"par_level\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-04",
+      "claim": "Product Catalog tile: master list of every product your organization has configured, with a Products tab and a Vendors tab; add products and edit SKU/HCPCS metadata here.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory-management/product-catalog\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Products</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/ProductCatalog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Vendors</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/ProductCatalog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{editMode ? \"Edit Product\" : \"Add Product\"}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-05",
+      "claim": "The hub has Amniotic / Advance Treatment, Biologics / Matrix, and Conservative Care Products tiles for receiving and management of those products.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Amniotic / Advance Treatment\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Biologics / Matrix\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Conservative Care Products\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/product-batches/:category\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manual Receive",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-06",
+      "claim": "Biologics / Matrix tile: receiving with HCPCS + manufacturer lot-format validation.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "endsWith\\(|startsWith\\(",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx",
+            "frontend/src/pages/inventory-management/product-batches/BulkUploadOrderModal.tsx",
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "validating a received lot against its format/suffix would compare the strings"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Receiving requires an HCPCS/Q code for amniotic and biologics (ManualReceiveModal.tsx:402) but does not validate the lot's format. The catalog's Lot No. Suffix only makes a lot number required on bulk upload (BulkUploadOrderModal.tsx:1158-1183). The '-' + three digits format is enforced on the catalog suffix itself (AddEditProduct.tsx:159-166), not on received lots.",
+      "proposed_text": "Biologics / Matrix — receiving and management for biologic matrix products; each received unit needs an HCPCS/Q code, tissue ID, size, lot number and expiration date.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.product_code?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (isPatientBasedCategory && !item.tissue_id?.trim()) {",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-07",
+      "claim": "PRP tile: platelet-rich plasma kits. Ultrasonic Mist (UM) tile: ultrasonic mist therapy cartridges.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Platelet-rich plasma kits and applications\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Ultrasonic Mist (UM)\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"MIST therapy cartridges and applicators\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-08",
+      "claim": "IVR Tracking tile: tracks IVR submissions, outcomes, and vendor responses.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Track and manage Inventory Vendor Requests (IVR) submissions, outcomes, and vendor responses\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-09",
+      "claim": "Clinician Inventory View tile: a read-only, role-filtered view of what's available at a clinician's facility, without cost or AP data.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/clinician-inventory-view\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "New Product Request|Request More Inventory|title=\"Receive Item\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "absent",
+          "note": "a read-only view has no request or receive actions"
+        },
+        {
+          "type": "grep",
+          "pattern": "cost|price",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The tile opens ProviderInventoryView (\"My Inventory\" / \"Provider Inventory\" for admins), the provider's own assigned stock. It is not read-only: it has New Product Request, Request More Inventory, and a Received button to accept transferred items (ProviderInventoryView.tsx:700, 900, 980-990). It shows no cost data.",
+      "proposed_text": "Clinician Inventory View — a clinician's own assigned stock (\"My Inventory\"), without cost data. Clinicians accept transferred items with Received and can request more inventory.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isAdminOrManager ? 'Provider Inventory' : 'My Inventory'}",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>New Product Request</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cost|price",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/pages/inventory-management/provider/ProviderInventoryView.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-10",
+      "claim": "Accounts Payable tile: vendor invoice intake, matching, payments, and disputes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/accounts-payable\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "type ApTab = \"inbox\" | \"matching\" | \"payments\" | \"disputes\" | \"activity\" | \"reports\";",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-11",
+      "claim": "Main Inventory tile: the facility's stock and fulfillment view for what is physically on hand.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Main Inventory\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/active\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "note": "an on-hand view tile would link to an in-stock page"
+        }
+      ],
+      "finding": "The Main Inventory tile is described as \"Clinician Fulfillment Request queue for triage, ordering, and stock-based fulfillment\" and links to /inventory/reorder-requests (InventoryManagement.tsx main-inventory-fulfillment card). On-hand stock is on each category tile's Active Inventory tab.",
+      "proposed_text": "Main Inventory — the clinician fulfillment request queue for triage, ordering, and stock-based fulfillment. On-hand stock is on each category tile's Active Inventory tab.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Clinician Fulfillment Request queue for triage, ordering, and stock-based fulfillment\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/inventory/reorder-requests\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ id: TabTypes.ACTIVE_INVENTORY, label: 'Active Inventory', icon: Activity },",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ProductBatchesManagement.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-12",
+      "claim": "PRP and Ultrasonic Mist are their own categories alongside Amniotic, Biologics, and Conservative Care; like conservative products, they flow through the standard deduction pipeline and do not require IVR prior authorization.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductCategoryEnum.PRP, label: \"PRP\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: ProductCategoryEnum.UM, label: \"Ultrasonic Mist (UM)\" },",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Reuses the same lot-picker + inventory_deduct_batch_v2 path as",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "option.value === ProductCategoryEnum.Amniotic ||",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "present",
+          "note": "IVR requests offer only Amniotic and Biologics"
+        },
+        {
+          "type": "grep",
+          "pattern": "ProductCategoryEnum\\.(PRP|UM)",
+          "paths": [
+            "frontend/src/pages/inventory-management/ivr/IVRInventoryRequestModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-13",
+      "claim": "FDA HCT/P Recall Lookup is a lookup tool, not a hub tile, for checking received tissue products against FDA recall data.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/recall-lookup\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "recall",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "fda\\.gov|openfda|api\\.fda",
+          "ignoreCase": true,
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx",
+            "backend/supabase/functions/inventory-recall-lookup"
+          ],
+          "expect": "present",
+          "note": "checking against FDA recall data would fetch FDA data"
+        }
+      ],
+      "finding": "Recall Lookup does not read any FDA recall data. You type a lot number from a recall notice and it lists every application of that lot at your facilities (inventory-recall-lookup/index.ts:81 .eq(\"lot_number\", lotNumber)). It is not a hub tile and nothing in the app links to it; it is reached only at /inventory-management/recall-lookup.",
+      "proposed_text": "FDA HCT/P Recall Lookup — a lookup tool, not a hub tile, at /inventory-management/recall-lookup. Enter the lot number from a recall notice to find every patient who received product from that lot.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/recall-lookup\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"lot_number\", lotNumber)",
+          "paths": [
+            "backend/supabase/functions/inventory-recall-lookup/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-14",
+      "claim": "Bulk operations — shipment logging, vendor receiving, manual receipt, and provider assignment — are on a single landing page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/inventory-management/bulk\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Upload Shipment (from vendor)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Upload Receiving (from vendor)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Manual Receive (no CSV)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Bulk Assign to Provider\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/bulk/BulkOperationsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-15",
+      "claim": "A product is defined in Product Catalog with its SKU, HCPCS, and category.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SKU <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name=\"hcpcs_code\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: z.number().min(1, \"Category is required\"),",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-16",
+      "claim": "A shipment is received through the appropriate category tile (Amniotic / Advance Treatment, Biologics / Matrix, Conservative Care Products, PRP, or Ultrasonic Mist), generating a UIN for each unit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: `/inventory-management/product-batches/prp`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: `/inventory-management/product-batches/um`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\buin\\b",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/functions/inventory-import-batches"
+          ],
+          "expect": "present",
+          "note": "the receiving edge function (inventory-import-batches, used by Manual Receive and bulk receiving) would write a per-unit UIN"
+        }
+      ],
+      "finding": "Receiving through the five category tiles is live, but it does not generate UINs (see inv-ov-01).",
+      "proposed_text": "A shipment is received through the appropriate category tile (Amniotic / Advance Treatment, Biologics / Matrix, Conservative Care Products, PRP, or Ultrasonic Mist), creating inventory records with lot and expiration.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: `/inventory-management/product-batches/prp`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: `/inventory-management/product-batches/um`,",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.error(`Expiration date is required for ${item.product_name}`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-batches/ManualReceiveModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-17",
+      "claim": "If a payer requires prior authorization for a graft, an IVR is tracked in IVR Tracking.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"IVR Tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<IVRTrackingDashboard",
+          "paths": [
+            "frontend/src/pages/inventory-management/IVRManagementPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-18",
+      "claim": "Received units appear in inventory and become selectable in the Visit Wizard's Procedures & Supplies section.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "inventory_product_batches_v2",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "selecting received stock in Procedures & Supplies would read inventory batches there"
+        }
+      ],
+      "finding": "Procedures & Supplies does not read inventory. Received stock is selected in the Conservative Care & Interventions section (ConservativeCareInterventionVisit.tsx:718-745 reads inventory_product_batches_v2 and patient allocations).",
+      "proposed_text": "Received units appear in inventory and become selectable in the Visit Wizard's Conservative Care & Interventions section.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"inventory_product_batches_v2\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "conservativeCare: \"Conservative Care & Interventions\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "inv-ov-19",
+      "claim": "Vendor invoices for received shipments are handled in Accounts Payable.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"vendor_invoices\")",
+          "paths": [
+            "frontend/src/pages/AccountsPayablePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

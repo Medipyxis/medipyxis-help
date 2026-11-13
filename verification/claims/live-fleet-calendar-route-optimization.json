@@ -1,0 +1,626 @@
+{
+  "title": "Review provider routes and export reports",
+  "source": "modules/fleet-calendar/route-optimization",
+  "url": "https://help.medipyxis.com/modules/fleet-calendar/route-optimization/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lro-01",
+      "claim": "See each provider's stops for a day laid out on a map, review drive distance and utilization, and export scheduling reports as CSV. Medipyxis presents route information for review — it does not auto-sequence stops or push routes to devices.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<h1 className=\"text-2xl font-bold text-gray-900\">Route Map</h1>",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Utilization:",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const blob = new Blob([csv], { type: \"text/csv;charset=utf-8\" });",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "getSuggestionForVisit, getTotalDistance) currently have",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// ZERO call sites, so this guard is a tripwire for whoever revives them, not",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-02",
+      "claim": "Before you start: appointments are scheduled for the target date.",
+      "kind": "advice"
+    },
+    {
+      "id": "lro-03",
+      "claim": "For map and distance figures, appointments need a geocodable patient address on record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const location = portalRequest",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "bookingLocation(ownLocationOf(apt.patient), facility);",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-04",
+      "claim": "Open the Fleet Calendar in Day view and navigate to the target date.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<div className={`flex-shrink-0 hidden md:flex ${viewMode !== \"day\" ? \"md:hidden\" : \"\"}`}>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-05",
+      "claim": "Open the Routes panel. Click Routes (top-right panel toggle).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "top-right",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Routes is a collapsed strip on the right-hand edge of the calendar body (frontend/src/pages/ops/FleetCalendarCanvas.tsx:1200), not a top-right toolbar control; the panel is hidden outside Day view.",
+      "proposed_text": "Open the Fleet Calendar in Day view. The routes panel is shown only in Day view. Click Routes on the right-hand edge of the calendar; the Route Information panel opens.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<div className={`flex-shrink-0 hidden md:flex ${viewMode !== \"day\" ? \"md:hidden\" : \"\"}`}>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title=\"Click to expand route information\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<h2 className=\"font-bold text-sm text-gray-900\">Route Information</h2>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-06",
+      "claim": "For each provider with visits that day, the panel shows Provider, Visits (number of stops that day), Distance (total driving distance across the stops, in miles), Est. drive time, and Utilization as a bar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "if (visitCount === 0) return null;",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{getProfessionTitleCode(provider.professionTitle) ||",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<div className=\"text-gray-500 font-medium\">Visits</div>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<div className=\"text-gray-500 font-medium\">Distance</div>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{hasRoad ? (distance / 1.609344).toFixed(2) : \"N/A\"}",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<div className=\"text-gray-500 font-medium\">Est. Drive</div>",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "!isOffSchedule(v.statusKey)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "export const OFF_SCHEDULE_STATUS_KEYS = [\"canceled\", \"no_show\"] as const;",
+          "paths": [
+            "frontend/src/utils/appointmentStatusCatalog.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-07",
+      "claim": "Utilization: percentage of the working day used.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "// Assuming 8-hour workday (480 minutes)",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "Utilization is booked minutes divided by a fixed 480 minutes (frontend/src/services/fleetCalendarService.ts:287), not the provider's own working day.",
+      "proposed_text": "Utilization is booked visit minutes as a percentage of an 8-hour day, shown with a bar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "// Assuming 8-hour workday (480 minutes)",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return { ...provider, utilizationPct: (totalMinutes / 480) * 100 };",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "width: `${provider.utilizationPct || 0}%`,",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-08",
+      "claim": "Stops are listed in scheduled-time order. The panel is read-only — reorder a day by changing individual appointment times on the calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "statsB.visitCount - statsA.visitCount || statsB.distance - statsA.distance",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "The panel lists providers, sorted by visit count then distance (frontend/src/pages/ops/FleetCalendarCanvas.tsx:1220), not stops. The route itself does follow scheduled time order (frontend/src/pages/ops/FleetCalendarCanvas.tsx:337).",
+      "proposed_text": "The route always follows the scheduled times; to change the order, change appointment times. Visits with no map location are counted on the card as left out of the distance. With no base address, Distance and Est. Drive show N/A.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".sort((a, b) => (a.startMin || 0) - (b.startMin || 0));",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? \"1 visit has no map location, so it isn't in this distance.\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"N/A\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-09",
+      "claim": "Click View Map. The Fleet Map opens, showing each provider's stops as numbered pins in scheduled order with the connecting route drawn between them.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Fleet Map",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "navigate(`/facility/${facilityId}/ops/fleet-map?date=",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The page is titled Route Map (frontend/src/pages/ops/FleetMapView.tsx:790), and View Map does not pass the calendar date, so it opens on today (frontend/src/pages/ops/FleetMapView.tsx:141). Numbered pins and drawn route are true.",
+      "proposed_text": "Click View Map. The Route Map opens on today's date; change the date there. It shows each provider's stops as numbered pins and draws the route between them.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "navigate(`/facility/${facilityId}/ops/fleet-map`)",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return formatDateInputValue(getTodayLocalDate());",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Pins only for visits with a location, numbered as in the stop list",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "\"line-color\": color,",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-10",
+      "claim": "Use the map to sanity-check the day's sequence and spot backtracking. To change the order, adjust the appointment times back on the calendar.",
+      "kind": "advice"
+    },
+    {
+      "id": "lro-11",
+      "claim": "Open the Reports panel from the Fleet Calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ">Reports<",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The control is labelled \"Reports & Export\" with a Show/Hide toggle above the calendar (frontend/src/components/calendar/FleetReportPanel.tsx:287).",
+      "proposed_text": "Click Reports & Export above the calendar (Show to expand).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Reports &amp; Export",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{open ? \"Hide\" : \"Show\"}",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<FleetReportPanel",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-12",
+      "claim": "Choose a report preset — for example, by provider per month or by date of service. Export to CSV: click the export action to download the report.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"By provider per month\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"By date of service\",",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Export CSV",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const blob = new Blob([csv], { type: \"text/csv;charset=utf-8\" });",
+          "paths": [
+            "frontend/src/components/calendar/FleetReportPanel.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-13",
+      "claim": "Use the export for scheduling review, payroll, or utilization analysis.",
+      "kind": "advice"
+    },
+    {
+      "id": "lro-14",
+      "claim": "The Routes panel and Fleet Map are for review and reporting. Medipyxis does not re-optimize stop order automatically or send a route to a clinician's device — clinicians see their assigned visits on their own calendar.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "getSuggestionForVisit, getTotalDistance) currently have",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// ZERO call sites, so this guard is a tripwire for whoever revives them, not",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "(apt) => apt.clinician_id === clinicianId",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? \"All Providers\"",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-15",
+      "claim": "Troubleshooting: Stop missing from the map — appointment address not geocoded — open the appointment, verify the patient address, and save.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "setEditedData({ ...editedData, address",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The visit location comes from the patient, or the facility for a resident (frontend/src/services/fleetCalendarService.ts:1420); Appointment Details has no address field to verify or save.",
+      "proposed_text": "Stop missing from the map: the patient has no map location; check the patient's address, or for a facility resident the facility's address.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "// Pins only for visits with a location, numbered as in the stop list",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "bookingLocation(ownLocationOf(apt.patient), facility);",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-16",
+      "claim": "Troubleshooting: Distance / drive time blank — one or more stops lack a geocodable address — add complete addresses to the affected appointments.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "// substituting a default or facility origin: an invented base yields",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "Distance and Est. Drive show N/A when the clinician has no base (home) address (frontend/src/pages/ops/FleetCalendarCanvas.tsx:1147). A stop with no location is left out of the distance and counted on the card (\"… has no map location\"), not blanking it (frontend/src/pages/ops/FleetCalendarCanvas.tsx:1364).",
+      "proposed_text": "Distance / drive time N/A: no base address on file. An administrator adds the clinician's home address on their profile under HR & Compliance, picking it from the suggestions so the location is saved.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "An administrator can add their home address on the clinician's profile under HR & Compliance — pick the address from the suggestions so the location is saved.",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if (!base) continue;",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lro-17",
+      "claim": "Troubleshooting: Map does not load — browser pop-up or content blocker — allow content from your Medipyxis domain.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "script.src = \"https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js\";",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "The map script loads from api.mapbox.com (frontend/src/pages/ops/FleetMapView.tsx:314); allowing the Medipyxis domain alone does not help.",
+      "proposed_text": "Map does not load: allow content from api.mapbox.com.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "script.src = \"https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js\";",
+          "paths": [
+            "frontend/src/pages/ops/FleetMapView.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

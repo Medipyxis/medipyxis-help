@@ -1,0 +1,678 @@
+{
+  "title": "HR & Compliance overview",
+  "source": "modules/hr-compliance/overview",
+  "url": "https://help.medipyxis.com/modules/hr-compliance/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lho-01",
+      "claim": "HR & Compliance centralizes employee onboarding, credential monitoring, facility user management, and clinical education in one module. Caption: HR & Compliance hub — each tile leads to a dedicated workflow.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/hr\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return <HrCockpit />;",
+          "paths": [
+            "frontend/src/pages/Hr.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Human Resources Hub",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "      title: \"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": {
+            "count": 9
+          },
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "    //   title: \"Provider Management\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-02",
+      "claim": "Nine sections: Announcements, Credential Tracker, Activity Logs, New Employee Onboarding, Bulk Employee Upload, Facility Users, Pharmacy Management, Education Bundle Management, Training Materials.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "      title: \"",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": {
+            "count": 9
+          },
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Bulk Employee Upload\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Pharmacy Management\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Education Bundle Management\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Training Materials\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-03",
+      "claim": "Announcements: post organization-wide or facility-level messages visible to all users on their dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "visible to all users on their dashboard",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "announcement.title",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "announcements themselves would be rendered on the dashboard"
+        }
+      ],
+      "finding": "The Dashboard has a View Announcements & Kudos card that links to Company Announcements (frontend/src/pages/Dashboard.tsx:1406); announcements are not shown on the dashboard. They are stored per facility (frontend/src/services/simpleHRService.ts:44); there is no organization-wide option.",
+      "proposed_text": "Announcements: view active and past announcements, search and filter them, and post new ones.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\"View active and past company announcements, search, and filter.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-announcements-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span className=\"hidden sm:inline\">New Announcement</span>",
+          "paths": [
+            "frontend/src/pages/HRAnnouncementsPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-04",
+      "claim": "Credential Tracker: monitor license and certification expiry dates for clinical staff.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Monitor employee certifications, licenses, and training compliance.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-credential-tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-05",
+      "claim": "Activity Logs: audit trail of user actions across modules — logins, edits, exports, and sign-offs.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"Export\">",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"SignOff\">",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "HR Activity Logs filters on Login, Role Change, Policy Acknowledgment, Training Update, User Edit, Announcement Read and File Upload (frontend/src/pages/HRLogs.tsx:464); exports and sign-offs are not logged there.",
+      "proposed_text": "Activity Logs: the HR Activity Logs page lists HR events such as logins, role changes, policy acknowledgments, training updates, user edits, announcement reads and file uploads. Filter by action, date range and user.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "HR Activity Logs",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"RoleChange\">Role Change</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"PolicyAck\">Policy Acknowledgment</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"TrainingUpdate\">Training Update</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"AnnouncementRead\">Announcement Read</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"FileUpload\">File Upload</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"last30days\">Last 30 Days</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"\">All Users</option>",
+          "paths": [
+            "frontend/src/pages/HRLogs.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-06",
+      "claim": "New Employee Onboarding: add a new employee and set up their access on a single form.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-07",
+      "claim": "Bulk Employee Upload: import multiple employee records at once via a CSV template.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick: () => setIsBulkUploadModalOpen(true),",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "accept=\".csv\"",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Download Sample CSV",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "a.download = \"bulk_user_template.csv\";",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-08",
+      "claim": "Facility Users: view and manage all users active at a specific facility — adjust roles, deactivate accounts, or reassign facilities.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "setEditValues({ ...editValues, role",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "facility_id: e.target.value",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Facility Users edits name, job title, phone and status (frontend/src/pages/FacilityUsersPage.tsx:1292) and can resend the welcome email; role is not editable there and there is no facility reassignment.",
+      "proposed_text": "Facility Users: see the users at this facility. Edit a user's name, job title, phone and status (for example Active or Inactive), or resend their welcome email.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "description: \"View and manage all users associated with this facility.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "editValues.job_title",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "editValues.phone_number",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setEditValues({ ...editValues, status: val })",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ value: \"inactive\", label: \"Inactive\" },",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ResendWelcomeEmailButton",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>Edit User</span>",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-09",
+      "claim": "Pharmacy Management: configure the approved pharmacy list for medication orders and prescriptions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "approved",
+          "paths": [
+            "frontend/src/pages/PharmacyManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The page manages pharmacy partners (add, contact details, e-prescribe flag) (frontend/src/pages/PharmacyManagement.tsx:167); there is no approved list that gates orders or prescriptions.",
+      "proposed_text": "Pharmacy Management: manage pharmacy partners — add a pharmacy, keep its contact details, and filter by whether e-prescribing is enabled.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Manage pharmacy data, contact information, and e-prescribe settings.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Manage pharmacy partners",
+          "paths": [
+            "frontend/src/pages/PharmacyManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>New Pharmacy</span>",
+          "paths": [
+            "frontend/src/pages/PharmacyManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"true\">E-Prescribe Enabled</option>",
+          "paths": [
+            "frontend/src/pages/PharmacyManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-10",
+      "claim": "Education Bundle Management: create, assign, and track completion of training modules and required competency courses.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Create and manage pre-configured patient education material bundles for clinical scenarios.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "Education bundles are patient education material bundles (frontend/src/pages/HrCockpit.tsx:192), not staff training. Staff training, assignment and completion are in Training Materials (frontend/src/pages/HrCockpit.tsx:201).",
+      "proposed_text": "Education Bundle Management: create and manage bundles of patient education material for common clinical scenarios. These are for patients, not staff training.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Create and manage pre-configured patient education material bundles for clinical scenarios.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/hr/education-bundles\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-11",
+      "claim": "Training Materials: publish reference and training documents for staff.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\"Manage the staff training library: add documents, videos, and assessments; assign required trainings; review completion.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/knowledge/training\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "note": "Medipyxis-provided baseline trainings (facility_id null) show in this library without a \"For example purposes only\" label at v1.1.345 (no such string in the frontend; TrainingMaterialsPage.tsx only has a hover title \"Remove this Medipyxis training from your facility's list\"). Open PR #4052 (MEDA-350, \"label Medipyxis examples\") adds ExampleDocBadge. The live page does not itself show example trainings."
+    },
+    {
+      "id": "lho-12",
+      "claim": "HR & Compliance is available to administrators (admin) and to roles granted HR access such as clinical_manager.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "currentRole === \"admin\"",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<FeatureAccess feature=\"HR & Compliance\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const configured = orgRoleConfig?.[currentRole];",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "    \"HR & Compliance\",",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lho-13",
+      "claim": "Clinicians see announcements and their own assigned education on the dashboard but do not open the module directly.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const CLINICIAN_FALLBACK_FEATURES = [",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "View Announcements & Kudos",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "My Training",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a dashboard widget for the user's assigned education would be on the Dashboard"
+        }
+      ],
+      "finding": "Clinicians do not get HR & Compliance by default (fallback list at frontend/src/contexts/FacilityContext.tsx:758; an organization can change it). The Dashboard links to Company Announcements and to Training Materials (frontend/src/pages/Dashboard.tsx:1555) but has no widget showing a user's assigned education.",
+      "proposed_text": "Unless your organization's role settings say otherwise, clinicians do not open HR & Compliance. From the Dashboard they can open Company Announcements and Training Materials.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "const CLINICIAN_FALLBACK_FEATURES = [",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "View Announcements & Kudos",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "route: \"/knowledge/training\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

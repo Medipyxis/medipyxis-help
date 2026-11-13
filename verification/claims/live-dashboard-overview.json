@@ -1,0 +1,529 @@
+{
+  "title": "The Dashboard at a glance",
+  "source": "modules/dashboard/overview",
+  "url": "https://help.medipyxis.com/modules/dashboard/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "ldo-01",
+      "claim": "Your Dashboard is the first screen you see after login.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "({ kind: 'pane', pane: 'clinical', path: '/dashboard' } as const);",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ path: \"/dashboard\", element: <Dashboard /> },",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-02",
+      "claim": "It summarizes the work waiting for you today and deep-links into every module.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{/* Action Items panel removed (MEDA-277): it never had a real data",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "a today's-work summary would not have been removed"
+        }
+      ],
+      "finding": "The only today's-work panel (Action Items) was removed because it had no data source (frontend/src/pages/Dashboard.tsx:1415). The Dashboard links to some work areas (Your Work Cockpits, HR Self-Service, announcements, Knowledge Base), not every module.",
+      "proposed_text": "The Dashboard is the first screen after login; it greets you, links to main work areas, and gathers HR self-service, announcements, recent activity and reference material.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Dashboard\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Your Work Cockpits",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HR Self-Service",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Recent Activity",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Knowledge Base & Resources",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-03",
+      "claim": "Welcome Back banner: shows your name, current facility, and an On Duty pill.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "currentFacility?.name",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "the current facility would be rendered in the banner"
+        }
+      ],
+      "finding": "The banner shows your name, job title and role with an On Duty pill and a HIPAA label (frontend/src/pages/Dashboard.tsx:901); it does not show the facility.",
+      "proposed_text": "Welcome Back banner: your name, job title and role, an On Duty pill and a HIPAA badge.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{profile.job_title}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{profile?.role || \"Team Member\"}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HIPAA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-04",
+      "claim": "The HIPAA badge next to your profile confirms your session is audit-logged.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "audit",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "HIPAA is a static label in the banner (frontend/src/pages/Dashboard.tsx:944), not next to the profile and not tied to any logging state. (Page access is logged app-wide by ActivityLoggerProvider, router.tsx, but the badge does not reflect it.)",
+      "proposed_text": "A HIPAA label appears in the Welcome Back banner.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{/* Medical Badge */}",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "HIPAA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-05",
+      "claim": "Action tiles — dynamic cards for referrals needing review, visits scheduled today, denials needing appeal, and credentials expiring.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "denial",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No such tiles exist; the Dashboard has no denial or referral-review cards, and the Action Items panel was removed (frontend/src/pages/Dashboard.tsx:1415).",
+      "proposed_text": "Your Work Cockpits: Patient Management, Clinical Workflow and Mileage & Expenses. HR Self-Service: Time Off Requests and My Credentials & Compliance. Electronic Prescribing Setup: set up DoseSpot e-prescribing and EPCS access.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title: \"Patient Management\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Clinical Workflow\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Mileage & Expenses\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"Time Off Requests\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "title: \"My Credentials & Compliance\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Electronic Prescribing Setup",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Configure DoseSpot ePrescribing and EPCS access",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-06",
+      "claim": "Sidebar (left) — module links. Your visible items depend on your role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-07",
+      "claim": "Sidebar examples: a biller will not see Fleet Calendar, a BD rep will not see Billing Operations.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "  biller: [",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "a default biller sidebar would be defined"
+        },
+        {
+          "type": "grep",
+          "pattern": "  bd_rep: [",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Sidebar items come from your organization's role settings, with built-in defaults only for some roles (frontend/src/contexts/FacilityContext.tsx:108); there is no built-in biller default, so these examples depend on configuration.",
+      "proposed_text": "Your organization's role settings decide which modules each role sees.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const configured = orgRoleConfig?.[currentRole];",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-08",
+      "claim": "Top bar — Organization Selector, Quick Jump (⌘K), Notifications bell, Profile menu.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Quick jump...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The top bar has Quick jump, notifications and the profile menu (frontend/src/components/AppShell.tsx:1596); there is no control called Organization Selector — facilities are switched from a Switch Facility menu grouped by organization (frontend/src/components/AppShell.tsx:1706).",
+      "proposed_text": "Top bar: Quick jump search (⌘K or Ctrl+K), the notifications bell, a Switch Facility menu, and your profile menu with Sign Out.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Quick jump...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Sign Out",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Switch Facility Button */}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-09",
+      "claim": "Tiles surface by urgency, not by module: a STAT referral from 20 minutes ago beats a routine visit scheduled for next week. Red border — SLA breach or today-blocker; yellow — due today; grey — informational / caught up.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "SLA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "There are no urgency-ordered tiles on the Dashboard (no SLA logic in Dashboard.tsx; Action Items removed at frontend/src/pages/Dashboard.tsx:1415).",
+      "proposed_text": "Remove this section.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "SLA",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "ldo-10",
+      "claim": "Personalize: click the gear in any tile header to hide or pin it. Click Reset in the profile menu to restore defaults.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Reset",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "pinned",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true
+        }
+      ],
+      "finding": "There is no tile gear, pin/hide, or Reset control (no \"pinned\" in Dashboard.tsx, no Reset in AppShell.tsx).",
+      "proposed_text": "Remove this section.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "pinned",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Reset",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

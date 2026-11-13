@@ -1,0 +1,379 @@
+{
+  "title": "Visit wizard / EHR",
+  "source": "modules/visit-wizard-ehr",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "imvwe-00",
+      "kind": "advice",
+      "claim": "13 articles in this module (13 cards; each link resolves to a page in this repo whose H1 matches the card).",
+      "note": "Help-site structure, not a product claim. Checked by script 2026-11-11: count matches=True, all links resolve=True, all H1s match=True. Breadcrumb links / and /modules/ resolve. Targets read at 5d93bb5 (live main)."
+    },
+    {
+      "id": "imvwe-01",
+      "claim": "Card: APRN as a signature credential (reference · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"APRN\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ProviderAttestationVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/aprn-credential/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-02",
+      "claim": "Card: Complete the Wound Assessment (section 7) (how-to · 8 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CompactWoundCaseSetupVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/wound-assessment/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-03",
+      "claim": "Card: Document a visit offline (how-to · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "note": "the wizard route renders VisitWizardV4, so the absent check covers the live wizard"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const DEFAULT_DEBOUNCE_MS = 1_000;",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/work-offline/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-04",
+      "claim": "Card: How the Visit Wizard opens (route-on-arrival) (concept · 5 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "await openVisitWizard(",
+          "paths": [
+            "frontend/src/components/wound-cockpit/AppointmentPickerInline.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/how-the-wizard-opens/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-05",
+      "claim": "Card: How the signature timestamp prints on a signed note (reference · 5 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Signature timestamp\", formatSignatureTimestamp(at.signature_timestamp)]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "subsectionHeading(ctx, \"Provider Attestation\");",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/signature-timestamp/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-06",
+      "claim": "Card: How your progress note is written (concept · 7 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const NOT_DOCUMENTED = \"Not documented.\";",
+          "paths": [
+            "frontend/src/services/perfectNote/forbiddenPhrases.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { NOT_DOCUMENTED } from \"./forbiddenPhrases\";",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/progress-note/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-07",
+      "claim": "Card: Note honesty guardrails (concept · 5 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "renderLegalDefenseNote",
+          "paths": [
+            "frontend/src/services/perfectNote/buildVisitNotePdf.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/note-honesty-guardrails/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-08",
+      "claim": "Card: Prescribe with DoseSpot (e-prescribing) (how-to · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/functions/v1/dosespot-iframe/prepare-prescription",
+          "paths": [
+            "frontend/src/components/shared/medication/MedicationManagementShared.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Complete EPCS Setup",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/medication-dosespot/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-09",
+      "claim": "Card: Sign off on a visit with Provider Attestation (step 17) (how-to · 4 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Step 17",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ProviderAttestationVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/sign-off/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-10",
+      "claim": "Card: Use the LCD compliance status and review (how-to · 5 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "LCD Compliance Status",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present",
+          "note": "the wizard is mounted by a routed page"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/lcd-navigator/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-11",
+      "claim": "Card: Visit Wizard overview (concept · 6 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{totalCompleted} / 17 sections",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ConsentSection",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/overview/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-12",
+      "claim": "Card: Walk through a visit in the Visit Wizard (how-to · 8 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Fleet Calendar\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AppointmentDetailsModal",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/start-a-visit/",
+        "resolves": true
+      }
+    },
+    {
+      "id": "imvwe-13",
+      "claim": "Card: Wound Cockpit overview (concept · 5 min) (link resolves; the screen it documents exists).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/patients/:patientId/wound-cockpit\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import WoundCockpitPage from \"./pages/WoundCockpitPage\";",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "link": {
+        "href": "/modules/visit-wizard-ehr/wound-cockpit/",
+        "resolves": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1495 @@
+{
+  "title": "Manage your catalog and push it to clinics",
+  "source": "vendor-portal/manage-catalog",
+  "url": "https://help.medipyxis.com/vendor-portal/manage-catalog/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "vpc-01",
+      "claim": "Your catalog is the single source of truth for every product you sell. It drives the Visit Wizard picker at every tethered clinic, sizes the shipment lines you upload, and matches your SKUs against Medipyxis's canonical product master so buyers see accurate cross-vendor comparisons.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const masterMatch = await matchProductMaster(sb, resp, requestId);",
+          "paths": [
+            "backend/supabase/functions/vendor-upsert-catalog-sku/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'udi_di'::text AS method, true AS auto_linkable, 1 AS prio",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'gtin', true, 2",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "WHERE p_hcpcs ~* '^Q[0-9]{4}$'",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'name_brand', false, 4",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"product_master_match_proposals\")",
+          "paths": [
+            "backend/supabase/functions/_shared/product-identity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"pending_review\",",
+          "paths": [
+            "backend/supabase/functions/_shared/product-identity.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Picker (after clinic acceptance) and master matching are checked; 'sizes the shipment lines' is not checked. Note: products reach a clinic's picker only after the clinic accepts them."
+    },
+    {
+      "id": "vpc-02",
+      "claim": "You need the vendor_admin or vendor_user role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/catalog\" element={<VendorIdentityGate><VendorCatalogPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Catalog\", path: \"/vendor/catalog\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Every vendor role (including vendor_sales) can open Catalog."
+    },
+    {
+      "id": "vpc-03",
+      "kind": "advice",
+      "claim": "Have your product line data ready: SKU, brand, product name, HCPCS Q-code, sizes, UDI-DI/GTIN if you have them."
+    },
+    {
+      "id": "vpc-04",
+      "claim": "To push, your BAA must be approved and you must be tethered to at least one clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ error: \"Cannot push to non-tethered clinics\", untethered },",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "baa|BAA",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The push checks only that the clinic connection is approved; it does not check BAA status (vendor-catalog-push/index.ts has no BAA check at v1.1.345).",
+      "proposed_text": "To push, your company must be connected to the clinic (connection approved).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ error: \"Cannot push to non-tethered clinics\", untethered },",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-05",
+      "claim": "Open Catalog from the vendor sidebar. The page has two views: Products — every SKU with its family, HCPCS, and status; Master proposals (amber banner when active) — SKUs where the matching rail found a possible match; you confirm or reject each proposal.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/catalog\" element={<VendorIdentityGate><VendorCatalogPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Catalog\", path: \"/vendor/catalog\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">SKU</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Size</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">HCPCS</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Consignable</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Purchase</span>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">List price</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Clinics accepted</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Updated</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Link status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "active: 'bg-green-100 text-green-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "proposed: 'bg-blue-100 text-blue-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "draft: 'bg-gray-100 text-gray-800',",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bg-amber-50 border border-amber-200",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{p.master?.canonical_name ?? 'Unknown product'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{p.master?.hcpcs_code && ",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-06",
+      "claim": "Filter the products list by Family (Amniotic, Biologics, Conservative, etc.) using the pills above the table.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "All families",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{summary.families.map((f) => (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-07",
+      "claim": "Search the table by SKU, brand, or product name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no search box on the Catalog page at v1.1.345.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpc-08",
+      "claim": "Click Add SKU in the upper-right, or click a row's Edit action.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add SKU",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button is 'Add Product'; editing is by clicking the row (no Edit action) (VendorCatalogPage.tsx at v1.1.345).",
+      "proposed_text": "Click Add Product, or click a row to edit it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => openEdit(item)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-09",
+      "claim": "Product form: SKU (unique within your catalog), Product name, Brand, Family (Amniotic, Biologics, Conservative, PRP, or NPWT), HCPCS / Q-code (required for amniotic and biologics), Sizes (one row per size with dimensions, unit of measure, computed area; the catalog derives price and quantity from these), UDI-DI / GTIN (optional), Active (clear to soft-retire).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"prp\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The form has Product Name (required), SKU / Catalog Number (required), Brand, HCPCS Code, GTIN, a Modality list (CTP / Skin Substitute, Amniotic, Biologics, Conservative, DME, Supplies — no PRP or NPWT), a comma-separated Sizes field, and Consignable and Active checkboxes (VendorCatalogSkuModal.tsx at v1.1.345). HCPCS is not required.",
+      "proposed_text": "Fill in the form: Product Name (required), SKU / Catalog Number (required — the number clinics order by), Brand, HCPCS Code, GTIN, Modality (CTP / Skin Substitute, Amniotic, Biologics, Conservative, DME, or Supplies), Sizes separated by commas, and the Consignable and Active boxes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"Product Name *\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"SKU / Catalog Number *\" hint=\"The number clinics use to order this product.\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setError('SKU is required — it is the number clinics order by');",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"Brand\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"HCPCS Code\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label=\"GTIN\"",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"ctp\">CTP / Skin Substitute</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"amniotic\">Amniotic</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"biologics\">Biologics</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"conservative\">Conservative</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"dme\">DME</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"supplies\">Supplies</option>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Field label=\"Sizes (comma-separated)\">",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "set('consignable', e.target.checked)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "set('is_active', e.target.checked)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-10",
+      "claim": "Save. New SKUs land in an unpublished state until you push them.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "unpublished",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no unpublished state; catalog link statuses are active, proposed and draft (VendorCatalogPage.tsx).",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpc-11",
+      "claim": "Pushing a catalog is what makes your SKUs selectable in a clinic's Visit Wizard. You can push all products at once or a specific subset.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "2 · Select SKUs",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Push entire catalog (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleProduct(product.id);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Selectable only after the clinic accepts the pushed products."
+    },
+    {
+      "id": "vpc-12",
+      "claim": "Click Push to clinic from the catalog page (route /vendor/catalog/push).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate('/vendor/catalog/push')",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/catalog/push\" element={<VendorIdentityGate><VendorCatalogPushPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-13",
+      "claim": "Pick the target clinic from the list of tethered clinics. Each row shows the tether date, BAA status, and provider count for context.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "1 · Destination clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!clinic.isTethered}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Connection requested — push blocked until tether accepted",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "parts.push(`Tethered ${new Date(c.granted_at).toLocaleDateString()}`);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((c as any).baa_signed) parts.push('BAA signed');",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(c as any).provider_count != null",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-14",
+      "claim": "Pick what to push: All active products — the default; Specific products — check individual rows. Click Push catalog. The confirmation shows how many SKUs landed, how many are new, and how many updated existing accepted rows.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "2 · Select SKUs",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Push entire catalog (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleProduct(product.id);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Confirm push'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pushResult.links_auto_updated > 0 && `, ${pushResult.links_auto_updated} auto-updated`}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "skipped (existing)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "['>]Push catalog['<]",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no 'Push catalog' button; after a Preview step the button is 'Confirm push' (VendorCatalogPushPage.tsx at v1.1.345). Draft products are skipped.",
+      "proposed_text": "Select SKUs: Push entire catalog, or tick individual products. Check the Preview (draft products are skipped), then click Confirm push. The result shows how many links were created, updated, and skipped.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "2 · Select SKUs",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Push entire catalog (",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleProduct(product.id);",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "3 · Preview",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "proposed links</b> for",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SKU skipped (draft:",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Confirm push'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pushResult.links_auto_updated > 0 && `, ${pushResult.links_auto_updated} auto-updated`}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "skipped (existing)",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-15",
+      "claim": "New SKUs land in the clinic's catalog with a New badge. Their inventory admin reviews and accepts them one time before they appear in the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "['>]New['<]",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The clinic's Accept vendor catalog page has no 'New' badge (VendorCatalogAccept.tsx at v1.1.345); pushed products arrive there as proposals.",
+      "proposed_text": "New products arrive as proposals on the clinic's Accept vendor catalog page. When the clinic accepts one, it is added to their product pickers.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-16",
+      "claim": "Updates to already-accepted SKUs auto-apply — no clinic review needed. This includes price changes, size additions, and HCPCS corrections.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (existing.status === \"accepted\" && existing.auto_update) {",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Auto-apply happens only when the clinic link has auto_update on."
+    },
+    {
+      "id": "vpc-17",
+      "claim": "Discontinued SKUs (unchecked Active) send an alert to the clinic if they have on-hand lots or open orders.",
+      "reason": "No discontinuation alert was found in backend functions at v1.1.345; not confirmable."
+    },
+    {
+      "id": "vpc-18",
+      "claim": "This is one-way. Clinics can accept or ignore new SKUs but cannot edit them. Their catalog row is a linked copy — the source of truth is your side.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Clinic-side edit restrictions are not separately checked."
+    },
+    {
+      "id": "vpc-19",
+      "claim": "Medipyxis keeps a canonical product_master keyed on FDA UDI-DI, GTIN, and HCPCS Q-code. Exact ID match auto-links; fuzzy match (name + brand) lands a proposal; no match seeds a new master row as pending_review for compliance to verify.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const masterMatch = await matchProductMaster(sb, resp, requestId);",
+          "paths": [
+            "backend/supabase/functions/vendor-upsert-catalog-sku/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'udi_di'::text AS method, true AS auto_linkable, 1 AS prio",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'gtin', true, 2",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "WHERE p_hcpcs ~* '^Q[0-9]{4}$'",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SELECT pm.id, 'name_brand', false, 4",
+          "paths": [
+            "backend/supabase/migrations/20260728010000_product_master_phase1.sql"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"product_master_match_proposals\")",
+          "paths": [
+            "backend/supabase/functions/_shared/product-identity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"pending_review\",",
+          "paths": [
+            "backend/supabase/functions/_shared/product-identity.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-20",
+      "claim": "The amber rail shows each pending proposal with your SKU on the left, Medipyxis's best-guess canonical product on the right (brand, generic name, HCPCS), and the match reason.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bg-amber-50 border border-amber-200",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{p.master?.canonical_name ?? 'Unknown product'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{p.master?.hcpcs_code && ",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The match-reason display is not separately checked."
+    },
+    {
+      "id": "vpc-21",
+      "claim": "Confirm match links your SKU to the canonical product; Reject treats it as distinct and seeds a new pending_review master row.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Same product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Different product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   accept — \"same product\": link master_product_id (the ASIN moment)",
+          "paths": [
+            "backend/supabase/functions/vendor-master-proposals-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   reject — \"different product\": seed a new pending_review master so the row",
+          "paths": [
+            "backend/supabase/functions/vendor-master-proposals-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Confirm match",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The buttons are labelled 'Same product' and 'Different product', not 'Confirm match' and 'Reject' (VendorCatalogPage.tsx at v1.1.345).",
+      "proposed_text": "Click Same product to link your product to the registry product, or Different product to create a new registry entry marked for review.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Same product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Different product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   accept — \"same product\": link master_product_id (the ASIN moment)",
+          "paths": [
+            "backend/supabase/functions/vendor-master-proposals-respond/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//   reject — \"different product\": seed a new pending_review master so the row",
+          "paths": [
+            "backend/supabase/functions/vendor-master-proposals-respond/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-22",
+      "kind": "advice",
+      "claim": "Confirming a mismatch corrupts cross-vendor comparisons. When in doubt, reject and let Medipyxis compliance seed a new master row."
+    },
+    {
+      "id": "vpc-23",
+      "claim": "Clinics see your SKUs alongside other vendors' offers for the same product. The comparison is a neutral sort — price ascending, then vendor name — locked in code. Medipyxis does not offer paid placement or preferential ordering.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Also available from {o.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Already in your catalog from {o.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const alternatives = others.filter((o) => !o.already_in_catalog).slice(0, 2);",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// product_master. Neutral, data-driven sort (price asc, then vendor name) —",
+          "paths": [
+            "backend/supabase/functions/clinic-master-offers/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-23b",
+      "kind": "external",
+      "claim": "This is a compliance guardrail (AKS safe harbor)."
+    },
+    {
+      "id": "vpc-24",
+      "claim": "Buyers see an \"Also available from\" badge on any catalog row with alternate sources on the same master; your row is called out with an \"Already in your catalog\" badge if they've already accepted your version.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Also available from {o.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Already in your catalog from {o.vendor_name}",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const alternatives = others.filter((o) => !o.already_in_catalog).slice(0, 2);",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// product_master. Neutral, data-driven sort (price asc, then vendor name) —",
+          "paths": [
+            "backend/supabase/functions/clinic-master-offers/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "At most two other offers show."
+    },
+    {
+      "id": "vpc-25",
+      "claim": "Bulk update pricing — download a CSV template from the catalog page, edit prices offline, and re-upload. Bulk activate / deactivate — check multiple rows and use the row-actions dropdown.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "[Cc][Ss][Vv]",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No CSV template, upload, row selection or row-actions dropdown exists on the Catalog page at v1.1.345.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpc-26",
+      "claim": "API updates — every write on this page is also available via the Vendor API (PUT /catalog/skus/{sku}). See the API integration doc (coming soon).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route(\"PUT\", \"/catalog/skus/:sku\", [\"catalog:write\"], handleUpsertSku, \"catalog.upsert\");",
+          "paths": [
+            "backend/supabase/functions/vendor-api/handlers/catalog.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/settings/api\" element={<VendorAdminOnly><VendorSettingsApiPage /></VendorAdminOnly>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The API integration doc is listed as coming soon (help content, not product)."
+    },
+    {
+      "id": "vpc-27",
+      "claim": "Troubleshooting: \"Cannot push — BAA pending\"; wait for approval email; button re-enables automatically.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "BAA pending",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts",
+            "frontend/src/pages/vendor/VendorCatalogPushPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No BAA check or 'BAA pending' message exists in the push function or page.",
+      "proposed_text": "(Remove this row.)"
+    },
+    {
+      "id": "vpc-28",
+      "claim": "Troubleshooting: clinic doesn't see the SKU — clinic hasn't accepted it; ask the clinic admin to open their vendor catalog page and click Accept.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept vendor catalog</h1>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/inventory-management/vendor-catalog\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpc-29",
+      "claim": "Troubleshooting: proposal rail says \"0 pending\" — every fuzzy match was resolved; this is the empty state.",
+      "reason": "Empty-state wording not checked."
+    },
+    {
+      "id": "vpc-30",
+      "claim": "Troubleshooting: discontinued SKU still shows on clinic wizard — discontinuation propagates on next catalog sync (hourly) or immediately when the clinic re-accepts.",
+      "reason": "No hourly catalog sync was found at v1.1.345; not confirmable."
+    },
+    {
+      "id": "vpc-31",
+      "claim": "Troubleshooting: SKU rejected on upload — \"duplicate\" — you already have that SKU in a different family or archived state.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "duplicate",
+          "paths": [
+            "backend/supabase/functions/vendor-upsert-catalog-sku/index.ts",
+            "frontend/src/pages/vendor/VendorCatalogSkuModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Neither the save function nor the form produces a 'duplicate' rejection; the catalog table has no unique index on SKU (vendor-upsert-catalog-sku/index.ts:81).",
+      "proposed_text": "(Remove this row.)"
+    }
+  ]
+}

@@ -1,0 +1,861 @@
+{
+  "title": "Graft vendor first hour",
+  "source": "getting-started/by-role/graft-vendor",
+  "url": "https://help.medipyxis.com/getting-started/by-role/graft-vendor/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "gv-00",
+      "claim": "By the end of this hour you will have signed in to the vendor portal, reviewed your catalog, worked an order end to end, and sent an invoice.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{send.isPending ? 'Sending…' : 'Send Invoice'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-01",
+      "claim": "The vendor portal is a dedicated app at /vendor, separate from the clinical app, and never shows PHI.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{line.patient_initials} {line.patient_birth_year}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceDetailPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The portal is a section of the same app (router.tsx /vendor with VendorShell), and Use Events and invoice lines show the patient's initials and year of birth (pages/vendor/VendorUseEventsPage.tsx:202; pages/vendor/VendorInvoiceDetailPage.tsx:269).",
+      "proposed_text": "The vendor portal is the part of Medipyxis at /vendor, with its own menu; patients appear only as initials and year of birth.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/vendor\",",
+          "paths": [
+            "frontend/src/router.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "element: <VendorShell />,",
+          "paths": [
+            "frontend/src/router.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// PHI-safe: view exposes patient_initials + birth_year only.",
+          "paths": [
+            "backend/supabase/functions/vendor-list-use-events/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-02a",
+      "claim": "Your company's vendor_admin (or a clinic that set your company up) invited you by email. Accept the invite and set your password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// W7: Clinic invites a vendor by email.",
+          "paths": [
+            "backend/supabase/functions/vendor-invite/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Vendor admins invite, resend, revoke, and list their own staff.",
+          "paths": [
+            "backend/supabase/functions/vendor-invite-staff/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// The invited person calls action=activate after they set a password or sign in.",
+          "paths": [
+            "backend/supabase/functions/vendor-invite-staff/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Each person gets an email invite to set their password.",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOnboardingPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-03",
+      "claim": "Know your product SKUs and pricing.",
+      "kind": "advice"
+    },
+    {
+      "id": "gv-old-02",
+      "claim": "Go to https://app.medipyxis.com/vendor and sign in. You land on the vendor Home page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// There is no /vendor/login: everyone signs in at /login and postAuthDestination",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "There is no vendor sign-in page; everyone signs in at /login and a vendor account then lands on /vendor/home (utils/auth/postAuthDestination.ts:21).",
+      "proposed_text": "Sign in at https://app.medipyxis.com/login; there is no separate vendor sign-in page; a vendor account opens the vendor Home page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return hostname === 'app.medipyxis.com';",
+          "paths": [
+            "frontend/src/utils/envValidation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// There is no /vendor/login: everyone signs in at /login and postAuthDestination",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "vendor: '/vendor/home',",
+          "paths": [
+            "frontend/src/utils/auth/postAuthDestination.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Home\", path: \"/vendor/home\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-03",
+      "claim": "The portal navigation gives you Home, Orders, Use Events, Catalog, Invoices, and Clinics. Staff appears only if you're a vendor_admin.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Shipments\", path: \"/vendor/shipments\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"API\", path: \"/vendor/settings/api\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The menu also has Shipments, Requests, Verifications, Consignment, Supply Radar, CRM, Messages and Documents, and admins also see API (components/app-shell/VendorShell.tsx:62).",
+      "proposed_text": "Menu: Home, Catalog, Shipments, Orders, Requests, Verifications, Use Events, Consignment, Supply Radar, Invoices, Clinics, CRM, Messages, Documents; Admins also see Staff and API.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Home\", path: \"/vendor/home\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Catalog\", path: \"/vendor/catalog\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Shipments\", path: \"/vendor/shipments\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Orders\", path: \"/vendor/orders\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Verifications\", path: \"/vendor/verifications\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Use Events\", path: \"/vendor/use-events\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Consignment\", path: \"/vendor/consignment\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Supply Radar\", path: \"/vendor/supply\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Invoices\", path: \"/vendor/invoices\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Clinics\", path: \"/vendor/clinics\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"CRM\", path: \"/vendor/crm\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Messages\", path: \"/vendor/messages\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Documents\", path: \"/vendor/documents\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Staff\", path: \"/vendor/staff\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"API\", path: \"/vendor/settings/api\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "items.push(...VENDOR_ADMIN_NAV_ITEMS);",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (identity?.role === \"vendor_admin\") {",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-06a",
+      "claim": "Open Catalog. Confirm your SKUs are present and correct.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Catalog\", path: \"/vendor/catalog\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-04",
+      "claim": "Add or edit any with New SKU.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New SKU",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button is Add Product (pages/vendor/VendorCatalogPage.tsx:91).",
+      "proposed_text": "Catalog: Add Product, or click a row to edit it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => openEdit(item)}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-05",
+      "claim": "You own your catalog directly — there is no practice approval step.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"proposed\",",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Pushed products arrive at the clinic as proposals the clinic must accept (functions/vendor-catalog-push/index.ts:3).",
+      "proposed_text": "Push to clinic offers products to a clinic; the clinic reviews and accepts new products before its staff can use them.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Push to clinic",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Creates catalog_links rows with status='proposed' for clinic review.",
+          "paths": [
+            "backend/supabase/functions/vendor-catalog-push/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<li>· Adds the SKU to wizard product pickers</li>",
+          "paths": [
+            "frontend/src/pages/inventory-management/vendor-catalog/VendorCatalogAccept.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-08",
+      "claim": "Open Orders. New orders arrive as Pending.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"pending\", // T3",
+          "paths": [
+            "backend/supabase/functions/create-vendor-order/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'open',      label: 'Pending',      statuses: ['pending'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-09a",
+      "claim": "Accept an order (it moves to In Progress), then Ship it and enter the tracking number.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'progress',  label: 'In Progress',  statuses: ['accepted', 'in_progress'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Shipped",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!trackingNumber || updateStatus.isPending}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Ship</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-06",
+      "claim": "It completes as Delivered once the clinic confirms receipt.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The vendor marks the order delivered from Order Detail (pages/vendor/VendorOrderDetailDrawer.tsx:143).",
+      "proposed_text": "Accept moves the order to the In Progress tab; enter the tracking number under Mark Shipped and click Ship; when it arrives, click Mark Delivered.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Accept</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'progress',  label: 'In Progress',  statuses: ['accepted', 'in_progress'] },",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrdersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Shipped",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!trackingNumber || updateStatus.isPending}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Ship</button>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "shipped:      [\"delivered\"],",
+          "paths": [
+            "backend/supabase/functions/vendor-update-order-status/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-old-07",
+      "claim": "Open Invoices. Create an invoice for a shipped order and submit it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "order_id",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The New invoice form is not tied to an order (no order_id in VendorInvoiceComposer.tsx); you pick a clinic and enter the lines.",
+      "proposed_text": "Invoices: New invoice, pick the clinic, add line items, Send Invoice; the clinic approves, disputes or holds it on its accounts payable page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New invoice",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoicesPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Clinic *</label>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Add line",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{send.isPending ? 'Sending…' : 'Send Invoice'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Clinic AP actions on a received invoice: approve, dispute, or hold per line.",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-10a",
+      "claim": "The clinic's finance team reconciles and pays it on their side.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Clinic AP actions on a received invoice: approve, dispute, or hold per line.",
+          "paths": [
+            "backend/supabase/functions/clinic-invoice-respond/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-11a",
+      "claim": "Open Use Events to see where your products were used, de-identified (initials + year of birth only).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// PHI-safe: view exposes patient_initials + birth_year only.",
+          "paths": [
+            "backend/supabase/functions/vendor-list-use-events/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-12a",
+      "claim": "Open Clinics to see which facilities you're enabled at.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"Connected clinics and their billing terms\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">City / State</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Granted</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorClinicsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-13",
+      "claim": "Result: You can sign in, keep your catalog current, work orders from Pending to Delivered, and send invoices.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Product",
+          "paths": [
+            "frontend/src/pages/vendor/VendorCatalogPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Mark Delivered",
+          "paths": [
+            "frontend/src/pages/vendor/VendorOrderDetailDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{send.isPending ? 'Sending…' : 'Send Invoice'}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorInvoiceComposer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-14a",
+      "claim": "For account issues, contact your company's vendor_admin or email support@medipyxis.com.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return json({ error: \"Only vendor_admin can manage staff\" }, 403, cors);",
+          "paths": [
+            "backend/supabase/functions/vendor-invite-staff/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "href=\"mailto:support@medipyxis.com\"",
+          "paths": [
+            "frontend/src/components/EnhancedErrorBoundary.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "gv-15",
+      "claim": "For portal questions, see the Vendor Portal Guide and FAQ.",
+      "kind": "advice",
+      "finding": "Help-site defect: the \"Vendor Portal Guide\" link is relative (../../vendor-portal/) and resolves to /getting-started/vendor-portal/, which does not exist.",
+      "link_check": "Broken: ../../vendor-portal/ from /getting-started/by-role/graft-vendor/ → /getting-started/vendor-portal/ (404). Should be /vendor-portal/."
+    }
+  ]
+}

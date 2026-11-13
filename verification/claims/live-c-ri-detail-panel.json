@@ -1,0 +1,211 @@
+{
+  "title": "Use the referral detail panel",
+  "source": "modules/referral-intake/detail-panel",
+  "url": "https://help.medipyxis.com/modules/referral-intake/detail-panel/",
+  "claims": [
+    {
+      "id": "ri-dp-01",
+      "claim": "Clicking any kanban card opens the detail panel on the right. It has six tabs: Details, Documents, Chat, Precharting, History, Notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import UnifiedReferralDrawer from \"@/components/UnifiedReferralDrawer\";",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleCardClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fixed inset-y-0 right-0",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ name: \"(details|documents|chat|precharting|history|notes)\", label: \"(Details|Documents|Chat|Precharting|History|Notes)\"",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-02",
+      "claim": "Chat: conversation on this referral, separate from Team Chat.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chat_type: \"referral\",",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Chat tab (ReferralChatWidget) creates and reads a Team Chat conversation: teamChatService.findOrCreateReferralConversation inserts into team_conversations with chat_type \"referral\" (frontend/src/services/teamChatService.ts:990; called from frontend/src/components/ReferralChatWidget.tsx:255). TeamChatService.loadConversations, which the Team Chat page uses (frontend/src/pages/TeamChat.tsx:481), does not filter out chat_type \"referral\", so participants also see the thread in Team Chat.",
+      "proposed_text": "Chat: a conversation about this referral. It is a Team Chat conversation, so participants can also open it from Team Chat.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "chat_type: \"referral\",",
+          "paths": [
+            "frontend/src/services/teamChatService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await teamChatService.findOrCreateReferralConversation(",
+          "paths": [
+            "frontend/src/components/ReferralChatWidget.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-03",
+      "claim": "Precharting: preparation for the first visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<EnhancedPrechartingTab",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pull from Zus Health",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-04",
+      "claim": "Move a card — drag it between columns on the board.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDragEnd = async (event: DragEndEvent) => {",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onDragEnd={handleDragEnd}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-05",
+      "claim": "Assign a clinician — use Assign on the card. After a card is moved to Assigned, you are prompted to select a provider to complete assignment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Assign</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.info(\"Please select a provider to complete assignment\");",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setIsAssignmentDialogOpen(true);",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-06",
+      "claim": "Non-Admit — drag the card into the Non-Admit column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"NON_ADMIT\" as ReferralStatus,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-dp-07",
+      "claim": "Face Sheet — the panel can generate a Face Sheet for the patient.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isFaceSheetGenerating ? \"Generating…\" : \"Face Sheet\"}",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleDownloadFaceSheet}",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

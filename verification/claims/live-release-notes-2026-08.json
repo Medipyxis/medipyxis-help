@@ -1,0 +1,1194 @@
+{
+  "title": "August 2026 release notes",
+  "source": "release-notes/2026-08",
+  "url": "https://help.medipyxis.com/release-notes/2026-08/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "rn08-00",
+      "claim": "Changes shipped between 2026-08-01 and 2026-09-01. Items are grouped by module.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3369,
+          "titleMatch": ".",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "pr",
+          "number": 3253,
+          "titleMatch": ".",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"APRN\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-00b",
+      "kind": "advice",
+      "claim": "Entries marked ★ are high-impact or frequently requested.",
+      "reason": "Editorial labelling."
+    },
+    {
+      "id": "rn08-00c",
+      "claim": "The month was heavy on billing correctness, note honesty, and shipping the native app photo capture. 241 non-refactor feat/fix commits landed, spanning 8 release trains (v1.1.267 through v1.1.300).",
+      "reason": "Not checkable with this runner (no commit-count or tag check type). Evidence against the release count, from `gh release list` and core tags: v1.1.267 (2026-08-02) through v1.1.300 (2026-08-28) are 34 separate published releases, and v1.1.301 was published 2026-08-30, inside the stated window. '8 release trains' is false.",
+      "proposed_text": "Changes merged between 2026-08-01 and 2026-09-01, released in v1.1.267 through v1.1.301."
+    },
+    {
+      "id": "rn08-01",
+      "claim": "★ APRN is a first-class credential. The attestation dropdown used to offer a combined \"NP / APRN\" option that always stored NP. APRN and NP are now separate options; pick the one your state licence uses.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"APRN\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"NP\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProviderAttestationVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-02",
+      "claim": "★ Signature timestamp is readable and carries a timezone. Now they print Aug 25, 2026, 11:07 PM EDT in the reader's device timezone with the zone abbreviation always shown.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "[\"Signature timestamp\", formatSignatureTimestamp(at.signature_timestamp)]",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The device-timezone part is not separately checked."
+    },
+    {
+      "id": "rn08-02b",
+      "claim": "Notes used to print a raw UTC ISO instant (24% of signed notes) or a false \"same day\" fallback (99% of finalized notes).",
+      "reason": "An internal metric or process statement (counts of commits, notes, findings or review rounds). It cannot be checked against the product and should not be on a customer page."
+    },
+    {
+      "id": "rn08-02c",
+      "claim": "Legacy PDF fallback that stamped new Date() onto unsigned notes is deleted.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345. (buildVisitNotePdf.ts:73 still calls new Date() for the as-of date; that is not the signature stamp, so it is neither proof nor disproof.)"
+    },
+    {
+      "id": "rn08-03",
+      "claim": "★ Provider credential prints on the signature line. Previously the credential (NP, PA, MD, etc.) was silently dropped from the printed signature. Now it renders beside the provider's name on every signed note.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "formatSignatureName(at.provider_name, at.provider_credentials)",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-04",
+      "claim": "★ Note-honesty guardrails. The renderer no longer synthesizes a post-debridement measurement that was never taken, and no longer invents an undocumented comorbidity type or stage.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const postMeasure: number | undefined = undefined;",
+          "paths": [
+            "frontend/src/services/perfectNote/s09_debridement.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "with no documented type, the generic condition name prints",
+          "pattern": "if (comorbidities.diabetes) parts.push(comorbidities.diabetes_type ? normalizeCommaList(comorbidities.diabetes_type) : \"Diabetes mellitus\");",
+          "paths": [
+            "frontend/src/services/perfectNote/perfectNoteRenderer.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-05",
+      "claim": "Contradictory is_clean formulas reconciled in the perfect-note pipeline.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-06",
+      "claim": "Wizard binding hardened. Visit Wizard now renders against the URL patient (not a frozen copy) and blocks documenting against another patient's appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "identity welded to another patient's appointment.",
+          "paths": [
+            "frontend/src/utils/visitWizardPatientIdentity.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-07",
+      "claim": "Running HPI preserved on resume. Fixed a defect that blanked and erased the Running HPI when a draft was reopened.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// EXCEPT the Running HPI: it is a continuous clinical narrative meant",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-08",
+      "claim": "Exudate: allow \"no exudate\" wounds and resolve exudate type on write at every hydration path.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "exudate_type: resolveExudateType(",
+          "paths": [
+            "frontend/src/services/documentationAssist/gapFacts.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "A shared exudate-type resolver exists; the write-path coverage is not checked."
+    },
+    {
+      "id": "rn08-09",
+      "claim": "★ Addendum surfaces in Progress Notes with download. Signed corrections after the fact are now visible from the Progress Notes tab, not buried in audit logs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ADDENDA_NOT_LOADED_BANNER,",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// In-memory PDFs (amended bundle, regenerated clinical note) — shown before download.",
+          "paths": [
+            "frontend/src/pages/all-patients/patient-overview/progress-notes/PatientProgressNotes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-10",
+      "claim": "Encounter identity on every amendment. An addendum now identifies which encounter it belongs to — no more ambiguous \"which visit is this?\" corrections.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-11",
+      "claim": "Patient name, MRN, and DOB print on every addendum page — required for HH agencies that receive faxed amendments.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-12",
+      "claim": "★ $0.00 claim guard. Auto-drafted claims now refuse to submit if the claim total is zero. Companion fix: unpriced-line rejections are readable to a biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-13",
+      "claim": "★ Coding Review Drawer soft-blocks and closes bypasses. Coding findings are soft-blocks — you can override with a reason — and the manual bypasses that used to skip the drawer entirely are closed.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/CodingReviewDrawer.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "note": "an override that needs a reason",
+          "pattern": "overrid.{0,40}reason|reason.{0,40}overrid",
+          "paths": [
+            "frontend/src/components/billing",
+            "frontend/src/pages/BillingClaimDetailPage.tsx",
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No override-with-reason exists in the Coding Review drawer, the billing components, or the claim pages at v1.1.345.",
+      "proposed_text": "Coding Review drawer opens on the claim it codes. (PR #3376)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 3376,
+          "titleMatch": "connect the Coding Review drawer to the claim it codes",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/CodingReviewDrawer.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-13b",
+      "claim": "Coding Review now resolves 174 of 461 clinical notes (was 60).",
+      "reason": "An internal metric or process statement (counts of commits, notes, findings or review rounds). It cannot be checked against the product and should not be on a customer page."
+    },
+    {
+      "id": "rn08-14",
+      "claim": "★ Service-date guard. Stops silent today-substitution when a service date is missing; uses the existing CMS-1500 date convention rather than inventing anchoring.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// can see — which is how a REQUIRED `serviceDate` stayed missing on 106 of",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The guard comment is present; the CMS-1500 date convention is not separately checked."
+    },
+    {
+      "id": "rn08-14b",
+      "claim": "Reworked twice after hostile review to close 84 findings.",
+      "reason": "An internal metric or process statement (counts of commits, notes, findings or review rounds). It cannot be checked against the product and should not be on a customer page."
+    },
+    {
+      "id": "rn08-15",
+      "claim": "★ The claim scrubber shipped. Five wound-care-specific pre-submission rules (deleted C-codes, JW/JZ on Q-codes, WISeR PA, MAC state mismatch, debridement+CTP bundled). Advisory only, never hard-blocks.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "frontend/src/services/claimScrub.ts",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} from './claimScrub';",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mismatch, debridement-CTP bundling. See `claimScrub.ts` for rule",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The scrubber is wired into auto-drafting. Rule detail (for example R2 fires on CTP application CPTs with JW/JZ, not on Q-codes) is verified in live-b-bill-claim-scrub.json."
+    },
+    {
+      "id": "rn08-16",
+      "claim": "★ Area-based CPT coding for debridement, CTP, and NPWT. Correct code selection driven by measured wound area.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-17",
+      "claim": "★ Retired CPT 99343 no longer emitted. Deleted by AMA on 2023-01-01.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(e) => e.recommend && e.setting === setting && e.status === status && e.mdmLevels.includes(level),",
+          "paths": [
+            "frontend/src/utils/billing/emFamily.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-17b",
+      "claim": "Three prod notes had been billed with it in July 2026.",
+      "reason": "An internal metric or process statement (counts of commits, notes, findings or review rounds). It cannot be checked against the product and should not be on a customer page."
+    },
+    {
+      "id": "rn08-18",
+      "claim": "ICD-10 catalog reconciled to CDC FY2026 billable leaf set. Diagnosis validation now checks against the billable catalog, not a regex.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (!looksLikeIcd10(code)) {",
+          "paths": [
+            "frontend/src/services/claimValidationService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-19",
+      "claim": "CMS-1500 Box 1 marked from the same source as the 837P wire — the two now agree.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-20",
+      "claim": "CMS-1500 checkboxes that never got marked are now marked.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-21",
+      "claim": "Timely filing severity thresholds with day-count math resistant to timezone drift.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export function computeTimelyFiling(",
+          "paths": [
+            "frontend/src/utils/billing/timelyFiling.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Thresholds and timezone handling are verified in live-b-bill-timely-filing.json."
+    },
+    {
+      "id": "rn08-22",
+      "claim": "★ 837P payload validator built from Stedi's own JSON Schema. Catches structural errors before submission.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** A pruned JSON Schema node: only validator-enforceable keywords survive. */",
+          "paths": [
+            "backend/supabase/functions/_shared/stedi837pSchema.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import type { ClaimValidationIssue } from './validateStediClaimPayload.ts';",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-23",
+      "claim": "★ PTAN and payer enrollment surface. Full self-service enrollment page at /billing/enrollment covering four transaction types.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/enrollment\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "() => import(\"./pages/StediEnrollmentPage.tsx\")",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The four transaction types are verified in live-b-bill-ptan-and-payer-enrollment.json."
+    },
+    {
+      "id": "rn08-24",
+      "claim": "★ Stedi Actions Inbox. Triage surface for four Stedi event types (file failed, transaction processed, enrollment rejected, enrollment task assigned) with five actions and superadmin facility stamping.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/stedi-actions\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'file.failed',",
+          "paths": [
+            "backend/supabase/functions/stedi-action-count/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Event types and actions are verified in live-b-bill-stedi-actions-inbox.json."
+    },
+    {
+      "id": "rn08-25",
+      "claim": "★ First-ever coverage of the inbound path (277CA + 835 ERA). Documented why the inbound path was previously unproven — never ran, never failed.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345. Test/documentation work, not product behavior."
+    },
+    {
+      "id": "rn08-26",
+      "kind": "advice",
+      "claim": "Two Stedi webhook systems disambiguated in documentation.",
+      "reason": "Internal documentation, not product behavior."
+    },
+    {
+      "id": "rn08-27",
+      "claim": "Subscriber DOB recovered and paired with DMG03.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-28",
+      "claim": "DMG03 patient sex populated; stops CMS-1500 guessing Male when the field was blank.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-29",
+      "claim": "All 6 always-required 837P claimInformation fields sent.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-30",
+      "claim": "Diagnosis pointers capped at 12 per 837P spec; fix applied to frontend builder.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const MAX_POSITION = 12;",
+          "paths": [
+            "backend/supabase/functions/_shared/diagnosisPointers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The cap is in the shared (back-end) pointer module; the frontend-builder part is not checked."
+    },
+    {
+      "id": "rn08-31",
+      "claim": "Resolved charge carried onto 837P service lines (previously blanked in some paths).",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3347,
+          "titleMatch": "carry the resolved charge onto 837P service lines",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-32",
+      "claim": "Primary line no longer counted twice on auto claims.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-33",
+      "claim": "$0 claims blocked before Stedi submission — reads the charge/modifier keys the builder actually writes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const chargeCheck = validateClaimLineCharges(claimPayload);",
+          "paths": [
+            "backend/supabase/functions/_shared/submitToStedi.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-34",
+      "kind": "advice",
+      "claim": "CMS-1500 field mapping documented. DMG03 M/F/U mapping, SV107 diagnosis pointer, DTP*472 format.",
+      "reason": "Documentation cross-reference; the field facts are verified in live-b-bill-cms-1500-and-837p-fields.json."
+    },
+    {
+      "id": "rn08-35",
+      "claim": "★ Import write layer rebuilt. Five mappers, lab_tests redirect, Immunization inlet, unique indexes, honest save counts. Medications imports unblocked after August 4 prod forensics.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./allergyMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./vaccinationMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Mapper wiring is checked; indexes, save counts and the forensics date are not."
+    },
+    {
+      "id": "rn08-36",
+      "claim": "★ Patient.active preserved on identifier write-back. One-shot repair function shipped for patients whose active flag was stripped by the prior defect. Also unblocked FQS reads on Patient 403 responses.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-37",
+      "claim": "UPID settlement against demographics before scoping FQS reads.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{@link ZUS_UPID_SYSTEM}. Every FQS read is scoped by it (`?upid=…`).",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-identifiers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "UPID scoping is checked; the demographic settlement step is not."
+    },
+    {
+      "id": "rn08-38",
+      "claim": "Sync button in pre-charting with toast feedback; SELECT RLS policy added for zushealth_patient_relations.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-39",
+      "claim": "One pull button + honest post-pull import summary in precharting.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3224,
+          "titleMatch": "one pull button \\+ honest post-pull import summary",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [zusPullWarning, setZusPullWarning] = useState<string | null>(null);",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-40",
+      "claim": "Legacy JWT + sb_sec_ key formats both accepted in Zus edge functions.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`SUPABASE_SERVICE_ROLE_KEY` as an `sb_secret_…` value (41 chars, not a JWT),",
+          "paths": [
+            "backend/supabase/functions/_shared/service-auth.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-41",
+      "claim": "Zus-Account header attached only to CE-delegated writes; reads go headerless at BA level.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * Zus CE Builder resolver — the single source of truth for the `Zus-Account`",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-ce-builder.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The resolver exists; the read/write split is not separately checked."
+    },
+    {
+      "id": "rn08-42",
+      "claim": "PHI logs removed from Zus code paths.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-43",
+      "claim": "CE Builder ID added for [name] (CA).",
+      "reason": "Names a customer organization on a public page (reported, paraphrased here as [name]). A per-customer configuration entry is not a product change; remove from the public notes.",
+      "proposed_text": "(Remove this item.)"
+    },
+    {
+      "id": "rn08-44",
+      "claim": "The native tablet build (\"electron\") shipped its wound-photo capture pipeline this month. ★ Wound photos capture and file on the tablet, sync to web §7. Photos are queued as base64 rows, filed under facility_id for storage RLS, content-addressed to prevent duplicates, and linked back to the web wizard's §7 by shared wound id.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sha256: string; // hex",
+          "paths": [
+            "apps/offline-visit/src/db/repositories/photoQueue.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "A content-addressed photo queue exists in the offline app; the storage path and §7 link are not separately checked."
+    },
+    {
+      "id": "rn08-44b",
+      "claim": "26 commits, culminating in an end-to-end path.",
+      "reason": "An internal metric or process statement (counts of commits, notes, findings or review rounds). It cannot be checked against the product and should not be on a customer page."
+    },
+    {
+      "id": "rn08-45",
+      "claim": "★ Cross-device visit continuity. Resuming a web visit on the tablet (or vice versa) keeps its wound and photo links intact; the tablet emits id in web's key shape so the two builds share one identity.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-46",
+      "claim": "Refused picks surfaced to the clinician instead of silently dropped.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-47",
+      "claim": "Removed photos cancel their queued upload.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-48",
+      "claim": "Persisted-file fallback when the picked file no longer exists on the device.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-49",
+      "claim": "★ Appointment-integrity review surface (Phase 2/3). Admin view for reviewing appointments with data-integrity flags.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-50",
+      "claim": "Reassign dropdown reads the bookable roster, not every facility member. Scoped to the appointment's facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { useBookableProviders } from \"@/hooks/useBookableProviders\";",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The bookable-roster hook exists (booking modal); the reassign dropdown wiring is not separately checked."
+    },
+    {
+      "id": "rn08-51",
+      "claim": "Shared clinician-id normalizer applied to create-appointment and reassign.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-52",
+      "claim": "Explicit unassign on reschedule honored.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * so `?? ` collapses an explicit unassign into \"not supplied\" and silently",
+          "paths": [
+            "backend/supabase/functions/update-appointment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-53",
+      "kind": "advice",
+      "claim": "Stale count fix inside the anti-stale-comment guard.",
+      "reason": "Internal test-guard change, not product behavior."
+    },
+    {
+      "id": "rn08-54",
+      "claim": "★ Map stays mounted during date-change refetch — no more full remount + flicker.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-55",
+      "claim": "★ Map pins no longer randomized for unresolved CA addresses.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-56",
+      "claim": "Marker listeners registered once, not once per render.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-57",
+      "claim": "Fleet Calendar drains paged reads instead of truncating at max_rows.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-58",
+      "claim": "★ File faxes to charts from an edge function, not the browser. Closes tenancy and idempotency gaps.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// file-fax-to-chart — copies a received fax PDF into the patient",
+          "paths": [
+            "backend/supabase/functions/file-fax-to-chart/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-59",
+      "claim": "★ Cover page + message box on progress-note faxes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Appears in the NOTES section of the fax cover page.",
+          "paths": [
+            "frontend/src/components/fax/SendFaxModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-60",
+      "claim": "Fax IDP tables scoped by facility grant, not user_profile.facility_id.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-61",
+      "claim": "★ Verify-insurance writes the verified boolean + raw 271 eligibility response. Single isInsuranceVerified predicate for all readers.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export function isInsuranceVerified(",
+          "paths": [
+            "frontend/src/utils/insuranceStatus.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The shared predicate exists; the verify-insurance write is not separately checked."
+    },
+    {
+      "id": "rn08-62",
+      "claim": "NIM-202 closed. Fixed a defect that recorded \"self\" as an answer nobody gave, and shipped a documented, reproducible row repair.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3350,
+          "titleMatch": ".",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01",
+          "note": "merge of the NIM-202 fix branch"
+        }
+      ],
+      "reason": "PR evidence only."
+    },
+    {
+      "id": "rn08-63",
+      "claim": "Coinsurance fractions normalized to whole percents across legacy rows.",
+      "checks": [
+        {
+          "type": "file",
+          "path": "backend/supabase/migrations/20260804080952_normalize_legacy_coinsurance_fractions.sql",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-64",
+      "claim": "Payer shown in Claims picker; warns on duplicates and gates removal.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-65",
+      "claim": "Billing & Auth insurance add path guarded.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-66",
+      "claim": "Sex editable after intake; ends patient.gender drift between demographics and claims.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-67",
+      "claim": "★ Typed-name attestation as a backup signature method for consent capture.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { normalizeTypedName, renderTypedSignatureDataUrl } from \"@/utils/typedSignature\";",
+          "paths": [
+            "frontend/src/consent/ConsentCaptureDialog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-68",
+      "claim": "Signer identity shared across modalities (paper, digital, typed).",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-69",
+      "kind": "advice",
+      "claim": "Per-modality coherence enforced via AST walk rather than regex census.",
+      "reason": "Internal test technique, not product behavior."
+    },
+    {
+      "id": "rn08-70",
+      "claim": "Prefills may only add information, never remove it.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-71",
+      "claim": "★ Phase 0-2 shipped. Catalog + data-driven router → dispatcher + delivery ledger → real email/SMS/push wiring. Email launches first; SMS and push are \"coming soon\".",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  email: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Out of date: SMS was switched on 2026-10-30 (PR #3931); notificationChannels.ts has sms: \"live\" at v1.1.345. Push is still coming soon.",
+      "proposed_text": "Email notifications launched; SMS and push were marked coming soon. (PR #3330) Update (Nov 2026): SMS launched on October 30 (PR #3931); push is still coming soon.",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 3330,
+          "titleMatch": "launch email only, gate SMS/push as \"coming soon\"",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "pr",
+          "number": 3931,
+          "titleMatch": "SMS from coming_soon to live",
+          "mergedFrom": "2026-10-30",
+          "mergedTo": "2026-10-30"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  email: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const COMING_SOON_LABEL = \"Coming soon\";",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-71b",
+      "claim": "Email sends through the existing Gmail SMTP path.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-72",
+      "claim": "Retention purge moved into an edge function.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// notification-retention-purge — deletes delivery ledger rows past their retention date.",
+          "paths": [
+            "backend/supabase/functions/notification-retention-purge/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-73",
+      "claim": "Both service-role key formats accepted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`SUPABASE_SERVICE_ROLE_KEY` as an `sb_secret_…` value (41 chars, not a JWT),",
+          "paths": [
+            "backend/supabase/functions/_shared/service-auth.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-74",
+      "claim": "★ BD Activities: row menu, archive confirm with undo, edit modal, archived view.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-75",
+      "claim": "Archive-aware mode in useBdActivities; archived activities excluded from daily suggestions.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-76",
+      "claim": "bd-activity-mutate edge function with authorization predicate; soft-delete columns, privilege lockdown, reader filters on bd_activities.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Archive / restore / edit a BD activity. This is the ONLY write path for",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-77",
+      "claim": "\"Add New Agency\" in the home-health picker.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 3353,
+          "titleMatch": "\"Add New Agency\" to the picker",
+          "mergedFrom": "2026-08-01",
+          "mergedTo": "2026-09-01"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add New Agency",
+          "paths": [
+            "frontend/src/components/HomeHealthProviderModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-78",
+      "claim": "Legacy soak gate retired — was reading 0 in front of a live table.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-79",
+      "claim": "Blank Tax ID no longer silently blocks facility edit.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-80",
+      "claim": "RLS-denied edit no longer reports success.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-81",
+      "kind": "advice",
+      "claim": "Migration aborted on rows with two bad identifiers is now idempotent.",
+      "reason": "Internal migration change, not product behavior."
+    },
+    {
+      "id": "rn08-82",
+      "claim": "★ Billing-surface role gates. Billers and superadmin now 403 on Submit Claim, fax, auth email, and verification — matching the documented permission model.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-83",
+      "claim": "Client code can no longer hard-delete clinical records — DELETE policy dropped on visit_data_v2, and higher-level clinical writes routed through edge functions.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-84",
+      "claim": "Verify-insurance bound to the facility on write.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-85",
+      "claim": "Concise-arrow console.* calls stripped from the production build.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// `pure` (not `drop: ['console']`) so console.error / console.warn survive —",
+          "paths": [
+            "frontend/vite.config.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "console.log-style calls are marked pure; console.error/warn are kept by design."
+    },
+    {
+      "id": "rn08-86",
+      "kind": "advice",
+      "claim": "Coverage routing hostile-review findings closed: A+B state, Zus dup rows, Stedi timeout, hospice race, indeterminate payer gate, NPI fallback audit.",
+      "reason": "Internal review-process statement."
+    },
+    {
+      "id": "rn08-87",
+      "claim": "Cross-patient note bleed fixed in the referral intake pipeline; UTC note-date regressions pinned with timezone-independent tests.",
+      "reason": "No PR is cited and no product marker specific enough to prove this was found at v1.1.345."
+    },
+    {
+      "id": "rn08-88",
+      "claim": "GA4 wired at router root. SPA page views, begin_checkout before Stripe redirect, sign_up conversion on /mini/confirmation.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "trackGa4Event('begin_checkout', {",
+          "paths": [
+            "frontend/src/pages/mini/SignupPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "trackGa4Event('sign_up', {",
+          "paths": [
+            "frontend/src/pages/mini/ConfirmationPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-89",
+      "claim": "PostHog suppressed on /mini/* signup routes to isolate marketing-funnel telemetry.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// If the initial pathname is under the /mini/* public signup surface, opt",
+          "paths": [
+            "frontend/src/lib/analytics/posthog.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn08-90",
+      "claim": "Eight release PRs landed in August: v1.1.267 → v1.1.300. The largest single train was v1.1.297, which carried the Stedi 837P DMG03 recovery, the referring-provider write gap fix, and the coverage-routing hostile-review round.",
+      "reason": "Not checkable with this runner. `gh release list` shows 34 published releases from v1.1.267 (2026-08-02) to v1.1.300 (2026-08-28), plus v1.1.301 (2026-08-30); 'eight release PRs' is false.",
+      "proposed_text": "(Remove the Release Trains section.)"
+    },
+    {
+      "id": "rn08-91",
+      "kind": "advice",
+      "claim": "Related: Auto-rendered from related: in frontmatter.",
+      "reason": "Page-template placeholder text leaked into the live page (release-notes/2026-08/index.html). Not a product claim; remove it.",
+      "proposed_text": "(Remove.)"
+    }
+  ]
+}

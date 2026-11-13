@@ -1,0 +1,908 @@
+{
+  "title": "Notification settings and channels",
+  "source": "admin/notifications",
+  "url": "https://help.medipyxis.com/admin/notifications/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "nt-00",
+      "claim": "Medipyxis notifies you when something needs your attention — a new BD activity flag, a claim status change, a referral update.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  billing: 'Billing',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  referral: 'Referrals',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-01a",
+      "claim": "In-app: Live — notification bell in the top nav. Email: Live — detailed alert to the user's registered email address.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  in_app: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  email: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f01",
+      "claim": "SMS — Coming soon. Text messages for time-sensitive alerts. Backend is built and tested — not yet launched.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "SMS is live in the release under test (constants/notificationChannels.ts:21; backend _shared/notification-channels.ts also says live).",
+      "proposed_text": "Channels: In-app (the bell) live, Email live, SMS live, Push coming soon.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  in_app: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  email: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"live\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "sms: \"live\",",
+          "paths": [
+            "backend/supabase/functions/_shared/notification-channels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "push: \"coming_soon\",",
+          "paths": [
+            "backend/supabase/functions/_shared/notification-channels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-01p",
+      "claim": "Push — Coming soon.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "push: \"coming_soon\",",
+          "paths": [
+            "backend/supabase/functions/_shared/notification-channels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f02",
+      "claim": "Push: Mobile push through the Medipyxis app.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Medipyxis app",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Push is coming soon (constants/notificationChannels.ts:22); nothing names a Medipyxis app as the push channel.",
+      "proposed_text": "Push — Coming soon.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  push: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-02",
+      "claim": "The in-app bell always fires when a notification is generated for you, regardless of which channels you choose for delivery.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Every alert also appears in your notification bell.",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f03",
+      "claim": "Turning off email or muting SMS does not silence the bell — it silences the outbound delivery.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mutable_in_app",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Non-clinical types can be muted in the bell per type; only clinical alerts cannot (utils/notificationPreferenceEdit.ts:113).",
+      "proposed_text": "Every alert also appears in the notification bell, whatever delivery method a person chooses. Clinical alerts cannot be hidden from the bell.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Every alert also appears in your notification bell.",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "inAppMuted = change.inAppMuted && event.mutable_in_app && !event.is_clinical;",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-03a",
+      "claim": "Every user can open their own preferences at /settings/notifications.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/settings/notifications\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Notification Settings</h1>",
+          "paths": [
+            "frontend/src/pages/SettingsNotificationsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f04",
+      "claim": "/facility/{facility_uuid}/settings/notifications — same page, scoped to the current facility. Admins cannot set preferences on behalf of another user.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility_id",
+          "paths": [
+            "backend/supabase/functions/set-notification-preferences/index.ts"
+          ],
+          "expect": "present",
+          "note": "would hold if preferences were scoped per facility"
+        }
+      ],
+      "finding": "Preferences are per person, not per facility: the save function takes no facility_id (backend/supabase/functions/set-notification-preferences/index.ts). The admin restriction was not confirmed.",
+      "proposed_text": "Each person sets their own preferences: profile menu → Settings → Alert Method under Notification Preferences, or More notification settings to open Notification Settings (/settings/notifications).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(\"/settings\")}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Notification Preferences\"",
+          "paths": [
+            "frontend/src/pages/Settings.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Alert Method\"",
+          "paths": [
+            "frontend/src/pages/Settings.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "More notification settings",
+          "paths": [
+            "frontend/src/components/notifications/settings/BdAlertMethodRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Link to=\"/settings/notifications\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/BdAlertMethodRow.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/settings/notifications\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Notification Settings</h1>",
+          "paths": [
+            "frontend/src/pages/SettingsNotificationsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f05",
+      "claim": "Today the preference surface controls one event family: BD Rep alerts. Other event families (billing, referral, clinical) use system defaults today. A per-event preference surface for those families is on the roadmap.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-xl\">By notification type</CardTitle>",
+          "paths": [
+            "frontend/src/components/notifications/settings/EventPreferencesList.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Per-type preferences already ship: the \"By notification type\" card (components/notifications/settings/EventPreferencesList.tsx:100).",
+      "proposed_text": "How we reach you: the default for alerts outside the app, BD Rep alerts included. By notification type: change one type without touching the default; types are grouped (Clinical, Billing, HR, Inventory, Messages, Onboarding, Operations, Referrals); types you have not changed follow your default.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-xl\">How we reach you</CardTitle>",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Your default for alerts outside the app, including BD Rep alerts.",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-xl\">By notification type</CardTitle>",
+          "paths": [
+            "frontend/src/components/notifications/settings/EventPreferencesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Change one type without touching your default. Types you haven't changed follow your default.",
+          "paths": [
+            "frontend/src/components/notifications/settings/EventPreferencesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  billing: 'Billing',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  clinical: 'Clinical',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  hr: 'HR',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  inventory: 'Inventory',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  messaging: 'Messages',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  onboarding: 'Onboarding',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  ops: 'Operations',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  referral: 'Referrals',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-07",
+      "claim": "Users choose one of four methods: Email Alerts, SMS Text Messages, All Channels, Pause Alerts.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Email Alerts\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"SMS Text Messages\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"All Channels\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Pause Alerts\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-08a",
+      "claim": "Email Alerts: in-app bell + email.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description=\"Alerts delivered to your inbox.\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Every alert also appears in your notification bell.",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f06",
+      "claim": "SMS Text Messages: in-app bell + SMS (falls back to email until SMS launches). All Channels: in-app bell + email + SMS (falls back to email-only until SMS launches). Pause Alerts: in-app bell only — outbound delivery is muted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "SMS is live, so there is no email fallback (constants/notificationChannels.ts:21); Pause Alerts still emails critical alerts and any type changed separately.",
+      "proposed_text": "Email Alerts: alerts delivered to your inbox. SMS Text Messages: alerts sent to your phone. All Channels: email and SMS together. Pause Alerts: no email or text, except critical alerts (where email is allowed) and any type you changed separately; the bell still shows everything.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description=\"Alerts delivered to your inbox.\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Instant alerts sent to your phone.'",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Email and SMS together.'",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description=\"No email or text, except critical alerts (where email is allowed) and any type you change below. The bell still shows everything.\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f07",
+      "claim": "What happens before SMS launches: the preference is saved as chosen; delivery falls back to email; the settings page shows a banner \"Your saved choice was SMS, which needs text messaging…\"; when SMS launches the saved preference activates automatically. The UI marks SMS and All Channels as pending.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "SMS is live (constants/notificationChannels.ts:21), so the pending state and fallback banner do not show.",
+      "proposed_text": "(remove the section)"
+    },
+    {
+      "id": "nt-11a",
+      "claim": "Every generated notification lands in the bell in the top-right of the app. The bell shows the unread count and links back to the record that triggered the notification.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{unreadCount > 99 ? '99+' : unreadCount}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onNotificationClick={handleNotificationClick}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f08",
+      "claim": "The bell shows a Dismiss button. Dismissing a notification hides it from the bell list but preserves the audit record — every notification is logged in party_notifications with recipient, event key, dispatch time, and read/dismissed timestamps.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dismiss",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "NotificationBell.tsx has no Dismiss control; it offers Mark all read and opens the full notifications page.",
+      "proposed_text": "The bell is in the top bar with an unread badge; click a notification to open it, Mark all read clears the count, and the full notifications page opens from the bell.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{unreadCount > 99 ? '99+' : unreadCount}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{notificationLoading ? 'Marking...' : 'Mark all read'}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onNotificationClick={handleNotificationClick}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => { navigate(notificationsPagePath); setIsOpen(false); }}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f09",
+      "claim": "Event families: bd_rep_alert_preferences → bell + user-chosen channel; referral.* → bell + email (system default); billing.* (denied claim, ERA posted, work-queue task assigned) → bell + email (system default); clinical.* (signed note needs addendum, LCD guardrail alert) → bell + email (system default).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bell + email (system default)",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Delivery for each type follows the person's preferences (By notification type), not a fixed bell + email system default; the family names are internal.",
+      "proposed_text": "By notification type: change one type without touching the default; types are grouped (Clinical, Billing, HR, Inventory, Messages, Onboarding, Operations, Referrals); types you have not changed follow your default.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CardTitle className=\"text-xl\">By notification type</CardTitle>",
+          "paths": [
+            "frontend/src/components/notifications/settings/EventPreferencesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Change one type without touching your default. Types you haven't changed follow your default.",
+          "paths": [
+            "frontend/src/components/notifications/settings/EventPreferencesList.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  billing: 'Billing',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  clinical: 'Clinical',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  hr: 'HR',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  inventory: 'Inventory',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  messaging: 'Messages',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  onboarding: 'Onboarding',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  ops: 'Operations',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  referral: 'Referrals',",
+          "paths": [
+            "frontend/src/utils/notificationPreferenceEdit.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-t1",
+      "claim": "Troubleshooting: User is not receiving email alerts — update the email in Admin → User Management and ask the user to save preferences again.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "User Management",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Admin → User Management item; the email is edited in HR & Compliance → Facility Users.",
+      "proposed_text": "Someone not receiving email: their method is Pause Alerts or their address is wrong — check Notification Settings; fix the address in HR & Compliance → Facility Users.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Pause Alerts\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter email address\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-f10",
+      "claim": "Troubleshooting: User asks why SMS never arrived — SMS channel is not yet launched — point them to the banner; Duplicate BD alerts — dismiss any one of them and the other duplicates are marked read together.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  sms: \"coming_soon\",",
+          "paths": [
+            "frontend/src/constants/notificationChannels.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "SMS is live (constants/notificationChannels.ts:21); no duplicate-collapsing on dismiss exists.",
+      "proposed_text": "Someone not receiving email: their method is Pause Alerts or their address is wrong — check Notification Settings; fix the address in HR & Compliance → Facility Users.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Pause Alerts\"",
+          "paths": [
+            "frontend/src/components/notifications/settings/AccountAlertMethodCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter email address\"",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "nt-14",
+      "claim": "Troubleshooting: Bell shows nothing but the user expects alerts — confirm the user's role has the required grant in Role Config.",
+      "kind": "advice"
+    }
+  ]
+}

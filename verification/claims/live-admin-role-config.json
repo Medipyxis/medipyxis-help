@@ -1,0 +1,820 @@
+{
+  "title": "Configure organization roles and permissions",
+  "source": "admin/role-config",
+  "url": "https://help.medipyxis.com/admin/role-config/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "rc-01",
+      "claim": "The Organization Role Config screen is where you control what each role can see and do across your Medipyxis organization.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Configure which features each role can access per organization.",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "upsertAllRoleConfigs(",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-02",
+      "claim": "Access requires a facility-admin role (admin, clinical manager, or BD manager) for at least one facility, or Medipyxis platform-level access.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const FACILITY_ADMIN_ROLES = [\"admin\", \"clinical_manager\", \"bd_manager\"];",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Administrator: superadmin, customersupport, or facility admins (admin/clinical_manager/bd_manager)",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-f01",
+      "claim": "Configuration is per organization — you select the organization at the top of the screen.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSuperAdmin && (",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Only Medipyxis staff get the organization picker (pages/administrator/OrgRoleConfigPage.tsx:226); an organization's own admins have their organization chosen for them.",
+      "proposed_text": "Settings are per organization. If you manage one organization, it is chosen for you; Medipyxis staff pick the organization from a list at the top.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Select organization...\"",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSuperAdmin && (",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": `Configuring role access for your organization.`}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setSelectedOrgId((prev) => prev ?? data[0].id);",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-f02",
+      "claim": "Changes take effect on an affected user's next page load.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "refreshOrgRoleConfig()",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "note": "would hold if every page load re-read the config"
+        }
+      ],
+      "finding": "Not confirmed: the saved configuration is re-read when a user's facility loads, not on every page load (no refreshOrgRoleConfig call in frontend/src).",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "rc-05",
+      "claim": "Open the Administrator cockpit, then choose Organization Role Config. The Administrator cockpit link appears in the sidebar for admin roles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Administrator\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-06",
+      "claim": "The Organization Role Config matrix: rows are roles; columns are features. A checked box means the role has access to that feature.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ROLES.map((role) => (",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "checked={hasFeature(role, feature)}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".filter((f) => f !== \"Administrator\")",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-07",
+      "claim": "Medipyxis ships ten built-in roles. They cannot be deleted, but their permissions can be adjusted.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"admin\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"clinical_manager\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"medical_director\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"clinician\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"referral_coordinator\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"bd_rep\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"bd_manager\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"vendor_coordinator\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"biller\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "deleteRole",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rc-f04",
+      "claim": "Seeded roles and primary functions: Admin — full organization access; Clinical manager — Fleet Calendar, Visit Wizard, Oversight Cockpit; Medical director — LCD Navigator™ audit and reporting; Clinician — Visit Wizard, patient records, orders; Referral coordinator — Referral Intake kanban and Fax Review Queue; BD rep — CRM, BD Dashboard, limited patient view; BD manager — CRM, BD Dashboard, Oversight Cockpit BD metrics; Finance (AP) — Billing (read), Inventory Accounts Payable; Vendor coordinator — Product Catalog and inventory; Biller — Claims, Denials, Payments, Charge Master.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Visit Wizard\"",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "What each role can open is set per organization by the matrix, not fixed in the product; there is no Visit Wizard feature and no read-only Billing feature (frontend/src/constants/features.ts).",
+      "proposed_text": "The matrix has one row for each of the ten roles. You cannot add or delete roles here. Row names (role with underscores shown as spaces) and the matching names on the user form: admin/Administrator, clinical manager/Clinical Manager, medical director/Medical Director, clinician/Clinician, referral coordinator/Referral Coordinator, bd rep/Business Development Representative, bd manager/Business Development Manager, finance ap/Finance/Accounts Payable, vendor coordinator/Vendor Coordinator, biller/Biller.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"admin\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"clinical_manager\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"medical_director\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"clinician\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"referral_coordinator\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"bd_rep\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"bd_manager\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"vendor_coordinator\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"biller\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "deleteRole",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"admin\", label: \"Administrator\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development Representative\",",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"finance_ap\", label: \"Finance/Accounts Payable\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"biller\", label: \"Biller\" },",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-x1",
+      "claim": "Platform-level roles used internally by Medipyxis staff sit above these organization roles and are not configured here.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"superadmin\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"customersupport\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"admin\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-06b",
+      "claim": "The matrix uses checkboxes at the intersection of each role and feature. A checked box means the role can access that feature.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ROLES.map((role) => (",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "checked={hasFeature(role, feature)}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-f06",
+      "claim": "Feature permission matrix (typical defaults): Dashboard — all roles; Referral Intake; Patient Management; Visit Wizard / EHR; Fleet Calendar; Inventory; Orders & DME; Billing — biller, finance (AP), admin; CRM; Business Development; Oversight Cockpit; HR & Compliance; Administrator — admin; Team Chat — all roles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Visit Wizard / EHR\"",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Billing\",",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Dashboard, Visit Wizard / EHR, Billing or Administrator column; the 14 columns are listed in features.ts (Billing access is \"Billing Operations\"), and defaults are per organization.",
+      "proposed_text": "There are 14 feature columns: HR & Compliance, Business Development, CRM, Team Chat, Referral Intake, Patient Management, All Patients, Fleet Calendar, Inventory, Oversight Cockpit, Facilities, Orders & DME, Billing Operations, and More. Billing access is the Billing Operations column. More controls the Fax Center link. The Dashboard is not a column: everyone can open it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".filter((f) => f !== \"Administrator\")",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^  \"[A-Z][^\"]*\",$",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": {
+            "count": 15
+          },
+          "note": "15 features minus Administrator = 14 columns"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Billing Operations\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "feature: \"More\" as Feature,",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"Dashboard\",",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (feature === \"Dashboard\") return true;",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-adv1",
+      "claim": "This matrix shows typical defaults. Your organization may have customized these — always verify the live checkboxes in Organization Role Config.",
+      "kind": "advice"
+    },
+    {
+      "id": "rc-f07",
+      "claim": "Set a permission: Open Organization Role Config and select the organization from the dropdown at the top. Find the role row and feature column. Check or uncheck the box. Click Save. A confirmation toast appears.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{isSuperAdmin && (",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Organization admins have no dropdown, and the button is Save Changes (pages/administrator/OrgRoleConfigPage.tsx:172).",
+      "proposed_text": "Tick or untick the box, click Save Changes; a \"Role configuration saved successfully\" message confirms it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onCheckedChange={() =>",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save Changes",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.success(\"Role configuration saved successfully\");",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-16",
+      "claim": "Removing a feature from a role hides that sidebar link for every user with that role.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-17",
+      "claim": "Communicate permission changes to affected staff in advance.",
+      "kind": "advice"
+    },
+    {
+      "id": "rc-18",
+      "claim": "Billing roles (biller and related) are scoped to a specific facility; assign the billing role at the facility where the user works.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const FACILITY_SCOPED_ROLES = new Set([",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  'biller',",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-19",
+      "claim": "The biller role can view and edit that facility's Charge Master.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "charge_write: ['billing_lead', 'biller', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "payment_post: ['billing_lead', 'biller', 'admin', 'superadmin'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-f08",
+      "claim": "Creating and editing claim codes and claim status remains governed by the same role configuration.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "codes_write:  ['billing_lead', 'biller',",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Claim codes and Claim Status are governed by a separate server-side billing role list that excludes biller (functions/_shared/billingRoleGuard.ts:17), not by Organization Role Config.",
+      "proposed_text": "A biller cannot change claim codes or the Claim Status; a fix is being tracked for the Claim Status. Until then, ask an admin to set it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status_write: ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "codes_write:  ['billing_lead', 'coder', 'medical_director', 'admin', 'superadmin', 'customersupport'],",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-f09",
+      "claim": "Worked example: give referral coordinators visibility into Billing so they can see claim status without creating or editing claims — find the referral coordinator row and the Billing column, check the box, click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"Billing\",",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Billing column; the box is \"Billing Operations\" and grants the Billing Operations pages without a view-only limit.",
+      "proposed_text": "Worked example: find the referral coordinator row and the Billing Operations column, tick the box, click Save Changes; the Billing Operations link then appears in their sidebar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"Billing Operations\",",
+          "paths": [
+            "frontend/src/constants/features.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rc-22",
+      "claim": "Notify affected users that the Billing link is now visible in their sidebar. If you need finer-grained (read-only) billing access than the feature toggle provides, contact Medipyxis support.",
+      "kind": "advice"
+    }
+  ]
+}

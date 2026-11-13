@@ -1,0 +1,162 @@
+{
+  "title": "March 2026 release notes",
+  "source": "release-notes/2026-03",
+  "url": "https://help.medipyxis.com/release-notes/2026-03/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "rn03-00",
+      "claim": "Changes shipped between 2026-03-01 and 2026-03-31.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1487,
+          "titleMatch": "progress note generator",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/services/perfectNote/perfectNoteRenderer.ts",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn03-01",
+      "claim": "This release contained no user-facing feature changes. Work shipped in March was limited to infrastructure maintenance, dependency updates, and back-end data migrations. No module documentation was affected.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1487,
+          "titleMatch": "^(chore|deps|build|ci|infra)\\b|dependenc|maintenance",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "pr",
+          "number": 1497,
+          "titleMatch": "^(chore|deps|build|ci|infra)\\b|dependenc|maintenance",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        }
+      ],
+      "finding": "False. User-facing feature PRs merged in March 2026 and are still in v1.1.345: Wound care progress note generator builds the note from the visit's documentation. (PR #1487, #1520, #1542); Previous treatments section added (PR #1486, #1530). Update: now the Medical Necessity & Previous Treatments section of the Visit Wizard.; Each appointment stores its time slot. (PR #1497, #1501) The check encodes the live sentence: the listed feature PR would have to be a maintenance-only change, and its title is not.",
+      "proposed_text": "Changes merged between 2026-03-01 and 2026-03-31. This is not a complete list: it covers selected user-facing changes that are still in the current release. Wound care progress note generator builds the note from the visit's documentation. (PR #1487, #1520, #1542) Previous treatments section added (PR #1486, #1530). Update: now the Medical Necessity & Previous Treatments section of the Visit Wizard. Each appointment stores its time slot. (PR #1497, #1501)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 1487,
+          "titleMatch": "wound care progress note generator",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "pr",
+          "number": 1520,
+          "titleMatch": "wound care progress note generator",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "pr",
+          "number": 1542,
+          "titleMatch": "wound care progress note generator",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/services/perfectNote/perfectNoteRenderer.ts",
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/services/perfectNote/buildVisitNotePdf.ts",
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 1486,
+          "titleMatch": "Previous Treatments",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "pr",
+          "number": 1530,
+          "titleMatch": "previous treatments",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Medical Necessity & Previous Treatments",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 1497,
+          "titleMatch": "timeslot",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "pr",
+          "number": 1501,
+          "titleMatch": "save timeslot",
+          "mergedFrom": "2026-03-01",
+          "mergedTo": "2026-03-31"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const timeslot = `${slot.time}-${endTime}`;",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn03-02",
+      "claim": "Several internal engineering tasks were resolved with resolution dates in late March (MED-1596, MED-1676, MED-1432, MED-1215, MED-1595, MED-1124, and others); those items did not produce observable UI or workflow changes for end users and are therefore not listed individually.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 1522,
+          "titleMatch": "^(chore|ci|build)\\b",
+          "mergedFrom": "2026-03-15",
+          "mergedTo": "2026-03-31",
+          "note": "MED-1432 PR; live text says no observable UI change"
+        },
+        {
+          "type": "pr",
+          "number": 930,
+          "titleMatch": "^(chore|ci|build)\\b",
+          "mergedFrom": "2026-03-15",
+          "mergedTo": "2026-03-31",
+          "note": "MED-1124 PR; live text says resolved late March with no observable UI change"
+        }
+      ],
+      "finding": "False. MED-1432 is PR #1522 (merged 2026-03-23) 'sync medications and billing to patient dashboard', a visible change; MED-1124 is PR #930 (merged 2025-11-19) 'Show assigned sales rep on referral cards', a visible change shipped in November 2025, not late March; MED-1676 is listed on the live April page as a user-facing fix (clinician title display). The other keys (MED-1596, MED-1215, MED-1595) have no PR citing them except MED-1215 → PR #1309 (2026-01-07).",
+      "proposed_text": ""
+    },
+    {
+      "id": "rn03-03",
+      "kind": "advice",
+      "claim": "If you need the technical details for an audit or integration review, contact your implementation manager with the ticket key."
+    },
+    {
+      "id": "rn03-04",
+      "kind": "advice",
+      "claim": "User-facing changes from the next deploy cycle are documented in April 2026 release notes.",
+      "reason": "Cross-link sentence; linked page exists (checked locally)."
+    }
+  ]
+}

@@ -1,0 +1,1543 @@
+{
+  "title": "June 2026 release notes",
+  "source": "release-notes/2026-06",
+  "url": "https://help.medipyxis.com/release-notes/2026-06/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "rn06-00",
+      "claim": "Changes shipped between 2026-06-01 and 2026-06-25. Items are grouped by module.",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2370,
+          "titleMatch": ".",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2711,
+          "titleMatch": ".",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ]
+    },
+    {
+      "id": "rn06-00b",
+      "kind": "advice",
+      "claim": "Entries marked ★ are high-impact or frequently requested.",
+      "reason": "Editorial labelling."
+    },
+    {
+      "id": "rn06-01",
+      "claim": "★ ZusHealth — Patient history sync rebuilt. Click-driven importer covering allergies, medications, lab results, surgeries, vaccinations, and conditions. The Pull button in pre-charting drives the new sync. (PR #2370)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2370,
+          "titleMatch": "click-driven importer",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./allergyMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./medicationMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./labMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./surgeryMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./vaccinationMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "from \"./conditionMapper.ts\"",
+          "paths": [
+            "backend/supabase/functions/_shared/zus-importer/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-02",
+      "claim": "★ ZusHealth — Sync status and source badges. Last-sync pill (green/yellow/red) and per-row provenance badges. (PR #2370)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2370,
+          "titleMatch": "zus",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ZusLastSyncPill",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ZusProvenanceBadge",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-03",
+      "claim": "★ ZusHealth — Automatic visit contribution (TEFCA). On visit finalize, Medipyxis contributes the visit back to the patient's external record via ZusHealth/TEFCA — no extra step. (PR #2706)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2706,
+          "titleMatch": "TEFCA",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "functions/v1/zus-contribute-visit",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-04",
+      "claim": "ZusHealth — Comprehensive Patient History added to pre-charting, plus reliability fixes. (PR #2687, #2697, #2698)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2687,
+          "titleMatch": "Patient History",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2697,
+          "titleMatch": "zus",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2698,
+          "titleMatch": "Patient History",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient-history/jobs",
+          "paths": [
+            "backend/supabase/functions/zus-preachart-data/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-05",
+      "claim": "★ Visit Wizard — Offline mode removed from the web app. The legacy wizardSafetyNet offline system was removed. (PR #2711)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2711,
+          "titleMatch": "wizardSafetyNet",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "import[^;]*wizardSafetyNet|from ['\"][^'\"]*wizardSafetyNet",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn06-05b",
+      "claim": "The wizard now saves continuously with per-field auto-save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEFAULT_DEBOUNCE_MS = 1_000",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEFAULT_HEARTBEAT_MS = 30_000",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-05c",
+      "kind": "advice",
+      "claim": "If your team relied on in-wizard offline/backup behavior, coordinate with your implementation manager on the current save model."
+    },
+    {
+      "id": "rn06-06",
+      "claim": "★ Visit Wizard — DME product picker removed from the DME section. (PR #2707)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2707,
+          "titleMatch": "DME product picker",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DmeLibraryPicker",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-07",
+      "claim": "★ Visit Wizard — Cross-device draft recall. Drafts are recalled by a stable visit identifier, eliminating wrong-wound data and cross-device load failures. (PR #2700, #2701, #2704)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2700,
+          "titleMatch": "visit_id",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2701,
+          "titleMatch": "visit_id",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2704,
+          "titleMatch": "stable id",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/visitDraftSelection.ts",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-08",
+      "claim": "★ Visit Wizard — Reliable per-field auto-save. The 60-second interval was replaced with per-field debounced saving plus a heartbeat. (PR #2553)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2553,
+          "titleMatch": "60s autosave",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEFAULT_DEBOUNCE_MS = 1_000",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DEFAULT_HEARTBEAT_MS = 30_000",
+          "paths": [
+            "frontend/src/hooks/useWizardAutoSave.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-09",
+      "claim": "Visit Wizard — Secondary payer read-only in the wizard; edits on the Insurance tab; written back to the canonical insurance record. (PR #2705)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2705,
+          "titleMatch": "insurance",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/services/wizardInsuranceWriteback.ts",
+          "expect": "present"
+        }
+      ],
+      "finding": "Out of date: since 2026-10-15 (PR #3696) all insurance in the wizard is view-only, labelled '(from chart — view only)' (PatientDemographicsVisit.tsx), and the write-back service wizardInsuranceWriteback.ts is gone at v1.1.345.",
+      "proposed_text": "Visit Wizard — Secondary payer read-only in the wizard; edits on the Insurance tab; written back to the canonical insurance record. (PR #2705) Update (Nov 2026): since October 15 (PR #3696), all insurance in the wizard is view-only and labeled \"from chart — view only\"; the wizard no longer writes insurance back. Edit insurance on the patient's chart.",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2705,
+          "titleMatch": "insurance",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 3696,
+          "titleMatch": "view-only",
+          "mergedFrom": "2026-10-15",
+          "mergedTo": "2026-10-15"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(from chart — view only)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/PatientDemographicsVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/services/wizardInsuranceWriteback.ts",
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-10",
+      "claim": "Visit Wizard — Open-visits docket moved to the top; older Pull from History / View Previous Visits removed in favor of the new pull workflows. (PR #2687, #2682)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2682,
+          "titleMatch": "open-visits docket",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2687,
+          "titleMatch": "docket",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "WizardUnfinishedVisitsDocket",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "Pull from past visits|View Previous Visits",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "PR #2687 is cited but is the Comprehensive Patient History change, not the docket. The open-visits docket itself was removed on 2026-07-13 (PR #2958) and is not in v1.1.345.",
+      "proposed_text": "Visit Wizard — Open-visits docket moved to the top; older Pull from History / View Previous Visits removed in favor of the new pull workflows. (PR #2682) Update (Nov 2026): the open-visits docket was removed on July 13 (PR #2958).",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2682,
+          "titleMatch": "open-visits docket",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2958,
+          "titleMatch": "wizard entry points",
+          "mergedFrom": "2026-07-13",
+          "mergedTo": "2026-07-13"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "WizardUnfinishedVisitsDocket",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "Pull from past visits|View Previous Visits",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "rn06-11",
+      "claim": "Visit Wizard — eRx labeled DoseSpot; calls routed through a server-side proxy. (PR #2662)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2662,
+          "titleMatch": "proxy",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "dosespot-proxy",
+          "paths": [
+            "frontend/src/services/doseSpotService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/api/dosespot",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-12",
+      "claim": "Visit Wizard — Imported wound history in the cockpit (two-pane); migration-context banner for transferred patients. (PR #2642)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2642,
+          "titleMatch": "Onboarding",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Transferring from {pullPatient.prior_ehr_system",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The banner is checked; the two-pane cockpit history view is not separately checked."
+    },
+    {
+      "id": "rn06-13",
+      "claim": "Visit Wizard — Native camera on mobile web for wound photos. (PR #2637, #2638)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2638,
+          "titleMatch": "native camera",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setAttribute(\"capture\", \"environment\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 2637,
+          "titleMatch": "camera"
+        }
+      ],
+      "finding": "PR #2637 is cited but its title is about something else (not the camera). PR #2638 and the code check out.",
+      "proposed_text": "Visit Wizard — Native camera on mobile web for wound photos. (PR #2638)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2638,
+          "titleMatch": "native camera",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setAttribute(\"capture\", \"environment\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-14",
+      "claim": "Visit Wizard — Fewer false error toasts and several data-loss/silent-failure fixes. (PR #2631, #2674)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2631,
+          "titleMatch": "data loss",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2674,
+          "titleMatch": "crash",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ]
+    },
+    {
+      "id": "rn06-15",
+      "claim": "★ Dashboard — Overdue undocumented visit alerts in a dedicated card with disposition actions. (PR #2695)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2695,
+          "titleMatch": "Overdue undocumented",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OverdueVisitsCard",
+          "paths": [
+            "frontend/src/pages/PmClinicianDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-16",
+      "claim": "Dashboard — Real data sources (placeholder data removed). (PR #2650)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2650,
+          "titleMatch": "hardcoded data",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ]
+    },
+    {
+      "id": "rn06-17",
+      "claim": "★ Charge Master access for billers. The biller role can view and edit the facility Charge Master; billing roles are facility-scoped (no global wildcard). (PR #2710)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2710,
+          "titleMatch": "biller",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "charge_(admin_read|write):.*'biller'",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": {
+            "count": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "FACILITY_SCOPED_ROLES",
+          "paths": [
+            "backend/supabase/functions/_shared/billingRoleGuard.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-18",
+      "claim": "★ Billing Work Queue — Filters, bulk actions, metrics. Status/payer/age filters, bulk status changes, status dropdown with history, Coding Review drawer, dashboard metric cards. (PR #2559, #2561, #2558)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2558,
+          "titleMatch": "StatusDropdown",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2561,
+          "titleMatch": "CodingReviewDrawer",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2559,
+          "titleMatch": "metric cards",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/CodingReviewDrawer.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/billing/StatusDropdown.tsx",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { BulkActionToolbar } from \"@/components/billing/BulkActionToolbar\";",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const [payerFilter, setPayerFilter] = useState<string>(\"all\");",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Age filter and status history are not separately checked."
+    },
+    {
+      "id": "rn06-19",
+      "claim": "★ Billing — Auto-populate codes for claim-ready visits; de-dup by date of service. (PR #2639)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2639,
+          "titleMatch": "auto-populate billing codes",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ]
+    },
+    {
+      "id": "rn06-20",
+      "claim": "★ Billing — Patient superbill PDF download + preview on the claim detail page. (PR #2601)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2601,
+          "titleMatch": "superbill",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DownloadPatientSuperbillButton",
+          "paths": [
+            "frontend/src/pages/BillingClaimDetailPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-21",
+      "claim": "★ Eligibility — Full Stedi medical-catalog sync with typeahead payer picker, resubmit cooldown, and Medicare MBI gating. (PR #2532, #2606)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2532,
+          "titleMatch": "eligibility",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2606,
+          "titleMatch": "cooldown",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/sync-stedi-payers/index.ts",
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "checkPreSubmissionGates(",
+          "paths": [
+            "backend/supabase/functions/verify-eligibility/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useEligibilityCooldown",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "PayerTypeahead",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "rn06-22",
+      "claim": "Billing — Drag-to-reorder claim lines with CMS-1500 Box 24 re-assertion. (NIM-150)",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "computeBox24OnReorder",
+          "paths": [
+            "frontend/src/pages/NewBillingSubmitPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Cites a tracker key, no PR; code check only."
+    },
+    {
+      "id": "rn06-23",
+      "claim": "Billing — Facility NPI/Tax ID validation and NPPES auto-fill. (PR #2607, #2614)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2607,
+          "titleMatch": "NPPES auto-fill",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2614,
+          "titleMatch": "tax_id",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/nppes-search/index.ts",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-24",
+      "claim": "Billing — Place of Service defaults to Home (POS 12). (PR #2557)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2557,
+          "titleMatch": "POS 12 default",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let derivedPosCode = '12'",
+          "paths": [
+            "backend/supabase/functions/submit-claim/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Out of date: since 2026-10-27 (PR #3854) a claim with no Place of Service is refused instead of defaulting to 12; the default is gone from submit-claim at v1.1.345.",
+      "proposed_text": "Billing — Place of Service defaults to Home (POS 12). (PR #2557) Update (Nov 2026): since October 27 (PR #3854), a claim with no Place of Service is refused instead of defaulting to Home. Set the Place of Service on the visit.",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2557,
+          "titleMatch": "POS 12 default",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 3854,
+          "titleMatch": "refuse missing Place of Service",
+          "mergedFrom": "2026-10-27",
+          "mergedTo": "2026-10-27"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "let derivedPosCode = '12'",
+          "paths": [
+            "backend/supabase/functions/submit-claim/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-25",
+      "claim": "Billing — Only documented supplies billed (auto-fill of saline A4216 removed). (PR #2625)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2625,
+          "titleMatch": "A4216",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "intervention.type.includes(\"debridement\")",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ProcedureSuppliesVisit.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-26",
+      "claim": "Intake — Carry-forward across 13 sections; progress-note preview; unified finalize + claim auto-creation (parity with Visit Wizard). (PR #2627, #2628)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2627,
+          "titleMatch": "intake",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2628,
+          "titleMatch": "intake",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/pages/IntakeWizardV3.tsx",
+          "expect": "present"
+        }
+      ],
+      "finding": "#2627 is appointment booking and #2628 is the Visit Wizard bring-forward, not intake; the separate intake wizard (IntakeWizardV3.tsx) was retired on 2026-07-02 (PR #2816) and is absent at v1.1.345.",
+      "proposed_text": "(Remove this item.)"
+    },
+    {
+      "id": "rn06-27",
+      "claim": "Intake — Referral field renames: Referral Date → Referral Entry Date; Referral Source Date → Date Referral Sent. (PR #2587)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2587,
+          "titleMatch": "Referral Date",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referral Entry Date",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Date Referral Sent",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": {
+            "min": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referral Source Date",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-28",
+      "claim": "Intake — Cross-device draft recall. (PR #2704)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2704,
+          "titleMatch": "cross-device",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/pages/IntakeWizardV3.tsx",
+          "expect": "present"
+        }
+      ],
+      "finding": "Out of date: the separate intake wizard was retired on 2026-07-02 (PR #2816); IntakeWizardV3.tsx is absent at v1.1.345.",
+      "proposed_text": "Intake — Cross-device draft recall. (PR #2704) Update (Nov 2026): on July 2 (PR #2816) the separate intake wizard was retired; intake visits now use the single Visit Wizard.",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2704,
+          "titleMatch": "cross-device",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2816,
+          "titleMatch": "unified wizard",
+          "mergedFrom": "2026-07-02",
+          "mergedTo": "2026-07-02"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/pages/IntakeWizardV3.tsx",
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "rn06-29",
+      "claim": "★ Fleet Calendar — Clinician identity unified across Fleet Calendar, HR, and chat; top scroll nav added; display bugs fixed. (PR #2629, #2678)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2678,
+          "titleMatch": "top scroll nav",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Horizontal scroll navigation",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 2629,
+          "titleMatch": "fleet|calendar"
+        }
+      ],
+      "finding": "PR #2629 is cited but its title is not about Fleet Calendar or clinician identity. PR #2678 and the top scroll nav check out.",
+      "proposed_text": "★ Fleet Calendar — Top scroll nav added; hidden clinician names resolved; display bugs fixed. (PR #2678)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2678,
+          "titleMatch": "top scroll nav",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Horizontal scroll navigation",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-30",
+      "claim": "Fleet Calendar — Off-hours visits visible. (PR #2556)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2556,
+          "titleMatch": "off-hours",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "off-hours visibility",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-31",
+      "claim": "Scheduling — Non-clinician appointment creation via provider dropdown, stricter provider/NPI validation. (PR #2627, #2554)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2627,
+          "titleMatch": "provider dropdown",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "availableProviders",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "pr",
+          "number": 2554,
+          "titleMatch": ".",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 422",
+          "paths": [
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The strict-validation 422 that #2554 added was removed two days later (PR #2613); create-appointment has no 422 at v1.1.345.",
+      "proposed_text": "Scheduling — Non-clinician appointment creation via provider dropdown. (PR #2627)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2627,
+          "titleMatch": "provider dropdown",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "availableProviders",
+          "paths": [
+            "frontend/src/components/AppointmentDetailsModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-32",
+      "claim": "Vendors — Lists repointed to the CRM vendor hub; dead practice.vendor_* lookups and stale category sentinels removed. (PR #2707, #2708, #2709)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2708,
+          "titleMatch": "crm_vendors",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2709,
+          "titleMatch": "practice.vendor_",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "\\.from\\(['\"]practice['\"]\\).*vendor_",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "pr",
+          "number": 2707,
+          "titleMatch": "vendor",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ],
+      "finding": "PR #2707 is cited but is the DME product picker removal, not the vendor lists. #2708, #2709 and the code check out.",
+      "proposed_text": "Vendors — Lists repointed to the CRM vendor hub; dead practice.vendor_* lookups and stale category sentinels removed. (PR #2708, #2709)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2708,
+          "titleMatch": "crm_vendors",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2709,
+          "titleMatch": "practice.vendor_",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "\\.from\\(['\"]practice['\"]\\).*vendor_",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn06-33",
+      "claim": "★ Inventory — Free-form bulk upload (no purchase order required), promoted to the page header. (PR #2591, #2550)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2591,
+          "titleMatch": "free-form Bulk Upload",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2550,
+          "titleMatch": "bulk upload",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "BulkUploadInventoryFreeFormModal",
+          "paths": [
+            "frontend/src/pages/inventory-management"
+          ],
+          "expect": {
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "rn06-34",
+      "claim": "★ Inventory — FDA HCT/P recall lookup view and page. (PR #2580)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2580,
+          "titleMatch": "recall lookup",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "FDA HCT/P Recall Lookup",
+          "paths": [
+            "frontend/src/pages/inventory-management/Inv_RecallLookup.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-35",
+      "claim": "Inventory — New conservative product types (Surgical Instrument, PPE, General Supply). (PR #2535)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2535,
+          "titleMatch": "PPE",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "label: \"(Surgical Instrument|PPE|General Supply)\"",
+          "paths": [
+            "frontend/src/pages/inventory-management/commons/Enums.ts"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "rn06-36",
+      "claim": "Inventory — Forensic audit trail (immutability triggers, FDA chain-of-custody). (PR #2579)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2579,
+          "titleMatch": "immutability triggers",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "CREATE OR REPLACE FUNCTION public.fda_chain_of_custody(",
+          "paths": [
+            "backend/supabase/migrations/20260621150000_external_party_audit_trail_closure.sql"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-37",
+      "claim": "★ Practice Onboarding — New admin hub with guided patient import + chart-data import modules (wounds, visit history). (PR #2642)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2642,
+          "titleMatch": "Onboarding Hub",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "file",
+          "path": "frontend/src/components/import/ImportModuleShell.tsx",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-38",
+      "claim": "★ Team Chat — Unified chat with case linking and Kudos threads; consolidated notification pipeline. (PR #2649, #2652, #2653, #2654)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2649,
+          "titleMatch": "Kudos",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2652,
+          "titleMatch": "emit-notification",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2653,
+          "titleMatch": "notification readers",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2654,
+          "titleMatch": "unified chat",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Kudos\"",
+          "paths": [
+            "frontend/src/components/teamChat/ConversationCard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "file",
+          "path": "backend/supabase/functions/emit-notification/catalog.ts",
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-39",
+      "claim": "Business Development — Dashboard scoped to the logged-in rep; load race condition fixed. (PR #2651)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2651,
+          "titleMatch": "rep scoping",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        }
+      ]
+    },
+    {
+      "id": "rn06-40",
+      "claim": "★ Progress Notes — the note does not invent undocumented plan items. Clinical-entity and medication checks keep plan items, entities, and medications that were not documented from appearing on the PDF as if they had been entered.",
+      "checks": [
+        {
+          "type": "grep",
+          "note": "the clinical-entity and medication checks (progressNoteGuardrails.ts) run only inside this generator",
+          "pattern": "<ProgressNoteGenerator[ />]",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The clinical-entity and medication checks (services/progressNoteGuardrails.ts, PR #2622) run only in useProgressNoteGenerator, used only by components/progress-notes/ProgressNoteGenerator.tsx, which nothing renders at v1.1.345. The stored PDF is built by the perfectNote renderer, which prints 'Not documented.' for blank fields (see September 2026).",
+      "proposed_text": "★ Progress Notes — Zero-fabrication checks. Clinical-entity and medication checks for the progress note were added. (PR #2622) Update (Nov 2026): the current progress note does not use these checks; it is built a different way. See the September 2026 release notes and Note honesty guardrails.",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2622,
+          "titleMatch": "zero-fabrication",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "<ProgressNoteGenerator[ />]",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "from ['\"][^'\"]*components/progress-notes['\"]",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true
+        }
+      ]
+    },
+    {
+      "id": "rn06-41",
+      "claim": "Analytics — Product usage instrumentation (PostHog) and error tagging (Sentry), behind the scenes. (PR #2541, #2545)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2541,
+          "titleMatch": "PostHog",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2545,
+          "titleMatch": "user tagging",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "posthog.init",
+          "paths": [
+            "frontend/src/lib/analytics/posthog.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sentry.setUser",
+          "paths": [
+            "frontend/src/lib/logging/sentry.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "rn06-42",
+      "claim": "Reliability — Saves are unconditional; DB safeguards against duplicate visits and double-billing. (PR #2611, #2612, #2613, #2643)",
+      "checks": [
+        {
+          "type": "pr",
+          "number": 2612,
+          "titleMatch": "kill every save-time 422",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2613,
+          "titleMatch": "strict-validation 422",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2643,
+          "titleMatch": "duplicate visits",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 422",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts",
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "pr",
+          "number": 2611,
+          "titleMatch": "save"
+        }
+      ],
+      "finding": "PR #2611 is cited but its title is about something else. #2612, #2613, #2643 and the code check out.",
+      "proposed_text": "Reliability — Visit saves no longer fail on save-time validation; appointment creation no longer fails on strict validation; DB safeguards against duplicate visits and double-billing. (PR #2612, #2613, #2643)",
+      "proposed_checks": [
+        {
+          "type": "pr",
+          "number": 2612,
+          "titleMatch": "kill every save-time 422",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2613,
+          "titleMatch": "strict-validation 422",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "pr",
+          "number": 2643,
+          "titleMatch": "duplicate visits",
+          "mergedFrom": "2026-06-01",
+          "mergedTo": "2026-06-25"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: 422",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts",
+            "backend/supabase/functions/create-appointment/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ]
+    }
+  ]
+}

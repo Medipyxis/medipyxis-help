@@ -1,0 +1,1199 @@
+{
+  "title": "Respond to clinic requests",
+  "source": "vendor-portal/respond-to-requests",
+  "url": "https://help.medipyxis.com/vendor-portal/respond-to-requests/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "vpq-01",
+      "claim": "Clinic Requests is where a clinic-side IVR turns into a real order on your desk. Every request in this queue is attributed to your catalog, came from an approved-tether clinic, and is waiting on you to accept it, ship it, or decline it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Clinic Requests</h1>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Route path=\"/requests\" element={<VendorIdentityGate><VendorRequestsPage /></VendorIdentityGate>} />",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRoutes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const runAction = (order_id: string, action: 'accept' | 'ship' | 'decline') => {",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-02",
+      "claim": "You are signed in to the vendor portal as vendor_admin or vendor_user.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "Every vendor role (including vendor_sales) can open Requests."
+    },
+    {
+      "id": "vpq-03",
+      "claim": "Your company has at least one approved tether with a clinic. Requests from suspended, revoked, or terminated tethers never surface here — that guardrail lives on the read path.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-04",
+      "claim": "Attribution flows: your catalog push → clinic accepts → product carries your vendor id → the clinic's IVR-to-order step stamps the order with your id.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.is_bulk && <span className=\"ml-2 text-xs text-gray-400\">(bulk)</span>}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, vendor_id, facility_id, order_name, category, status, provider_request_id, created_at\",",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The vendor_id on the order is checked; the full attribution chain is not."
+    },
+    {
+      "id": "vpq-05",
+      "claim": "Two kinds of requests show up on /vendor/requests: IVR-derived orders (inventory_orders_v2 rows with a provider request id) and bulk orders (no provider request id).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.is_bulk && <span className=\"ml-2 text-xs text-gray-400\">(bulk)</span>}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, vendor_id, facility_id, order_name, category, status, provider_request_id, created_at\",",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-06",
+      "claim": "Columns: Request (with a (bulk) tag), Product (name, SKU, HCPCS/Q-code), Qty, Status — Pending (1), Shipped (2), Completed (4), Actions — Accept, Ship, Decline, greyed out once the request has shipped.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.is_bulk && <span className=\"ml-2 text-xs text-gray-400\">(bulk)</span>}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, vendor_id, facility_id, order_name, category, status, provider_request_id, created_at\",",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Request</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Qty</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Actions</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "s === 2 ? 'Shipped' : s === 4 ? 'Completed' : s === 1 ? 'Pending'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipped = r.status === 2 || r.status === 4;",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={shipped}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-07",
+      "claim": "The Refresh button re-pulls the queue on demand; the page is otherwise read-only until you act.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".order(\"created_at\", { ascending: false })",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => void refetch()}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-08",
+      "claim": "Actions here write to the tables the clinic watches — the clinic sees your response inside minutes of you clicking.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// IVR-derived → set the provider request Declined (clinic-visible via IVR tracking).",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//              (clinic-visible); bulk (no provider_request_id): audit note only.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ],
+      "reason": "Ship and IVR-derived Decline change clinic-visible rows; 'within minutes' is not checked, and Accept and bulk Decline do not change clinic-visible state."
+    },
+    {
+      "id": "vpq-09",
+      "claim": "Accept acknowledges the request. No status change on the shared order; the clinic does not see movement at Accept. It writes an audit-log entry to your side.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Acknowledge only — no inventory_orders_v2.status change.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await audit(\"request_accepted\", { note: body.note ?? null });",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-10",
+      "claim": "Ship moves the clinic order to Shipped (status 2) and creates the shipment projection (an Advance Ship Notice tied to the existing order — not a new order).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-11",
+      "claim": "Their receiving team can now expect the box, and the same shipment will pre-stage in their receiving queue when it arrives.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'portal_request'",
+          "paths": [
+            "frontend/src/hooks/useClinicVendorReceiving.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Shipments created from a request have origin 'portal_request', which the clinic check-in list does not include (useClinicVendorReceiving.ts at v1.1.345), so they do not appear in the clinic's check-in panel.",
+      "proposed_text": "(Remove.)"
+    },
+    {
+      "id": "vpq-12",
+      "kind": "advice",
+      "claim": "See Create and track shipments for the fields the shipment carries (carrier, tracking number, expected date, lot detail).",
+      "reason": "Cross-reference; shipment fields are verified in live-vendor-portal-shipments.json. A shipment created by Ship on this page has no carrier or tracking (see vpq-17)."
+    },
+    {
+      "id": "vpq-13",
+      "claim": "Ship is a forward-only transition. Once a request shows Shipped you cannot re-open it from this page — corrections happen on the shipment record.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Request</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Qty</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Actions</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "s === 2 ? 'Shipped' : s === 4 ? 'Completed' : s === 1 ? 'Pending'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipped = r.status === 2 || r.status === 4;",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={shipped}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-14",
+      "claim": "Decline: IVR-derived — moves the clinic-side provider request to Declined; the clinic sees the decline immediately. Bulk — records an audit note only; the clinic order stays open.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// IVR-derived → set the provider request Declined (clinic-visible via IVR tracking).",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//              (clinic-visible); bulk (no provider_request_id): audit note only.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpq-15",
+      "kind": "advice",
+      "claim": "Use Decline for anything you cannot fulfill: out of stock, discontinued, tether-scope mismatch, or a catalog error."
+    },
+    {
+      "id": "vpq-16",
+      "claim": "Field workflow: open Requests; new requests land at the top; Accept to hand to fulfillment; Ship when the box goes out.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".order(\"created_at\", { ascending: false })",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => void refetch()}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Acknowledge only — no inventory_orders_v2.status change.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "await audit(\"request_accepted\", { note: body.note ?? null });",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-17",
+      "claim": "Enter carrier, tracking number, and any lot detail on the shipment record (linked from the request).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/vendor/shipments/",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The request has no link to a shipment record and Ship takes no tracking input (VendorRequestsPage.tsx).",
+      "proposed_text": "Ship does not ask for a carrier or tracking number.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "act.mutate({ order_id, action }, { onSettled: () => void refetch() });",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "tracking",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpq-18",
+      "claim": "Click Decline with a short reason if you cannot fulfill.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Reason",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Decline has no reason field (VendorRequestsPage.tsx).",
+      "proposed_text": "Click Decline if you cannot fulfill. Decline does not ask for a reason.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// IVR-derived → set the provider request Declined (clinic-visible via IVR tracking).",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//              (clinic-visible); bulk (no provider_request_id): audit note only.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpq-19",
+      "claim": "Watch the clinic-side status column update on your next refresh. The Home page also aggregates open requests, so the queue drains as you work.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useVendorProviderRequests",
+          "paths": [
+            "frontend/src/pages/vendor/VendorHomePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The vendor Home page does not load requests (no useVendorProviderRequests in VendorHomePage.tsx).",
+      "proposed_text": "Click Refresh to see status changes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".order(\"created_at\", { ascending: false })",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => void refetch()}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-20",
+      "claim": "Tether scope — a request never appears from a clinic whose relationship is not approved; if a tether goes revoked/suspended/terminated, the request drops out of your queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-21",
+      "claim": "Optimistic guard on Ship — forward-only; refuses to re-fire on a request that already shows Shipped. You cannot accidentally double-ship from another tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-22",
+      "claim": "PHI minimum-necessary — request rows carry the clinic id, product info, and quantities; patient identifiers on the underlying IVR are handled by the clinic.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.is_bulk && <span className=\"ml-2 text-xs text-gray-400\">(bulk)</span>}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, vendor_id, facility_id, order_name, category, status, provider_request_id, created_at\",",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-23",
+      "claim": "After you Ship: the clinic-side order flips to Shipped; your Shipments list gets a new ASN (/vendor/shipments).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipmentNumber = `SH-${requestId.slice(0, 8)}`;",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prestaged_order_id: order.id,",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (order.status !== ORDER_PENDING && order.status !== 0) {",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", order.status) // optimistic concurrency guard (C5)",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "reason": "The shipment record is created; its appearance on /vendor/shipments is not separately checked."
+    },
+    {
+      "id": "vpq-24",
+      "claim": "When the product is consumed at the clinic, the resulting Use Event joins the shipment lot to the patient (initials + birth year only) and eventually drives the auto-drafted invoice on your terms.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "note": "auto-drafting must be able to run",
+          "pattern": "'schedule', '0 2 * * *',  'fn', 'invoice-draft-run'",
+          "paths": [
+            "backend/supabase/migrations/20260727130100_invoice_draft_and_webhook_cron.sql"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Auto-drafted invoices are not produced at v1.1.345: the job runs at 06:10 UTC but only drafts between 02:00 and 02:59 UTC (see live-vendor-portal-invoices-and-payment.json vpi-04).",
+      "proposed_text": "When the product is used at the clinic, the Use Event shows the patient's initials and year of birth.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{evt.patient_display.initials}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorUseEventsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// PHI-safe: view exposes patient_initials + birth_year only.",
+          "paths": [
+            "backend/supabase/functions/vendor-list-use-events/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-25",
+      "claim": "Troubleshooting: expected order not in queue — tether not approved or product not attributed to your catalog.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{r.is_bulk && <span className=\"ml-2 text-xs text-gray-400\">(bulk)</span>}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"id, vendor_id, facility_id, order_name, category, status, provider_request_id, created_at\",",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-26",
+      "claim": "Troubleshooting: Ship button disabled — request already shows Shipped or Completed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Request</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Product</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Qty</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Status</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Actions</th>",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "s === 2 ? 'Shipped' : s === 4 ? 'Completed' : s === 1 ? 'Pending'",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shipped = r.status === 2 || r.status === 4;",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={shipped}",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-27",
+      "claim": "Troubleshooting: Decline did not update on the clinic side — bulk request without a provider request id; bulk declines record an audit note only.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// IVR-derived → set the provider request Declined (clinic-visible via IVR tracking).",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "//              (clinic-visible); bulk (no provider_request_id): audit note only.",
+          "paths": [
+            "backend/supabase/functions/vendor-act-on-request/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason",
+          "paths": [
+            "frontend/src/pages/vendor/VendorRequestsPage.tsx"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    },
+    {
+      "id": "vpq-28",
+      "claim": "Troubleshooting: requests re-surface as soon as the tether returns to approved.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Requests\", path: \"/vendor/requests\"",
+          "paths": [
+            "frontend/src/components/app-shell/VendorShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".in(\"facility_id\", approvedClinicIds)",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".eq(\"status\", \"approved\");",
+          "paths": [
+            "backend/supabase/functions/vendor-list-provider-requests/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "vpq-29",
+      "kind": "advice",
+      "claim": "Related: Auto-rendered from related: in frontmatter.",
+      "reason": "Page-template placeholder text leaked into the live page; remove it."
+    }
+  ]
+}

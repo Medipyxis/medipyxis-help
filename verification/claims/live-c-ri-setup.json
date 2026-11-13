@@ -1,0 +1,308 @@
+{
+  "title": "Configure Referral Intake for your facility",
+  "source": "modules/referral-intake/setup",
+  "url": "https://help.medipyxis.com/modules/referral-intake/setup/",
+  "claims": [
+    {
+      "id": "ri-su-01",
+      "claim": "Referral Intake does not have a separate setup wizard; what you can configure is which roles can see the feature.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Referral Intake\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "[Ii]ntake ?[Ss]etup|[Rr]eferral ?[Ss]etup|IntakeSettings|ReferralSettings",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-02",
+      "claim": "Open Organization Role Config from the Administrator hub.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-03",
+      "claim": "That page turns features on or off per role for an organization.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Configure which features each role can access per organization. Organization admins only.\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleFeature(role, feature)",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-04",
+      "claim": "It does not set fax numbers, SLA timers, OCR thresholds, payer catalogs, or auto-assignment rules.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "fax|sla|ocr|payer|auto-?assign",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-05",
+      "claim": "Roles you can assign include Administrator, Clinical Manager, Clinical Director, Clinician, Referral Coordinator, Business Development Representative, Business Development Manager, Finance/Accounts Payable, Vendor Coordinator, and Biller.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"clinical_director\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present",
+          "note": "the roles on Organization Role Config are its ROLES list"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "absent",
+          "note": "the page would need to print display labels, not role keys"
+        }
+      ],
+      "finding": "Organization Role Config lists ten roles from its own ROLES array (frontend/src/pages/administrator/OrgRoleConfigPage.tsx:26-37): admin, clinical_manager, medical_director, clinician, referral_coordinator, bd_rep, bd_manager, finance_ap, vendor_coordinator, biller. It prints the raw key with underscores replaced (:272), so the rows read \"admin\", \"clinical manager\", \"medical director\", \"bd rep\", \"finance ap\" and so on. There is no Clinical Director row there; the labelled list in the sentence is USER_ROLES (frontend/src/constants/roles.ts), which this page does not use.",
+      "proposed_text": "The page lists ten roles, shown by their system names: admin, clinical manager, medical director, clinician, referral coordinator, bd rep, bd manager, finance ap, vendor coordinator, and biller.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^  \"(admin|clinical_manager|medical_director|clinician|referral_coordinator|bd_rep|bd_manager|finance_ap|vendor_coordinator|biller)\",$",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": {
+            "count": 10
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-06",
+      "claim": "There is no role named intake_coordinator.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "intake_coordinator",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-07",
+      "claim": "Referral Intake in the sidebar opens the Patient Intake board.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Referral Intake\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Patient Intake",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-08",
+      "claim": "Fax Review Queue in the sidebar (and the Fax Queue button on the board) opens the fax review page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Review Queue\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Fax Review Queue item in the live sidebar (frontend/src/components/AppShell.tsx:629-756). The Fax Queue button on the board does open it (Referrals.tsx:3313). Other routes in: the Fax Review Queue tile under Fax Center (MorePage.tsx:134; Fax Center is AppShell.tsx:751) and ⌘K \"Fax review queue\" (AppShell.tsx:815).",
+      "proposed_text": "The Fax Queue button on the board, the Fax Review Queue tile under Fax Center in the sidebar, and ⌘K \"fax review queue\" all open the fax review page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`/facility/${targetFacility}/fax-review-queue`",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax Review Queue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax review queue\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-09",
+      "claim": "Inbound faxes appear there once they have been received.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"fax_processing_queue\")",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fax_processing_queue",
+          "paths": [
+            "backend/supabase/functions"
+          ],
+          "expect": "present",
+          "note": "a server path fills the queue from received faxes"
+        }
+      ]
+    },
+    {
+      "id": "ri-su-10",
+      "claim": "If a role cannot see Referral Intake, check that role's feature access in Organization Role Config; Facility Settings → Fax, Intake SLAs, Payers → Request add, or Referral Rules are not part of this flow.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "note": "sidebar items are filtered by feature access"
+        },
+        {
+          "type": "grep",
+          "pattern": "Intake SLAs|Referral Rules|Request add",
+          "paths": [
+            "frontend/src"
+          ],
+          "excludeTests": true,
+          "expect": "absent"
+        }
+      ]
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

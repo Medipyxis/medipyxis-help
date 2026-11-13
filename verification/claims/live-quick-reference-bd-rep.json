@@ -1,0 +1,887 @@
+{
+  "title": "BD rep cheat sheet",
+  "source": "quick-reference/bd-rep",
+  "url": "https://help.medipyxis.com/quick-reference/bd-rep/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "qbd-01",
+      "claim": "Your loop: cover your practices, log every touch, let Medipyxis attribute ROI back to you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid_amount",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "ROI (MTD) on the BD Dashboard is an estimate, referrals this month × $3,500 (BdDashboard.tsx frontend/src/pages/BdDashboard.tsx:2885); no paid-claim or revenue attribution is computed.",
+      "proposed_text": "Your loop: cover your practices and log every touch in CRM, so your activity and referrals show on the BD Dashboard. ROI (MTD) — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { QuickAddStrip } from \"../components/bd-dashboard/QuickAddStrip\";",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ROI (MTD)</p>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedROI = referralsThisMonth * estimatedRevenuePerReferral;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-02",
+      "claim": "Tracked automatically: referrals received from every practice you own.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals This Month",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientQuery = patientQuery.eq(\"bd_rep_id\", user.id);",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (userIsAdmin && selectedBdRepFilter !== \"ALL\") {",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-03",
+      "claim": "Tracked automatically: visits completed and revenue tied to those referrals.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "paid_amount",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "BdDashboard.tsx reads no paid amounts; the only revenue figure is the $3,500-per-referral estimate (frontend/src/pages/BdDashboard.tsx:2886).",
+      "proposed_text": "ROI (MTD) — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ROI (MTD)</p>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedROI = referralsThisMonth * estimatedRevenuePerReferral;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-04",
+      "claim": "Tracked automatically: your activities (calls, visits, spend) logged from the quick-add strip.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mtdSpend: crmMtdSpend,",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Log Call",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Visit",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Spend",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Record Voice Note\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-05",
+      "claim": "Tracked automatically: cost to serve (activity time × your loaded cost).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "loaded cost",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No loaded-cost or cost-to-serve calculation exists anywhere in frontend/src (case-insensitive 'loaded cost' has no hit).",
+      "proposed_text": "(Remove: Medipyxis does not calculate cost to serve.) A quick-add strip with your month-to-date counts and spend.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "mtdSpend: crmMtdSpend,",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-06",
+      "claim": "Log every practice touch, same day: CRM → practice → Log Call / New Visit / Add Spend (or voice).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The quick-add strip (Log Call, New Visit, Add Spend, Record Voice Note) is on the CRM list page and BD Dashboard (Crm.tsx frontend/src/pages/Crm.tsx:3398), not inside a practice; inside a practice the actions are Call, Visit and Note (frontend/src/pages/CrmPracticeDetail.tsx:584).",
+      "proposed_text": "Log every practice touch with the quick-add strip on CRM or the BD Dashboard: Log Call, New Visit, Add Spend, or Record Voice Note. Log a touch on one practice: CRM → open the practice → Call, Visit or Note.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<QuickAddStrip",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Log Call",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Visit",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Add Spend",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Record Voice Note\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"note\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-07",
+      "claim": "Update practice contact info as needed: CRM → practice → Overview → Edit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Edit button removed */}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The practice header's Edit button was removed (CrmPracticeDetail.tsx frontend/src/pages/CrmPracticeDetail.tsx:228).",
+      "proposed_text": "(Remove this row: there is no Edit button on the practice header.) Record new contacts: CRM → open the practice → Additional Contacts → Add.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"addContact\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-08",
+      "claim": "Record new contacts when met: CRM → practice → + Add Contact.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "+ Add Contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The control is Additional Contacts → Add (CrmPracticeDetail.tsx frontend/src/pages/CrmPracticeDetail.tsx:1550).",
+      "proposed_text": "Record new contacts: CRM → open the practice → Additional Contacts → Add.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"addContact\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-09",
+      "claim": "KPI: Referrals this month, on the BD Dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals This Month",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-10",
+      "kind": "advice",
+      "claim": "KPI target: referrals this month ↑ vs last month."
+    },
+    {
+      "id": "qbd-11",
+      "claim": "KPIs: Conversion rate (BD Dashboard, target > 80%) and Cost per converted referral (BD Dashboard, target < $150).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Conversion Rate",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Cost per",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "BdDashboard.tsx has no conversion-rate or cost-per-referral KPI ('Conversion Rate' and 'Cost per' have no hit).",
+      "proposed_text": "Referrals This Month — new patients this month credited to you (an admin can filter by rep). ROI (MTD) — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend. Active Pipeline — not calculated yet; it always shows $0k.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Referrals This Month",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patientQuery = patientQuery.eq(\"bd_rep_id\", user.id);",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "} else if (userIsAdmin && selectedBdRepFilter !== \"ALL\") {",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ROI (MTD)</p>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedROI = referralsThisMonth * estimatedRevenuePerReferral;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Active Pipeline",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activePipeline: 0,",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": false,
+          "pattern": "activePipeline:\\s*[^0n ]",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activePipeline =",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "${(kpiData.activePipeline / 1000).toFixed(0)}k",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-12",
+      "claim": "KPI: Inactive practices — BD → Practices → filter: no activity 30d — investigate.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "no activity 30d",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No such filter; the CRM status filter has Follow-up Due and Cold (Crm.tsx frontend/src/pages/Crm.tsx:4120).",
+      "proposed_text": "Practices that need attention: CRM → status filter: Follow-up Due or Cold.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"follow-up-due\">Follow-up Due</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"cold\">Cold</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-13",
+      "claim": "Shortcut: log an activity quickly — Practice detail → L.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "e.key === \"l\"",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No 'l' key handler exists in frontend/src.",
+      "proposed_text": "Log a touch on one practice: CRM → open the practice → Call, Visit or Note.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => onAction(\"note\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-14",
+      "claim": "Shortcut: find a practice — ⌘K + practice name.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"practice\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "⌘K opens Quick Jump (AppShell.tsx frontend/src/components/AppShell.tsx:1141), which searches pages, not practices.",
+      "proposed_text": "Find a practice: CRM → Search practices... ⌘K / Ctrl+K (Quick Jump), then type the page name, goes to a page such as CRM Home or BD Dashboard.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"CRM Home\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-15",
+      "claim": "Shortcut: open today's plan — G then T.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key === \"g\"",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No 'g' key handler exists in frontend/src.",
+      "proposed_text": "(Remove: there is no G-then-T shortcut.) ⌘K / Ctrl+K (Quick Jump), then type the page name, goes to a page such as CRM Home or BD Dashboard.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"CRM Home\"",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-16",
+      "claim": "Round-robin referrals: when a new practice sends a referral before you've claimed it, the round-robin assigns it based on your territory. Check the Unattributed queue weekly on BD → Dashboard to claim any that routed incorrectly.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Unattributed",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Round-robin on the BD Dashboard tracks practice contact cycles (BdDashboard.tsx frontend/src/pages/BdDashboard.tsx:4316); there is no Unattributed referral queue.",
+      "proposed_text": "The BD Dashboard shows your round-robin progress: how many of your practices you have contacted in the current cycle.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Round-robin progress: practices contacted in the current cycle\"",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{dailySuggestions.cycle.practices_touched} of {dailySuggestions.cycle.practices_total} this cycle",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-17",
+      "claim": "How ROI is calculated: Net ROI per practice = (sum of paid claims for visits originated by this practice) − (sum of your activity cost for this practice) − (sum of rep spend budget allocated to this practice). Time horizon is rolling 12 months.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rolling 12",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "No such calculation exists; ROI (MTD) = referrals this month × $3,500 (frontend/src/pages/BdDashboard.tsx:2886).",
+      "proposed_text": "ROI (MTD) — an estimate: referrals this month × $3,500. It is not based on paid claims or on your spend.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">ROI (MTD)</p>",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const estimatedRevenuePerReferral = 3500; // Average revenue per referral",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedROI = referralsThisMonth * estimatedRevenuePerReferral;",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qbd-18",
+      "claim": "Ask your manager to adjust loaded cost rates in Admin → BD Settings.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "loaded cost",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "There is no loaded-cost setting anywhere in frontend/src.",
+      "proposed_text": "(Remove: there is no loaded-cost setting.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "loaded cost",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "ignoreCase": true
+        }
+      ]
+    }
+  ]
+}

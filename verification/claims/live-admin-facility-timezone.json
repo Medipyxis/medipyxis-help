@@ -1,0 +1,707 @@
+{
+  "title": "Set your facility timezone",
+  "source": "admin/facility-timezone",
+  "url": "https://help.medipyxis.com/admin/facility-timezone/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "tz-01",
+      "claim": "Every facility in Medipyxis has one canonical timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timezone: z.string().min(1, \"Timezone is required\"),",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const facilityTz = currentFacility?.timezone || \"America/New_York\";",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f01",
+      "claim": "That timezone is what the scheduling grid, appointment reminders, chart timestamps, and provider handoff views resolve to. Set it once during facility setup and every downstream surface follows it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "handoff view",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deliberately not the facility's zone.",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Signature timestamps print in the device timezone, not the facility's (utils/formatters.ts:198); there is no \"provider handoff view\" in frontend/src; the Fleet Calendar route view uses a provider's own timezone when set (services/fleetCalendarService.ts:1441).",
+      "proposed_text": "Every facility has one timezone. New appointments are booked in it, and the scheduling screens show times in it. Signature timestamps on signed notes print in the timezone of the device that makes the PDF, with the zone abbreviation, not in the facility timezone.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timezone: z.string().min(1, \"Timezone is required\"),",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const facilityTz = currentFacility?.timezone || \"America/New_York\";",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deliberately not the facility's zone.",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timeZoneName: \"short\",",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f02",
+      "claim": "Before you start: You have the admin or superadmin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(userRole|currentRole) (!==|===) \"admin\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Access is the Facilities feature (user-routes.tsx:603).",
+      "proposed_text": "You can open Facilities in the sidebar.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Facilities\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-02",
+      "claim": "You know which timezone the facility operates in (the physical clinic location, not the head office). If clinicians drive to patients across state lines, decide whether this is a multi-timezone service area.",
+      "kind": "advice"
+    },
+    {
+      "id": "tz-f03",
+      "claim": "Open Admin → Facilities and click the facility you want to configure. If you are creating a new facility, click + Add Facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Facilities is a sidebar item with a per-row Edit button; Add Facility is only enabled for Medipyxis support roles (pages/FacilityDashboard.tsx:469).",
+      "proposed_text": "Open Facilities, find the facility, and click its Edit button. New locations are added by Medipyxis support.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleEditFacility(facility)}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "userRole === \"superadmin\" || userRole === \"customersupport\";",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"Contact Medipyxis support to add a location\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-06",
+      "claim": "Find the Timezone dropdown on the facility form. Pick from the eight supported US timezones: Eastern (ET), Central (CT), Mountain (MT), Arizona (no DST), Pacific (PT), Alaska (AKT), Hawaii (HST), Atlantic (AST), stored as America/New_York, America/Chicago, America/Denver, America/Phoenix, America/Los_Angeles, America/Anchorage, Pacific/Honolulu, America/Puerto_Rico.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Timezone <span className=\"text-red-500\">*</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{US_TIMEZONES.map((tz) => (",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/New_York': 'Eastern (ET)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Chicago': 'Central (CT)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Denver': 'Mountain (MT)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Phoenix': 'Arizona (no DST)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Los_Angeles': 'Pacific (PT)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Anchorage': 'Alaska (AKT)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Pacific/Honolulu': 'Hawaii (HST)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'America/Puerto_Rico': 'Atlantic (AST)',",
+          "paths": [
+            "frontend/src/utils/tz.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f04",
+      "claim": "Multi-timezone service area — Check this box only if the facility routinely books visits in more than one timezone. When enabled, individual appointments can carry their own timezone override; when disabled, every appointment is booked in the facility timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "multi_timezone",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx",
+            "frontend/src/components/CreateAppointmentModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The box is saved with the facility but nothing in booking reads it; every appointment is booked in the facility timezone (components/AppointmentBookingModal.tsx:801).",
+      "proposed_text": "The Multi-timezone service area box is saved with the facility, but booking does not use it: every appointment is booked in the facility timezone either way.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Multi-timezone service area",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "multi_timezone",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "multi_timezone",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx",
+            "frontend/src/components/CreateAppointmentModal.tsx",
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f05",
+      "claim": "Save. The change takes effect immediately for new appointments. Existing appointments keep the timezone they were booked in.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{US_TIMEZONE_LABELS[appt.timezone",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button is Save Changes (components/FacilityAddEditModal.tsx:1284); appointments are stored as instants and lists re-render them in the current facility timezone (components/AppointmentManagementCard.tsx:848), so they do not keep a booked timezone.",
+      "proposed_text": "Click Save Changes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-xs sm:text-sm\">Save Changes</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f06",
+      "claim": "Fleet Calendar and Clinician Calendar render every appointment slot in the facility timezone. The banner at the top of the booking modal shows which timezone is being used.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerTimeZone: clinician?.timezone || this.facilityTimezone,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The timezone shows as a badge next to Time in the booking window, not a banner; the Fleet Calendar route view uses each provider's own timezone when set (services/fleetCalendarService.ts:1441).",
+      "proposed_text": "Booking: the time you enter is read in the facility timezone. The badge next to Time in the booking window shows which timezone that is. Calendars: the clinician calendar and appointment lists show times in the facility timezone.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{US_TIMEZONE_LABELS[currentFacility?.timezone as keyof typeof US_TIMEZONE_LABELS] || currentFacility?.timezone || 'Eastern'}",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const facilityTz = currentFacility?.timezone || \"America/New_York\";",
+          "paths": [
+            "frontend/src/pages/ClinicianCalendar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "formatDateTime(row.startAt, currentFacility?.timezone);",
+          "paths": [
+            "frontend/src/components/AppointmentManagementCard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f07",
+      "claim": "Appointment reminders — the send time is calculated against the facility timezone so a patient receives a 24-hour reminder at 9:00 a.m. their local morning, not at 6:00 a.m.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"09:00\"",
+          "paths": [
+            "backend/supabase/functions/_shared/patient-appointment-alerts.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The reminder is due 24 hours before the visit (functions/_shared/patient-appointment-alerts.ts:277), not at 9:00 a.m.; the facility timezone only sets 9 p.m.–8 a.m. quiet hours, and reminders run only where patient alerts are switched on.",
+      "proposed_text": "Patient appointment reminders go out only at facilities where Medipyxis has switched patient appointment alerts on. The reminder is due about 24 hours before the visit, and messages due between 9 p.m. and 8 a.m. in the facility timezone wait until the morning.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const REMINDER_LEAD_MS = 24 * 60 * 60_000;",
+          "paths": [
+            "backend/supabase/functions/_shared/patient-appointment-alerts.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const PATIENT_QUIET_HOURS = { start: \"21:00\", end: \"08:00\" } as const;",
+          "paths": [
+            "backend/supabase/functions/_shared/patient-appointment-alerts.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"id, timezone, patient_appointment_alerts_enabled\")",
+          "paths": [
+            "backend/supabase/functions/_shared/patient-appointment-alerts-io.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "out.set(f.id, { enabled: f.patient_appointment_alerts_enabled === true, timezone: f.timezone });",
+          "paths": [
+            "backend/supabase/functions/_shared/patient-appointment-alerts-io.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "patient_appointment_alerts_enabled",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "absent",
+          "excludeTests": true,
+          "note": "no screen switches it on; Medipyxis sets it"
+        }
+      ]
+    },
+    {
+      "id": "tz-f08",
+      "claim": "Chart timestamps on the patient chart and progress notes are stored in UTC but displayed in the facility timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deliberately not the facility's zone.",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Progress-note signature times print in the device timezone (utils/formatters.ts:198). Not confirmed.",
+      "proposed_text": "(remove the bullet)"
+    },
+    {
+      "id": "tz-f09",
+      "claim": "Signature timestamps on signed notes show both the UTC time and the local time in the facility timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deliberately not the facility's zone.",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "They show one time, in the timezone of the device that makes the PDF, with the zone abbreviation (utils/formatters.ts:198).",
+      "proposed_text": "Signature timestamps on signed notes print in the timezone of the device that makes the PDF, with the zone abbreviation, not in the facility timezone.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Deliberately not the facility's zone.",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timeZoneName: \"short\",",
+          "paths": [
+            "frontend/src/utils/formatters.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f10",
+      "claim": "If a facility is created without a timezone (for example through the bulk uploader), Medipyxis defaults to America/New_York (Eastern). Change this before booking your first appointment — moving a facility timezone after appointments exist does not retro-adjust already booked slots.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "bulk",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "There is no facility bulk uploader for customers; the add form starts on Eastern and switches to the state's timezone (components/FacilityAddEditModal.tsx:562); booking falls back to Eastern when no timezone is saved (components/AppointmentBookingModal.tsx:801).",
+      "proposed_text": "A new facility form starts on Eastern and switches to the main timezone of the state you pick, until you choose a timezone yourself. If a facility has no timezone saved, booking falls back to Eastern (America/New_York).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "timezone: \"America/New_York\",",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (mode !== \"add\" || timezoneTouchedRef.current) return;",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const stateDefault = STATE_DEFAULT_TIMEZONE[formData.state];",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-t1",
+      "claim": "Troubleshooting: Appointment shows the wrong time to the patient — facility timezone is Eastern by default but the clinic is Pacific — update the facility record, then reschedule affected appointments.",
+      "kind": "advice"
+    },
+    {
+      "id": "tz-f11",
+      "claim": "Troubleshooting: Two clinicians see the same slot at different times because one is in a different timezone client-side; the calendar always renders in facility timezone — refresh the browser.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerTimeZone: clinician?.timezone || this.facilityTimezone,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Fleet Calendar route view can use a provider's own timezone (services/fleetCalendarService.ts:1441), so \"always renders in facility timezone\" is false.",
+      "proposed_text": "(remove the row)"
+    },
+    {
+      "id": "tz-14",
+      "claim": "Troubleshooting: DST shifted appointments by an hour — facility is on America/Phoenix or Pacific/Honolulu which do not observe DST — confirm the facility's actual timezone; switch if wrong.",
+      "kind": "advice"
+    },
+    {
+      "id": "tz-f12",
+      "claim": "Troubleshooting: A visit in another state is booked in the wrong timezone — Multi-timezone service area is off — enable it, then edit the appointment and set its per-appointment timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "multi_timezone",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx",
+            "frontend/src/components/CreateAppointmentModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No per-appointment timezone exists; booking always uses the facility timezone (components/AppointmentBookingModal.tsx:801).",
+      "proposed_text": "A visit in another state is booked in the facility timezone; per-appointment timezones are not available. Enter the time as it reads in the facility timezone.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "resolveApptTz(",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx",
+            "frontend/src/components/CreateAppointmentModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const bookingTimeZone = currentFacility?.timezone || 'America/New_York';",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "tz-f13",
+      "claim": "Facility timezone is separate from user profile locale. Individual clinicians do not carry their own scheduling timezone — every clinician working at a facility sees that facility's timezone.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "providerTimeZone: clinician?.timezone || this.facilityTimezone,",
+          "paths": [
+            "frontend/src/services/fleetCalendarService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Users have their own Timezone field and the Fleet Calendar route view uses it when set (services/fleetCalendarService.ts:1441).",
+      "proposed_text": "(remove the paragraph)"
+    }
+  ]
+}

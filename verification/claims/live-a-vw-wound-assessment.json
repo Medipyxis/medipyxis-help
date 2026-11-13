@@ -1,0 +1,1461 @@
+{
+  "title": "Complete the Wound Assessment (section 7)",
+  "source": "modules/visit-wizard-ehr/wound-assessment",
+  "url": "https://help.medipyxis.com/modules/visit-wizard-ehr/wound-assessment/",
+  "claims": [
+    {
+      "id": "wa-01",
+      "claim": "Document all active wounds in section 7 (Wound Assessment) of the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Step 7\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": {
+            "count": 1
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CompactWoundCaseSetupVisit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const VisitWizardV4 = lazy(() => import('@/components/VisitWizardV4'));",
+          "paths": [
+            "frontend/src/pages/VisitWizardV2Page.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-02",
+      "claim": "Section 8 (Previous Treatment) is where ABI is documented; if you intend to order compression, enter the ankle-brachial index there.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "\\bABI\\b|ankle.brachial",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/PreviousTreatmentsVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Previous Treatments (step 8, PreviousTreatmentsVisit.tsx) has no ABI field. ABI is recorded on the step 4 perfusion record (VitalsAssessmentVisit.tsx:480) or typed into the Compression Therapy card in step 9 (CompressionSafetySection.tsx:260, rendered at ConservativeCareInterventionVisit.tsx:4077).",
+      "proposed_text": "ABI is recorded in step 4 (Objective Assessment, perfusion). If it is missing when you add compression, you can enter it in the Compression Therapy card in step 9.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "right_abi: watch(\"perfusion.right_abi\") || null,",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/VitalsAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ABI — right",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompressionSafetySection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CompressionSafetySection",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-03",
+      "claim": "Missing ABI on a compression order now raises a soft warning rather than blocking you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { holdsDialog: false, message: ABI_REQUIRED_MESSAGE };",
+          "paths": [
+            "frontend/src/services/compressionRecommendation.ts"
+          ],
+          "expect": "absent",
+          "note": "would hold only if missing ABI no longer locks the dialog"
+        }
+      ],
+      "finding": "With no ABI on file, the compression dialog's Done button stays disabled with \"ABI is required before compression therapy can be ordered.\" (compressionRecommendation.ts:381 and 422; CompressionDialogDoneButton used at ConservativeCareInterventionVisit.tsx:5138).",
+      "proposed_text": "If no ABI is on file, the Done button in the Compression Therapy dialog stays disabled with the message \"ABI is required before compression therapy can be ordered.\" Enter the ABI to continue.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"ABI is required before compression therapy can be ordered.\";",
+          "paths": [
+            "frontend/src/services/compressionRecommendation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { holdsDialog: false, message: ABI_REQUIRED_MESSAGE };",
+          "paths": [
+            "frontend/src/services/compressionRecommendation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<CompressionDialogDoneButton",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/ConservativeCareInterventionVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-04",
+      "claim": "Before you start: you have completed steps 1-6. Reach step 7 by completing steps 1-6 in sequence.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "isSectionLocked|sectionLocked|canOpenSection|previousSectionsComplete",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present",
+          "note": "a sequence gate would need some lock on opening a step"
+        }
+      ],
+      "finding": "The wizard is a single accordion. Clicking any step opens it, with no order gate (VisitWizardV4.tsx:16945).",
+      "proposed_text": "Open step 7 (Wound Assessment) from the step list. Steps do not have to be completed in order.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setActiveAccordionSection(value || \"\");",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-05",
+      "claim": "The step navigator highlights Wound Assessment when you arrive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"In Progress\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"text-blue-900\"",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-06",
+      "claim": "Step 7 opens with a list of wounds carried forward from the patient's chart; select the wound to assess it.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Select wounds to treat in this visit",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundSelectionWithRemoveHandler",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-07",
+      "claim": "Click Add Wound to document a new one.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Add Wound\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The step 7 button reads \"Add New Wound\" (VisitWizardV4.tsx:16372).",
+      "proposed_text": "Click Add New Wound to document a new one.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Add New Wound\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AddNewWoundButton",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-08",
+      "claim": "Each wound carries a Treating / Monitoring status; Monitoring shows a yellow marker.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"monitoring\">Monitoring</option>",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"treating\">Treating</option>",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-yellow-500\"",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundSwitcher",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-09",
+      "claim": "Monitoring relaxes some required fields for the visit.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return wound?.visit_treatment_mode === \"monitoring\";",
+          "paths": [
+            "frontend/src/utils/wizardRequiredFields.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "DON'T require a photo this visit",
+          "paths": [
+            "frontend/src/utils/wizardRequiredFields.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-10",
+      "claim": "A Monitoring wound stays Monitoring on the next visit's reload until you flip it back to Treating.",
+      "checks": [],
+      "finding": "Not provable from code. The form-shape helper keeps visit_treatment_mode when a wound entry passes through it (wound-form-shape.ts:182), and comments say it carries across visits, but whether the next visit's wound load copies it depends on the draft and copy-forward path, which needs a browser test."
+    },
+    {
+      "id": "wa-11",
+      "claim": "Wound # is auto-assigned and read-only for existing wounds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Wound #",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx",
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The form has no Wound # field. The wound switcher shows the wound's position, e.g. \"1 of 3\" (WoundSwitcher.tsx:191).",
+      "proposed_text": "With more than one wound, the wound switcher shows which wound you are on (for example, 1 of 3).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{activeWoundIndex + 1} of {wounds.length}",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-12",
+      "claim": "Anatomic Location is a precise anatomic site, editable per wound.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Auto-populated from the Anatomical Site Selector. To change, use the wound location selector above.",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Specific Area\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AnatomicalSitePicker from \"@/components/AnatomicalSitePicker\";",
+          "paths": [
+            "frontend/src/components/WoundSelectorModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-13",
+      "claim": "Laterality: L (Left), R (Right), B (Bilateral).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'midline', label: 'Midline' },",
+          "paths": [
+            "frontend/src/constants/anatomicalSites.ts"
+          ],
+          "expect": "absent",
+          "note": "the list is complete only if there are no further options"
+        }
+      ],
+      "finding": "Laterality also offers Midline and Not Applicable (anatomicalSites.ts:90-96).",
+      "proposed_text": "Laterality: Left, Right, Bilateral, Midline, or Not Applicable.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'bilateral', label: 'Bilateral' },",
+          "paths": [
+            "frontend/src/constants/anatomicalSites.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'midline', label: 'Midline' },",
+          "paths": [
+            "frontend/src/constants/anatomicalSites.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: 'na', label: 'Not Applicable' },",
+          "paths": [
+            "frontend/src/constants/anatomicalSites.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-14",
+      "claim": "Onset Date is entered with a date picker.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Add Onset Details\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { StandardDateInput } from \"@/components/ui/standard-date-input\";",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-15",
+      "claim": "Duration (weeks) is auto-calculated from Onset Date and editable.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Duration (auto-calculated)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "updateFormState({ duration",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "an editable duration would need a writer"
+        }
+      ],
+      "finding": "Duration is a read-only display computed from the onset date (CompactWoundCaseSetupVisit.tsx:5411-5418); it has no input.",
+      "proposed_text": "Duration is calculated from the onset date and cannot be edited directly; change the onset date to change it.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Duration (auto-calculated)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? calculateDuration(formState.onsetDate)",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-16",
+      "claim": "Etiology options are DFU, VLU, PU, Arterial, Mixed, Surgical, Traumatic, and Other (Other requires free-text clarification).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Other\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Other etiology. The list (CompactWoundCaseSetupVisit.tsx:3771-4012) is Pressure Injury, Diabetic Foot Ulcer, Venous Leg Ulcer, Arterial Ulcer, Mixed Arterial-Venous, Surgical Wound, Atypical Wound, Malignant Wound, Fungating Wound, Trauma Wound, Moisture-Associated Skin Damage (MASD), and Infection / Cellulitis / Abscess.",
+      "proposed_text": "Select Wound Etiology: Pressure Injury, Diabetic Foot Ulcer, Venous Leg Ulcer, Arterial Ulcer, Mixed Arterial-Venous, Surgical Wound, Atypical Wound, Malignant Wound, Fungating Wound, Trauma Wound, Moisture-Associated Skin Damage (MASD), or Infection / Cellulitis / Abscess.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Pressure Injury\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Mixed Arterial-Venous\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Trauma Wound\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Moisture-Associated Skin Damage (MASD)\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "name: \"Infection / Cellulitis / Abscess\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-17",
+      "claim": "Diabetic foot ulcers are graded on the Wagner scale (Wagner 0-5).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: '0', name: 'Grade 0'",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: '5', name: 'Grade 5'",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundInfectionStatusSection",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-18",
+      "claim": "Pressure stage options: Stage I, Stage II, Stage III, Stage IV, Unstageable, DTI.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Stage (I|II|III|IV)\\b",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Pressure Injury stages use Arabic numerals and longer labels: \"Stage 1 - Non-blanchable\" ... \"Stage 4 - Deep tissues and bone\", \"Unstageable\", \"Deep Tissue Injury\", \"Unspecified Stage\" (CompactWoundCaseSetupVisit.tsx:3775-3785).",
+      "proposed_text": "For a Pressure Injury, choose Stage 1 to Stage 4, Unstageable, Deep Tissue Injury, or Unspecified Stage.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"stage_1\", label: \"Stage 1 - Non-blanchable\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"stage_4\", label: \"Stage 4 - Deep tissues and bone\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"dti\", label: \"Deep Tissue Injury\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"unspecified\", label: \"Unspecified Stage\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-19",
+      "claim": "Measurements: Length (cm), Width (cm), Depth (cm); Area cm² is auto-calculated as Length × Width.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Length (cm)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Width (cm)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Depth (cm)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const calculatedArea = parseFloat(((length as number) * (width as number)).toFixed(2));",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-20",
+      "claim": "Troubleshooting: Area cm² does not update when Length or Width is empty.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (length !== null && (length as number) > 0 && width !== null && (width as number) > 0) {",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-21",
+      "claim": "Record tunneling depth and direction, and undermining by o'clock position and depth.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Tunneling present\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Click positions on clock face\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Undermining present\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+From Position\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-22",
+      "claim": "Tissue composition has five fields: Granulation, Slough, Necrotic, Epithelial, Eschar.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Granulation (%)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Slough (%)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Necrotic (%)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Epithelial (%)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Eschar (%)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundTissueAssessmentVisit",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-23",
+      "claim": "The five tissue fields are checked against a total of exactly 100%.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return total === 100;",
+          "paths": [
+            "frontend/src/utils/wizardRequiredFields.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Total Tissue Coverage:",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-24",
+      "claim": "The running total indicator turns red if the sum exceeds or falls below 100%.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "calculateTotalPercentage() < 100",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present",
+          "note": "a red state under 100 would need this branch"
+        }
+      ],
+      "finding": "The total is red only above 100%, green at exactly 100% and blue below 100% with a \"Remaining\" count (WoundTissueAssessmentVisit.tsx:941-968).",
+      "proposed_text": "The Total Tissue Coverage indicator is red above 100%, green at exactly 100%, and blue below 100% with the remaining percentage shown.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-red-50 border-red-300\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? \"bg-green-50 border-green-300\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"bg-blue-50 border-blue-300\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Remaining: {100 - calculateTotalPercentage()}%",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-25",
+      "claim": "The Next button remains disabled until the five tissue percentages sum to exactly 100 (also: Next disabled when a required field is missing; click Next to advance to step 8).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Next\\s*$|>\\s*Next\\s*<",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx",
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx",
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Step 7 has no Next button; you leave it by opening another step. Gaps never block: wizard validation is switched off (featureFlags.ts:25), and Mark as Complete with a gap closes the step with the warning \"Wound assessment marked complete with gaps\" (VisitWizardV4.tsx:17891).",
+      "proposed_text": "If tissue percentages do not total 100 or a field is missing, Mark as Complete still closes the step, with a warning listing what is recommended for complete documentation.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_VALIDATION_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Wound assessment marked complete with gaps\",",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-26",
+      "claim": "Exudate Amount options: None, Scant, Small, Moderate, Large, Copious.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"copious\", label: \"Copious\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"small\", label: \"Small\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Exudate Amount offers None, Scant, Light, Moderate, Heavy (dropdownOptions.ts:91-97).",
+      "proposed_text": "Exudate Amount: None, Scant, Light, Moderate, or Heavy.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"light\", label: \"Light\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"heavy\", label: \"Heavy\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{DROPDOWN_OPTIONS.exudateAmount.map((opt) => (",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-27",
+      "claim": "Exudate Type options include Serous, Serosanguineous, Sanguineous, Purulent.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"serous\", label: \"Serous\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"serosanguineous\", label: \"Serosanguineous\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"sanguineous\", label: \"Sanguineous\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"purulent\", label: \"Purulent\" },",
+          "paths": [
+            "frontend/src/utils/dropdownOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{DROPDOWN_OPTIONS.exudateType.map((opt) => (",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-28",
+      "claim": "Record Odor as yes or no.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Exudate Odor</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"yes\">Yes</option>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-29",
+      "claim": "Periwound condition options: Intact, Macerated, Erythematous, Callus, Hyperpigmented.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"callus\">",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Surrounding Skin Assessment > Condition offers Intact, Macerated, Erythematous, Indurated, Excoriated, Hyperpigmented, Hyperkeratosis; there is no Callus (WoundTissueAssessmentVisit.tsx:1390-1396).",
+      "proposed_text": "Surrounding skin condition: Intact, Macerated, Erythematous, Indurated, Excoriated, Hyperpigmented, or Hyperkeratosis.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"intact\">Intact</option>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"indurated\">Indurated</option>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"hyperkeratosis\">Hyperkeratosis</option>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-30",
+      "claim": "Wound Edges options include Attached, Epibole, Rolled.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"attached_edge\", label: \"Attached Edge\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"epibole_rolled_edges\", label: \"Epibole/rolled edges\" },",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-31",
+      "claim": "Rate Pain 0-10 by dragging the slider or typing a number.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "type=\"range\"|<Slider",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Pain Level (0-10) is a row of tappable number pills (PainPillRow, WoundTissueAssessmentVisit.tsx:1485-1486), not a slider.",
+      "proposed_text": "Rate Pain Level (0-10) by tapping a number.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ">Pain Level (0-10)</Label>",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<PainPillRow",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundTissueAssessmentVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-32",
+      "claim": "Infection signs checklist: check all that apply (erythema, warmth, swelling, purulent drainage, malodor, increased pain, fever, lymphangitis, cellulitis).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Erythema',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Purulent drainage',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Malodor',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Cellulitis',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Lymphangitis (red streaking)',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Fever or hypothermia',",
+          "paths": [
+            "frontend/src/services/woundInfectionStatus.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "type=\"checkbox\"",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/WoundInfectionStatusSection.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-33",
+      "claim": "Click Photo Upload, then select a photo from the device camera or library.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Photo Upload\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There are two buttons, \"Open Camera\" and \"Upload Photo\" (CompactWoundCaseSetupVisit.tsx:5477 and 5500); none is labelled Photo Upload.",
+      "proposed_text": "Click Open Camera to take a photo, or Upload Photo to pick one from the device.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Open Camera\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Upload Photo\\s*$",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-34",
+      "claim": "Click Save Wound; the wound record saves and you return to the wound list.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Save Wound\\s*$|>\\s*Save Wound\\s*<",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx",
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Save Wound button. The visit autosaves as you type, and the step ends with \"Mark as Complete\" (VisitWizardV4.tsx:17924). Use the wound switcher to move between wounds.",
+      "proposed_text": "Your entries save automatically. When every wound is documented, click Mark as Complete at the bottom of step 7.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "^\\s+Mark as Complete\\s*$",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "useWizardAutoSave({",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-35",
+      "claim": "Validation: if any required field is missing or tissue percentages do not sum to 100, the wizard shows inline errors; red outlines mark fields that must be resolved before advancing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_VALIDATION_DISABLED = false;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Validation enforcement is off (featureFlags.ts:25). Gaps show as an amber advisory list and nothing must be fixed before moving on (VisitWizardV4.tsx:17891).",
+      "proposed_text": "If something is missing, the wizard lists it as recommended for complete documentation; you can still finish the visit.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export const WIZARD_VALIDATION_DISABLED = true;",
+          "paths": [
+            "frontend/src/utils/featureFlags.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: `Recommended for complete documentation: ${gapSummary}`,",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-36",
+      "claim": "On save, the LCD audit fires and refreshes the LCD ambient badge; items like Dimensions measured today, Tissue percentages sum to 100, and Precise anatomical location flip from amber to green.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dimensions measured today",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Precise anatomical location",
+          "paths": [
+            "frontend/src",
+            "backend/supabase/functions"
+          ],
+          "excludeTests": true,
+          "expect": "present"
+        }
+      ],
+      "finding": "No such checklist items exist. The header badge re-checks 1.2 s after form changes, not on save (AmbientBadgeMount.tsx:27), and shows one colour with a flag count, not per-item rows.",
+      "proposed_text": "As you type, the LCD badge in the wizard header re-checks the visit and shows All clear (green) or a flag count (amber).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "debounceMs: 1200,",
+          "paths": [
+            "frontend/src/components/lcd-navigator/AmbientBadgeMount.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<AmbientBadgeInHeader />",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-37",
+      "claim": "Use the wound thumbnail strip at the top of step 7 to switch between wounds.",
+      "checks": [
+        {
+          "type": "grep",
+          "ignoreCase": true,
+          "pattern": "thumbnail",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Wounds are switched with the wound switcher bar (Prev/Next buttons and \"1 of N\"), not thumbnails (WoundSwitcher.tsx:191).",
+      "proposed_text": "If you document more than one wound, use the wound switcher at the top of the form to move between wounds.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{activeWoundIndex + 1} of {wounds.length}",
+          "paths": [
+            "frontend/src/components/WoundSwitcher.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<WoundSwitcher",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-38",
+      "claim": "Troubleshooting: photo upload fails when the file exceeds 10 MB or is an unsupported format.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "10 \\* 1024 \\* 1024",
+          "paths": [
+            "frontend/src/services/photoPipeline"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The photo pipeline accepts originals up to 75 MB (photoPipeline/index.ts:36) and compresses them to 500 KB (photoPipeline/constants.ts:18); there is no 10 MB limit.",
+      "proposed_text": "Photo upload fails: the photo is very large (over 75 MB) or cannot be read. Retake it with the camera button or try a smaller photo.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const MAX_INPUT_BYTES = 75 * 1024 * 1024;",
+          "paths": [
+            "frontend/src/services/photoPipeline/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Unsupported photo\",",
+          "paths": [
+            "frontend/src/components/visit-wizard/visit/CompactWoundCaseSetupVisit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "wa-39",
+      "claim": "Many Medicare LCDs require photographic documentation at each visit for graft coverage; at least one photo per wound per visit is recommended by most facility protocols.",
+      "checks": [],
+      "finding": "Payer-policy and facility-protocol statement, not product behaviour; cannot be checked from code."
+    }
+  ],
+  "commit": "5d93bb5 (live on main)",
+  "provenance": "Extracted from the live page text in the MEDA-379 first pass (medipyxis-help commit 27e4ddb), before any rewrite."
+}

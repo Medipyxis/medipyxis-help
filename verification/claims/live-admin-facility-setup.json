@@ -1,0 +1,653 @@
+{
+  "title": "Set up a facility in your first week",
+  "source": "admin/facility-setup",
+  "url": "https://help.medipyxis.com/admin/facility-setup/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "fs-01",
+      "claim": "Complete these tasks during the first week after a new facility goes live so that referrals, billing, and scheduling work correctly from day one.",
+      "kind": "advice"
+    },
+    {
+      "id": "fs-f01",
+      "claim": "Before you start: You need the admin or superadmin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(userRole|currentRole) (!==|===) \"admin\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Access is the Facilities feature: user-routes.tsx:603; FacilityDashboard has no admin role check.",
+      "proposed_text": "You can open Facilities in the sidebar. Administrators always can.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Facilities\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<RequireFeature feature=\"Facilities\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// (2026-05-17): \"admin should be like superadmin of their own account, until",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-adv",
+      "claim": "Have the facility's main fax number, business hours, NPI, and Tax ID ready.",
+      "kind": "advice"
+    },
+    {
+      "id": "fs-f02",
+      "claim": "Open the Organization Selector in the top-left header and select the facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Organization Selector; you switch with Switch Facility in the profile menu (components/AppShell.tsx:1706).",
+      "proposed_text": "If you work at more than one facility, open your profile menu (top right), click Switch Facility, and pick the facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Switch Facility Button */}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={activeFacilitiesCount <= 1 || !isOnline}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-04",
+      "claim": "Look at the browser address bar — the URL reads /facility/{uuid}/dashboard. Copy the uuid segment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/dashboard\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const path = `/facility/${currentFacility.id}/dashboard`;",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f03",
+      "claim": "Share this UUID with any integration partners or API consumers; it is the stable identifier for this facility across all Medipyxis APIs.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility_uuid",
+          "paths": [
+            "backend/supabase/functions/vendor-api"
+          ],
+          "expect": "present",
+          "note": "would hold if a public API took the facility ID"
+        }
+      ],
+      "finding": "There is no customer-facing Medipyxis API that takes a facility ID (no facility_uuid parameter in the vendor API). Not confirmed.",
+      "proposed_text": "Medipyxis support may ask for the facility ID."
+    },
+    {
+      "id": "fs-12a",
+      "claim": "The Facilities list is at /facilities. Confirm your facility shows Active in the STATUS column before proceeding.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facilities\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{facility.active ? \"Active\" : \"Inactive\"}",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f04",
+      "claim": "Set the fax number: Navigate to Facilities in the sidebar. Click Actions → Edit next to your facility. Enter the 10-digit fax number in the Fax Number field. Click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Actions → Edit",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Edit is a button on the row (pages/FacilityDashboard.tsx:1032), not an Actions menu, and the button is Save Changes (components/FacilityAddEditModal.tsx:1284).",
+      "proposed_text": "Facilities → Edit button on your facility's row → Fax Number → Save Changes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Fax Number$",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-xs sm:text-sm\">Save Changes</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f05",
+      "claim": "The fax number entered here is the outbound caller ID shown to referring practices. Inbound faxes are routed via the More (Fax) module; this field does not change inbound routing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "normalizePhoneNumber(f.fax || \"\") === normalizedRecipient",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Inbound faxes are matched to a facility by this number (functions/receive-fax-webhook/index.ts:343), so the field does change inbound routing. The outbound caller-ID part is true.",
+      "proposed_text": "Faxes sent from Medipyxis for this facility go out from this number, so it must be set up for the facility's fax service; sending is refused while it is blank. Faxes received on that number are filed to this facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "error: \"Facility has no fax caller ID configured\",",
+          "paths": [
+            "backend/supabase/functions/send-fax/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Set facility.fax to a Documo-registered number for this facility before sending.\",",
+          "paths": [
+            "backend/supabase/functions/send-fax/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "normalizePhoneNumber(f.fax || \"\") === normalizedRecipient",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility_id = matchedFacility.id;",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-10",
+      "claim": "In the facility edit panel, enter the facility NPI and Tax ID.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "NPI Code",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Tax Number",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f06",
+      "claim": "NPI and Tax ID are both format-validated as you type. When you enter a valid 10-digit NPI, Medipyxis performs an NPPES lookup and offers to auto-fill the facility's legal name, address, and taxonomy. If NPPES cannot confirm the NPI, a Save anyway? prompt appears.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Save anyway?</",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "NPPES confirmation runs on save; the \"Found in federal NPPES registry\" card fills legal name, address and phone, not taxonomy (components/FacilityAddEditModal.tsx:394); the button reads \"Save anyway\" (components/FacilityAddEditModal.tsx:816).",
+      "proposed_text": "When you enter a 10-digit NPI, Medipyxis looks it up in the NPPES registry and shows a Found in federal NPPES registry card; Use this info fills the Legal / Billing Name, address and phone, Dismiss keeps what you typed. If the registry cannot confirm the NPI, saving stops with \"We can't confirm this NPI is a real registered provider\" and a Save anyway button.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Found in federal NPPES registry",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "legal_name: s.organizationName || s.displayName || prev.legal_name,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "phone: normalizedPhone || prev.phone,",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// dismiss path leaves form fields untouched.",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'We can\\'t confirm this NPI is a real registered provider. Use \"Save anyway\" below if this is a test/dev facility.',",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "data-testid=\"nppes-save-anyway\"",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-13",
+      "claim": "The facility legal name is what appears on payer-facing claim output.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "billing_provider_name: facility?.legal_name || facility?.name || undefined,",
+          "paths": [
+            "frontend/src/services/autoBillingClaimService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f08",
+      "claim": "Set business hours: In the facility edit panel, expand Business Hours. Toggle each day on or off and set Open and Close times in 30-minute increments. Business hours affect the SLA breach timer displayed on the Fax Review Queue and the Referral Intake kanban. Click Save.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Business Hours",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Business Hours setting anywhere in frontend/src.",
+      "proposed_text": "(remove the step)"
+    },
+    {
+      "id": "fs-f09",
+      "claim": "Set intake SLAs: Navigate to Referral Intake settings (Settings gear icon). Set the New Referral SLA and the Financial Clearance SLA. These thresholds drive the red SLA Breach Timer shown on each referral card.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Referral SLA",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Financial Clearance SLA",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Neither \"New Referral SLA\" nor \"Financial Clearance SLA\" exists in frontend/src; intake SLAs are not configurable.",
+      "proposed_text": "(remove the step)"
+    },
+    {
+      "id": "fs-f10",
+      "claim": "Set billing defaults: Navigate to Billing → Charge Master. Confirm the facility's charge rates and, under the Templates tab, the default superbill template. Confirm the correct Default Rendering Provider NPI so it populates CMS-1500 §24J automatically on every new claim.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Default Rendering Provider",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Charge Master holds rates and templates (pages/ChargeMasterPage.tsx:61) but there is no default template and no Default Rendering Provider setting.",
+      "proposed_text": "Click Billing Operations, then Charge Master; add rates in Insurance Charges and Self-Pay Charges. A claim line with no rate is priced at $0.00 and the claim cannot be sent to Stedi; the message reads No price on file for CPT ….",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/billing/charge-master`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<DollarSign className=\"h-4 w-4\" /> Insurance Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<Users className=\"h-4 w-4\" /> Self-Pay Charges",
+          "paths": [
+            "frontend/src/pages/ChargeMasterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"needs_pricing\",",
+          "paths": [
+            "frontend/src/lib/billing/charge_master.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `No price on file for ${label}${atFacility} — add it in Charge Master.`,",
+          "paths": [
+            "backend/supabase/functions/_shared/validateClaimLineCharges.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-f11",
+      "claim": "Result: Your facility is Active, has a fax number, a validated NPI/Tax ID and legal name, enforces business-hour SLAs on Referral Intake, and auto-populates a default rendering provider on new claims.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Business Hours",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Default Rendering Provider",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Business-hour SLAs and a default rendering provider do not exist (no \"Business Hours\"/\"Default Rendering Provider\" in frontend/src).",
+      "proposed_text": "Your facility is Active and has a fax number, a confirmed NPI, Tax Number and legal name.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Edit\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Fax Number$",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"text-xs sm:text-sm\">Save Changes</span>",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'We can\\'t confirm this NPI is a real registered provider. Use \"Save anyway\" below if this is a test/dev facility.',",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "data-testid=\"nppes-save-anyway\"",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-t1",
+      "claim": "Troubleshooting: Facility shows Inactive in the list — not yet activated by Medipyxis support — contact your implementation contact.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "An inactive facility is one that was deactivated; anyone with Facilities can reactivate it from the Deactivated Facilities tab (pages/FacilityDashboard.tsx:1049).",
+      "proposed_text": "A facility not in the list was deactivated: open the Deactivated Facilities tab and click Reactivate on its row.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Deactivated Facilities</span>",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "activeTab === \"active\" ? \"Deactivate\" : \"Reactivate\"",
+          "paths": [
+            "frontend/src/pages/FacilityDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-t2",
+      "claim": "Troubleshooting: NPPES cannot confirm the NPI — re-check the 10-digit NPI; you can still Save anyway if it is correct.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'We can\\'t confirm this NPI is a real registered provider. Use \"Save anyway\" below if this is a test/dev facility.',",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "data-testid=\"nppes-save-anyway\"",
+          "paths": [
+            "frontend/src/components/FacilityAddEditModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fs-t3",
+      "claim": "Troubleshooting: SLA timer never turns red — business hours not saved, or SLA set to 0; Default rendering provider blank — complete Step 6.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Business Hours",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Business hours, SLA settings and a default rendering provider do not exist.",
+      "proposed_text": "(remove the rows)"
+    }
+  ]
+}

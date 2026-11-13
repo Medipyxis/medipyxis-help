@@ -1,0 +1,662 @@
+{
+  "title": "Log in and set your working facility",
+  "source": "getting-started/login-and-setup",
+  "url": "https://help.medipyxis.com/getting-started/login-and-setup/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "ls-00",
+      "claim": "Every Medipyxis session starts with two choices: who am I and which facility am I working in.",
+      "kind": "advice"
+    },
+    {
+      "id": "ls-01",
+      "claim": "Go to https://app.medipyxis.com/login.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return hostname === 'app.medipyxis.com';",
+          "paths": [
+            "frontend/src/utils/envValidation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "['/login', '/forgot-password', '/create-password', '/auth/callback']",
+          "paths": [
+            "frontend/src/utils/fetchPolyfill.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f01",
+      "claim": "Your practice admin may have a vanity subdomain — if so, use the one they gave you; it works the same way.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "hostname\\.(endsWith|includes)\\(['\"]\\.medipyxis\\.com",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Production is recognised as app.medipyxis.com only (utils/envValidation.ts:71); there are no per-practice subdomains.",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "ls-02a",
+      "claim": "Enter your email and password.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter your email\"",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter your password\"",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f02",
+      "claim": "If this is your first login, click First time? Set password and check your email for the magic link. Passwords must be 12+ characters with one number and one symbol.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "First time?",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Password must be at least 12 characters",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no \"First time? Set password\" link on Login.tsx; first sign-in uses the link in the welcome email or Forgot Password?. No 12-character rule exists in frontend/src (the set-password screen requires at least 6 characters).",
+      "proposed_text": "Enter your email and password. On first sign-in, set your password with the link in your welcome email; otherwise click Forgot Password? on the login page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter your email\"",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Enter your password\"",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Forgot Password?",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import { sendWelcomeEmail } from \"@/services/welcomeEmailService\";",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f03",
+      "claim": "Click Sign in. You land on the Dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ">\\s*Sign in\\s*<",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The button reads \"Sign In Securely\" (pages/Login.tsx:359).",
+      "proposed_text": "Click Sign In Securely. You land on the Dashboard.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span>Sign In Securely</span>",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  clinical: '/dashboard',",
+          "paths": [
+            "frontend/src/utils/auth/postAuthDestination.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f04",
+      "claim": "Check the top-left header. The text next to the Medipyxis logo shows your current Organization. Below it, your profile card on the top-right shows your role and current Facility (for example, \"Admin • [clinic name]\").",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{currentOrganization",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No organization name is shown next to the logo (no currentOrganization in AppShell.tsx); the profile button shows \"role • facility\" (components/AppShell.tsx:1633). The live example names a real clinic.",
+      "proposed_text": "Your profile button (top right) shows your name, your email, and your role and current facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{displayName}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{user?.email}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${currentRole} • ${currentFacility.name}`",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f05",
+      "claim": "Switch facility: Click the Organization Selector in the top-left and pick the facility you want. Every sidebar link now scopes to that facility — the URL changes from /facility/{old-uuid}/... to /facility/{new-uuid}/....",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Organization Selector; switching is Switch Facility in the profile menu (components/AppShell.tsx:1706). The URL change is true.",
+      "proposed_text": "Click your profile button, then Switch Facility, and pick the facility; facility pages then open for it (URL /facility/{uuid}/...).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Switch Facility Button */}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const newPath = `/facility/${facilityId}/${remainingPath}`;",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-06a",
+      "claim": "You see the Welcome Back banner with your name, and the sidebar reflects the modules you have permission to use. The green On Duty pill and HIPAA badge appear.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+On Duty$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+HIPAA$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f06",
+      "claim": "The green On Duty pill and HIPAA badge confirm your session is active and compliant.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "isCompliant|hipaaCompliant",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The badges are static labels on the Dashboard banner; nothing checks session activity or compliance to show them (no compliance check in Dashboard.tsx).",
+      "proposed_text": "You see the Welcome Back banner with your name, and the sidebar shows the modules you have permission to use; On Duty and HIPAA badges appear in the banner.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Welcome Back, {userFullName || \"User\"}!",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+On Duty$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+HIPAA$",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return items.filter((item) => facilityCanAccessFeature(item.feature));",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f07",
+      "claim": "Facility is \"sticky\" — Medipyxis remembers the last facility you used and takes you there on next login.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lastFacilityId",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Not confirmed: sign-in lands on /dashboard (utils/auth/postAuthDestination.ts:20) and no saved last-facility setting was found in FacilityContext.tsx.",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "ls-07",
+      "claim": "Header: Medipyxis logo (top-left) — click to return to your dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleFacilityNavigation}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const path = `/facility/${currentFacility.id}/dashboard`;",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-x1",
+      "claim": "Header: Organization Selector (top-left, next to logo) — switch facility/organization.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no Organization Selector; switching is Switch Facility in the profile menu.",
+      "proposed_text": "Click your profile button, then Switch Facility, and pick the facility; facility pages then open for it (URL /facility/{uuid}/...).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Switch Facility Button */}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const newPath = `/facility/${facilityId}/${remainingPath}`;",
+          "paths": [
+            "frontend/src/contexts/FacilityContext.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f08",
+      "claim": "Header: Quick Jump (top-center) — press ⌘K / Ctrl+K to search anything.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "category: \"Patients\", path: \"/patients/",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Quick jump matches page names only (components/AppShell.tsx:1489); it does not search patients or records.",
+      "proposed_text": "Quick jump: press ⌘K / Ctrl+K to jump to a page by name.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Quick jump...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "item.title.toLowerCase().includes(q) ||",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-09a",
+      "claim": "Header: Notifications bell (top-right) — shows action items with badge count.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NotificationBell size=\"lg\" />",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{unreadCount > 99 ? '99+' : unreadCount}",
+          "paths": [
+            "frontend/src/components/NotificationBell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-10a",
+      "claim": "Header: Profile menu (far top-right) — your name, role, facility; click to edit profile or sign out.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{displayName}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{user?.email}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${currentRole} • ${currentFacility.name}`",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Settings$",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Sign Out$",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f09",
+      "claim": "Troubleshooting: \"Invalid credentials\" — typo, or password has expired — click Forgot password on the login page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "password has expired",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The message is \"Invalid email or password. Please try again.\" (utils/authStore.ts:963); passwords do not expire.",
+      "proposed_text": "\"Invalid email or password\" → click Forgot Password? on the login page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "errorMessage = \"Invalid email or password. Please try again.\";",
+          "paths": [
+            "frontend/src/utils/authStore.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Forgot Password?",
+          "paths": [
+            "frontend/src/pages/Login.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-f10",
+      "claim": "Troubleshooting: No facilities listed in selector — your admin hasn't assigned you yet — ask your practice admin to open HR & Compliance → Facility Users and add you.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Organization Selector",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no facility selector list at sign-in; Switch Facility is greyed out with one facility (components/AppShell.tsx:1715). The HR & Compliance → Facility Users fix is right.",
+      "proposed_text": "Switch Facility is greyed out when you have access to only one facility; an admin adds the facility in HR & Compliance → Facility Users.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={activeFacilitiesCount <= 1 || !isOnline}",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/hr-new-user-page?userId=${user.id}`);",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-13",
+      "claim": "Troubleshooting: Sidebar is missing items — your role doesn't have access — admin opens Administrator → Organization Role Config and adjusts your role's features.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "ls-x2",
+      "claim": "Troubleshooting: Page redirects in a loop — stale session cookie — clear cookies for app.medipyxis.com and sign in again.",
+      "kind": "advice"
+    }
+  ]
+}

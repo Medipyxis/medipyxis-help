@@ -1,0 +1,787 @@
+{
+  "title": "Import and export data",
+  "source": "admin/data-import-export",
+  "url": "https://help.medipyxis.com/admin/data-import-export/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "de-00",
+      "claim": "Bring staff and patient records in via bulk upload and the Practice Onboarding pipeline, review ZusHealth patient data in the chart, and export referral and claim records.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "Export (CSV|PDF|Referrals)|exportReferrals|^\\s+Export$",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Bulk employee upload is switched off (components/HrBulkUploadModal.tsx:716) and Referral Intake has no export (Referrals.tsx). Practice Onboarding, ZusHealth in the chart and claim exports are real.",
+      "proposed_text": "Bring patient records in with the Practice Onboarding importer, review ZusHealth patient data in the chart, and export billing records from Billing Operations.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Administrator\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Pull from Zus Health\"",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Export filtered rows to CSV\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-f01",
+      "claim": "Before you start: You need the admin or superadmin role.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(userRole|currentRole) (!==|===) \"admin\"",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Practice Onboarding is reached from the Administrator cockpit and gated by the Administrator feature, not by an admin/superadmin role check in the page (pages/administrator/AdministratorCockpit.tsx:21).",
+      "proposed_text": "Practice Onboarding is on the Administrator cockpit; its card is shown to admins.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ORG_ADMIN_ROLES = [\"admin\"];",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-02",
+      "claim": "For a full practice migration (patients, insurance, medications, wounds, visit history), use the Practice Onboarding pipeline.",
+      "kind": "advice"
+    },
+    {
+      "id": "de-f02",
+      "claim": "Bulk Employee Upload: Navigate to HR & Compliance → Bulk Employee Upload. Click Download CSV Template. Populate the template (first name, last name, email unique per organization, role matching Organization Role Config, phone 10-digit, facility assignment, provider fields). Upload the CSV; the system runs a validation pass and shows errors in a preview. Fix flagged rows, re-upload, and confirm. Rows that pass validation are imported even if others fail.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Bulk Employee Upload tile opens a \"Bulk upload is temporarily disabled.\" message (components/HrBulkUploadModal.tsx:716); staff are added one at a time with New Employee Onboarding.",
+      "proposed_text": "The Bulk Employee Upload tile opens a message that bulk upload is temporarily disabled; add staff with New Employee Onboarding.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-f03",
+      "claim": "To migrate an entire practice's patients and clinical history, navigate to /administrator → Practice Onboarding and work through the pipeline: Patients first, then Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Documents, and Wounds, and finally Visit History.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "importType: 'documents',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present",
+          "note": "Documents before Wounds"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    importType: 'wounds',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Wounds is step 7 and \"Documents & Historical Wound Photos\" step 8, so Documents comes after Wounds (pages/administrator/PracticeOnboarding.tsx:141).",
+      "proposed_text": "Click Administrator in the sidebar, then the Practice Onboarding card. Nine steps in order: Patients; Insurance, Medications, Allergies, Comorbidities, Emergency Contacts, Wounds, Documents & Historical Wound Photos; Visit History.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Administrator\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Patients',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Insurance',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Medications',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Allergies',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Comorbidities',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Emergency Contacts',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Wounds',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Documents & Historical Wound Photos',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Visit History',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    stepNumber: 9,",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "stepNumber: 7,",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-06",
+      "claim": "Each step has its own import module; later steps unlock once their prerequisite (usually Patients) has imported successfully.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    dependsOn: ['patients'],",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    dependsOn: ['wounds'],",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={!unlocked}",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Locked",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-01b",
+      "claim": "Practice Onboarding is the supported path for bulk patient/chart migration (including from other EMRs).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ORG_ADMIN_ROLES = [\"admin\"];",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-f05",
+      "claim": "Imported patients are flagged so their first visit shows a migration-context banner in the Visit Wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pullPatient?.onboarding_type === 'established_transfer' && isFirstMedipyxisVisit && (",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Only patients imported as established transfers get the banner (components/VisitWizardV4.tsx:16894); new-patient imports do not.",
+      "proposed_text": "A patient imported as a transfer from another EHR shows an \"Established Patient — Transferring from …\" banner on their first visit in Medipyxis.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onboarding_type: 'established_transfer',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{pullPatient?.onboarding_type === 'established_transfer' && isFirstMedipyxisVisit && (",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Established Patient — Transferring from",
+          "paths": [
+            "frontend/src/components/VisitWizardV4.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-08",
+      "claim": "Medipyxis integrates with ZusHealth to bring longitudinal patient records (medications, allergies, labs, prior surgeries, vaccinations, conditions) into the patient chart, and to contribute finalized visits back to the patient's external record (TEFCA).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  (medications|allergies|lab_tests|surgeries|vaccinations|\"patient.conditions\"): \"",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const zusContribUrl = Deno.env.get('SUPABASE_URL') + '/functions/v1/zus-contribute-visit';",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-09",
+      "claim": "ZusHealth data is retrieved from the patient chart / pre-charting using the Pull button — not from an admin settings page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Pull from Zus Health\"",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Pull from Zus Health$",
+          "paths": [
+            "frontend/src/components/EnhancedPrechartingTab.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pull from Zus Health",
+          "paths": [
+            "frontend/src/pages/administrator"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "de-10a",
+      "claim": "Imported items show a last-sync pill.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ZusLastSyncPill lastSyncIso={safeData.lastSyncTime ?? null} />",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-f06",
+      "claim": "Imported items show per-row provenance badges indicating their source and date, and appear read-only in the chart.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ZusProvenanceBadge source={item.source} date=",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The badge shows the source only (Zus or Manual), not the date (components/patient/ZusProvenanceBadge.tsx:11); read-only display was not confirmed.",
+      "proposed_text": "A last-sync pill shows how current the data is, and rows show a Zus or Manual source badge.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<ZusLastSyncPill lastSyncIso={safeData.lastSyncTime ?? null} />",
+          "paths": [
+            "frontend/src/components/patient/ZusHealthDataSection.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const label = source === \"zus-health\" ? \"Zus\"",
+          "paths": [
+            "frontend/src/components/patient/ZusProvenanceBadge.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": source === \"manual\" ? \"Manual\"",
+          "paths": [
+            "frontend/src/components/patient/ZusProvenanceBadge.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-f07",
+      "claim": "Contributing data out: when a visit is finalized, Medipyxis automatically contributes it back to the patient's external health record via ZusHealth/TEFCA — no extra step for the clinician.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason: 'patient_not_on_zus'",
+          "paths": [
+            "backend/supabase/functions/zus-contribute-visit/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Contribution is skipped for patients not linked to ZusHealth (functions/zus-contribute-visit/index.ts:585) and for facilities without a ZusHealth connection.",
+      "proposed_text": "When a visit is finalized with Sign & Lock, Medipyxis sends it to ZusHealth automatically, only for patients linked to ZusHealth at facilities connected to ZusHealth.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (involvesSec17 && !is_draft) {",
+          "paths": [
+            "backend/supabase/functions/save-visit-data/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "reason: 'patient_not_on_zus'",
+          "paths": [
+            "backend/supabase/functions/zus-contribute-visit/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const message = ceErr instanceof ZusNotConfiguredError",
+          "paths": [
+            "backend/supabase/functions/zus-contribute-visit/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-r08a",
+      "claim": "ZusHealth sync is subject to the data-sharing agreement between your organization and ZusHealth.",
+      "kind": "external"
+    },
+    {
+      "id": "de-r08b",
+      "claim": "Medipyxis does not modify or delete records sourced from ZusHealth.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "does not modify or delete",
+          "paths": [
+            "backend/supabase/functions/zus-preachart-data"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No code-level guarantee was found; the statement is not confirmed by any product check.",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "de-f09",
+      "claim": "Export referrals: Navigate to Referral Intake. Click the Export button. Select date range, status filter, and format. Download the file. PHI columns are included only if your role has patient-level access.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Export (CSV|PDF|Referrals)|exportReferrals|^\\s+Export$",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Referral Intake (pages/Referrals.tsx) has no Export button or export function.",
+      "proposed_text": "Referral Intake has no export.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Export (CSV|PDF|Referrals)|exportReferrals|^\\s+Export$",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "absent"
+        }
+      ]
+    },
+    {
+      "id": "de-f10",
+      "claim": "Export claims and payments: Navigate to Billing. Apply filters (date range, payer, status) in the Claims or Work Queue view. Use the Export CSV action to download the filtered set. For remittance detail, export from the Payments (ERA) tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "exportClaims(CSV|Csv)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Only the Work Queue has Export CSV (pages/BillingWorkQueuePage.tsx:1063); the Claims tab exports PDF or JSON and marks claims Exported (pages/BillingDashboard.tsx:1442); ERAs download one at a time as PDF.",
+      "proposed_text": "Billing Operations → Work Queue: apply filters and click Export CSV to download the filtered rows. On the Claims tab, select claims and click Export PDF or Export JSON. Exporting marks those claims Exported; it does not send them. On the Payments tab, use the download button on an ERA row (Download ERA as PDF). On the Denials tab, Export CSV downloads the filtered denials.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/billing/work-queue`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Export filtered rows to CSV\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Export CSV$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Export PDF$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Export JSON$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Export selected claims as PDF - AUTO-MARK AS EXPORTED",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim has been exported as PDF or JSON. Ready to submit.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Download ERA as PDF\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={exportDenialsCSV}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={filteredDenials.length === 0}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "de-res",
+      "claim": "Result: Your staff and patients are imported, ZusHealth data flows into the chart with visits contributed back automatically, and your billing and referral teams can self-serve CSV exports.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Bulk upload is temporarily disabled.",
+          "paths": [
+            "frontend/src/components/HrBulkUploadModal.tsx"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "pattern": "Export (CSV|PDF|Referrals)|exportReferrals|^\\s+Export$",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Staff bulk upload is disabled and referrals cannot be exported (see de-f02, de-f09).",
+      "proposed_text": "Your patients are imported, ZusHealth data is available in the chart, and your billing team can export the Work Queue as CSV.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    title: 'Patients',",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "aria-label=\"Export filtered rows to CSV\"",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

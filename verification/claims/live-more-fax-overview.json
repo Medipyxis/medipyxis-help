@@ -1,0 +1,1123 @@
+{
+  "title": "More (Fax) overview",
+  "source": "modules/more-fax/overview",
+  "url": "https://help.medipyxis.com/modules/more-fax/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "fxo-01",
+      "claim": "The Fax Center is the dedicated interface for managing outbound and inbound fax activity — a complement to the automated fax ingestion that flows through Referral Intake.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage outgoing and incoming fax activity.",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const referralRecordsResult = await createReferralRecordsForPatient(",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-02",
+      "claim": "Faxing is available to all roles.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"More\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Fax Center is gated by the per-role \"More\" feature (navigation.ts frontend/src/constants/navigation.ts:154; routes wrapped in <FeatureAccess feature=\"More\"> at frontend/src/user-routes.tsx:1583); org admins switch it per role in Organization Role Config.",
+      "proposed_text": "Fax Center is shown to the roles that have it turned on in Administrator → Organization Role Config.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "feature: \"More\" as Feature,",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FeatureAccess feature=\"More\">",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": {
+            "min": 4
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Configure which features each role can access per organization. Organization admins only.\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleFeature(role, feature)",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-03",
+      "claim": "Image caption: Fax Review Queue — incoming faxes awaiting review or routing.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax Review Queue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "queue_status: \"ready_for_review\",",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-04",
+      "claim": "The Fax Center has three sections: Send Fax Logs, Received Fax Logs, and Fax Review Queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Send Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxSettings\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "MorePage.tsx has four tiles: Outgoing Fax Logs (frontend/src/pages/MorePage.tsx:97), Received Fax Logs, Fax Review Queue and Fax Settings (frontend/src/pages/MorePage.tsx:154). There is no \"Send Fax Logs\" tile.",
+      "proposed_text": "The Fax Center item in the sidebar is where you send faxes and work with the faxes your clinic receives. The page opens with counts of Total Faxes, Successful, Failed and Pending, and four tiles.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/more\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Manage outgoing and incoming fax activity.",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Successful",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs font-medium text-gray-600\">Failed</p>",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs font-medium text-gray-600\">Pending</p>",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Total Faxes",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxLogs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"receivedFaxLog\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxSettings\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-05",
+      "claim": "Send Fax Logs: history of all outbound faxes sent by your facility — date, recipient number, document name, page count, and delivery status.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Pages",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Send Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The tile is Outgoing Fax Logs (frontend/src/pages/MorePage.tsx:97); its table has 9 columns (Status, Patient, Receiving Fax, File Name, Document Type, Sent At, Created At, Sent By, Actions; frontend/src/pages/FaxLogsPage.tsx:656) and no page-count column.",
+      "proposed_text": "Outgoing Fax Logs: send a fax with New Fax, and see the faxes your clinic has sent with their delivery status. Outgoing Fax Logs columns: Status, Patient, Receiving Fax, File Name, Document Type, Sent At, Created At, Sent By and Actions.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Outgoing Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Send faxes, view sent fax history, track delivery status, and monitor fax performance.\"",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "New Fax",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<NewFaxModal",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Receiving Fax",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Document Type",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sent At",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Created At",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Sent By",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Actions",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "colSpan={9}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-06",
+      "claim": "Received Fax Logs: history of all inbound faxes received — date, sender number, page count, and whether the fax was auto-processed or required manual review.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "auto-processed",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "ReceivedFaxLog.tsx has no auto-processed / manual-review indicator; it is the triage inbox (frontend/src/pages/ReceivedFaxLog.tsx:482).",
+      "proposed_text": "Received Fax Logs: the inbox for every incoming fax. Assign a fax to a patient, file it to the patient's chart, or attach it to one of the patient's orders.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Received Fax Logs\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Central inbox for all incoming faxes - triage, assign, and route",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Triage & Assign\"",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<FileToChartButton fax={fax} onFiled={refreshAfterFiling} />",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Attach to Lab/Order\"",
+          "paths": [
+            "frontend/src/pages/ReceivedFaxLog.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-07",
+      "claim": "Fax Review Queue: inbound faxes that could not be automatically matched to a patient or referral; faxes appear there when OCR confidence is below the auto-routing threshold or no matching patient record is found.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shouldAutoCreate = false;",
+          "paths": [
+            "backend/supabase/functions/process-fax-idp/index.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Every received fax (except a failed one with no stored PDF) is queued for review (backend/supabase/functions/receive-fax-webhook/index.ts:700); auto-create is hard-disabled (backend/supabase/functions/process-fax-idp/index.ts:651). There is no auto-routing threshold.",
+      "proposed_text": "Every fax your clinic receives is listed in Received Fax Logs. It is also added to the Fax Review Queue, where Medipyxis reads it and fills in the patient details it finds.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"received_faxes\")",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"fax_processing_queue\")",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "queue_status: \"ready_for_review\",",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const idpUrl = `${supabaseUrl}/functions/v1/process-fax-idp`;",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Skip queue creation only if fax failed AND no PDF was stored in storage",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-08",
+      "claim": "Click the row to open the fax document in the preview pane.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "preview",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Queue rows have no click handler; the row's View button navigates to a separate fax review page (FaxReviewQueue.tsx frontend/src/components/idp/FaxReviewQueue.tsx:751, frontend/src/components/idp/FaxReviewQueue.tsx:344).",
+      "proposed_text": "Click View on the fax's row to open it on its own review page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => handleViewDetails(item.id)}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/fax-review/${queueItemId}`);",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-09",
+      "claim": "Review the content. The panel shows the OCR-extracted text alongside the original document image.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div className=\"grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Right Column: Extracted Data Form",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<iframe",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-10",
+      "claim": "Take action: Link to Referral (associates the fax with an existing referral card), Create Referral (opens the New Referral form with OCR data pre-populated), Dismiss (marks the fax reviewed and non-actionable; it moves to Received Fax Logs), File to patient chart (attaches the fax to an existing patient's Documents tab).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Link to Referral",
+          "paths": [
+            "frontend/src/components/idp"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Dismiss",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "File to patient chart",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "FaxReviewDetail.tsx offers Save Changes (frontend/src/components/idp/FaxReviewDetail.tsx:4059), Reject (frontend/src/components/idp/FaxReviewDetail.tsx:4077) and Approve & Create Patient (frontend/src/components/idp/FaxReviewDetail.tsx:4102). Filing to a chart is done from Received Fax Logs, not the review queue.",
+      "proposed_text": "Medipyxis never creates a patient from a fax on its own. A person opens each fax in the Fax Review Queue, with the document on one side and the extracted fields on the other, and clicks Approve & Create Patient, Save Changes or Reject.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shouldAutoCreate = false; // Auto-create patient disabled; always require manual review",
+          "paths": [
+            "backend/supabase/functions/process-fax-idp/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "requires_manual_review: true,",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div className=\"grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Right Column: Extracted Data Form",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<iframe",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleSave}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Save Changes$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleReject}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Reject$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-11",
+      "claim": "Note: Inbound fax review and referral auto-creation are handled by the Fax Review Queue in Referral Intake, a separate page from the Fax Center.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shouldAutoCreate = false;",
+          "paths": [
+            "backend/supabase/functions/process-fax-idp/index.ts"
+          ],
+          "expect": "absent"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "No auto-creation (backend/supabase/functions/process-fax-idp/index.ts:651), and Fax Review Queue is a Fax Center tile (frontend/src/pages/MorePage.tsx:133).",
+      "proposed_text": "Fax Review Queue: incoming faxes that Medipyxis has read automatically, waiting for a person to turn them into new patients. Medipyxis never creates a patient from a fax on its own. A person opens each fax in the Fax Review Queue, with the document on one side and the extracted fields on the other, and clicks Approve & Create Patient, Save Changes or Reject.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Fax Review Queue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Review & process incoming faxes with automated OCR extraction and patient creation.\"",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": \"Approve & Create Patient\"}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const result = await createPatientFromFax(",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      status: \"NEW\",",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const referralRecordsResult = await createReferralRecordsForPatient(",
+          "paths": [
+            "frontend/src/services/idpService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const shouldAutoCreate = false; // Auto-create patient disabled; always require manual review",
+          "paths": [
+            "backend/supabase/functions/process-fax-idp/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "requires_manual_review: true,",
+          "paths": [
+            "backend/supabase/functions/receive-fax-webhook/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<div className=\"grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6\">",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Right Column: Extracted Data Form",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<iframe",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleSave}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Save Changes$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleReject}",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^ +Reject$",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewDetail.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-12",
+      "claim": "The Fax Center supports filtering by date range and fax number, and exporting to CSV.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "to_number.ilike",
+          "paths": [
+            "backend/supabase/functions/fax-center/index.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Outgoing Fax Logs search covers patient name and file name (frontend/src/pages/FaxLogsPage.tsx:570); dates are Today / This Week / This Month presets. CSV export exists, capped at 5,000 rows (frontend/src/pages/FaxLogsPage.tsx:261).",
+      "proposed_text": "Search by patient name or file name, filter by status (Sent, Pending, Failed, Sending, Draft, Cancelled) and by date (Today, This Week, This Month). Export downloads the filtered list as a CSV file, up to 5,000 rows.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search by patient name or file name...\"",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"sent\">Sent</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"pending\">Pending</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"failed\">Failed</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"sending\">Sending</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"draft\">Draft</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"cancelled\">Cancelled</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"today\">Today</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"week\">This Week</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"month\">This Month</SelectItem>",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toast.warning(\"Export capped at 5,000 records. Narrow your filters for complete data.\");",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: statusFilter !== \"all\" ? statusFilter : undefined,",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-13",
+      "claim": "Outbound fax statuses include draft, pending, sending, sent, delivered, failed, and cancelled.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"draft\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"pending\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"sending\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"sent\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"delivered\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"failed\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "case \"cancelled\":",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "fxo-14",
+      "claim": "Failed faxes can be retried (up to 3 attempts) or cancelled, and each fax has an audit log.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(log.status === \"failed\" || log.status === \"pending\" || log.status === \"draft\") && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Retry is capped at 3 (backend/supabase/functions/fax-center/index.ts:438), but Cancel is shown only for pending or draft faxes (frontend/src/pages/FaxLogsPage.tsx:782). Audit history exists (frontend/src/pages/FaxLogsPage.tsx:804).",
+      "proposed_text": "A failed fax can be retried up to 3 times. A pending or draft fax can be cancelled. Each row has an audit history, and a sent fax can be downloaded.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if (currentRetry >= 3) {",
+          "paths": [
+            "backend/supabase/functions/fax-center/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "disabled={(log.retry_count || 0) >= 3}",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{(log.status === \"pending\" || log.status === \"draft\") && (",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Cancel this fax\"",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"View audit history\"",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Download sent fax\"",
+          "paths": [
+            "frontend/src/pages/FaxLogsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}

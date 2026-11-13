@@ -1,0 +1,519 @@
+{
+  "title": "CRM overview",
+  "source": "modules/crm/overview",
+  "url": "https://help.medipyxis.com/modules/crm/overview/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lcro-01",
+      "claim": "The CRM module is the central directory of referring practices and contacts. It tracks relationships, organizes outreach history, and feeds data to the Business Development dashboard.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/crm\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"practice\")",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-02",
+      "claim": "A Practices / Vendors toggle switches the directory between referring practices and the vendors hub. On the Vendors side, + Add Vendor registers a vendor and you can enable it at specific clinics; practices and vendors are managed as separate lists.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const [crmView, setCrmView] = useState<\"practices\" | \"vendors\">(\"practices\");",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<Plus className=\"w-3.5 h-3.5\" /> Add Vendor",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Enable this vendor at:",
+          "paths": [
+            "frontend/src/components/crm/AddVendorModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-03",
+      "claim": "Video caption: Built-in CRM tour — managing vendors, reps, and referral sources without external tools.",
+      "kind": "advice",
+      "note": "Caption of an embedded YouTube video; the video content was not verified."
+    },
+    {
+      "id": "lcro-04",
+      "claim": "Caption: CRM practices list. Tabs across the top filter by relationship type or assignment.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label=\"Assigned\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"PCP\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"Home Health\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-05",
+      "claim": "Tab All: every practice in your organization's CRM (archived practices are on the Archived tab).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(viewMode === \"all\" && !isInactivePractice) ||",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-06",
+      "claim": "Tab Assigned: practices assigned to the logged-in BD rep.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "practice.assignedUserId === currentUserId",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The Assigned tab shows every practice with any BD rep assigned (frontend/src/pages/Crm.tsx:3038); yours carry a Me badge.",
+      "proposed_text": "Assigned: practices that have a BD rep; yours show a Me badge.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "label=\"Assigned\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practice.assignedUserId &&",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? \"Me\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-07",
+      "claim": "Tab Favorites: practices the rep has starred for quick access.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label=\"Favorites\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onAction(\"toggleFavorite\", practice.id);",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const isCurrentlyFavorite = currentFavorites.includes(userId);",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-08",
+      "claim": "Tabs PCP (primary care physician practices only) and Home Health (home health agencies).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(viewMode === \"pcp\" && practice.is_pcp && !isInactivePractice) ||",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label=\"Home Health\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-09",
+      "claim": "Tab Facility: skilled nursing facilities, hospitals, and other institutional referral sources.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label=\"Facility\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practice.is_facility === true &&",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "note": "The tab lists practices marked as a facility (is_facility); which institutions those are depends on how practices were marked."
+    },
+    {
+      "id": "lcro-10",
+      "claim": "Tab Archived: practices that are no longer active — hidden from route suggestions and searches unless this tab is selected.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Boolean(practice.deleted_at) || practice.archived === true;",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Deno.test(\"archive sets archived and deleted_at\", async () => {",
+          "paths": [
+            "backend/supabase/functions/practice-archive/__tests__/handler.test.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "mode=\"archived\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-11",
+      "claim": "Every call, visit, and spend entry logged from the BD dashboard writes back to the practice's activity record in the CRM. The CRM is the system of record; the BD dashboard is the action layer.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "voice: \"Voice Notes\",",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"spend\">Spend</option>",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"visit\">Visits</option>",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"visit\",",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-12",
+      "claim": "When a practice's referral volume or engagement metrics change, the Next Best Action and AI Route Suggestions widgets on the BD dashboard pick up the change on their next refresh — both recompute on demand (with a short cache), not on an overnight batch.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "'bd-daily-suggestions',",
+          "paths": [
+            "frontend/src/hooks/useDailySuggestions.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "// Daily \"Next Best Action\" queue from the bd-daily-suggestions edge function.",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-13",
+      "claim": "New practices can be added directly in the CRM using + New Practice (top-right).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "+ New Practice",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The CRM button is an icon-only \"+\" with the title \"Add New Practice\" (frontend/src/pages/Crm.tsx:1047); there is no \"+ New Practice\" label.",
+      "proposed_text": "Click the + (Add New Practice) button at the top right of the CRM.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AddPracticeModal",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcro-14",
+      "claim": "New practices can be added inline during referral creation in Referral Intake by clicking + Add new practice in the Practice & PCP section. Both methods create the same CRM record.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Practice & PCP",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "+ Add new practice",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import { AddPracticeModal } from \"components/crm/AddPracticeModal\";",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>Add New Practice</span>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Practice\" : \"Add New Practice\"}",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The Referral Intake button is labelled \"Add New Practice\" (frontend/src/pages/ReferralsNewPage.tsx:4302), not \"+ Add new practice\". It opens the same Add New Practice form as the CRM, so both create the same record.",
+      "proposed_text": "Add New Practice in the CRM, or Add New Practice while creating a referral in Referral Intake; both open the same Add New Practice form.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<AddPracticeModal",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "import { AddPracticeModal } from \"components/crm/AddPracticeModal\";",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<span>Add New Practice</span>",
+          "paths": [
+            "frontend/src/pages/ReferralsNewPage.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{isEditMode ? \"Edit Practice\" : \"Add New Practice\"}",
+          "paths": [
+            "frontend/src/components/crm/AddPracticeModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

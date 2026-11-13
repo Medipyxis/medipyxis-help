@@ -1,0 +1,1840 @@
+{
+  "title": "Practice admin cheat sheet",
+  "source": "quick-reference/practice-admin",
+  "url": "https://help.medipyxis.com/quick-reference/practice-admin/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "qpa-01",
+      "kind": "advice",
+      "claim": "One page. Everything you own across a typical day, week, and month."
+    },
+    {
+      "id": "qpa-02",
+      "claim": "Start of day: check action items and SLA breach alerts — Dashboard → right panel → Action Items.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Action Items panel removed (MEDA-277)",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Dashboard's Action Items panel was removed (Dashboard.tsx frontend/src/pages/Dashboard.tsx:1415).",
+      "proposed_text": "Review incoming faxes waiting for review: Fax Center → Fax Review Queue; watch the SLA column and the \"SLA Breached\" summary.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.sla_breached ? (",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-muted-foreground\">SLA Breached</p>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-03",
+      "claim": "Review fax queue age (target: zero > 24 h): More (Fax) → Fax Review Queue.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"More (Fax)\"",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The sidebar item is Fax Center (navigation.ts frontend/src/constants/navigation.ts:152); there is no More (Fax) item.",
+      "proposed_text": "Review incoming faxes waiting for review: Fax Center → Fax Review Queue; watch the SLA column and the \"SLA Breached\" summary.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.sla_breached ? (",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-muted-foreground\">SLA Breached</p>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Fax Center\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-04",
+      "claim": "Verify all providers are marked On Duty: Fleet Calendar → day view → provider swim lanes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/ops"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Fleet Calendar has no On Duty marker (no 'On Duty' in frontend/src/pages/ops).",
+      "proposed_text": "Check today's schedule by provider: Fleet Calendar → Day view → provider swim lanes.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "const [viewMode, setViewMode] = useState<\"day\" | \"week\" | \"month\">(\"day\");",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const handleDropOnLane = (e: React.DragEvent, providerId: string) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qpa-05",
+      "claim": "Switch facility context: Header → facility name pill → select facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility pill",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The header control is a Switch Facility button (AppShell.tsx frontend/src/components/AppShell.tsx:1706).",
+      "proposed_text": "Switch facility: header → Switch Facility → search or pick a facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AppShell from \"./AppShell\";",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-06",
+      "claim": "Tip: use ⌘K / Ctrl+K (Quick Jump) to navigate to any patient, visit, page, or facility without touching the sidebar.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"patient\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Quick Jump searches pages, features and actions only (CommandBar.tsx frontend/src/components/app-shell/CommandBar.tsx:124).",
+      "proposed_text": "⌘K / Ctrl+K (Quick Jump) goes to any page or feature: search pages, features or actions.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search pages, features, or actions...\"",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-07",
+      "claim": "Daily: approve pending referral assignments — Referral Intake → Ready for Assignment column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Assign</span>",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleAssignClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{referral.status === \"READY_FOR_ASSIGNMENT\" && (",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// If moving to ASSIGNED, open assignment dialog",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-08",
+      "claim": "Daily: confirm no appointments on archived patients — Fleet Calendar → check for Archived patient badge.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "archived",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Fleet Calendar shows no Archived badge; archived patients cannot be booked (AppointmentBookingModal.tsx frontend/src/components/AppointmentBookingModal.tsx:406).",
+      "proposed_text": "Troubleshooting: an archived patient still has an appointment — it was booked before the patient was archived (archived patients cannot be booked); cancel the appointment.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setDateError(\"This patient is archived and cannot be scheduled\");",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-09",
+      "claim": "Daily: review credential expirations due this week — HR & Compliance → Credential Tracker.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-10",
+      "claim": "Daily: check for unanswered Team Chat pings — Team Chat → Conversations.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<span className=\"hidden sm:inline\">Conversations</span>",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{conversations.some((conv) => conv.unread_count > 0) && (",
+          "paths": [
+            "frontend/src/components/teamChat/TeamChatSidebar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-11",
+      "claim": "Daily: monitor IVR queue, flag any stalled requests — Inventory Management → IVR Tracking.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "route: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/pages/InventoryManagement.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "path: \"/inventory-management/ivr-tracking\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qpa-12",
+      "claim": "Keyboard shortcut ⌘K / Ctrl+K: Quick Jump — patient, visit, facility, page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from(\"patient\")",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Quick Jump searches pages, features and actions only; CommandBar.tsx queries no patient table.",
+      "proposed_text": "⌘K / Ctrl+K (Quick Jump) goes to any page or feature: search pages, features or actions.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search pages, features, or actions...\"",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-13",
+      "claim": "Keyboard shortcut ⌘/ / Ctrl+/: help for the current page.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"/\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "AppShell.tsx has no '/' key handler.",
+      "proposed_text": "(Remove: there is no ⌘/ shortcut.) ⌘K / Ctrl+K (Quick Jump) goes to any page or feature: search pages, features or actions.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "if ((event.metaKey || event.ctrlKey) && event.key === \"k\") {",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search pages, features, or actions...\"",
+          "paths": [
+            "frontend/src/components/app-shell/CommandBar.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-14",
+      "claim": "Keyboard shortcut ⌘S / Ctrl+S: save draft on any editable form.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "event.key === \"s\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "AppShell.tsx has no global 's' key handler; ⌘S works only in the billing Coding Review drawer.",
+      "proposed_text": "(Remove: there is no global ⌘S shortcut.)",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Ctrl/Cmd+S = save",
+          "paths": [
+            "frontend/src/components/billing/CodingReviewDrawer.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-15",
+      "kind": "advice",
+      "claim": "SLA targets: zero faxes > 24 h; referral-to-schedule < 24 h from referral created; unbilled encounters cleared within 72 h of visit signature; unmatched ERAs reconciled within 24 h; credential expiry notices actioned same day."
+    },
+    {
+      "id": "qpa-16",
+      "claim": "Fax queue age: More (Fax) → Fax Review Queue → SLA Breach Timer column.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "SLA Breach Timer",
+          "paths": [
+            "frontend/src/components/idp"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The column is SLA, with an SLA Breached summary (FaxReviewQueue.tsx frontend/src/components/idp/FaxReviewQueue.tsx:511).",
+      "proposed_text": "Review incoming faxes waiting for review: Fax Center → Fax Review Queue; watch the SLA column and the \"SLA Breached\" summary.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"faxReviewQueue\",",
+          "paths": [
+            "frontend/src/pages/MorePage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{item.sla_breached ? (",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<p className=\"text-xs text-muted-foreground\">SLA Breached</p>",
+          "paths": [
+            "frontend/src/components/idp/FaxReviewQueue.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-17",
+      "claim": "Referral-to-schedule time: Referral Intake → kanban → Ready for Assignment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Referrals\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Info Needed\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Financial\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Ready for Assignment\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Assigned\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Non-Admit\",",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    title: \"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": {
+            "count": 6
+          },
+          "note": "exactly six column titles in the columns array"
+        }
+      ]
+    },
+    {
+      "id": "qpa-18",
+      "claim": "Unbilled encounters: Billing → Work Queue → Ready preset.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={() => navigate(`/facility/${facilityPathId}/billing/work-queue`)}",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+Work Queue$",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/work-queue\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Quick Actions",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^\\s+(Ready|Pending Doc|Pending Sig|No Show|Not Seen)$",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "min": 5
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{bucketCounts\\.(ready|pendingDoc|pendingSig)\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{rows\\.filter\\(\\(r\\) => r\\.visit_status === \"(No Show|Not Seen)\"\\)\\.length\\}",
+          "paths": [
+            "frontend/src/pages/BillingWorkQueuePage.tsx"
+          ],
+          "expect": {
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "qpa-19",
+      "claim": "ERA posting: auto-posted; reconcile unmatched.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "so there is no manual \"sync\" action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cron\\.schedule.*(stedi|era|835)",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent",
+          "note": "no scheduled ERA polling job"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Match to claim",
+          "paths": [
+            "frontend/src/pages/EraEob.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-20",
+      "claim": "ERA posting location: Billing → ERA / Payments (/era-eob).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA / Payments",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The page is ERA / EOB (BillingDashboard.tsx frontend/src/pages/BillingDashboard.tsx:328); the /era-eob route is correct.",
+      "proposed_text": "ERA posting: matched lines post automatically; unmatched lines are matched on the ERA / EOB page (/era-eob), linked from the Billing overview.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "result = await importEraEvent(supabase, getStediConfig(), kind.transactionIds);",
+          "paths": [
+            "backend/supabase/functions/sync-stedi-responses/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "so there is no manual \"sync\" action",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "cron\\.schedule.*(stedi|era|835)",
+          "ignoreCase": true,
+          "paths": [
+            "backend/supabase/migrations"
+          ],
+          "expect": "absent",
+          "note": "no scheduled ERA polling job"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "value=\"payments\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": {
+            "min": 2
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/era-eob\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "navigate(`/facility/${facilityPathId}/era-eob`)",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "ERA / EOB",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-21",
+      "claim": "Credential expiry notices: HR & Compliance → Credential Tracker.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-22",
+      "claim": "Weekly: run the Claims report (Billing → Reports Center → Claims Reports) and the Account Receivable report (Account Receivable Reports).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/reports-center\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingReportsCenterPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Account Receivable Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-23",
+      "claim": "Weekly: scan the operational Heat Map (patients vs. clinicians) — Oversight Cockpit → Heat Map.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Patients vs Employees',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-24",
+      "claim": "Weekly: audit inactive practices — CRM → Practices → filter by activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "no activity",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "CRM has no activity filter; the status filter has Follow-up Due and Cold (Crm.tsx frontend/src/pages/Crm.tsx:4120).",
+      "proposed_text": "Review practices that need attention: CRM → status filter (Follow-up Due, Cold).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"follow-up-due\">Follow-up Due</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"cold\">Cold</option>",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-25",
+      "claim": "Weekly: verify inventory PAR levels are current — Inventory Management → Main Inventory.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "par_level",
+          "paths": [
+            "frontend/src/pages/ReorderRequestsPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Main Inventory opens Reorder Requests, which has no PAR levels; PAR levels show in the Product Catalog (Products.tsx frontend/src/pages/inventory-management/product-catalog/Products.tsx:631).",
+      "proposed_text": "Check PAR levels on conservative care products: Inventory Management → Product Catalog (red Par Level Reached icon).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{/* Par Level - Only for Conservative, PRP and UM */}",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/AddEditProduct.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Par Level Reached",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "product.category === ProductCategoryEnum.Conservative &&",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(product.par_level || 10) > (product.batch_count || 0);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".or(`expiration_date.gte.${today},expiration_date.is.null`);",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".select(\"id\", { count: \"exact\", head: true })",
+          "paths": [
+            "frontend/src/pages/inventory-management/product-catalog/Products.tsx"
+          ],
+          "expect": "present",
+          "note": "counts lot rows, not quantity"
+        }
+      ]
+    },
+    {
+      "id": "qpa-26",
+      "claim": "Monthly: review revenue geography (Revenue by Zip) — Oversight Cockpit → Heat Map → Revenue by Zip.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Revenue by Zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The view is Billed by zip and plots dollars billed, not revenue received (heatMapDataService.ts frontend/src/services/heatMapDataService.ts:46).",
+      "proposed_text": "Scan the Heat Map (patients vs. clinicians): Oversight Cockpit → Heat Map → Patients vs Employees. Review billing geography: Heat Map → Billed by zip.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Heat Map\",",
+          "paths": [
+            "frontend/src/pages/Analytics.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Patients vs Employees',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Billed by zip',",
+          "paths": [
+            "frontend/src/services/heatMapDataService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-27",
+      "claim": "Monthly: export billing reports (Claims, Insurance Payment, Charges) — Billing → Reports Center.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/facility/:facilityId/billing/reports-center\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<BillingReportsCenterPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Claims Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Account Receivable Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Insurance Payment Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Charges Reports\",",
+          "paths": [
+            "frontend/src/pages/BillingReportsCenterPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-28",
+      "claim": "Monthly: archive or close non-admit referrals — Referral Intake → Non-Admit column → Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive referral\"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The card action is Archive patient, which archives the patient record, not the referral (Referrals.tsx frontend/src/pages/Referrals.tsx:467).",
+      "proposed_text": "Clear out patients who will not be admitted: Referral Intake → Non-Admit column → Archive patient on the card.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "id: \"NON_ADMIT\" as ReferralStatus,",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const isOverColumn = columns.some((col) => col.id === overId);",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title=\"Archive patient\"",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// Archive (soft-delete): set `deleted_at` on the patient record.",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-29",
+      "claim": "Monthly: validate facility user roster is current — HR & Compliance → Facility Users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "description: \"View and manage all users associated with this facility.\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-30",
+      "claim": "Onboarding: go to HR & Compliance → New Employee Onboarding; assign one or more facilities (multi-facility selection is supported); save to create the account.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "selected={formData.facilityIds}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-31",
+      "claim": "Complete the single New Employee form (Basic Info; Provider Details appear for clinical roles). There is no multi-step wizard.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Basic Info",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Provider Details",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The single form is Create New User (HRNewUserPage.tsx frontend/src/pages/HRNewUserPage.tsx:2076) with sections such as Role & Assignment and Facility Assignment; there is no Basic Info or Provider Details section.",
+      "proposed_text": "HR & Compliance → New Employee Onboarding opens the Create New User form, a single page. Choose the role under Role & Assignment and one or more facilities under Facility Assignment, then click Create User.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"New Employee Onboarding\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/hr-new-user-page\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Edit User Profile\" : \"Create New User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Role & Assignment",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Facility Assignment{\" \"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "selected={formData.facilityIds}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{userId ? \"Save Changes\" : \"Create User\"}",
+          "paths": [
+            "frontend/src/pages/HRNewUserPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-32",
+      "claim": "Verify their permissions in Administrator → Organization Role Config; the matrix controls what each role can see across all modules.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Configure which features each role can access per organization. Organization admins only.\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleFeature(role, feature)",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-33",
+      "claim": "Test a new role in the demo environment before applying it to production users.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "demo environment",
+          "paths": [
+            "frontend/src/pages/administrator"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Medipyxis offers customers no demo environment; nothing in pages/administrator mentions one.",
+      "proposed_text": "Check which features the role can open in Administrator → Organization Role Config. It turns features on or off for each role in your organization and does not assign roles to people.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Organization Role Config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/org-role-config\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<OrgRoleConfigPage />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Configure which features each role can access per organization. Organization admins only.\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "toggleFeature(role, feature)",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ value: \"finance_ap\", label: \"Finance AP\" },",
+          "paths": [
+            "frontend/src/pages/FacilityUsersPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  \"finance_ap\",",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{role.replace(/_/g, \" \")}",
+          "paths": [
+            "frontend/src/pages/administrator/OrgRoleConfigPage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-34",
+      "claim": "The current facility context appears as a pill in the app header. Click the pill to open the facility selector; search by name or scroll.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "facility pill",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The header control is a Switch Facility button with a Search facilities box (AppShell.tsx frontend/src/components/AppShell.tsx:1756).",
+      "proposed_text": "Switch facility: header → Switch Facility → search or pick a facility.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Switch Facility",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search facilities...\"",
+          "paths": [
+            "frontend/src/components/AppShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import AppShell from \"./AppShell\";",
+          "paths": [
+            "frontend/src/components/AppProvider.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-35",
+      "claim": "All module data (patients, referrals, calendar, billing) scopes to the selected facility.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `/facility/${currentFacility.id}${item.path}`",
+          "paths": [
+            "frontend/src/utils/navigationUtils.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-36",
+      "claim": "Practice admins with org-level access can toggle All Patients → All Facilities to view cross-facility patient lists without switching context.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{viewMode === \"all\" && canViewAllPatientsByOrg && (",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<option value=\"all\">All Facilities</option>",
+          "paths": [
+            "frontend/src/pages/all-patients/Patients.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-37",
+      "claim": "Troubleshooting: provider not appearing in Fleet Calendar — provider not marked On Duty or facility mismatch; HR & Compliance → Facility Users — confirm facility assignment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "On Duty",
+          "paths": [
+            "frontend/src/pages/ops"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "There is no On Duty marker in Fleet Calendar; the facility-assignment cause and fix are right.",
+      "proposed_text": "Troubleshooting: provider not appearing in Fleet Calendar — not assigned to this facility; confirm in HR & Compliance → Facility Users.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Facility Users\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "const handleDropOnLane = (e: React.DragEvent, providerId: string) => {",
+          "paths": [
+            "frontend/src/pages/ops/FleetCalendarCanvas.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "qpa-38",
+      "claim": "Troubleshooting: referral stuck in Info Needed — missing demographic or insurance field; open referral → Details tab → fill flagged field.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "flagged field",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The referral drawer's Details tab does not flag missing fields (no 'flagged field' in UnifiedReferralDrawer.tsx).",
+      "proposed_text": "Troubleshooting: referral stuck in Info Needed — open the card → Details tab → complete the missing information, then drag the card on.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "import UnifiedReferralDrawer from \"@/components/UnifiedReferralDrawer\";",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onClick={handleCardClick}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "fixed inset-y-0 right-0",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ name: \"(details|documents|chat|precharting|history|notes)\", label: \"(Details|Documents|Chat|Precharting|History|Notes)\"",
+          "paths": [
+            "frontend/src/components/UnifiedReferralDrawer.tsx"
+          ],
+          "expect": {
+            "count": 6
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const handleDragEnd = async (event: DragEndEvent) => {",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "onDragEnd={handleDragEnd}",
+          "paths": [
+            "frontend/src/pages/Referrals.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-39",
+      "claim": "Troubleshooting: claim in Needs Info status — missing modifier or diagnosis pointer; Billing → Claims → open claim → follow rule-engine flag.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "rule-engine flag",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Needs Info means \"Claim flagged for missing or incorrect information. Edit to fix.\" (BillingDashboard.tsx frontend/src/pages/BillingDashboard.tsx:1228); no 'rule-engine flag' is shown.",
+      "proposed_text": "Troubleshooting: claim in Needs Info status — a required field is missing or a validation error must be resolved; open the claim from Billing Operations → Claims and fix the field.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "needs_info: \"Needs Info\",",
+          "paths": [
+            "frontend/src/utils/billing/claimStatusOptions.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"Claim flagged for missing or incorrect information. Edit to fix.\",",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "placeholder=\"Search patient, claim #, payer...\"",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const matchesPayer = !payerFilter || (claim as any).payer_name === payerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "(claim as any).rendering_provider_name === providerFilter;",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const serviceDate = new Date(claim.date_of_service);",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "<SelectItem value=\"all\">All Statuses</SelectItem>",
+          "paths": [
+            "frontend/src/pages/BillingDashboard.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-40",
+      "claim": "Troubleshooting: credential expiry banner on Dashboard — credential nearing expiry; HR & Compliance → Credential Tracker → upload renewal.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Credential expiry",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "The Dashboard has a My Credentials & Compliance tile, not an expiry banner (Dashboard.tsx frontend/src/pages/Dashboard.tsx:358).",
+      "proposed_text": "Check your credentials: Dashboard → My Credentials & Compliance. Credential expirations: HR & Compliance → Credential Tracker.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"My Credentials & Compliance\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "route: \"/hr-credential-tracker\",",
+          "paths": [
+            "frontend/src/pages/Dashboard.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Credential Tracker\",",
+          "paths": [
+            "frontend/src/pages/HrCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-41",
+      "claim": "Troubleshooting: archived patient appeared in scheduling — legacy appointment predating the archive fix; cancel the appointment.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "setDateError(\"This patient is archived and cannot be scheduled\");",
+          "paths": [
+            "frontend/src/components/AppointmentBookingModal.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "qpa-42",
+      "claim": "Related articles: Biller, Nurse daily and Intake coordinator cheat sheets, April 2026 release notes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: \"Billing Operations\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "link": [
+        {
+          "href": "/quick-reference/biller/",
+          "resolves": true
+        },
+        {
+          "href": "/quick-reference/nurse-daily/",
+          "resolves": true
+        },
+        {
+          "href": "/quick-reference/intake-coordinator/",
+          "resolves": true
+        },
+        {
+          "href": "/release-notes/2026-04/",
+          "resolves": true
+        }
+      ]
+    }
+  ]
+}

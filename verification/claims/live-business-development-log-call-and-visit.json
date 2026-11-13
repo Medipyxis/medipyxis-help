@@ -1,0 +1,1045 @@
+{
+  "title": "Log a call or in-person visit",
+  "source": "modules/business-development/log-call-and-visit",
+  "url": "https://help.medipyxis.com/modules/business-development/log-call-and-visit/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lbl-01",
+      "claim": "Record outbound calls and in-person practice visits from the Business Development dashboard so your activity history stays current in the CRM.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select a practice\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-02",
+      "claim": "Before you start: the practice or contact must already exist in the CRM. If not, use New Contact first to add the record before logging activity against it.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"new_contact\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Add New Practice",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "New Contact would need to be able to create a practice"
+        }
+      ],
+      "finding": "New Contact only adds a contact to an existing practice (its form requires Select a practice, frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx:1593). A missing practice is added in the CRM with Add New Practice.",
+      "proposed_text": "The practice must already exist in the CRM (add it there with Add New Practice). To add a contact to a practice, use New Contact.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"new_contact\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Full Name *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-03",
+      "claim": "Open the BD dashboard (Business Development in the sidebar) and tap Log Call in the quick-add strip.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-04",
+      "claim": "Select the Practice. Start typing to search your CRM — existing practices autocomplete.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<SearchablePracticeSelect",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select a practice\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-05",
+      "claim": "Select the Contact (optional but recommended): choose the specific physician, office manager, or coordinator you reached.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Select contact",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Log Call Activity has no contact field (frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx:332).",
+      "proposed_text": "Remove this step; the call form has no contact field.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Select contact",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Log Call Activity",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-06",
+      "claim": "Set the Call Outcome from the dropdown (for example, whether you reached the contact, left a voicemail, or got no answer).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"positive\">Positive</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "voicemail",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "ignoreCase": true,
+          "note": "the examples given would be outcome options"
+        }
+      ],
+      "finding": "Outcome options are Positive, Neutral, Negative, No Contact and Follow-up Needed (frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx:393); there is no voicemail option.",
+      "proposed_text": "Set the Outcome: Positive, Neutral, Negative, No Contact or Follow-up Needed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<option value=\"positive\">Positive</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"no_contact\">No Contact</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"follow_up_needed\">Follow-up Needed</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-07",
+      "claim": "Enter Notes: summarize the conversation — key topics, objections, commitments made.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Call Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-08",
+      "claim": "Set Next Steps (optional): add a follow-up date and action so the Next Best Action widget can surface a reminder.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Next Steps",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "There is no Next Steps field on Log Call (frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx:401).",
+      "proposed_text": "Click Business Development in the sidebar, tap Log Call. The Log Call Activity form: Practice (required), Call Subject (required), Duration in minutes (required), Outcome (Positive, Neutral, Negative, No Contact, Follow-up Needed), Call Notes (required).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"Business Development\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Log Call Activity",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Call Subject *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Duration (min) *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"positive\">Positive</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"no_contact\">No Contact</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"follow_up_needed\">Follow-up Needed</option>",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Call Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-09",
+      "claim": "Tap Save. The call appears in the practice's Activity tab in the CRM.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useBdActivities(practiceId, showArchived ? \"archived\" : \"live\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-10",
+      "claim": "Log a visit: tap New Visit in the quick-add strip and select the Practice.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Select a practice\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-11",
+      "claim": "Enter the Visit Date. Defaults to today; adjust if logging retroactively.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Visit Date",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The visit form has no date field; the visit is saved with the current time (frontend/src/pages/BdDashboard.tsx:4614).",
+      "proposed_text": "New Visit: Practice (required), Visit Purpose and Duration (required), Outcome, Visit Notes (required). The visit is logged with today's date; there is no date field.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Visit Purpose *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Visit Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"visit\",",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_date: new Date().toISOString(),",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Visit Date",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-12",
+      "claim": "Add Visit Notes: document key talking points, materials left, and any commitments.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Visit Notes *",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-13",
+      "claim": "Select the contacts you met (optional) so individual contact engagement records stay current.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Select contact",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The visit form has no contact field (frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx:1162).",
+      "proposed_text": "Remove this step; the visit form has no contact field.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Select contact",
+          "paths": [
+            "frontend/src/components/bd-dashboard/BdActivityModalsWithValidation.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-14",
+      "claim": "Tap Save. The visit logs to the practice's Activity tab and updates your dashboard metrics.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useBdActivities(practiceId, showArchived ? \"archived\" : \"live\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"visit\",",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-15",
+      "claim": "Use the voice recording option in the quick-add strip to capture the call or visit by voice; the recording is attached to the activity.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"voice\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "Record Voice Note saves a separate Voice Note activity (frontend/src/components/LocalVoiceRecordingModal.tsx:659), not attached to the call or visit.",
+      "proposed_text": "Record Voice Note records a voice note for a practice, saved as a separate Voice Note activity, not attached to the call or visit.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Record Voice Note\"",
+          "paths": [
+            "frontend/src/components/bd-dashboard/QuickAddStrip.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "activity_type: \"voice\",",
+          "paths": [
+            "frontend/src/components/LocalVoiceRecordingModal.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-16",
+      "claim": "Call and visit records are immediately visible in the CRM practice detail Activity tab and feed the Next Best Action and AI Route Suggestions algorithms. (Stated twice on the page, under both Result headings.)",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"call\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"visit\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "bd_activities",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Next Best Action reads bd_activities (calls and visits) (backend/supabase/functions/bd-daily-suggestions/index.ts:245). AI Route Suggestions does not read bd_activities (frontend/src/utils/intelligentRouting.ts:361); it uses practice.last_activity_date, which no code in v1.1.345 updates on a logged call or visit.",
+      "proposed_text": "Calls and visits appear in the practice's Activity tab and count toward the Next Best Action cycle.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useBdActivities(practiceId, showArchived ? \"archived\" : \"live\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"call\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"visit\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-17",
+      "claim": "Both Next Best Action and AI Route Suggestions recompute on demand (with a short cache), so a new call or visit is reflected almost immediately after you refresh.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "bd_activities",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "True for Next Best Action. AI Route Suggestions does not read logged activities (frontend/src/utils/intelligentRouting.ts:361).",
+      "proposed_text": "Next Best Action is worked out when the dashboard loads, so a new call or visit counts after you refresh.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "'bd-daily-suggestions',",
+          "paths": [
+            "frontend/src/hooks/useDailySuggestions.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".from(\"bd_activities\")",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"call\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "          \"visit\",",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-18",
+      "claim": "An activity you already saved stays editable from either the practice's Activity tab or the BD dashboard: open the row's ⋯ menu, click Edit; the composer reopens with the saved values.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "edit-activity",
+          "paths": [
+            "frontend/src/pages/BdDashboard.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "Edit exists only on the practice Activity tab, as \"Edit note\", which edits subject and notes in a small dialog (frontend/src/pages/CrmPracticeDetail.tsx:2300).",
+      "proposed_text": "Edit from the practice's Activity tab: ⋯ → Edit note, change the subject and notes, Save changes. You can edit your own; administrators and BD managers anyone's. The original date and creator stay; the edit time is recorded. Spend entries cannot be edited or archived.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Edit note",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "subject: editSubject,",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{savingEdit ? \"Saving...\" : \"Save changes\"}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patch = { edited_at: now, edited_by: authResult.user!.id };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return activity.bd_rep_id === callerId",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/authorize.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return { allowed: false, reason: \"spend_immutable\" };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/authorize.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  'bd_manager',",
+          "paths": [
+            "backend/supabase/functions/_shared/auth-helpers.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-19",
+      "claim": "Update fields and save. The activity keeps its original date and creator; an edited_at timestamp is stored for the audit trail.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "patch = { edited_at: now, edited_by: authResult.user!.id };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{savingEdit ? \"Saving...\" : \"Save changes\"}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-20",
+      "claim": "Archiving hides an activity from the live feed without deleting it. Open the row's ⋯ menu and click Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Archive note",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patch = { deleted_at: now, deleted_by: authResult.user!.id };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-21",
+      "claim": "A confirm dialog explains that the activity will be excluded from Next Best Action and MTD spend calculations. Confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Next Best Action",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Archive this note?",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The dialog \"Archive this note?\" says the note leaves the feed and stops counting toward the practice's activity metrics (frontend/src/pages/CrmPracticeDetail.tsx:4776); it does not mention Next Best Action or MTD spend, and spend entries cannot be archived.",
+      "proposed_text": "Archive: ⋯ → Archive note. The Archive this note? dialog says it leaves the feed and stops counting toward the practice's activity metrics. A “Note archived” message offers Undo.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "Archive note",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Archive this note?",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "this practice&apos;s activity metrics.",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(\"Note archived\", {",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Undo\",",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "patch = { deleted_at: now, deleted_by: authResult.user!.id };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-22",
+      "claim": "A toast confirms the archive and the row leaves the live view immediately; the same toast shows an Undo button for a few seconds.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "toast.success(\"Note archived\", {",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "label: \"Undo\",",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-23",
+      "claim": "View archived activities: on the practice detail Activity tab, switch the view mode from Live to Archived. The row menu on an archived entry offers Restore.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ">Live<",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The control is an Archived filter pill (frontend/src/pages/CrmPracticeDetail.tsx:2198), not a Live/Archived view mode. Restore is on archived rows.",
+      "proposed_text": "Click the Archived filter to list archived activities; click Restore to bring one back. You can restore what you archived; administrators and BD managers any.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onToggleArchived?.(!showArchived)}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "&#8617; Restore",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return activity.deleted_by === callerId",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/authorize.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lbl-24",
+      "claim": "Archived activities are excluded from Next Best Action, dashboard KPIs, and MTD spend rollups. They remain in the audit trail and export.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return { allowed: false, reason: \"spend_immutable\" };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/authorize.ts"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "MTD spend could only change if spend entries could be archived"
+        }
+      ],
+      "finding": "Next Best Action excludes archived rows (backend/supabase/functions/bd-daily-suggestions/index.ts:247). Spend entries cannot be archived at all (backend/supabase/functions/bd-activity-mutate/authorize.ts:59), so archiving never changes MTD spend; inclusion in the audit trail and export is not shown in code.",
+      "proposed_text": "Archived activities no longer count toward Next Best Action. Spend entries cannot be archived.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "backend/supabase/functions/bd-daily-suggestions/index.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "return { allowed: false, reason: \"spend_immutable\" };",
+          "paths": [
+            "backend/supabase/functions/bd-activity-mutate/authorize.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

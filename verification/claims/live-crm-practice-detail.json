@@ -1,0 +1,885 @@
+{
+  "title": "Work with a practice detail record",
+  "source": "modules/crm/practice-detail",
+  "url": "https://help.medipyxis.com/modules/crm/practice-detail/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "lcrp-01",
+      "claim": "View and update a practice's profile, review engagement history, and log new activity directly from the practice detail panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/crm-practice-detail/:practiceId\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<CrmPracticeDetail />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Edit button removed */}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true,
+          "note": "updating the profile from the detail page needs its Edit button"
+        }
+      ],
+      "finding": "The detail page has no way to edit the practice: the header Edit button was removed (frontend/src/pages/CrmPracticeDetail.tsx:228) and the More (⋯) toggle sets state that is never rendered. Edit lives on the practice card's menu in the CRM list (frontend/src/pages/Crm.tsx:544).",
+      "proposed_text": "View a practice's profile and contacts, review activity history, and log activity from the practice detail page. To edit the practice, use Edit on its card menu in the CRM list.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "path: \"/facility/:facilityId/crm-practice-detail/:practiceId\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<CrmPracticeDetail />",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<Edit2 className=\"w-4 h-4\" /> Edit",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-02",
+      "claim": "Before you start: the practice must already exist in the CRM. Create it with + New Practice if it does not.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "+ New Practice",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The CRM add button is an icon-only \"+\" titled \"Add New Practice\" (frontend/src/pages/Crm.tsx:1047).",
+      "proposed_text": "The practice must already exist in the CRM. If it does not, add it with the + (Add New Practice) button.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "title=\"Add New Practice\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-03",
+      "claim": "Go to the CRM (click CRM in the sidebar), find the practice with the search bar or a tab, and click the practice name to open the detail panel.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"CRM\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? `/facility/${targetId}/crm-practice-detail/${practice.id}`",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => navigate(",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "placeholder"
+        },
+        {
+          "type": "grep",
+          "pattern": "{/* Practice name opens detail */}",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "the practice name itself would be the link"
+        }
+      ],
+      "finding": "The card's View button opens the detail page (frontend/src/pages/Crm.tsx:478); the practice name is plain text.",
+      "proposed_text": "Click CRM in the sidebar, find the practice with the search bar or a tab, and click View on its card to open its detail page.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "label: \"CRM\",",
+          "paths": [
+            "frontend/src/constants/navigation.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"Search practices...\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? `/facility/${targetId}/crm-practice-detail/${practice.id}`",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-04",
+      "claim": "The practice detail panel has three tabs: Overview, Activity, Docs.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "...(showProviders ? [{ id: \"providers\", label: \"Providers\", icon: \"🩺\" }] : []),",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "absent",
+          "fixed": true
+        }
+      ],
+      "finding": "Skilled Nursing and Assisted Living practices also get Providers, Residents and Clinical Notes tabs (frontend/src/pages/CrmPracticeDetail.tsx:3131).",
+      "proposed_text": "Tabs: Overview (address, phone, email, fax, month-to-date spend, practice contact, Additional Contacts); Activity (calls, visits, voice notes, spend, notes; type filters; Archived filter); Docs (view, send, delete, upload). Providers, Residents and Clinical Notes show only for Skilled Nursing or Assisted Living Facilities.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"overview\", label: \"Overview\", icon: \"🧾\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ id: \"docs\", label: \"Docs\", icon: \"📂\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{practice.address}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{practice.fax}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "MTD Spend",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Practice Contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<option value=\"voice\">Voice Notes</option>",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onToggleArchived?.(!showArchived)}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onViewDocument: (url: string, name: string) => void;",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onSendDocument: (document: {",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onUpload={() => handleAction(\"uploadReceipt\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ id: \"residents\", label: \"Residents\", icon: \"🛏️\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{ id: \"clinical-notes\", label: \"Clinical Notes\", icon: \"📝\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "showProviders={RESIDENTIAL_PRACTICE_TYPES.includes(practice?.practice_type ?? \"\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"Skilled Nursing Facility\",",
+          "paths": [
+            "backend/supabase/functions/_shared/residentialPracticeTypes.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "  \"Assisted Living Facility\",",
+          "paths": [
+            "backend/supabase/functions/_shared/residentialPracticeTypes.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-05",
+      "claim": "Overview: practice name, specialty, address, phone, fax, NPI, assigned BD rep, and all linked contacts.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{practice.address}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{practice.fax}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "practice.npi",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "NPI would be rendered on the detail page"
+        },
+        {
+          "type": "grep",
+          "pattern": "assigned_user",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true,
+          "note": "the assigned BD rep would be read for the detail page"
+        }
+      ],
+      "finding": "The detail page shows name, specialty, address, phone, email, fax, month-to-date spend, practice contact and Additional Contacts; it does not show the NPI or the assigned BD rep (no practice.npi or assigned_user in frontend/src/pages/CrmPracticeDetail.tsx).",
+      "proposed_text": "Overview: address, phone, email, fax, month-to-date spend, the practice contact and Additional Contacts.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "{practice.address}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "{practice.fax}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "MTD Spend",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Practice Contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Additional Contacts",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-06",
+      "claim": "Activity: chronological log of calls, visits, and notes — with date, rep name, outcome, and notes for each entry.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Outcome: {activity.outcome}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "? (userNamesMap[activity.bd_rep_id] || \"Unknown User\")",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-07",
+      "claim": "Docs: uploaded files associated with the practice (referral agreements, contracts, marketing collateral).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"docs\", label: \"Docs\", icon: \"📂\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onUpload={() => handleAction(\"uploadReceipt\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-08",
+      "claim": "Quick-add actions at the top of the detail panel: Log Call, New Visit, Add Spend, and Voice recording (the recording is attached to the activity).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "LocalVoiceRecordingModal",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Log Call",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The header buttons are Call, Visit and Note (frontend/src/pages/CrmPracticeDetail.tsx:602); there is no Add Spend or voice recording there.",
+      "proposed_text": "Call, Visit and Note buttons at the top log an interaction: Call opens the call form, Visit the visit form, Note a note. On a contact, phone, email and text buttons open your phone, email or messaging app.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"call\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"visit\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"note\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setShowLogCallModal(true);",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setShowNewVisitModal(true);",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "setShowNoteModal(true);",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "window.open(`tel:${cleanPhone}`, \"_self\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "`mailto:${data.email}?subject=${subject}&body=${body}`,",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "window.open(`sms:${data.phone}`, \"_self\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-09",
+      "claim": "Complete the form and click Save. The entry appears immediately in the Activity tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "{ id: \"activity\", label: \"Activity\", icon: \"📋\" },",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "} = useBdActivities(practiceId, showArchived ? \"archived\" : \"live\");",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-10",
+      "claim": "Click + Add Contact in the Overview tab; fill in First Name, Last Name, Role, Phone, and Email, then click Save Contact.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "Save Contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "First Name",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The button is Add next to Additional Contacts; the form has Full Name, Job Title, Phone, Email, Contact Type, Notes and Set as primary contact, and the button is Add Contact (frontend/src/pages/CrmPracticeDetail.tsx:4863).",
+      "proposed_text": "Click Add next to Additional Contacts; fill Full Name (required), Job Title, Phone, Email, Contact Type and Notes, tick Set as primary contact if needed, then Add Contact.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "onClick={() => onAction(\"addContact\")}",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const AddContactModal = ({",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Full Name *",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "placeholder=\"e.g., Practice Manager\"",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Contact Type",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Set as primary contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Add Contact",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-11",
+      "claim": "Archive a practice: click the Actions menu (⋯ top-right of the detail panel) and select Archive.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "archivePractice",
+          "paths": [
+            "frontend/src/pages/CrmPracticeDetail.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ],
+      "finding": "The detail page has no Archive; its More toggle renders nothing. Archive is on the practice card's ⋮ menu in the CRM list (frontend/src/pages/Crm.tsx:576).",
+      "proposed_text": "In the CRM list, open the ⋮ menu on the practice card and choose Archive; archived practices move to the Archived tab and are left out of AI Route Suggestions. Restore from the Archived tab brings it back; history and contacts are kept.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "pattern": "<Archive className=\"w-4 h-4\" /> Archive",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ArchiveRestore className=\"w-4 h-4\" /> Restore",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "Deno.test(\"archive sets archived and deleted_at\", async () => {",
+          "paths": [
+            "backend/supabase/functions/practice-archive/__tests__/handler.test.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-12",
+      "claim": "Archived practices move to the Archived tab and are excluded from BD route suggestions.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "mode=\"archived\"",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": ".is(\"deleted_at\", null)",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-13",
+      "claim": "Changes to the practice record are reflected immediately in the CRM list, and the BD dashboard's Next Best Action and AI Route Suggestions pick them up on their next refresh (both recompute on demand, not overnight).",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes",
+          "paths": [
+            "frontend/src/utils/intelligentRouting.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "'bd-daily-suggestions',",
+          "paths": [
+            "frontend/src/hooks/useDailySuggestions.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "id": "lcrp-14",
+      "claim": "Archiving a practice does not delete its activity history or associated contacts. You can unarchive a practice at any time from the Archived tab.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "<Archive className=\"w-4 h-4\" /> Archive",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "<ArchiveRestore className=\"w-4 h-4\" /> Restore",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "const { data, error } = await supabase.functions.invoke(\"practice-archive\", {",
+          "paths": [
+            "frontend/src/services/practiceService.ts"
+          ],
+          "expect": "present",
+          "fixed": true
+        },
+        {
+          "type": "grep",
+          "pattern": "toast.success(\"Practice restored from archive\");",
+          "paths": [
+            "frontend/src/pages/Crm.tsx"
+          ],
+          "expect": "present",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

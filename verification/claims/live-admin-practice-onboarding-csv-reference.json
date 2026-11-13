@@ -1,0 +1,2403 @@
+{
+  "title": "Practice Data Import CSV templates and column reference",
+  "source": "admin/practice-onboarding-csv-reference",
+  "url": "https://help.medipyxis.com/admin/practice-onboarding-csv-reference/",
+  "commit": "5d93bb5 (live on main)",
+  "claims": [
+    {
+      "id": "cr-01",
+      "claim": "The Practice Onboarding importer is at /administrator/practice-onboarding (Practice Onboarding in the Administrator area).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "path: \"/administrator/practice-onboarding\",",
+          "paths": [
+            "frontend/src/user-routes.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "title: \"Practice Onboarding\",",
+          "paths": [
+            "frontend/src/pages/administrator/AdministratorCockpit.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f01",
+      "claim": "Every column name, required flag, accepted value, validation rule, and fallback default below matches the live importer and downloadable CSV templates.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLERGY_SEVERITIES = ['mild', 'moderate', 'severe', 'life_threatening', 'none'];",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Several rows below do not match the importer (see cr-f04 to cr-f18 and cr-x claims in this file).",
+      "proposed_text": "(remove the sentence)"
+    },
+    {
+      "id": "cr-02",
+      "claim": "Download the latest template from each step's Upload screen. Templates include a UTF-8 byte-order mark (BOM) and a leading sep=, hint line; the importer strips sep=, automatically when you upload the file back.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download {config.label} Template",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const BOM = '\\uFEFF';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const excelSepHint = 'sep=,\\r\\n';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": " * Strip leading UTF-8 BOMs, leading blank/delimiter-only rows, and a single",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-03",
+      "claim": "Templates overview: 1 Patients (patient_import_template.csv, produces patient_uid); 2 Insurance, 3 Medications, 4 Allergies, 5 Comorbidities, 6 Emergency Contacts, 7 Wounds (produces wound_uid) — each needs Step 1; 8 Documents & Historical Wound Photos needs Step 1 (optional wound_uid from Step 7); 9 Visit History needs Step 7; all nine Active.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'patient_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'insurance_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'medications_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'allergies_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'comorbidities_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'contacts_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'wounds_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'documents_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  templateFilename: 'visit_history_import_template.csv',",
+          "paths": [
+            "frontend/src/components/import/modules"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    dependsOn: \\['patients'\\],$",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": {
+            "count": 7
+          }
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    dependsOn: ['wounds'],",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  producesUid: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  producesUid: 'wound_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-05",
+      "claim": "The Patients template contains 22 columns: 11 core demographic and provider fields (3 required, 8 optional), 3 optional identity and duplicate-handling fields, and 8 optional consent_* fields.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^  \\{$|^  \\{ key: '",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": {
+            "min": 22
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "^    required: true,$",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        },
+        {
+          "type": "grep",
+          "pattern": "\\{ key: 'consent_",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": {
+            "count": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "cr-06",
+      "claim": "first_name, last_name and date_of_birth are required; date_of_birth must be a valid calendar date in YYYY-MM-DD (recommended) or MM/DD/YYYY; rollover dates such as 2026-02-31 are rejected.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'date_of_birth',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    validate: validateDate,",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return 'Date must be YYYY-MM-DD or MM/DD/YYYY';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-07",
+      "claim": "phone, address_street, address_city are optional and stored as null if blank; email is optional and must match name@domain.tld if provided.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'phone',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'address_street',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'address_city',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'email',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  if (!emailPattern.test(value)) return 'Invalid email format';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-08",
+      "claim": "address_state is validated against 2-letter US state and territory codes; address_zip must be 5-digit or 9-digit (ZIP+4).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    return 'State must be a valid 2-letter US state code (e.g. IL, TX)';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  if (!/^\\d{5}(-\\d{4})?$/.test(trimmed)) {",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-09",
+      "claim": "provider_email: if matched to an existing provider, assigns the provider and sets patient status to ASSIGNED; blank or unmatched imports the patient unassigned (status NEW) with a Needs Follow-Up warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      status: assignedProviderId ? 'ASSIGNED' : 'NEW',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      providerWarning = 'No provider_email — patient imported unassigned';",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Needs Follow-Up ({result.warnings.length})",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-10",
+      "claim": "notes: free-text note saved to the patient's notes with note_date = import date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'notes',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "note_date: nowDateISO(),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-11",
+      "claim": "prior_ehr_system: name of the source EHR.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    label: 'Prior EHR System',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f04",
+      "claim": "prior_ehr_system namespaces prior_ehr_mrn in patient.external_id as <prior_ehr_system>:<mrn> (lowercased, colons removed).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "lowercased, colons removed",
+          "paths": [
+            "frontend/src"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Internal storage detail; the stated format was not confirmed in patientIdentity.ts.",
+      "proposed_text": "(remove the internal storage detail)"
+    },
+    {
+      "id": "cr-12",
+      "claim": "prior_ehr_mrn: leading zeros are normalized; a re-import with matching prior_ehr_mrn + first_name + date_of_birth is recognized as the same patient; if prior_ehr_mrn matches an existing patient whose first_name or date_of_birth differs, the row is blocked unless confirmed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Case and leading zeros are the usual spreadsheet drift in an ID column. */",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: `Needs review, not imported: this prior-system patient ID belongs to patient_uid ${idMatch.id}, but the ${!dobSame ? 'date of birth' : 'first name'} on file is different.",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      kind: 'reuse',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-13",
+      "claim": "duplicate_decision: resolves a row held because first_name + last_name + date_of_birth match an existing patient without a matching prior_ehr_mrn — enter the existing patient_uid to reuse it, or NEW for a different person (with prior_ehr_mrn alongside when the existing patient has none).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return `Needs review, not imported: same name and date of birth as existing patient_uid ${ids}, and no matching prior-system patient ID.",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    label: 'Possible Duplicate Decision (patient_uid, or NEW)',",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      return { kind: 'review', field: 'prior_ehr_mrn', message: NO_SEPARATE_WITHOUT_ID };",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/patientIdentity.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-14a",
+      "claim": "If consent_on_file is blank or no, no consent attestation is created and the other 7 consent_* columns are ignored.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return v === 'true' || v === 'yes' || v === '1' || v === 'y';",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/shared.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  if (!normalizeBool(m.consent_on_file)) return null;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f05",
+      "claim": "If consent_on_file contains an unrecognized value (anything other than yes/no, true/false, 1/0, y/n), the patient still imports, no consent is recorded, and a non-blocking warning is added to the Needs Follow-Up list.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consent_on_file",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present",
+          "note": "a warning for unrecognized values"
+        },
+        {
+          "type": "grep",
+          "pattern": "unrecognized|not a yes/no",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "An unrecognized value is treated as no with no warning (functions/practice-onboarding-import/consentAttest.ts:28).",
+      "proposed_text": "consent_on_file: only yes, true, 1 or y records a consent; blank, no or anything else records nothing, and the other 7 columns are ignored.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return v === 'true' || v === 'yes' || v === '1' || v === 'y';",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/shared.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  if (!normalizeBool(m.consent_on_file)) return null;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-17a",
+      "claim": "Setting consent_on_file = yes records an externally attested, current consent to treatment and to bill, attested under the signed-in administrator's account.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "collection_method: \"external_attested\",",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "status: \"current\",",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consent_to_treatment: true,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consent_to_bill: true,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "obtained_by_user_id: attesterUserId,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-18",
+      "claim": "Only set consent_on_file = yes when your practice holds its own signed consent; never use a skilled nursing facility's admission paperwork or list facility staff as the signer — facility staff cannot legally consent on a resident's behalf.",
+      "kind": "external"
+    },
+    {
+      "id": "cr-17b",
+      "claim": "If a patient already has a current consent, re-importing with consent_on_file = yes leaves it untouched and logs a non-blocking warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "message: 'a consent is already on file for this patient; left as it is'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-x1",
+      "claim": "Internal storage names: consent_location is stored in external_document_location, consent_witnessed in external_witnessed, consent_photo in consent_to_photo, consent_npp_acknowledged in npp_acknowledged; medications and allergies are created with source = 'imported'.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_document_location",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_witnessed:",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "consent_to_photo",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "source: 'imported'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The fields are external_location, external_was_witnessed, photo_consent and hipaa_acknowledged (functions/practice-onboarding-import/consentAttest.ts:56); imported rows carry source = 'practice_onboarding' (patientIdentity.ts IMPORT_SOURCE).",
+      "proposed_text": "(remove the internal field names; keep the behaviour described)"
+    },
+    {
+      "id": "cr-f07",
+      "claim": "consent_signed_on: stored in external_signed_on and sets signed_at to YYYY-MM-DDT00:00:00Z; if blank or unreadable, signed_at defaults to the import timestamp; an unreadable date logs a warning on the Confirm screen.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_signed_on",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "An unreadable date is silently dropped (functions/practice-onboarding-import/consentAttest.ts:38); the column is plain text, so no Confirm-screen warning appears.",
+      "proposed_text": "consent_signed_on: YYYY-MM-DD or MM/DD/YYYY; an unreadable date is dropped, never guessed.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{ key: 'consent_signed_on', label: 'Consent Signed On (YYYY-MM-DD or MM/DD/YYYY)', required: false, type: 'text' },",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  // A date the importer could not read is dropped, never guessed.",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-x2",
+      "claim": "consent_signer_capacity: patient, poa or surrogate; blank or any other value defaults to patient, and unrecognized values also log a Needs Follow-Up warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const capacity = capacityRaw === \"poa\" || capacityRaw === \"surrogate\" ? capacityRaw : \"patient\";",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "field: 'consent_signer_capacity'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Unrecognized values default to patient with no warning (functions/practice-onboarding-import/consentAttest.ts:34); writers.ts raises no consent_signer_capacity warning.",
+      "proposed_text": "consent_signer_capacity: patient, poa or surrogate; blank or any other value is saved as patient.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const capacity = capacityRaw === \"poa\" || capacityRaw === \"surrogate\" ? capacityRaw : \"patient\";",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-x3",
+      "claim": "consent_signer_name defaults to the row's first_name last_name; consent_witnessed yes/no (blank not recorded); consent_location defaults to \"practice records (onboarding import)\"; consent_photo and consent_npp_acknowledged default to off unless yes.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const signerName = (m.consent_signer_name ?? \"\").trim() || patientName;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "external_was_witnessed: normalizeBool(m.consent_witnessed) ? true : isNo(m.consent_witnessed) ? false : null,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "\"practice records (onboarding import)\"",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "photo_consent: normalizeBool(m.consent_photo),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "hipaa_acknowledged: normalizeBool(m.consent_npp_acknowledged),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/consentAttest.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Consent Signed By (patient / poa / surrogate)'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Consent Witnessed (yes/no)'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Where the Signed Consent Is Kept'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Consent Allows Photographs (yes/no)'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Privacy Notice Acknowledged (yes/no)'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: 'Consent Signer Name'",
+          "paths": [
+            "frontend/src/components/import/modules/PatientImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-19a",
+      "claim": "Immediately after an import finishes, click Download Results CSV on the Results screen to download patients_import_results.csv or wounds_import_results.csv.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const filename = `${config.importType}_import_results.csv`;",
+          "paths": [
+            "frontend/src/components/import/ImportModuleShell.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-20a",
+      "claim": "Anytime later, completed Step 1 — Patients and Step 7 — Wounds cards display a persistent Download results CSV action, so you can re-download after Done, refreshing, or signing in elsewhere.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download results CSV",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "{completed && batchSummary.latest && (step.importType === 'patients' || step.importType === 'wounds') && (",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f08",
+      "claim": "patients_import_results.csv columns: csv_row, first_name, last_name, date_of_birth, patient_uid. wounds_import_results.csv columns: csv_row, patient_uid, wound_location, wound_type, first_seen_date, wound_uid.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    columns: ['first_name', 'last_name', 'date_of_birth', 'prior_ehr_mrn'],",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/batches.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The immediate download is your uploaded CSV plus the ID column (services/importService.ts:1165); the saved Patients download also has prior_ehr_mrn.",
+      "proposed_text": "Right after an import, Download Results CSV gives your uploaded CSV with the new ID column added. Later, the completed Patients and Wounds cards have Download results CSV; columns csv_row, first_name, last_name, date_of_birth, prior_ehr_mrn, patient_uid (Patients) and csv_row, patient_uid, wound_location, wound_type, first_seen_date, wound_uid (Wounds).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const headers = [...originalHeaders, uidColumnName];",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download Results CSV",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Download results CSV",
+          "paths": [
+            "frontend/src/components/import/BatchResultsDownload.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  const fields = ['csv_row', ...columns, results.uidColumn];",
+          "paths": [
+            "frontend/src/services/importBatchResults.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    columns: ['first_name', 'last_name', 'date_of_birth', 'prior_ehr_mrn'],",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/batches.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    columns: ['patient_uid', 'wound_location', 'wound_type', 'first_seen_date'],",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/batches.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-22a",
+      "claim": "Re-import matching: Insurance on payer + policy number; Allergies on allergen; Comorbidities merged without repeats; Emergency Contacts on name + phone; Wounds on location, type, first-seen date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.insurance_provider ?? ''}|${m.policy_number ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "computeExternalId(ctx.facilityId, 'allergies', patientId, `${m.allergen_name ?? ''}`);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.contact_name ?? ''}|${m.phone_number ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.wound_location ?? ''}|${m.wound_type ?? ''}|${firstSeenDate ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ── comorbidities → patient.conditions[] (facility-guarded merge) ──────────────",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-22b",
+      "claim": "Step 8 (Documents & Historical Wound Photos) deduplicates by SHA-256 content hash.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const externalId = `po_${sha256.slice(0, 32)}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/mediaImport.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f09",
+      "claim": "Step 1 (Patients) matches on (facility_id, external_id) + first_name + date_of_birth; Step 3 (Medications) matches on (patient_id, name); Step 9 (Visit History) matches on (patient_id, service_date, visit_number, provider_name, visit_summary).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// F6: Include dosage, route, and frequency in the medication naturalKey so two",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "Medications also match on dosage, route and frequency (functions/practice-onboarding-import/writers.ts:989); Visit History matches on service date, visit number and wounds when a visit number is given.",
+      "proposed_text": "Match keys: insurance payer + policy number; medications name, dosage, route, frequency; allergies allergen; comorbidities merged without repeats; contacts name + phone; wounds location, type, first-seen date; visit history service date, visit number and wounds (else also provider and summary).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.insurance_provider ?? ''}|${m.policy_number ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// F6: Include dosage, route, and frequency in the medication naturalKey so two",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "computeExternalId(ctx.facilityId, 'allergies', patientId, `${m.allergen_name ?? ''}`);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.contact_name ?? ''}|${m.phone_number ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const naturalKey = `${m.wound_location ?? ''}|${m.wound_type ?? ''}|${firstSeenDate ?? ''}`;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? `${serviceDate}|${visitNumStr}|${woundIds.join(',').toLowerCase()}`",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// ── comorbidities → patient.conditions[] (facility-guarded merge) ──────────────",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-21a",
+      "claim": "Rows that already exist are not duplicated; they increment the Skipped counter, and for Patients and Wounds skipped rows still return their existing ID in the results CSV.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "? ` All matched ${config.producesUid} IDs are included in the Results CSV below.`",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    r.status === 'inserted' ? acc.successCount++ : acc.skippedCount++;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-23",
+      "claim": "Each step card shows <N> imported total · last run: X imported, Y skipped, Z errors. Completed with errors (Import Completed with Errors) keeps good rows; Failed only when nothing imported or skipped and every row errored.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "label: `${totalImported} imported total · last run: ${formatLastRun(latest)}` };",
+          "paths": [
+            "frontend/src/components/import/importBatchSummary.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Import Completed with Errors'",
+          "paths": [
+            "frontend/src/components/import/ImportResultsPanel.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const hardFailed = totals.success_count === 0 && totals.skipped_count === 0 && totals.error_count > 0;",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/execute.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-23b",
+      "claim": "Complete (completed): all importable rows were imported or skipped with 0 errors.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "payload.status = hardFailed ? 'failed' : 'completed';",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/execute.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-25a",
+      "claim": "Insurance creates patient coverage records with is_active = true.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      is_active: true,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f11",
+      "claim": "Insurance creates records in patient_insurances with coverage_order = 1 (primary).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "coverage_order",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "No coverage order is set by the importer (no coverage_order in writers.ts).",
+      "proposed_text": "subscriber_relationship is left blank if blank; billing treats blank as Self. Imported coverage is saved as active.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      subscriber_relationship: trimOrNull(m.subscriber_relationship),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      // passes every check a blank would fail. Readers treat NULL as self, so",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      is_active: true,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-24",
+      "claim": "Insurance columns: patient_uid, insurance_provider, policy_number required; group_number, member_id, effective_date, subscriber_name, subscriber_dob, subscriber_relationship optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'insurance_provider',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'policy_number',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'group_number',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'member_id',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'effective_date',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'subscriber_name',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'subscriber_dob',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'subscriber_relationship',",
+          "paths": [
+            "frontend/src/components/import/modules/InsuranceImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-25b",
+      "claim": "subscriber_relationship is stored as null if blank (downstream billing readers treat null as Self).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      subscriber_relationship: trimOrNull(m.subscriber_relationship),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      // passes every check a blank would fail. Readers treat NULL as self, so",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      is_active: true,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-26",
+      "claim": "Medications columns: patient_uid, name required; dosage, frequency, route, prescribing_physician, start_date, status optional; start_date populates both start_date and date_prescribed.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'name',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'dosage',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'frequency',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'route',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'prescribing_physician',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'start_date',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'status',",
+          "paths": [
+            "frontend/src/components/import/modules/MedicationsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      date_prescribed: dateISO,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "// #2 — the master-meds display reads `date_prescribed`; the CSV field is",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f14",
+      "claim": "Medication status: active, discontinued (aliases: stopped, inactive, d/c, dc), or held (aliases: hold, on_hold); defaults to active if blank; unrecognized values default to active with a warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const MED_STATUSES = new Set(['active', 'discontinued', 'held', 'completed', 'unknown']);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The importer also accepts completed and unknown (functions/practice-onboarding-import/writers.ts:970).",
+      "proposed_text": "Medication status: active, discontinued (stopped, inactive, d/c, dc), held (hold, on_hold), completed or unknown; blank means active; anything else is saved as active with a warning.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const MED_STATUSES = new Set(['active', 'discontinued', 'held', 'completed', 'unknown']);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  stopped: 'discontinued', inactive: 'discontinued', 'd/c': 'discontinued', dc: 'discontinued',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  hold: 'held', on_hold: 'held',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return { value: 'active', unknown: true };",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    warnFallback(acc, row.rowNumber, 'status', m.status, status);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-28",
+      "claim": "Allergies: allergen_name required; allergy_type medication, food, environmental, latex, insect, other, or nkda; defaults to other if blank, other with a warning if unrecognized.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLERGY_TYPES = new Set(['medication', 'food', 'environmental', 'latex', 'insect', 'other', 'nkda']);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return { value: 'other', unknown: x !== '' };",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f12",
+      "claim": "Allergy severity (required): mild (aliases: low, minor), moderate, severe, life_threatening (aliases: life-threatening, life threatening, high, critical, anaphylaxis), or none; if an unrecognized value reaches the backend, it defaults to moderate with a warning.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLERGY_SEVERITIES = ['mild', 'moderate', 'severe', 'life_threatening', 'none'];",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return { value: 'moderate'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "The Confirm screen accepts only mild, moderate, severe and life_threatening (components/import/modules/AllergiesImportModule.tsx:29); the backend fallback is none, not moderate (functions/practice-onboarding-import/writers.ts:1046).",
+      "proposed_text": "Allergy severity is required: mild, moderate, severe or life_threatening (life-threatening and life threatening also work); any other value is an error on the Confirm screen.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLERGY_SEVERITIES = ['mild', 'moderate', 'severe', 'life_threatening'];",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ": `Severity must be one of: ${ALLERGY_SEVERITIES.join(', ')}`,",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "/** Normalize a value to a known enum label (lowercase, spaces/dashes -> _), or null. */",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f13",
+      "claim": "Allergy status: active, inactive, resolved, unknown, or not_applicable (alias: n/a); defaults to active if blank or unrecognized.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'n/a'",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "n/a is not recognized; it is saved as active with a warning (functions/practice-onboarding-import/writers.ts:1048).",
+      "proposed_text": "Allergy status: active, inactive, resolved, unknown or not_applicable; blank or anything else is saved as active. allergen_name required; reaction_description optional.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const ALLERGY_STATUSES = new Set(['active', 'inactive', 'resolved', 'unknown', 'not_applicable']);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  return { value: 'active', unknown: x !== '' };",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'allergen_name',",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'reaction_description',",
+          "paths": [
+            "frontend/src/components/import/modules/AllergiesImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-31",
+      "claim": "Comorbidities: patient_uid and condition required; one condition per row; multiple rows for one patient are grouped; duplicate conditions are skipped.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/ComorbiditiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'condition',",
+          "paths": [
+            "frontend/src/components/import/modules/ComorbiditiesImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  // Group conditions by patient_uid.",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-32",
+      "claim": "Emergency Contacts: patient_uid and contact_name required; relationship, phone_number, email (name@domain.tld), is_primary optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'contact_name',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'relationship',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'phone_number',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'email',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'is_primary',",
+          "paths": [
+            "frontend/src/components/import/modules/ContactsImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-33a",
+      "claim": "is_primary accepts true/false, yes/no, 1/0 (case-insensitive) and defaults to false if blank.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  const valid = ['true', 'false', 'yes', 'no', '1', '0', 'y', 'n'];",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    let isPrimary = normalizeBool(m.is_primary);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f15",
+      "claim": "Step 7 (Documents) is currently disabled on /administrator/practice-onboarding and displays Not available yet. Documents and wound photographs are not migrated via CSV; upload documents to the chart after onboarding. The endpoint returns \"Document import is not available yet. No documents were imported.\"",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "available: false",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "export async function startMediaImportBatch(",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The Documents & Historical Wound Photos step (Step 8) is active and uploads files to private storage (DocumentsImportModule.tsx; mediaImport.ts).",
+      "proposed_text": "Documents step uploads the files as well as the CSV; each source file is stored privately before its row is saved. Documents columns: patient_uid, file_name, document_type required; document_date, wound_uid (wound_id also accepted), prior_ehr_system optional.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "'Two-phase private-bucket import for prior-EHR patient documents (patient-documents) and historical wound photos (wound-images under historical/). Attach source files below so each row uploads directly to private Storage before its record is committed.',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'file_name',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'document_type',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'document_date',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    label: 'Wound UID / wound_id (optional — links photo or document to a wound)',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      'wound_id',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    required: true,$",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "cr-f16",
+      "claim": "Documents template: patient_uid, file_name required; document_type optional (referral, consent, lab_result, imaging, prior_auth, or other); document_date optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "^    required: true,$",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": {
+            "count": 2
+          },
+          "note": "document_type optional would leave 2 required fields"
+        }
+      ],
+      "finding": "document_type is required (three required: true entries in DocumentsImportModule.tsx).",
+      "proposed_text": "Documents columns: patient_uid, file_name, document_type required; document_date, wound_uid (wound_id also accepted), prior_ehr_system optional.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'file_name',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'document_type',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    key: 'document_date',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    label: 'Wound UID / wound_id (optional — links photo or document to a wound)',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      'wound_id',",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "pattern": "^    required: true,$",
+          "paths": [
+            "frontend/src/components/import/modules/DocumentsImportModule.tsx"
+          ],
+          "expect": {
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "cr-f18",
+      "claim": "Imported wounds (Step 8) and visits (Step 9) are stored in read-only history tables; imported history records cannot be edited, signed, or billed as active Medipyxis visits, and wound photos are not migrated.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "available: false",
+          "paths": [
+            "frontend/src/pages/administrator/PracticeOnboarding.tsx"
+          ],
+          "expect": "present"
+        }
+      ],
+      "finding": "Historical wound photos are migrated in Step 8 (mediaImport.ts appends to wound_import_history.photo_urls); wounds are Step 7, not Step 8.",
+      "proposed_text": "Imported wounds appear on the patient's Wound Cockpit for context and are kept separate from wounds documented in Medipyxis. Imported visits appear on the patient's timeline, separate from visits documented in Medipyxis.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      .from('wound_import_history')",
+          "paths": [
+            "backend/supabase/functions/wound-cockpit-load/index.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('visit_import_history')",
+          "paths": [
+            "frontend/src/pages/PatientTimelinePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-41",
+      "claim": "To document and bill a new encounter in Medipyxis, start a new visit on the patient's active chart.",
+      "kind": "advice"
+    },
+    {
+      "id": "cr-x4",
+      "claim": "Step 7 produces wound_uid in wounds_import_results.csv so Step 8 and Step 9 can link to historical wounds.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  producesUid: 'wound_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-34a",
+      "claim": "Wounds: patient_uid and wound_location required; wound_type, wound_etiology, wound_status (defaults to active), length_cm, width_cm, depth_cm, first_seen_date, prior_treatments and diagnosis_codes (split on , or ; into a list), notes (saved to treatment_notes) optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'wound_location',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'wound_type',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'wound_etiology',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'wound_status',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'length_cm',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'width_cm',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'depth_cm',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'first_seen_date',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'prior_treatments',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'diagnosis_codes',",
+          "paths": [
+            "frontend/src/components/import/modules/WoundsImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "wound_status: trimOrNull(m.wound_status) ?? 'active',",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "prior_treatments: splitList(m.prior_treatments),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "treatment_notes: trimOrNull(m.treatment_notes ?? m.notes),",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-f17",
+      "claim": "length_cm, width_cm, depth_cm must be >= 0; non-numeric or negative values fail validation.",
+      "checks": [
+        {
+          "type": "grep",
+          "pattern": "(n|value|num) < 0|must be (>=|at least) 0|cannot be negative",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts",
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present",
+          "ignoreCase": true
+        }
+      ],
+      "finding": "Negative numbers are not rejected; only non-numbers are (functions/practice-onboarding-import/writers.ts:54).",
+      "proposed_text": "Measurements are numbers with a period for decimals (3.2, not 3,2).",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      return 'Invalid number — use a period for decimals (e.g. 2.5)';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-40",
+      "claim": "Step 9 creates read-only historical encounter summaries in visit_import_history.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": ".from('visit_import_history')",
+          "paths": [
+            "frontend/src/pages/PatientTimelinePage.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-39a",
+      "claim": "Visit History: patient_uid and service_date required; wound_uid optional (one or more UUIDs, comma/semicolon-separated); provider_name and visit_summary optional.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'patient_uid',",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'service_date',",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'provider_name',",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "key: 'visit_summary',",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "    validate: validateUuidList,",
+          "paths": [
+            "frontend/src/components/import/modules/VisitHistoryImportModule.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-x5",
+      "claim": "Visit History wound_uid: any non-UUID token is dropped with a non-blocking warning so the visit row still imports.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Invalid wound_uid \"${tok}\" — must be a valid UUID from the Wounds results CSV",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "A non-UUID wound_uid fails the row with an error (functions/practice-onboarding-import/writers.ts:319); it is not dropped with a warning.",
+      "proposed_text": "Visit History wound_uid: every value must be a wound_uid from the Wounds results CSV; a value that is not a valid ID fails the row.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "Invalid wound_uid \"${tok}\" — must be a valid UUID from the Wounds results CSV",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-x6",
+      "claim": "visit_number must be a positive whole number; non-integer values are dropped with a warning on the backend or flagged on Confirm.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const visitNumber = numberOrThrow('visit_number', m.visit_number);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "absent"
+        }
+      ],
+      "finding": "The backend reads visit_number as any number and fails the row (not a warning) when it is not a number (functions/practice-onboarding-import/writers.ts:1251); decimals and negatives are not refused there.",
+      "proposed_text": "visit_number: optional; must be a number, or the row fails.",
+      "proposed_checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const visitNumber = numberOrThrow('visit_number', m.visit_number);",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-44",
+      "claim": "Format all dates as YYYY-MM-DD (recommended) and wrap fields containing commas in double quotes.",
+      "kind": "advice"
+    },
+    {
+      "id": "cr-42",
+      "claim": "The Confirm screen converts unambiguous slash dates (15/06/2026 vs 06/15/2026); ambiguous dates where both numbers are 12 or below default to US month-first (MM/DD/YYYY) and raise an amber warning banner.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "  // Determine month/day (support unambiguous day-first when a > 12 && b <= 12)",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "⚠ Some dates were ambiguous and assumed US month-first",
+          "paths": [
+            "frontend/src/components/import/ConfirmationScreen.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-43",
+      "claim": "Both the Confirm screen validator and the backend reject rollover dates such as 2026-02-31, 2026-02-29 (non-leap year) or 2026-04-31 with Invalid calendar date.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "return `Invalid calendar date \"${trimmed}\" (day does not exist in month)`;",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        },
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "`Invalid calendar date \"${v}\" (day does not exist in month)`,",
+          "paths": [
+            "backend/supabase/functions/practice-onboarding-import/writers.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-35",
+      "claim": "Wound dimensions must use a period decimal (3.2, not 3,2).",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "      return 'Invalid number — use a period for decimals (e.g. 2.5)';",
+          "paths": [
+            "frontend/src/services/importService.ts"
+          ],
+          "expect": "present"
+        }
+      ]
+    },
+    {
+      "id": "cr-45",
+      "claim": "Keep the exact lowercase snake_case column names on the header row so the Map Columns step auto-matches every field.",
+      "checks": [
+        {
+          "type": "grep",
+          "fixed": true,
+          "pattern": "const autoMapped = autoMapColumns(csvHeaders, targetFields);",
+          "paths": [
+            "frontend/src/components/import/ColumnMappingScreen.tsx"
+          ],
+          "expect": "present"
+        }
+      ]
+    }
+  ]
+}
