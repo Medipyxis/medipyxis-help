@@ -33,7 +33,7 @@ Medicare's Program Integrity Manual — the chapter that tells reviewers how to 
 - Reviewers are told to be suspicious of **template and cloned language**, meaning the same sentence appearing on every note.
 - An attestation on its own — "I confirm this was medically necessary" — proves nothing.
 
-See also [Note honesty guardrails](./note-honesty-guardrails.md).
+See also Note honesty guardrails.
 
 The note cites only the two verified wound-care policies.
 

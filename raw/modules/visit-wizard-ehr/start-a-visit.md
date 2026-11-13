@@ -172,7 +172,7 @@ Mark each section complete once it is documented.
 6. Document exudate, pain, and infection signs.
 7. Click **Mark as Complete**.
 
-See [Wound Assessment](./wound-assessment.md) for the full reference.
+See Wound Assessment for the full reference.
 
 ---
 
@@ -298,7 +298,7 @@ Some fields are recommended rather than required and won't stop you finishing th
 4. **Reconcile Active Medications (from chart).** Mark what was discontinued or changed, and add anything missing.
 5. **Add or prescribe:**
    - **Add a medication manually** to document it in the patient's record (name, dose, route, frequency).
-   - **Prescribe electronically** through the built-in DoseSpot workflow: choose the medication, enter the prescription details and refills, select the patient's pharmacy, review, and send. See [Prescribe with DoseSpot](./medication-dosespot.md).
+   - **Prescribe electronically** through the built-in DoseSpot workflow: choose the medication, enter the prescription details and refills, select the patient's pharmacy, review, and send. See Prescribe with DoseSpot.
 6. **Review Changes This Visit and Pharmacy Order**, including any pending or queued pharmacy orders.
 7. Click **Mark as Complete** if the section isn't already complete.
 
@@ -325,7 +325,7 @@ Automated coding supports you and your biller; it does not replace coding review
 
 ## 15. Section 16 — LCD Audit & Review
 
-This section checks your documentation against the applicable Medicare Local Coverage Determination (LCD) and shows any gaps before you finalize the visit. The [LCD Navigator](./lcd-navigator.md) tracks the same requirements as you work through the wizard.
+This section checks your documentation against the applicable Medicare Local Coverage Determination (LCD) and shows any gaps before you finalize the visit. The LCD Navigator tracks the same requirements as you work through the wizard.
 
 1. **Review the coverage context** at the top. If no local policy applies, it shows **General Medicare standard applies**.
 2. **Check the Wound Context** carried from Section 7 (dimensions, area, tissue, tunneling, undermining). A warning lists any missing fields.
