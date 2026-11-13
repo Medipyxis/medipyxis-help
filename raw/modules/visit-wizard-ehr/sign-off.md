@@ -146,12 +146,11 @@ Anyone whose role can open patient charts sees **Add an addendum** on a signed v
 
 1. **Addendum Note** — describe what changed and why. Do not re-state the original note; it stays as signed.
 2. **Select Progress Note** — check that it shows the note you are amending.
-3. **Type of Addendum** — choose *Correction*, *Clarification*, *Late entry*, *Fabrication remediation*, or *Other*.
+3. **Type of Addendum** — pick the addendum type that fits, such as *Correction*, *Clarification*, *Late entry*, or *Other*.
 4. **Reason** — enter at least 10 characters.
-5. If the signed note contains a sentence you did not write, choose *Fabrication remediation* and tick each statement you are correcting under **Fabricated Statements to Remediate** — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*.
-6. Sign in the **Provider Signature** box.
-7. Enter the signer's full name in **Electronic Signature by**, and check the **Signed Date**.
-8. Click **Submit Addendum**. A message confirms *Addendum filed and PDF generated.*
+5. Sign in the **Provider Signature** box.
+6. Enter the signer's full name in **Electronic Signature by**, and check the **Signed Date**.
+7. Click **Submit Addendum**. A message confirms *Addendum filed and PDF generated.*
 
 Pick the type and reason that name what you are correcting. A reviewer reads them alongside the addendum text, so a precise reason is worth more than a general one. The addendum prints on its own page after the signed note.
 

@@ -66,6 +66,8 @@ If no earlier visits are found on this patient's record, click **Search by name 
 
 Pull Migration Data lists visits already stored in Medipyxis. It does not connect to another EHR.
 
+A pull can replace details already filled in on the visit, so review the fields after you pull.
+
 <Tip>
 Pull before you start documenting, then review every pulled value against the patient in front of you before you sign. Pulled data is a starting point, not a re-assessment.
 </Tip>
@@ -204,7 +206,7 @@ Document every wound-specific intervention performed at this visit. What you ent
 1. In **Interventions Performed Today**, click **Generate Procedure Note**.
 2. Review the narrative for accuracy against the care you actually provided.
 
-To use your own wording instead, enter it in the intervention's **Notes** field and check **Use My Exact Procedure Note**. Your note is kept exactly as written and is not regenerated.
+To use your own wording instead, enter it in the intervention's **Notes** field and check **Use my exact procedure note**. Your note is kept exactly as written and is not rewritten automatically.
 
 ### Address contributing factors
 
@@ -279,7 +281,7 @@ This section is the final review of the procedures you documented in Section 9 b
 1. **Review the procedure entries.** **Wound-Specific Procedure Documentation** shows the active wound; **Procedure Entries** lists the interventions from Section 9 with their supplies. Review each wound separately.
 2. **Check for missing fields.** In **Procedure Documentation & Supplies**, choose a procedure under **Select Intervention Performed Today**. Details sync from Section 9 automatically (shown by the **Auto-Sync** indicator). Review any alerts about missing documentation — for sharp debridement, for example, tissue level, area debrided (cm²), hemostasis method, complications, and the compliance narrative. A recommendation such as an after-treatment photo may also appear.
 3. **Complete the procedure details.** Open **Review Procedure Documentation**. It carries in the wound assessment (Section 7) and the intervention details (Section 9). Confirm the **Procedure Summary** and fill in any missing fields — for sharp debridement: the deepest **Tissue Level** removed, **Area (cm²)**, **Hemostasis Method**, and **Complications** (or None).
-4. **Review the procedure note.** **Procedure Note (Auto-generated)** carries the narrative from Section 9. Edit it, or add detail with **Voice Intake**. If you used **Use My Exact Procedure Note** in Section 9, your wording is carried forward as written.
+4. **Review the procedure note.** **Procedure Note (Auto-generated)** carries the narrative from Section 9. Edit it, or add detail with **Voice Intake**. If you used **Use my exact procedure note** in Section 9, your wording is carried forward as written.
 5. **Optional — Compliance narrative.** Click **Generate Compliance Note** for an additional structured narrative, and review it. You can leave this blank if your procedure note already documents the procedure fully.
 6. Review the supplies, check **I have reviewed the procedure documentation** where shown, and click **Mark as Complete**.
 
@@ -374,7 +376,7 @@ Use **Not Seen** when the visit didn't take place, for example because the patie
 
 ### If the visit will not go ahead: cancel the appointment
 
-Canceling doesn't delete or change the visit note. The unsigned draft is kept, but it can't be opened or edited while the appointment is canceled. If the patient has no other open appointments, they move back to needs scheduling.
+Canceling doesn't delete or change the visit note. The unsigned draft is kept. A canceled appointment can't be reopened in the app, and the draft can't be opened from that appointment. If the patient has no other open appointments, they move back to needs scheduling.
 
 **From the Fleet Calendar:**
 
@@ -412,7 +414,7 @@ All 17 sections are complete, the codes and LCD findings are reviewed, and the v
 | --- | --- | --- |
 | Wizard opens on the wrong patient | You opened the wrong appointment | Close the wizard and open the correct appointment. |
 | The visit still shows as an unfinished draft | The wizard was closed, but the appointment wasn't updated | Mark the appointment Not Seen, or cancel it — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started). |
-| *Cannot open or edit a draft on a canceled appointment* | The appointment was canceled | The draft is kept but can't be opened while the appointment is canceled. If the patient was simply not seen, use **Not Seen** instead of cancel. |
+| *Cannot open or edit a draft on a canceled appointment* | The appointment was canceled | The draft is kept, but a canceled appointment can't be reopened in the app, and the draft can't be opened from that appointment. If the patient was simply not seen, use **Not Seen** instead of cancel. |
 | A new prescription isn't in Active Prescriptions | It hasn't synced from DoseSpot yet | Wait a few minutes and click **Refresh**. |
 | Section 16 flags a gap | Documentation is missing in an earlier section | Fix it in the section listed, then return to Section 16. |
 | *Not signed — fix required* after Continue to Review or Sign & Lock | The note PDF could not be built, or is not ready yet. Nothing was signed or filed. | Wait for the preview, or go back, fix the visit, and click **Continue to Review** again. See [Sign Off](/modules/visit-wizard-ehr/sign-off/). |

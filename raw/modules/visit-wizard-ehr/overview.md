@@ -36,7 +36,7 @@ You can open a visit from:
 
 - **Fleet Calendar** — tap the appointment, then **Start Visit** (**Resume Visit** or **Continue Visit** when documentation has already started).
 - **Patient Management (My Clinical Day)** — open the scheduled visit.
-- **All Patients → Appointment Management** — select the visit date, then click **Open Visit**.
+- **Patient chart > Appointment Management** — select the visit date, then click **Open visit**.
 - **Wound Cockpit** — choose a visit from **Pick a visit or start a new one** in the upper-right corner, then click **Open**.
 
 When opened, the wizard is tied to the selected patient and appointment. See [How the Visit Wizard opens](/modules/visit-wizard-ehr/how-the-wizard-opens/).
@@ -51,7 +51,7 @@ When opened, the wizard is tied to the selected patient and appointment. See [Ho
 - **Carry-forward** — information from earlier visits carries into sections such as Review of Systems, and **Pull Migration Data** brings forward data from a previous Medipyxis visit you choose.
 - **Per-wound documentation** — interventions, care plans, procedures, and billing are documented separately for each active wound.
 - **LCD support** — the [LCD Navigator](/modules/visit-wizard-ehr/lcd-navigator/) tracks Medicare LCD documentation requirements as you work, and Section 16 shows any remaining gaps.
-- **Drafting help** — **Summarize prior treatments**, **Generate Procedure Note**, **Generate Draft** (care plan), and **Generate Compliance Note** create starting text from what you documented. You review and edit it; you can also keep your own procedure wording with **Use My Exact Procedure Note**.
+- **Drafting help** — **Summarize prior treatments**, **Generate Procedure Note**, **Generate Draft** (care plan), and **Generate Compliance Note** create starting text from what you documented. You review and edit it; you can also keep your own procedure wording with **Use my exact procedure note**, which skips automatic rewriting.
 - **Billing codes from documentation** — **Pull Codes** suggests ICD-10-CM, CPT, HCPCS, and E/M codes from your documentation for review before signing.
 
 ---
@@ -91,7 +91,7 @@ If your practice needs a field or a change to support a clinical workflow, docum
 
 ## Autosave and drafts
 
-The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. A visit you leave before **Sign & Lock** stays an unsigned draft that you can resume on any device. To stop a visit you won't finish, cancel or delete the appointment — see [Stop or cancel a visit you started](/modules/visit-wizard-ehr/start-a-visit/#stop-or-cancel-a-visit-you-started).
+The Visit Wizard saves continuously — each field is written as you complete it — so you rarely need to save manually. A visit you leave before **Sign & Lock** stays an unsigned draft that you can resume on any device. To stop a visit you won't finish, mark the appointment **Not Seen** or cancel it — see [Stop or cancel a visit you started](/modules/visit-wizard-ehr/start-a-visit/#stop-or-cancel-a-visit-you-started).
 
 Always review carried-forward and pulled values — they are a starting point, not a substitute for re-assessment.
 

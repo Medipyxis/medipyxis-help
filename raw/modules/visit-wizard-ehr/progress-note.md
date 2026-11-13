@@ -81,7 +81,7 @@ The question is **not** asked per wound. If a wound's necessity note is word-for
 
 ## Your procedure note wording
 
-In Section 9 — Interventions & Treatments, **Generate Procedure Note** builds a procedure narrative from the intervention details you entered. To use your own wording instead, type it in the intervention's **Notes** field and check **Use My Exact Procedure Note** — it is kept exactly as written and carried into Section 13 — Procedures & Supplies.
+In Section 9 — Interventions & Treatments, **Generate Procedure Note** builds a procedure narrative from the intervention details you entered. To use your own wording instead, type it in the intervention's **Notes** field and check **Use my exact procedure note** — it is kept exactly as written and carried into Section 13 — Procedures & Supplies.
 
 In Section 13 you can also click **Generate Compliance Note** for an additional structured narrative. It is optional: leave it blank if your procedure note already documents the procedure fully.
 
@@ -101,7 +101,7 @@ After you click **Continue to Review** in step 17, the **Preview — Review Befo
 
 The **Download Clinical Note** action builds a fresh provider copy, without the billing sections, from the visit's recorded data. It keeps the format your note had when you signed it. Your signed note is still the signed note; the fresh copy is a fresh copy.
 
-**What if a signed note contains a sentence I did not write?** File an addendum naming the specific kind of sentence being corrected. The addendum reason list covers each kind — for example *Procedure tolerance was a template default* or *LCD citation was wrong (cited policy does not govern this service)*. See [Sign Off](/modules/visit-wizard-ehr/sign-off/).
+**What if a signed note contains a sentence I did not write?** Add an addendum correcting the statement, using the ordinary addendum flow. Choose *Correction*, describe the sentence, and submit the addendum. See [Sign Off](/modules/visit-wizard-ehr/sign-off/).
 
 **Do I have to answer the checklist?** No. Every item is advisory and none of them stop you signing.
 
