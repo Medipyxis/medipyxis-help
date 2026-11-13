@@ -108,7 +108,7 @@ A signed note can't be edited. To correct it or add information, add an addendum
 
 3. The **Add Addendum to Progress Note** form opens. In **Addendum Note**, enter the additional documentation.
 4. In **Select Progress Note**, check that the right signed note is selected. Each note shows the visit date, who signed it and when, and the wounds on the visit. A banner confirms the visit date the addendum will be attached to.
-5. Choose the **Type of Addendum**: **Correction**, **Clarification**, **Late entry**, **Fabrication remediation**, or **Other**. This is required by CMS.
+5. Choose the **Type of Addendum**: **Correction**, **Clarification**, **Late entry**, or **Other**. This is required by CMS.
 6. In **Reason**, briefly explain why you are adding the addendum (at least 10 characters).
 
    ![Top of the Add Addendum to Progress Note form, showing the Addendum Note field and the Attach Files area](../../assets/visit-wizard/22_addendum_form_top.png)
