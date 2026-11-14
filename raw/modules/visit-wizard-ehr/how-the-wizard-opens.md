@@ -1,86 +1,77 @@
 ---
 id: visit-wizard-ehr-how-the-wizard-opens
-title: How the Visit Wizard opens (route-on-arrival)
+title: How the Visit Wizard opens
 module: visit-wizard-ehr
-audience: [clinician, clinical_manager, admin]
+audience: [clinician, clinical_manager, admin, medical_director]
 roles: [clinician, medical_director, clinical_manager, admin]
 type: concept
 estimated_minutes: 5
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard
 related:
   - visit-wizard-ehr-overview
   - visit-wizard-ehr-start-a-visit
   - visit-wizard-ehr-wound-cockpit
   - visit-wizard-ehr-sign-off
-tags: [visit-wizard, route-on-arrival, resume-draft, signed-note, duplicate-note-guard]
+tags: [visit-wizard, resume-draft, signed-note, addendum, signed-visit]
 ---
 
-The Visit Wizard opens from three surfaces — Fleet Calendar, Wound Cockpit, and Patient Chart — and all three behave the same way. What the wizard shows on arrival depends on what already exists for that patient and appointment. This article explains the three cases and what to do in each.
+# How the Visit Wizard opens
+
+The Visit Wizard opens from three places — Fleet Calendar, the Wound Cockpit, and the Patient Chart — and all three behave the same way. What you see depends on what already exists for that patient and appointment. This article explains the three cases and what to do in each.
 
 ## Before you start
 
-- You are a clinician, medical director, or clinical manager at a facility that uses the wound-care wizard.
-- You are opening a visit from Fleet Calendar, the Wound Cockpit, or the Patient Chart's Appointments card.
-
----
+- Your role can open **All Patients**. Admins always can, and clinicians and clinical managers can by default. Other roles, such as medical director, can open the Visit Wizard only if your organization's role settings give them **All Patients** access.
+- You are opening a visit from Fleet Calendar, the Wound Cockpit, or the Patient Chart's **Appointment Management** tile.
 
 ## Same behavior from every surface
 
-Whichever surface you start from, Medipyxis looks up the appointment's visit type and any existing visit for that patient and appointment. The wizard then opens on the right patient and appointment, with the visit type taken from the appointment, and resumes a live draft if one exists.
+Whichever place you start from, Medipyxis looks up the appointment's visit type and any visit that already exists for that patient and appointment. The wizard then opens on the right patient and appointment, with the visit type taken from the appointment, and resumes a draft if one exists.
 
 ## Case 1 — No visit yet: fresh start
 
-If no visit exists yet for this patient and appointment, the wizard opens on **Section 1** with the visit type pre-selected from the appointment and the patient/wound context carried in. This is the normal path for a scheduled appointment you are walking into for the first time.
+If no visit exists yet for this patient and appointment, the wizard opens at the start, with the visit type taken from the appointment and the patient and wound context carried in. This is the normal path for a scheduled appointment you are walking into for the first time. Your draft saves automatically as you document.
 
-The wizard creates the draft on first save. Nothing is stored until you complete a field.
+## Case 2 — A draft exists: resume in place
 
-## Case 2 — A live draft exists: resume in place
+If a draft already exists for this appointment, the wizard resumes that draft with your earlier work in place. Each section's header shows its status, such as **Completed** or **Needs Attention**, so you can see what's left. Because the wizard saves as you go, work you entered on another device or in another tab is already there.
 
-If there is an active draft for this appointment, the wizard resumes that exact draft and re-opens the section navigator with your prior work intact. Continuous autosave means the last field you completed on your other device or in your other tab is already saved.
+An appointment has only one active draft, so a visit cannot be split across two drafts by accident.
 
-Medipyxis allows only one active draft per appointment, so you cannot accidentally split a visit across two drafts.
+A visit that reached the review screen but was never signed is still a draft. It opens as itself so you can finish it.
 
-## Case 3 — The appointment already has a signed note
+## Case 3 — The visit is already signed
 
-If the appointment already carries a finalized (signed and locked) note on this wound, the wizard opens on a fresh Section 1.
+If the appointment's visit is already signed, the wizard does not open. Instead you see **This visit is signed and locked**. You can review the signed note, but it can't be edited or signed again.
 
-<Warning>
-**Do not sign a second note on an appointment that already carries a signed note for the same wound** — use Addendum on the existing note. See [Sign Off](./sign-off.md) for the addendum flow.
-</Warning>
+An appointment has one signed note. From this screen:
 
-Medipyxis permits one finalized note **per wound** on the same appointment, so documenting a second wound separately on the same visit is legitimate and will not be blocked. What is not legitimate is a second finalized note on the same wound for the same encounter.
+- **Review signed note** — open the signed note, read-only.
+- **Add an addendum** — correct or add to the signed note.
+- **Add a wound by addendum** — document a wound you assessed at this visit that isn't in the signed note. Don't start a new visit for it.
+- **Back to patient chart** — leave without changes.
 
----
+If an unsigned copy of the visit was also started, the screen says so. That copy is kept as it is and can't be signed. Put anything it holds that isn't in the signed note into an addendum.
 
 ## What this means for you
 
-| You open the wizard on… | The wizard shows | What to do |
-|---|---|---|
-| An appointment with no visit yet | Section 1, prefilled from the patient and wound context | Document normally. |
-| An appointment with a live draft | The section you left off on, with all prior fields loaded | Continue where you left off. |
-| An appointment with a signed note on this wound | A fresh Section 1 | Close the wizard. Open the signed note from Progress Notes or the Wound Cockpit timeline and use **Add Addendum** if you need to correct or amend. |
-| An appointment with a signed note on a *different* wound | A fresh Section 1, ready to document the new wound | Document the second wound; both notes will co-exist on the appointment by design. |
-
----
+| You open the wizard on… | You see | What to do |
+| --- | --- | --- |
+| An appointment with no visit yet | The start of the wizard, with patient and wound context carried in | Document normally. |
+| An appointment with a draft | Your draft, with all earlier entries loaded | Continue where you left off. |
+| An appointment whose visit is signed | **This visit is signed and locked** | Review the note, or use **Add an addendum** or **Add a wound by addendum**. |
 
 ## Where you can open the wizard
 
-- **Fleet Calendar** — Appointment Details modal, **Start Visit** button.
-- **Wound Cockpit** — the inline appointment picker on each wound's cockpit page.
-- **Patient Chart** — the Appointment Management card's **Open Visit** button.
-
----
+- **Fleet Calendar** — the appointment's details window, **Start Visit** button (**Resume Visit** or **Continue Visit** when documentation has already started).
+- **Wound Cockpit** — the visit picker on the wound's cockpit page.
+- **Patient Chart** — the **Appointment Management** tile's **Open visit** button.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
-|---|---|---|
-| Wizard opens on a blank Section 1 for a visit you already started | A temporary network problem prevented the draft lookup — the wizard opens rather than blocking you | Close the wizard and re-open from the same surface; if the draft is truly missing, contact your admin. |
-| Wizard opens on the wrong wound | Draft on this appointment is tied to a different wound | Use the Wound picker in Section 7 to switch, or start the visit from the correct wound's cockpit. |
-| **Start Visit** takes you to the Primary Care Cockpit, not the wizard | Fleet Calendar specialty routing sent a primary-care patient to the PCP flow | Confirm the patient's assigned service line; wound-care patients route into the wizard. |
-| Wizard opens fresh when the appointment already has a signed note | The wizard does not redirect you to the signed note — see Case 3 above | Do not sign a second note; use the addendum flow on the existing note. |
-
-## Related
-
-Auto-rendered from `related:` in frontmatter.
+| --- | --- | --- |
+| The wizard opens at the start for a visit you already started | A temporary network problem stopped Medipyxis finding your draft. The wizard opens rather than blocking you. | Close the wizard and open it again from the same place. If the draft is still missing, contact your admin. |
+| The wizard shows the wrong wound | The draft for this appointment is on a different wound | Switch wounds with the wound picker in the Wound Assessment section, or start the visit from the correct wound's cockpit. |
+| You see **This visit is signed and locked** but need to document more | The appointment's visit is already signed | Use **Add an addendum**, or **Add a wound by addendum** for a wound missing from the note. |
