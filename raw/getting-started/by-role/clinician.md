@@ -37,7 +37,7 @@ Open **Fleet Calendar** (week view) once per Monday to preview the whole week �
 
 ## Step 2 — Start a new visit from the Wound Cockpit (2 min)
 
-1. From the Wound Cockpit, open the **Pick a visit or start a new one** dropdown. Select the scheduled visit and click **Open**, or choose **+ Start visit — pick a calendar slot…** to book and start one.
+1. From the Wound Cockpit, open the **Pick a visit or start a new one…** dropdown. Select the scheduled visit and click **Open**, or choose **+ Start visit — pick a calendar slot…** to book and start one.
 2. The **Visit Wizard** opens as a list of sections stacked down the page. Click a section's header to open it. Each header shows the section's status, for example **Completed**, **Needs Attention**, or **In Progress**.
 3. Your work autosaves continuously as you go — a dropped connection or a device switch won't lose it. (The web app is online-only; there is no separate offline mode.)
 ## Step 3 — Move through the 17 wizard steps (35 min)

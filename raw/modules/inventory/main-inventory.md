@@ -16,7 +16,7 @@ related:
   - inventory-accounts-payable
 prerequisites:
   - inventory-overview
-tags: [inventory, UIN, main inventory, active inventory, Visit Wizard, scanning, flat view]
+tags: [inventory, UIN, main inventory, active inventory, Visit Wizard, flat view]
 ---
 
 # Main Inventory reference
@@ -70,22 +70,18 @@ Each unit carries one of the following statuses through its lifecycle:
 Graft units applied to a patient are recorded by UIN against the encounter, and discarded amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded). Document the reason whenever a unit is marked `Damaged` or `Rejected`.
 </Compliance>
 
-## How UIN entry works in Procedure Supplies
+## How UIN entry and stock use work in the Visit Wizard
 
-The **Procedure Supplies** section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.
+The Visit Wizard records each graft's UIN in **Procedure Supplies**. Taking the unit out of stock is a separate step, in **Interventions & Treatments**.
 
-1. For a graft, the section shows a required **Box UID/UIN** field.
+1. For a graft, **Procedure Supplies** shows a required **Box UID/UIN** field.
 2. The clinician types the UIN from the product label into **Box UID/UIN**.
-3. The system validates that the entered UIN:
-   - Exists in Main Inventory for the clinician's facility.
-   - Has status `Available` or `Reserved`.
-   - Has not passed its **EXP DATE**.
-   - Has an IVR in `Approved` or `Agreed` status, if the product's category requires prior authorization.
-4. If validation passes, the unit is added to the encounter's supply record. Its status updates to `Used` when the visit is signed and locked.
-5. If validation fails, the system displays the specific reason (expired, wrong facility, no IVR) so the clinician can resolve it before proceeding.
+3. The UIN is saved with the visit, and **Generate Compliance Note** includes it in the draft compliance narrative. Medipyxis does not look the UIN up in Main Inventory, so check it against the label.
+4. To take the unit out of stock, the clinician picks the product's lot in **Interventions & Treatments**: choose where it comes from under **Deduct from** (**Patient Episode Inventory**, **Clinician Inventory**, or **Main Inventory**), then the lot and quantity. Lots are listed soonest expiry first, and an expired lot is marked **Expired**. Products allocated to the patient through an IVR are labelled **From IVR**.
+5. The quantity comes off inventory when the clinician clicks **Continue to Review**, not at **Sign & Lock**. Medipyxis first checks that the clinician has access to the facility, that the lot belongs to that facility and can be used from the chosen source, and that it has enough units left. If a check fails, the visit is still saved and a message says *Visit saved, but product use was not recorded*; fix the selection and save again. A lot's status changes to `Used` only when its last unit is used.
 
 <Warning>
-Do not apply a product without entering its UIN in the Visit Wizard. Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim, which can result in audit findings and claim denials.
+Enter the UIN and pick the lot for every graft you apply. **Box UID/UIN** puts the UIN in the note; the lot you pick is what takes the unit out of inventory.
 </Warning>
 
 <Note>

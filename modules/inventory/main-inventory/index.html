@@ -175,21 +175,17 @@
 <p><Compliance>
 Graft units applied to a patient are recorded by UIN against the encounter, and discarded amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded). Document the reason whenever a unit is marked <code>Damaged</code> or <code>Rejected</code>.
 </Compliance></p>
-<h2 id="how-uin-scanning-works-in-procedures-supplies">How UIN entry works in Procedure Supplies</h2>
-<p>The <strong>Procedure Supplies</strong> section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.</p>
+<h2 id="how-uin-scanning-works-in-procedures-supplies">How UIN entry and stock use work in the Visit Wizard</h2>
+<p>The Visit Wizard records each graft's UIN in <strong>Procedure Supplies</strong>. Taking the unit out of stock is a separate step, in <strong>Interventions &amp; Treatments</strong>.</p>
 <ol>
-<li>For a graft, the section shows a required <strong>Box UID/UIN</strong> field.</li>
+<li>For a graft, <strong>Procedure Supplies</strong> shows a required <strong>Box UID/UIN</strong> field.</li>
 <li>The clinician types the UIN from the product label into <strong>Box UID/UIN</strong>.</li>
-<li>The system validates that the entered UIN:
-   - Exists in Main Inventory for the clinician's facility.
-   - Has status <code>Available</code> or <code>Reserved</code>.
-   - Has not passed its <strong>EXP DATE</strong>.
-   - Has an IVR in <code>Approved</code> or <code>Agreed</code> status, if the product's category requires prior authorization.</li>
-<li>If validation passes, the unit is added to the encounter's supply record. Its status updates to <code>Used</code> when the visit is signed and locked.</li>
-<li>If validation fails, the system displays the specific reason (expired, wrong facility, no IVR) so the clinician can resolve it before proceeding.</li>
+<li>The UIN is saved with the visit, and <strong>Generate Compliance Note</strong> includes it in the draft compliance narrative. Medipyxis does not look the UIN up in Main Inventory, so check it against the label.</li>
+<li>To take the unit out of stock, the clinician picks the product's lot in <strong>Interventions &amp; Treatments</strong>: choose where it comes from under <strong>Deduct from</strong> (<strong>Patient Episode Inventory</strong>, <strong>Clinician Inventory</strong>, or <strong>Main Inventory</strong>), then the lot and quantity. Lots are listed soonest expiry first, and an expired lot is marked <strong>Expired</strong>. Products allocated to the patient through an IVR are labelled <strong>From IVR</strong>.</li>
+<li>The quantity comes off inventory when the clinician clicks <strong>Continue to Review</strong>, not at <strong>Sign &amp; Lock</strong>. Medipyxis first checks that the clinician has access to the facility, that the lot belongs to that facility and can be used from the chosen source, and that it has enough units left. If a check fails, the visit is still saved and a message says <em>Visit saved, but product use was not recorded</em>; fix the selection and save again. A lot's status changes to <code>Used</code> only when its last unit is used.</li>
 </ol>
 <p><Warning>
-Do not apply a product without entering its UIN in the Visit Wizard. Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim, which can result in audit findings and claim denials.
+Enter the UIN and pick the lot for every graft you apply. <strong>Box UID/UIN</strong> puts the UIN in the note; the lot you pick is what takes the unit out of inventory.
 </Warning></p>
 <p><Note>
 The UIN is printed on the product label. Type it into <strong>Box UID/UIN</strong> exactly as printed.
@@ -203,7 +199,7 @@ The UIN is printed on the product label. Type it into <strong>Box UID/UIN</stron
       </div>
     </div><aside class="toc">
       <p class="toc-label">On this page</p>
-      <ul class="toc-list"><li><a class="" href="#what-main-inventory-shows">What Main Inventory shows</a></li><li><a class="" href="#active-inventory-flat-view-columns">Active Inventory flat view columns</a></li><li><a class="indent-3" href="#status-values">STATUS values</a></li><li><a class="" href="#how-uin-scanning-works-in-procedures-supplies">How UIN entry works in Procedure Supplies</a></li><li><a class="" href="#related">Related</a></li></ul>
+      <ul class="toc-list"><li><a class="" href="#what-main-inventory-shows">What Main Inventory shows</a></li><li><a class="" href="#active-inventory-flat-view-columns">Active Inventory flat view columns</a></li><li><a class="indent-3" href="#status-values">STATUS values</a></li><li><a class="" href="#how-uin-scanning-works-in-procedures-supplies">How UIN entry and stock use work in the Visit Wizard</a></li><li><a class="" href="#related">Related</a></li></ul>
       <div class="toc-action-stack">
         <button class="toc-action" id="copy-md" data-md-url="/raw/modules/inventory/main-inventory.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="label">Copy as Markdown</span></button>
         <a class="toc-action" href="/raw/modules/inventory/main-inventory.md" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>View raw Markdown</span></a>
