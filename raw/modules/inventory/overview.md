@@ -39,7 +39,7 @@ Understand the areas of the Inventory Management hub and the key terms that appl
 
 ### UIN — Unique Inventory Number
 
-A **UIN** (Unique Inventory Number) is a system-generated identifier assigned to a single physical unit of a product at the moment it is received into inventory. No two units share a UIN, even when they come from the same lot or shipment. The UIN travels with the graft or supply item through receiving, storage, and patient application, and is scanned in the **Procedures & Supplies** section of the Visit Wizard to link the unit to a clinical encounter.
+A **UIN** (Unique Inventory Number) is a system-generated identifier assigned to a single physical unit of a product at the moment it is received into inventory. No two units share a UIN, even when they come from the same lot or shipment. The UIN travels with the graft or supply item through receiving, storage, and patient application, and is entered in the **Procedure Supplies** section of the Visit Wizard (the **Box UID/UIN** field) to link the unit to a clinical encounter.
 
 ### PAR level — Periodic Automatic Replenishment
 
@@ -74,7 +74,7 @@ A **PAR level** (Periodic Automatic Replenishment threshold) is the minimum quan
 1. A product is defined in **Product Catalog** with its SKU, HCPCS, and category.
 2. A shipment is received through the appropriate category tile (**Amniotic / Advance Treatment**, **Biologics / Matrix**, **Conservative Care Products**, **PRP**, or **Ultrasonic Mist**), generating a UIN for each unit.
 3. If a payer requires prior authorization for a graft, an IVR is tracked in **IVR Tracking**.
-4. Received units appear in inventory and become selectable in the Visit Wizard's Procedures & Supplies section.
+4. Received units appear in inventory and can be recorded in the Visit Wizard's Procedure Supplies section.
 5. Vendor invoices for received shipments are handled in **Accounts Payable**.
 
 ## Related

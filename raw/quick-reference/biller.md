@@ -35,7 +35,7 @@ The Work Queue's **Claim Status** dropdown (set by the biller) uses these values
 | Code type | Comes from |
 |---|---|
 | **ICD-10** | Wound Assessment + History of Present Illness |
-| **CPT/HCPCS** | Procedures & Supplies + graft UIN applied |
+| **CPT/HCPCS** | Procedure Supplies + graft UIN applied |
 | **Modifiers** | Rule engine: LT/RT from wound location, 25 from E/M + procedure same day, 59 when bundling conflict |
 | **Place of service** | Facility default, overridden by visit location |
 | **Units** | Graft size in cm² (auto-calculated from L × W measurements) |

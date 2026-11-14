@@ -93,7 +93,7 @@ For high-volume supply items such as gauze or foam dressings, set a PAR level in
 
 ## How receiving creates UINs
 
-Regardless of category, every unit entered through a receiving form generates exactly one **UIN** (Unique Inventory Number) in Main Inventory. The UIN is the bridge between the physical item and its clinical and billing records. When a clinician selects a product in the **Procedures & Supplies** section of the Visit Wizard, they scan or enter the UIN to record which specific physical unit was applied to the patient.
+Regardless of category, every unit entered through a receiving form generates exactly one **UIN** (Unique Inventory Number) in Main Inventory. The UIN is the bridge between the physical item and its clinical and billing records. When a clinician selects a product in the **Procedure Supplies** section of the Visit Wizard, they scan or enter the UIN in **Box UID/UIN** to record which specific physical unit was applied to the patient.
 
 ## Related
 

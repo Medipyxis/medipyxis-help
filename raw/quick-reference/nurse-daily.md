@@ -31,7 +31,7 @@ One page. Print it or keep it pinned. Everything you do in a typical day.
 | Start visit | Patient card → **Start Visit** | — |
 | Jump between wizard steps | Left wizard rail | `←` / `→` |
 | Add wound photo | Wound Assessment step → camera icon | — |
-| Scan graft UIN | Procedures & Supplies → **Scan** | — |
+| Enter graft UIN | Procedure Supplies → **Box UID/UIN** | — |
 | Save draft | Wizard autosaves each field continuously; manual save: top-right | `⌘S` / `Ctrl+S` |
 | Sign & lock | Final step → **Sign & Lock** (then **Go to Billing**) | — |
 

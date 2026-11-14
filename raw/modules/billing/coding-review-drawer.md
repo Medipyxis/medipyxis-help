@@ -46,7 +46,7 @@ The drawer is a two-column layout.
 **Left — Clinical Summary.** Read-only cards pulled from the progress note that supports this claim:
 
 - **Wound Assessment** (section 7)
-- **Procedures & Supplies** (section 11)
+- **Procedures & Supplies** (from the Visit Wizard's Procedure Supplies section, step 13)
 - **Objective Assessment** (section 4)
 - **Provider Attestation** (section 17)
 - **View Full Note** opens the PDF in a new tab.

@@ -44,42 +44,43 @@ Open **Fleet Calendar** (week view) once per Monday to preview the whole week �
 
 The wizard captures every field Medicare LCD policy needs to make the visit billable. Don't skip anything the wizard flags with a red dot.
 
-### Patient context (Steps 1–6)
+### Patient context (Steps 1–6, plus 2B)
 
 | # | Step | What you capture |
 |---|---|---|
-| 1 | **Patient Consent** | Digital or manual consent capture for today's visit. |
-| 2 | **Visit Setup** | Date of Service (DOS), Place of Service (POS), assigned provider, home health involvement, other facility involvement, and reason for visit. |
-| 3 | **ROS / Subjective** | Review of Systems and subjective assessment. Voice-intake is available — speak the note and Medipyxis structures it for you. |
-| 4 | **Objective Assessment** | Vital signs, height, weight, BMI, physical exam findings, labs, and diagnostic test results. |
-| 5 | **Comorbidities & Risk Factors** | Comorbidities that affect healing (diabetes, PAD, immunosuppression, etc.). These feed downstream billing logic. |
-| 6 | **Functional Status & ADLs** | Functional status and activities of daily living. |
+| 1 | **Consent & Attestation** | Patient consent: electronic signature, signed paper consent, or verbal consent. Consent can also be collected beforehand from the patient chart. |
+| 2 | **Patient Context & Demographics** | Date and place of service, clinician and supervising provider, chief complaint, and insurance (view only here — edit it on the patient's **Billing & Auth** page). |
+| 2B | **Clinical History Review** | Allergies and medical history. |
+| 3 | **Review of Systems** | Body-system review; carries forward from earlier visits. |
+| 4 | **Objective Assessment** | Vitals, vascular and perfusion exam, edema and circumference measurements, ABI/TBI, vascular studies, HbA1c, vascular follow-up plan. |
+| 5 | **Functional Status & ADLs** | Mobility level and assistive devices, daily activities (ADLs), and how the wound limits activity, work, and social life. |
+| 6 | **Comorbidities & Risk Factors** | Conditions that contribute to the wound or slow healing. |
 
 ### Wound documentation (Steps 7–10)
 
 | # | Step | What you capture |
 |---|---|---|
-| 7 | **Wound Assessment** | Comprehensive wound assessment: type, precise anatomical location, stage, measurements (L × W × D in cm), tissue types (granulation, slough, necrotic, epithelial, eschar), and exudate. Tap the camera icon to attach the wound photo. |
-| 8 | **Previous Treatment** | Prior treatments and historical measurements — establishes chronicity for billing. |
-| 9 | **Treatment / Intervention** | Interventions performed today. This step captures the trigger points for the CPT and HCPCS codes that the Billing section generates. |
-| 10 | **Care Plan** | Healing prognosis, healing timeline, visit frequency, medical necessity factors, and treatment plan notes. |
+| 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and **Treating / Monitoring** status. |
+| 8 | **Previous Treatments** | Prior treatments with their dates, duration in weeks, and outcome; medical necessity statement; supporting documents. |
+| 9 | **Interventions & Treatments** | Interventions performed per wound, procedure note, contributing factors. |
+| 10 | **Care Planning** | Per-wound follow-up interval, next visit date, treatment plan narrative. |
 
-### Procedures, orders, meds, billing (Steps 11–14)
-
-| # | Step | What you capture |
-|---|---|---|
-| 11 | **Procedures & Supplies** | Procedures performed and supplies/grafts used (scan the UIN for each unit). |
-| 12 | **Orders & DME** | DME orders, lab orders, home health orders, and outbound referrals. |
-| 13 | **Medication Management** | Medication updates and new prescriptions. Launch DoseSpot here for electronic prescribing. |
-| 14 | **Billing** | Auto-generated CPT/HCPCS billing codes for biller review before you sign. |
-
-### Education, audit, and sign-off (Steps 15–17)
+### Orders, education, supplies, medication (Steps 11–14)
 
 | # | Step | What you capture |
 |---|---|---|
-| 15 | **Patient Education** | Education provided and the patient's response/understanding. |
-| 16 | **LCD Audit & Review** | Medicare LCD compliance check for the visit. Unresolved items raise a warning to resolve before you sign. |
-| 17 | **Provider Attestation** | Final review of the generated narrative and your electronic signature. |
+| 11 | **Orders & DME** | DME, labs, imaging, referrals, and home health orders, sent by fax or email. |
+| 12 | **Patient Education** | Education library, care bundles, topics covered, patient understanding, next-visit goals. |
+| 13 | **Procedure Supplies** | Final review of the procedures from Step 9, missing fields, procedure and compliance notes, supplies. For a graft, enter the unit's UIN in **Box UID/UIN**. |
+| 14 | **Current Medication** | Active prescriptions, medication status, allergies, reconciliation, **DoseSpot** e-prescribing. |
+
+### Billing, audit, and sign-off (Steps 15–17)
+
+| # | Step | What you capture |
+|---|---|---|
+| 15 | **Billing & Documentation** | Per-wound and visit-level codes, modifiers, and the CMS-1500 claim preview. |
+| 16 | **LCD Audit & Review** | Documentation gaps against the applicable LCD. |
+| 17 | **Provider Attestation** | Attestation, provider title and NPI, and total E/M time. Then **Continue to Review** at the bottom of the wizard starts the final review, the progress note preview, and **Sign & Lock**. |
 
 Detailed wizard walkthrough: [Visit Wizard — complete walkthrough](../../modules/visit-wizard-ehr/start-a-visit.md).
 Wound assessment specifics: [Wound assessment](../../modules/visit-wizard-ehr/wound-assessment.md).

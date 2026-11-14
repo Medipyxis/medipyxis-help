@@ -2,7 +2,7 @@
 id: visit-wizard-ehr-how-the-wizard-opens
 title: How the Visit Wizard opens
 module: visit-wizard-ehr
-audience: [clinician, clinical_manager, admin]
+audience: [clinician, clinical_manager, admin, medical_director]
 roles: [clinician, medical_director, clinical_manager, admin]
 type: concept
 estimated_minutes: 5
@@ -22,7 +22,7 @@ The Visit Wizard opens from three places — Fleet Calendar, the Wound Cockpit, 
 
 ## Before you start
 
-- You are a clinician or clinical manager at a facility that uses the wound-care Visit Wizard.
+- Your role can open **All Patients**. Admins always can, and clinicians and clinical managers can by default. Other roles, such as medical director, can open the Visit Wizard only if your organization's role settings give them **All Patients** access.
 - You are opening a visit from Fleet Calendar, the Wound Cockpit, or the Patient Chart's **Appointment Management** tile.
 
 ## Same behavior from every surface
