@@ -51,7 +51,7 @@ The drawer is a two-column layout.
 - **Provider Attestation** (section 17)
 - **View Full Note** opens the PDF in a new tab.
 
-Coding Review now resolves the correct note for a claim across three ID namespaces, not just one — so notes that used to render as "no note" now appear. Before the fix, ~87% of claims had no note surface in the drawer even when a signed note existed; after the fix, coverage on the reachable set jumped from 60 to 174 of 461 clinical notes on production.
+The drawer looks up the signed note for the visit. **View Full Note** opens it, with any addenda below the signature. If no signed note is found, the panel says *No signed note found for this visit.* If the lookup itself fails, it says *Could not look up the signed note for this visit. Reopen the claim to try again.*
 
 **Right — Billing Codes.** Editable:
 
@@ -101,13 +101,12 @@ Fix red items in the drawer or in **Edit in Full Form**. Yellow items are worth 
 
 ## Coding-fact overrides are soft blocks, and they are recorded
 
-When a code triggers a coding-fact finding — MUE unit ceilings, unusual Place of Service, mutually exclusive procedures — the submitter **does not silently accept it**, and it also **does not refuse outright**. Instead:
+Coding-fact checks flag coverage risks in the codes on a claim: units above the CMS MUE limit (including codes with an MUE of 0), a place of service the code is not usually paid at, and unit caps. These checks never refuse a claim outright.
 
-1. Submit stops, and a modal names every finding in the biller's words ("CPT 97597 units exceed CMS MUE of 3 per DOS").
-2. You either fix the codes and try again, or confirm the override — "Submit it anyway".
-3. If you confirm, the submission proceeds AND a row is written to `claim_status_history` with the method (electronic / manual / fax / resubmit), the codes overridden, and who overrode them.
+- **Electronic submission to Stedi:** coding-fact findings do not stop the claim.
+- **Mark as Submitted Outside Stedi**, **Fix & Mark Resubmitted**, and **Send Fax:** before the claim is marked or the fax is prepared, a confirmation lists each finding. Cancel to fix the codes, or confirm to go ahead.
 
-The same check now runs on all four submission paths — **Submit to Stedi**, **Mark as Submitted**, **Fix & Resubmit**, and **Send Fax** — so a biller cannot walk around the electronic gate by faxing the claim off-system. Every override reads back as an attributed decision on the claim, not a silent bypass.
+When you confirm, the override is recorded on the claim with the submission method, the codes involved, and who confirmed it. It appears in the drawer's **Claim History** list.
 
 <Note>
 CMS MUE values carry known errors that MACs correct out-of-band, non-Medicare payers do not adopt them uniformly, and a Place of Service can be legitimately unusual. That is why coding-fact findings are soft, not hard — an override that is named and logged is worth more than a block that gets walked around off-system.
@@ -125,7 +124,8 @@ At the end of a Coding Review session, the claim's codes match the note, the Exp
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Left panel says "No note" | The claim was created manually, or the note lives in a namespace outside the three tiers (rare after the Aug-26 fix). | Open **View Full Note** if the button is enabled; otherwise open the chart. |
+| Left panel says *Could not look up the signed note for this visit.* | The note lookup failed. | Close and reopen the claim to try again. |
+| Left panel says *No signed note found for this visit.* | No signed note could be matched to this claim — for example, the claim was created manually or the visit has not been signed yet. | If the visit is unsigned, the provider must sign it first. Otherwise open the patient's chart to find the note. |
 | "VISIT NOT SIGNED" banner | The progress note is a draft or in-progress. | The provider must sign the note before the claim can be submitted. Use **Notify** on the Work Queue row. |
 | Yellow warning about diagnosis pointers | A procedure line has no diagnosis linked, or points to a diagnosis you removed. | Reassign the pointer on the line — every line must point to at least one active diagnosis. |
 | Expected Total is `$0.00` | The line has no price in `facility_charge_master`. | Open **Charge Master** for the facility and add the price. See [Charge Master and the $0 claim guard](./charge-master-and-zero-dollar-guard.md). |

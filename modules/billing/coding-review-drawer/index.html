@@ -88,7 +88,7 @@
 <li><strong>Provider Attestation</strong> (section 17)</li>
 <li><strong>View Full Note</strong> opens the PDF in a new tab.</li>
 </ul>
-<p>Coding Review now resolves the correct note for a claim across three ID namespaces, not just one — so notes that used to render as "no note" now appear. Before the fix, ~87% of claims had no note surface in the drawer even when a signed note existed; after the fix, coverage on the reachable set jumped from 60 to 174 of 461 clinical notes on production.</p>
+<p>The drawer looks up the signed note for the visit. <strong>View Full Note</strong> opens it, with any addenda below the signature. If no signed note is found, the panel says <em>No signed note found for this visit.</em> If the lookup itself fails, it says <em>Could not look up the signed note for this visit. Reopen the claim to try again.</em></p>
 <p><strong>Right — Billing Codes.</strong> Editable:</p>
 <ul>
 <li><strong>Place of Service</strong> (two-digit code, e.g. <code>12</code>)</li>
@@ -166,13 +166,12 @@
 </table>
 <hr />
 <h2 id="coding-fact-overrides-are-soft-blocks-and-they-are-recorded">Coding-fact overrides are soft blocks, and they are recorded</h2>
-<p>When a code triggers a coding-fact finding — MUE unit ceilings, unusual Place of Service, mutually exclusive procedures — the submitter <strong>does not silently accept it</strong>, and it also <strong>does not refuse outright</strong>. Instead:</p>
-<ol>
-<li>Submit stops, and a modal names every finding in the biller's words ("CPT 97597 units exceed CMS MUE of 3 per DOS").</li>
-<li>You either fix the codes and try again, or confirm the override — "Submit it anyway".</li>
-<li>If you confirm, the submission proceeds AND a row is written to <code>claim_status_history</code> with the method (electronic / manual / fax / resubmit), the codes overridden, and who overrode them.</li>
-</ol>
-<p>The same check now runs on all four submission paths — <strong>Submit to Stedi</strong>, <strong>Mark as Submitted</strong>, <strong>Fix &amp; Resubmit</strong>, and <strong>Send Fax</strong> — so a biller cannot walk around the electronic gate by faxing the claim off-system. Every override reads back as an attributed decision on the claim, not a silent bypass.</p>
+<p>Coding-fact checks flag coverage risks in the codes on a claim: units above the CMS MUE limit (including codes with an MUE of 0), a place of service the code is not usually paid at, and unit caps. These checks never refuse a claim outright.</p>
+<ul>
+<li><strong>Electronic submission to Stedi:</strong> coding-fact findings do not stop the claim.</li>
+<li><strong>Mark as Submitted Outside Stedi</strong>, <strong>Fix &amp; Mark Resubmitted</strong>, and <strong>Send Fax:</strong> before the claim is marked or the fax is prepared, a confirmation lists each finding. Cancel to fix the codes, or confirm to go ahead.</li>
+</ul>
+<p>When you confirm, the override is recorded on the claim with the submission method, the codes involved, and who confirmed it. It appears in the drawer's <strong>Claim History</strong> list.</p>
 <p><Note>
 CMS MUE values carry known errors that MACs correct out-of-band, non-Medicare payers do not adopt them uniformly, and a Place of Service can be legitimately unusual. That is why coding-fact findings are soft, not hard — an override that is named and logged is worth more than a block that gets walked around off-system.
 </Note></p>
@@ -191,9 +190,14 @@ CMS MUE values carry known errors that MACs correct out-of-band, non-Medicare pa
 </thead>
 <tbody>
 <tr>
-<td>Left panel says "No note"</td>
-<td>The claim was created manually, or the note lives in a namespace outside the three tiers (rare after the Aug-26 fix).</td>
-<td>Open <strong>View Full Note</strong> if the button is enabled; otherwise open the chart.</td>
+<td>Left panel says <em>Could not look up the signed note for this visit.</em></td>
+<td>The note lookup failed.</td>
+<td>Close and reopen the claim to try again.</td>
+</tr>
+<tr>
+<td>Left panel says <em>No signed note found for this visit.</em></td>
+<td>No signed note could be matched to this claim — for example, the claim was created manually or the visit has not been signed yet.</td>
+<td>If the visit is unsigned, the provider must sign it first. Otherwise open the patient's chart to find the note.</td>
 </tr>
 <tr>
 <td>"VISIT NOT SIGNED" banner</td>

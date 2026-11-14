@@ -21,7 +21,7 @@ tags: [inventory, UIN, main inventory, active inventory, Visit Wizard, scanning,
 
 # Main Inventory reference
 
-Reference the columns in the Main Inventory flat view and understand how UIN scanning in the Visit Wizard's Procedure Supplies section links a physical unit to a patient encounter.
+Reference the columns in the Main Inventory flat view and understand how entering the UIN in the Visit Wizard's Procedure Supplies section links a physical unit to a patient encounter.
 
 ## What Main Inventory shows
 
@@ -39,7 +39,7 @@ Reference the columns in the Main Inventory flat view and understand how UIN sca
 
 | Column | Description |
 |---|---|
-| **UIN** | Unique Inventory Number — the system-generated identifier assigned to this specific physical unit at receiving. No two units share a UIN. This is the value scanned or entered in the Visit Wizard. |
+| **UIN** | Unique Inventory Number — the system-generated identifier assigned to this specific physical unit at receiving. No two units share a UIN. This is the value entered in the **Box UID/UIN** field in the Visit Wizard. |
 | **LOT #** | The manufacturer's lot number for this unit, as entered during receiving. Includes the product's LOT SUFFIX. |
 | **TISSUE ID** | Donor tissue identifier assigned by the tissue bank. Populated for amniotic and advance-treatment products; blank for biologics and conservative care products that have no tissue-bank origin. |
 | **EXP DATE** | Expiration date printed on the manufacturer's packaging. Units near or past expiration are flagged and blocked from selection in the Visit Wizard. Expiration is a date, not a status — an expired unit keeps its status (e.g. `Available`) but is blocked from use. |
@@ -70,13 +70,13 @@ Each unit carries one of the following statuses through its lifecycle:
 Graft units applied to a patient are recorded by UIN against the encounter, and discarded amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded). Document the reason whenever a unit is marked `Damaged` or `Rejected`.
 </Compliance>
 
-## How UIN scanning works in Procedure Supplies
+## How UIN entry works in Procedure Supplies
 
 The **Procedure Supplies** section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.
 
-1. In that section, the clinician sees a product search field and a **Scan UIN** button.
-2. The clinician either scans the UIN barcode on the product packaging using a device camera or connected barcode reader, or types the UIN manually into the search field.
-3. The system validates that the scanned UIN:
+1. For a graft, the section shows a required **Box UID/UIN** field.
+2. The clinician types the UIN from the product label into **Box UID/UIN**.
+3. The system validates that the entered UIN:
    - Exists in Main Inventory for the clinician's facility.
    - Has status `Available` or `Reserved`.
    - Has not passed its **EXP DATE**.
@@ -85,11 +85,11 @@ The **Procedure Supplies** section of the Visit Wizard links one or more physica
 5. If validation fails, the system displays the specific reason (expired, wrong facility, no IVR) so the clinician can resolve it before proceeding.
 
 <Warning>
-Do not apply a product without scanning its UIN in the Visit Wizard. Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim, which can result in audit findings and claim denials.
+Do not apply a product without entering its UIN in the Visit Wizard. Applying a graft outside the Visit Wizard breaks the chain of custody between the physical unit and the claim, which can result in audit findings and claim denials.
 </Warning>
 
 <Note>
-If a device camera is unavailable, the UIN is printed on the product label and can be entered manually. Manual entry follows the same validation rules as scanning.
+The UIN is printed on the product label. Type it into **Box UID/UIN** exactly as printed.
 </Note>
 
 ## Related

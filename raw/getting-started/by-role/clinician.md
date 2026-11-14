@@ -37,12 +37,12 @@ Open **Fleet Calendar** (week view) once per Monday to preview the whole week �
 
 ## Step 2 — Start a new visit from the Wound Cockpit (2 min)
 
-1. From the Wound Cockpit, click the **+ Initial Evaluation** button (top-right of the cockpit chrome).
-2. The **Visit Wizard** opens as a multi-step form. Use the left sidebar inside the wizard to jump between sections; the active section is highlighted.
+1. From the Wound Cockpit, open the **Pick a visit or start a new one** dropdown. Select the scheduled visit and click **Open**, or choose **+ Start visit — pick a calendar slot…** to book and start one.
+2. The **Visit Wizard** opens as a list of sections stacked down the page. Click a section's header to open it. Each header shows the section's status, for example **Completed**, **Needs Attention**, or **In Progress**.
 3. Your work autosaves continuously as you go — a dropped connection or a device switch won't lose it. (The web app is online-only; there is no separate offline mode.)
 ## Step 3 — Move through the 17 wizard steps (35 min)
 
-The wizard captures every field Medicare LCD policy needs to make the visit billable. Don't skip anything the wizard flags with a red dot.
+As you work, a section with missing or invalid required items shows **Needs Attention** (in red), and **LCD Audit & Review** (Step 16) lists documentation gaps against the coverage policy (LCD) that applies. Don't skip any section the wizard marks **Needs Attention**.
 
 ### Patient context (Steps 1–6, plus 2B)
 
