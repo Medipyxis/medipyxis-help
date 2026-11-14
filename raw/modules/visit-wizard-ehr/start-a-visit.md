@@ -364,7 +364,7 @@ If you exit the Visit Wizard before completing **Sign & Lock**, the visit stays 
 
 1. Open the appointment. In the **Fleet Calendar**, tap the appointment tile to open **Appointment Details**. In the patient's chart, click **All Patients**, find the patient, click **View**, and open the **Appointment Management** tile.
 2. If the patient was not seen, mark the appointment **Not Seen**: in **Appointment Details**, click **Not Seen** next to **Mark outcome**, select a reason, add optional detail if you want, and click **Save Not Seen**.
-3. Otherwise, cancel the appointment: click **Cancel Appt** in **Appointment Details** and confirm with **Yes, cancel**, or click **Cancel visit** in **Appointment Management**, optionally add a reason, and confirm. Only an administrator can reverse a cancel.
+3. Otherwise, cancel the appointment. In **Appointment Details**, click **Cancel Appt** and confirm with **Yes, cancel**; the confirmation notes that only an administrator can reverse it. In **Appointment Management**, click **Cancel visit**, optionally add a reason, and click **Cancel visit** again to confirm. The appointment stays under the **Canceled** filter, and any visit note is kept.
 
 An appointment can't be deleted once it has a visit note, whether the note is a draft or signed. In **Appointment Management**, **Delete** is unavailable and shows *Cannot delete — visit note attached*. In the **Fleet Calendar**, **Delete** on such an appointment cancels it instead, even though the message says *Appointment deleted successfully*: the appointment leaves the calendar and stays in the patient's chart under **Canceled**, with its note kept.
 
@@ -391,7 +391,7 @@ All sections (Steps 1–17 and Step 2b) are complete, the codes and LCD findings
 | --- | --- | --- |
 | Wizard opens on the wrong patient | You opened the wrong appointment | Close the wizard and open the correct appointment. |
 | The visit still shows as an unfinished draft | The wizard was closed, but the appointment wasn't updated | Mark the appointment Not Seen, or cancel it — see [Stop or cancel a visit you started](#stop-or-cancel-a-visit-you-started). |
-| *Cannot open or edit a draft on a canceled appointment* | The appointment was canceled | The draft is kept, and **Open visit** still opens the Visit Wizard, but the app won't save a draft on a canceled appointment, so don't document there. Only an administrator can reverse a cancel. If the patient was simply not seen, use **Not Seen** instead of cancel. |
+| I opened a visit on a canceled appointment and my changes didn't save | The appointment was canceled. The Visit Wizard still opens on it, but the app doesn't save a draft on a canceled appointment. | Don't document there. Book a new appointment for the patient and document the visit on that one — see [Create an appointment in the Fleet Calendar](/modules/fleet-calendar/create-appointment/). Next time, if the patient wasn't seen, mark the appointment **Not Seen** instead of canceling it. |
 | A new prescription isn't in Active Prescriptions | It hasn't synced from DoseSpot yet | Wait a few minutes and click **Refresh**. |
 | Section 16 flags a gap | Documentation is missing in an earlier section | Fix it in the section listed, then return to Section 16. |
 | *Not signed — fix required* after Continue to Review or Sign & Lock | The note PDF could not be built, or is not ready yet. Nothing was signed or filed. | Wait for the preview, or go back, fix the visit, and click **Continue to Review** again. See [Sign Off](/modules/visit-wizard-ehr/sign-off/). |
