@@ -21,7 +21,7 @@ tags: [inventory, UIN, main inventory, active inventory, Visit Wizard, scanning,
 
 # Main Inventory reference
 
-Reference the columns in the Main Inventory flat view and understand how UIN scanning in the Visit Wizard's Procedures & Supplies section links a physical unit to a patient encounter.
+Reference the columns in the Main Inventory flat view and understand how UIN scanning in the Visit Wizard's Procedure Supplies section links a physical unit to a patient encounter.
 
 ## What Main Inventory shows
 
@@ -70,9 +70,9 @@ Each unit carries one of the following statuses through its lifecycle:
 Graft units applied to a patient are recorded by UIN against the encounter, and discarded amounts are captured for CMS billing modifier JW (drug amount discarded) or JZ (no drug discarded). Document the reason whenever a unit is marked `Damaged` or `Rejected`.
 </Compliance>
 
-## How UIN scanning works in Procedures & Supplies
+## How UIN scanning works in Procedure Supplies
 
-The **Procedures & Supplies** section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.
+The **Procedure Supplies** section of the Visit Wizard links one or more physical inventory units to the clinical encounter being documented.
 
 1. In that section, the clinician sees a product search field and a **Scan UIN** button.
 2. The clinician either scans the UIN barcode on the product packaging using a device camera or connected barcode reader, or types the UIN manually into the search field.
