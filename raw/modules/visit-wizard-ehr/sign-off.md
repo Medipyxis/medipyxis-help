@@ -26,7 +26,7 @@ Complete step 17 of the Visit Wizard: attest and sign, record E/M time if you co
 
 ## Before you start
 
-- All 17 steps of the Visit Wizard are complete, including the LCD Navigator™ checklist (step 16).
+- All steps of the Visit Wizard (1–17, plus Step 2b) are complete, including the LCD Navigator™ checklist (step 16).
 - You are the provider named in step 17 — the visit's clinician, or the supervising provider when the clinician has no NPI on file. When staff finish a visit the provider handed off to them, step 17 is view only for staff.
 - You have confirmed that all clinical documentation reflects the actual care provided during this encounter.
 
@@ -60,7 +60,7 @@ Exclude time spent performing separately billed procedures. Entering time suppor
 
 ### 4. Run the final review
 
-1. In the section navigator, check that every section that applies is marked complete.
+1. Check each section's header: every section that applies should show **Completed** with a green checkmark.
 2. Click **Continue to Review**. If documentation gaps remain, a **Documentation gaps** window lists them. Each row has a button that takes you to the item — or, for an item you can answer in a sentence, opens a box to answer it.
 3. When you are done with the list, choose:
    - **Resolve** — close the window, fix the items, then click **Continue to Review** again.

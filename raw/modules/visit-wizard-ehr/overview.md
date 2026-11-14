@@ -6,7 +6,7 @@ audience: [clinician]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 6
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-start-a-visit
@@ -24,7 +24,7 @@ tags: [visit-wizard, EHR, LCD, Medicare, autosave, customization, charting, temp
 
 # Visit Wizard overview
 
-The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **17 sections** — from consent to provider attestation — so the note is complete, meets Medicare LCD documentation needs, and produces billing codes for review before it is signed.
+The Visit Wizard is Medipyxis's step-by-step wound care documentation flow. It guides clinicians through **17 numbered steps plus Step 2b** — from consent to provider attestation — so the note is complete, meets Medicare LCD documentation needs, and produces billing codes for review before it is signed.
 
 For a section-by-section walkthrough, see [Walk through a visit in the Visit Wizard](/modules/visit-wizard-ehr/start-a-visit/).
 
@@ -45,7 +45,7 @@ When opened, the wizard is tied to the selected patient and appointment. See [Ho
 
 ## How it works
 
-- **Mark as Complete** — finish each section with **Mark as Complete**. In the section navigator, completed sections are green with a checkmark, sections with a missing required item are red, and sections flagged for review are yellow.
+- **Section status** — most sections finish with **Mark as Complete**; Section 1 completes on its own once a consent is on file, and Section 16 has no button. Each section's header shows its status: **Completed** with a green checkmark, **Needs Attention** in red, **For Review** in yellow, **In Progress** in blue, or **Pending**.
 - **Continuous autosave** — each field is saved as you complete it, so drafts survive network drops and device switches. The web app is online-only.
 - **Warnings, not blocks** — most missing items raise a warning and let you continue. Before signing, a final review lists open gaps so you can resolve them or continue anyway.
 - **Carry-forward** — information from earlier visits carries into sections such as Review of Systems, and **Pull Migration Data** brings forward data from a previous Medipyxis visit you choose.
@@ -56,34 +56,34 @@ When opened, the wizard is tied to the selected patient and appointment. See [Ho
 
 ---
 
-## The 17 sections
+## The sections
 
 | # | Section | What it covers |
 | --- | --- | --- |
 | 1 | **Consent & Attestation** | Patient consent: electronic signature, signed paper consent, or verbal consent. Consent can also be collected beforehand from the patient chart. |
-| 2 | **Patient Context / Demographics** | Date and place of service, clinician and supervising provider, chief complaint, and insurance (view only here — edit it on the patient's **Billing & Auth** page). |
+| 2 | **Patient Context & Demographics** | Date and place of service, clinician and supervising provider, chief complaint, and insurance (view only here — edit it on the patient's **Billing & Auth** page). |
 | 2B | **Clinical History Review** | Allergies and medical history. |
 | 3 | **Review of Systems** | Body-system review; carries forward from earlier visits. |
 | 4 | **Objective Assessment** | Vitals, vascular and perfusion exam, edema and circumference measurements, ABI/TBI, vascular studies, HbA1c, vascular follow-up plan. |
-| 5 | **Functional Status & ADLs** | Mobility, daily activities, fall risk. |
+| 5 | **Functional Status & ADLs** | Mobility level and assistive devices, daily activities (ADLs), and how the wound limits activity, work, and social life. |
 | 6 | **Comorbidities & Risk Factors** | Conditions that contribute to the wound or slow healing. |
 | 7 | **Wound Assessment** | Etiology, staging, dimensions, tissue percentages, location, exudate, pain, infection signs, photos, and **Treating / Monitoring** status. See [Wound Assessment](/modules/visit-wizard-ehr/wound-assessment/). |
-| 8 | **Previous Treatments** | Prior wound care, chronicity, medical necessity statement, supporting documents. |
+| 8 | **Previous Treatments** | Prior treatments with their dates, duration in weeks, and outcome; medical necessity statement; supporting documents. How long the wound has been present comes from the onset date in Section 7. |
 | 9 | **Interventions & Treatments** | Interventions performed per wound, procedure note, contributing factors. |
 | 10 | **Care Planning** | Per-wound follow-up interval, next visit date, treatment plan narrative. |
 | 11 | **Orders & DME** | DME, labs, imaging, referrals, and home health orders, sent by fax or email. |
 | 12 | **Patient Education** | Education library, care bundles, topics covered, patient understanding, next-visit goals. |
-| 13 | **Procedures & Supplies** | Final review of the procedures from Section 9, missing fields, procedure and compliance notes, supplies. |
+| 13 | **Procedure Supplies** | Final review of the procedures from Section 9, missing fields, procedure and compliance notes, supplies. |
 | 14 | **Current Medication** | Active prescriptions, medication status, allergies, reconciliation, **DoseSpot** e-prescribing. See [Prescribe with DoseSpot](/modules/visit-wizard-ehr/medication-dosespot/). |
 | 15 | **Billing & Documentation** | Per-wound and visit-level codes, modifiers, and the CMS-1500 claim preview. |
 | 16 | **LCD Audit & Review** | Documentation gaps against the applicable LCD. See [LCD Navigator](/modules/visit-wizard-ehr/lcd-navigator/). |
-| 17 | **Provider Attestation** | Attestation, E/M time, final review, progress note preview, and **Sign & Lock**. See [Sign Off](/modules/visit-wizard-ehr/sign-off/). |
+| 17 | **Provider Attestation** | Attestation, provider title and NPI, and total E/M time. Then **Continue to Review** at the bottom of the wizard starts the final review, the progress note preview, and **Sign & Lock**. See [Sign Off](/modules/visit-wizard-ehr/sign-off/). |
 
 ---
 
 ## Can I customize the charting?
 
-Not per practice. The Visit Wizard's sections, fields, and templates are the same for every organization, so documentation follows one clinical structure.
+Mostly not. The Visit Wizard's sections, fields, and templates are the same for every organization, so documentation follows one clinical structure. One facility-level setting changes the wizard: when a facility is set up not to record vitals on follow-up visits, Section 4 — Objective Assessment shows nothing on follow-up visits.
 
 If your practice needs a field or a change to support a clinical workflow, documentation quality, or compliance, send the request to your Medipyxis contact. Requests are reviewed, and changes that fit the clinical documentation structure can be added for everyone.
 

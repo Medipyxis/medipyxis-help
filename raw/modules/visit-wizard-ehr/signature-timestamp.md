@@ -6,7 +6,7 @@ audience: [clinician, admin, billing]
 roles: [clinician, medical_director, admin, biller]
 type: reference
 estimated_minutes: 5
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-sign-off
@@ -31,7 +31,7 @@ It has three parts:
 
 - **The date** — the calendar day the provider completed the attestation in step 17, not the date of service. When the two differ, the attestation day is what prints, and that difference is a normal and expected part of the record.
 - **The time** — hour and minute, no seconds.
-- **The timezone abbreviation** — `EDT`, `PDT`, `CST`, whatever the printing device's clock is set to. The abbreviation is always printed. If you regenerate the same note from a different computer set to a different zone, you will get a different reading of the same instant, and the two abbreviations will both be truthful descriptions of the same moment.
+- **The timezone abbreviation** — `EDT`, `PDT`, `CST`, whatever the printing device's clock is set to. The abbreviation is printed with every timestamp that has a time. A signature saved as a date only prints the day by itself, with no time and no zone. If you regenerate the same note from a different computer set to a different zone, you will get a different reading of the same instant, and the two abbreviations will both be truthful descriptions of the same moment.
 
 When no attestation has been recorded, the line reads:
 

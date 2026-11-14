@@ -6,7 +6,7 @@ audience: [clinician, billing, admin]
 roles: [clinician, medical_director]
 type: concept
 estimated_minutes: 7
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-13
 app_route: /facility/{facility_uuid}/visit-wizard-v2-page
 related:
   - visit-wizard-ehr-sign-off
@@ -45,7 +45,7 @@ Where the note cites a Medicare coverage policy, it cites only a verified policy
 
 | Where | What prints |
 | --- | --- |
-| **Allergies** | "Not documented." on each allergy item, until you record it |
+| **Allergies** | Drug allergies and Latex / other print what you recorded, or "Not documented." The **Reconciled this visit** line always prints "Not documented." for now — no field in the wizard fills it yet |
 | **Debridement** | "Not documented." on each detail you leave blank. The depth is whatever you recorded |
 | **Pressure-injury risk** | The Braden total and risk band print as documented. Write the prevention plan in the risk-assessment notes box — the wizard reminds you when the Braden total is 12 or below — and it prints under **Additional Risk Assessment** |
 | **Same-day visit and procedure** | "Separate E/M evaluation: Not documented." — unless you answer the checklist item |
@@ -63,7 +63,7 @@ When you stage billing codes, a line appears — for example **"3 documentation 
 
 - **Items you can answer in a sentence** — why the visit was necessary, what you evaluated separately from the procedure, your assessment and decision-making — open a small box. It shows the facts already documented for this visit, offers an example you can adapt, and reminds you to put it in your own words. To dictate instead of typing, press the microphone, speak, and your words are added to the box.
 - **Items that belong on a form** — missing debridement elements, or a billing code not linked to a wound — take you to the right screen, and to the right wound.
-- **Nothing is required.** **Continue anyway** is always available.
+- **Nothing is required.** When the list opens from **Continue to Review**, **Continue anyway** is always available. When you open it from the billing line, it has only **Close**.
 
 ### Continuing past an item that affects a claim
 
@@ -81,15 +81,15 @@ The question is **not** asked per wound. If a wound's necessity note is word-for
 
 ## Your procedure note wording
 
-In Section 9 — Interventions & Treatments, **Generate Procedure Note** builds a procedure narrative from the intervention details you entered. To use your own wording instead, type it in the intervention's **Notes** field and check **Use my exact procedure note** — it is kept exactly as written and carried into Section 13 — Procedures & Supplies.
+In Section 9 — Interventions & Treatments, **Generate Procedure Note** builds a procedure narrative from the intervention details you entered. The narrative appears in a **Procedure Note** box. To use your own wording, edit the text in that box and check **Use my exact procedure note (skip AI/template regeneration)** under it — your text is kept exactly as written and carried into Section 13 — Procedure Supplies.
 
-In Section 13 you can also click **Generate Compliance Note** for an additional structured narrative. It is optional: leave it blank if your procedure note already documents the procedure fully.
+In Section 13, each billable procedure also has a **Compliance Narrative** box, and it is on the section's list of required items. Click **Generate Compliance Note** for a starting draft, or write it yourself, and review it. A blank box is flagged but doesn't stop you.
 
 ---
 
 ## Preview before you sign
 
-After you click **Continue to Review** in step 17, the **Preview — Review Before Signing** screen shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](/modules/visit-wizard-ehr/sign-off/) for the attestation step itself.
+After you finish step 17 and click **Continue to Review** at the bottom of the wizard, the **Preview — Review Before Signing** screen shows the actual PDF that will be stored, rather than a separate on-screen version of it. What you see is what gets signed. See [Sign Off](/modules/visit-wizard-ehr/sign-off/) for the attestation step itself.
 
 ---
 
