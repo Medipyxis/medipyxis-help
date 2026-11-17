@@ -23,7 +23,6 @@ By the end of this hour you will have logged in, reviewed your day, opened a pat
 
 - Your practice admin has assigned you to at least one facility and one role.
 - You have at least one scheduled visit for today (if not, your admin can assign one from **Fleet Calendar**).
-- If you're on a tablet, install the Medipyxis Clinician mobile app from your admin's MDM link.
 
 ## Step 1 — See your day (5 min)
 
