@@ -4,8 +4,8 @@ title: How do I use Medipyxis? Video training, from referral to signed visit
 module: getting-started
 audience: [clinician, intake, admin, billing]
 type: whats-new
-last_reviewed: 2026-10-23
-tags: [whats-new, video, training, walkthrough, intake, visit-wizard, fleet-calendar, crm, hr, oversight-cockpit, team-chat, orders]
+last_reviewed: 2026-11-18
+tags: [whats-new, video, training, walkthrough, intake, visit-wizard, fleet-calendar, crm, hr, oversight-cockpit, team-chat, orders, fax, ocr, ivr, inventory]
 related:
   - whats-new
   - whats-new-snf-rounding
@@ -14,15 +14,15 @@ related:
 
 # How do I use Medipyxis? Video training, from referral to signed visit
 
-Eleven short videos walk through Medipyxis the way a wound care practice uses it: finding your way around, HR and staff onboarding, the referral CRM, adding a patient, assigning and booking them, documenting and signing the visit, orders and DME, Fleet Calendar, the Oversight Cockpit and Team Chat. Each video has on-screen captions and a full text transcript below it.
+Sixteen short videos walk through Medipyxis the way a wound care practice uses it: finding your way around, HR and staff onboarding, the referral CRM, fax referrals, adding a patient, assigning and booking them, documenting and signing the visit, orders and DME, IVR requests, the product catalog and inventory, Fleet Calendar, the Oversight Cockpit and Team Chat. Each video has spoken narration, on-screen captions and a full text transcript below it.
 
-The videos have no sound; the narration is shown as captions and written out under each video. They were recorded in the Medipyxis demo system with made-up patients.
+The videos have spoken narration and on-screen captions, and the narration is written out under each video. They were recorded in the Medipyxis demo system with made-up patients.
 
-## Part 1 of 11: Platform overview and navigation — How do I find my way around Medipyxis?
+## Part 1 of 16: Platform overview and navigation — How do I find my way around Medipyxis?
 
 *Available now · 4:10*
 
-Video (captions, no sound, 4:10): [01-platform-overview.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/01-platform-overview.mp4)
+Video (narration and captions, 4:10): [01-platform-overview.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/01-platform-overview.mp4)
 
 A tour of the screen: the left sidebar opens every area your role can use, the facility you are working in is at the top, and the dashboard shows your day. Then a quick look at each main area: HR and Compliance, Business Development, Inventory, Orders and DME, Billing Operations, the Oversight Cockpit, Referral Intake, Patient Management, All Patients and the visit wizard.
 
@@ -49,11 +49,11 @@ A tour of the screen: the left sidebar opens every area your role can use, the f
 - 3:47 All Patients is where you review each patient's profile and use the wound cockpit for documentation guidance during visits.
 - 4:00 The next videos go through each workflow step by step, starting with patient intake.
 
-## Part 2 of 11: HR and compliance — How do I onboard staff and track credentials in Medipyxis?
+## Part 2 of 16: HR and compliance — How do I onboard staff and track credentials in Medipyxis?
 
 *Available now · 2:35*
 
-Video (captions, no sound, 2:35): [02-hr-compliance.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/02-hr-compliance.mp4)
+Video (narration and captions, 2:35): [02-hr-compliance.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/02-hr-compliance.mp4)
 
 The Human Resources Hub: post announcements, upload provider credentials in the Credential Tracker, check Activity Logs, and add a new employee in New Employee Onboarding. Choosing the Clinician role adds the provider fields (printed name, initials, NPI and state license). Facility Users, Education Bundle Management and Training Materials are shown last.
 
@@ -74,11 +74,11 @@ The Human Resources Hub: post announcements, upload provider credentials in the 
 - 2:11 Training Materials gives access to Medipyxis user guides and other clinical and professional training.
 - 2:24 That completes HR and compliance: onboarding, facility users, credentials, and education and training.
 
-## Part 3 of 11: CRM and referral network — How does Medipyxis help manage referral sources?
+## Part 3 of 16: CRM and referral network — How does Medipyxis help manage referral sources?
 
 *Available now · 2:09*
 
-Video (captions, no sound, 2:09): [03-crm-referral-network.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/03-crm-referral-network.mp4)
+Video (narration and captions, 2:09): [03-crm-referral-network.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/03-crm-referral-network.mp4)
 
 In CRM, practices are the organizations that refer patients, such as home health agencies and skilled nursing facilities. Each practice is assigned to a business development rep, and follow-ups are scheduled. Business Development shows each rep their practices, a route map for outreach visits, Log Update for calls and visits and Add Spend for outreach costs. The Oversight Cockpit shows referral trends by practice.
 
@@ -97,11 +97,40 @@ In CRM, practices are the organizations that refer patients, such as home health
 - 1:48 See which practices are sending more referrals and which have dropped, to decide where to follow up and visit next.
 - 1:58 Together these tools organize referral relationships, plan outreach, record activity and use referral trends to guide next steps.
 
-## Part 4 of 11: Patient intake — How do I add a new patient referral in Medipyxis?
+## Part 4 of 16: Fax management and OCR referral intake — How do I process fax referrals and send faxes in Medipyxis?
+
+*Available now · 2:51*
+
+Video (narration and captions, 2:51): [04-fax-ocr-intake.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/04-fax-ocr-intake.mp4)
+
+Fax features are in three places. In Referral Intake, the Fax Queue lists incoming fax referrals. OCR (optical character recognition) reads each fax and fills in the patient demographics, referring provider and insurance; you check them against the fax, correct them, verify insurance, then approve the referral and create the patient. In the Fax Center, the Received Fax Log files an incoming fax straight to an existing patient's chart, and Outgoing Fax Logs sends a new fax. A progress note can be faxed from the patient chart, and documents and order forms from their own sections.
+
+**Why it matters:** Faxed referrals become patients without retyping, and faxes go in and out without downloading and uploading files.
+
+**Transcript of this video**
+
+- 0:02 This video shows how to process fax referrals, file received documents to a patient chart, and send faxes from Medipyxis.
+- 0:12 There are three main places to use fax features. The first is Referral Intake.
+- 0:18 In Fax Queue, you review incoming referrals. The system uses optical character recognition (OCR) to read the fax and help prepare the patient profile.
+- 0:30 Select View, then review the extracted patient demographics, referring provider and insurance information.
+- 0:38 Compare the details with the referral and complete or correct them as needed. You can also verify insurance here before creating the patient profile.
+- 0:48 When the information has been reviewed, approve the referral and create the patient profile.
+- 1:04 Next is the Fax Center, the second main place for fax features.
+- 1:10 The Received Fax Log holds incoming fax documents, which you can file directly to an existing patient chart.
+- 1:20 Select the patient assignment icon, find the correct patient and enter a descriptive file name.
+- 1:32 Select File to Chart. The document is saved to the patient's documents section, with no separate download and upload.
+- 1:40 To send a document from the Fax Center, open Outgoing Fax Logs and select New Fax.
+- 1:48 Enter the recipient fax number, upload the document and review the information.
+- 2:00 To send a progress note from the patient chart, go to All Patients, select the patient and open Progress Notes. Next to the note, open Actions and select the option to send a fax. The note is already attached.
+- 2:18 Enter the recipient's fax number, add any notes, and review the fax before sending.
+- 2:30 Faxing is also available in other areas, including documents and patients' order forms, so you can send from there without going back to the Fax Center.
+- 2:42 You can now process fax referrals, file received documents to patient charts, and send faxes from the Fax Center or the patient record.
+
+## Part 5 of 16: Patient intake — How do I add a new patient referral in Medipyxis?
 
 *Available now · 1:09*
 
-Video (captions, no sound, 1:09): [05-patient-intake.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/05-patient-intake.mp4)
+Video (narration and captions, 1:09): [05-patient-intake.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/05-patient-intake.mp4)
 
 In Referral Intake, Add New Referral opens the intake form: care type, demographics (name, date of birth, phone, address), a duplicate check, the referring provider and insurance, with an optional Verify for coverage. Create Patient saves it, and the referral appears under New Referrals until it is ready for assignment.
 
@@ -118,11 +147,11 @@ In Referral Intake, Add New Referral opens the intake form: care type, demograph
 - 0:52 When no intake steps remain, move the patient to Ready for Assignment.
 - 1:01 The next video shows how to assign the patient to a provider.
 
-## Part 5 of 11: Patient assignment and scheduling — How do I assign a patient to a provider and book the first visit?
+## Part 6 of 16: Patient assignment and scheduling — How do I assign a patient to a provider and book the first visit?
 
 *Available now · 1:08*
 
-Video (captions, no sound, 1:08): [06-assign-and-schedule.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/06-assign-and-schedule.mp4)
+Video (narration and captions, 1:08): [06-assign-and-schedule.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/06-assign-and-schedule.mp4)
 
 From Ready for Assignment, Assign shows providers ranked by distance to the patient, availability and efficiency. After confirming, the patient moves to Assigned. Schedule opens the booking form with the provider filled in: visit type, place of service, clinician type, date and a free time slot.
 
@@ -138,11 +167,11 @@ From Ready for Assignment, Assign shows providers ranked by distance to the pati
 - 0:44 Choose a date and one of the available time slots, then book the appointment.
 - 0:56 The visit now appears in Patient Management for the provider. The next video shows how the provider sees scheduled patients and documents the visit.
 
-## Part 6 of 11: Clinical visit documentation — How does a provider document and sign a wound care visit in Medipyxis?
+## Part 7 of 16: Clinical visit documentation — How does a provider document and sign a wound care visit in Medipyxis?
 
 *Available now · 3:02*
 
-Video (captions, no sound, 3:02): [07-clinical-visit.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/07-clinical-visit.mp4)
+Video (narration and captions, 3:02): [07-clinical-visit.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/07-clinical-visit.mp4)
 
 The provider starts the visit from Patient Management, the patient chart or Appointment Management. The visit wizard goes section by section; this video follows the wound assessment (location, classification, measurements, wound bed, status and comparison with the prior visit). Missing items raise a warning that does not block. Then the attestation, the Biller Draft Note preview, a review of open items, the progress note, and sign and lock. The signed note can be faxed or downloaded as a PDF.
 
@@ -166,11 +195,11 @@ The provider starts the visit from Patient Management, the patient chart or Appo
 - 2:37 Sign and lock the visit.
 - 2:43 You can then fax the note, download the PDF, download the clinical note without the billing sections, regenerate the PDF or view it.
 
-## Part 7 of 11: Vendors and order forms — How do I set up vendors and order forms for DME and lab orders?
+## Part 8 of 16: Vendors and order forms — How do I set up vendors and order forms for DME and lab orders?
 
 *Available now · 1:57*
 
-Video (captions, no sound, 1:57): [08a-vendors-order-forms.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/08a-vendors-order-forms.mp4)
+Video (narration and captions, 1:57): [08a-vendors-order-forms.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/08a-vendors-order-forms.mp4)
 
 Vendors are added in CRM under Vendors. Then, in Orders and DME, Manage Vendors and Form Builder create an order form, starting from a template, linked to that vendor. Once saved, the form is available when providers create orders from the patient chart, and every order's status shows in Orders and DME by category.
 
@@ -188,11 +217,11 @@ Vendors are added in CRM under Vendors. Then, in Orders and DME, Manage Vendors 
 - 1:23 Order details and status updates appear in Orders and DME, under the right category: medical equipment, lab tests, imaging, specialist referrals and home health.
 - 1:42 There you can see the status and details of each order.
 
-## Part 8 of 11: Creating and tracking patient orders — How do I create a home health or DME order for a patient?
+## Part 9 of 16: Creating and tracking patient orders — How do I create a home health or DME order for a patient?
 
 *Available now · 1:56*
 
-Video (captions, no sound, 1:56): [08b-patient-orders.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/08b-patient-orders.mp4)
+Video (narration and captions, 1:56): [08b-patient-orders.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/08b-patient-orders.mp4)
 
 Orders can be made during a visit in the wizard or from the Orders and DME tab of the patient's chart; this video uses the chart. A home health order: choose the vendor agency, fill in its custom form, check the vendor's contact details and submit, or send it by email or fax from the form. Orders across all patients are tracked in Orders and DME, by category, with a status for each.
 
@@ -210,11 +239,127 @@ Orders can be made during a visit in the wizard or from the Orders and DME tab o
 - 1:35 Each order's status is shown, and View opens its details.
 - 1:47 This helps the team follow every order created for patients.
 
-## Part 9 of 11: Fleet Calendar — How do I manage provider schedules and routes in Medipyxis?
+## Part 10 of 16: IVR request submission — How do I submit an IVR request for an amniotic or biologic product?
+
+*Available now · 2:26*
+
+Video (narration and captions, 2:26): [09-ivr-request.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/09-ivr-request.mp4)
+
+An IVR (insurance verification request) starts from the patient's Wound Cockpit. After checking the wound information and anything the system has flagged, Proceed with IVR Request opens the request: coverage attestations, the wound being treated and its measurements, the product category and vendor, then the product, size and quantity. Add the ICD-10 code, the clinical justification and an optional note, review everything and click Submit IVR Request. The request then shows in Inventory Management under IVR Tracking.
+
+**Why it matters:** The request is built from the documented wound, so measurements, codes and justification go out together, and its status can be followed in one list.
+
+**Transcript of this video**
+
+- 0:02 This video submits an IVR request for an amniotic or biologic product: open the patient's wound information, review the request details, select a product and submit the request.
+- 0:14 Start in All Patients and open the patient's profile.
+- 0:20 This example uses a patient with a wound history and documented visits.
+- 0:24 Open Wound Cockpit to review the patient's wound history and reach the IVR request workflow.
+- 0:36 Review the wound information and any items flagged by the system. Check the available documentation before going ahead with the request.
+- 0:44 Select Proceed with IVR Request. Complete the coverage attestations for the patient's case, then choose the wound being treated.
+- 0:58 Review the wound measurements and treatment area.
+- 1:00 Choose the product category, then select the vendor you want to request the product from.
+- 1:06 This example uses an amniotic product. Review the available products and sizes.
+- 1:12 Select the product, size and quantity for the wound and the planned treatment area.
+- 1:30 Enter the ICD-10 code and complete the required request information, including the clinical justification where prompted. Add a request note if more context is needed.
+- 1:38 Review the selected wound, vendor, product, size, quantity and supporting information.
+- 1:48 When the details are correct, click Submit IVR Request.
+- 2:00 After submission, go to Inventory Management and open IVR Tracking to find the request and check its current status.
+- 2:14 You have now submitted an IVR request and found it in IVR Tracking. Approval, ordering, receiving and allocation are covered in the next video.
+
+## Part 11 of 16: IVR tracking, order processing, receiving and allocation — What happens after an IVR is approved, and how do I receive and allocate the product?
+
+*Available now · 3:14*
+
+Video (narration and captions, 3:14): [10-ivr-tracking-receiving.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/10-ivr-tracking-receiving.mp4)
+
+In IVR Tracking, Update Status records the vendor's answer (here, Approved) with the verification document attached, and Medipyxis creates the order. Under Amniotics, IVR Requests, Create Order sends it to the vendor, and Orders shows the order and its order ID. When the shipment arrives, it is received against that order ID: with Bulk Upload Inventory and a receiving file, or with Manual Receive (quantity, lot number, expiration date, tissue ID, size and Q code). Receiving History shows the receipt, Active Inventory shows the stock, and Allocate reserves product for a patient and wound case. Products can also be transferred or assigned to a clinician.
+
+**Why it matters:** Each graft can be followed from approval to order, delivery and patient, with lot and tissue details recorded when it arrives.
+
+**Transcript of this video**
+
+- 0:02 This video follows an IVR request after submission: approve it, find the resulting order, receive the shipment into inventory, and allocate a product to a patient.
+- 0:16 Open Inventory Management, then IVR Tracking, and find the submitted request.
+- 0:22 In the Actions column, select the green Update Status icon for that request.
+- 0:32 Record the outcome given in the vendor's response. This example selects Approved. Attach the vendor's verification document, then click Update Status.
+- 0:46 Once the IVR is approved, Medipyxis creates the order. Next, send the order to the vendor for fulfillment: in Inventory Management, open Amniotics and select IVR Requests.
+- 1:02 Find the same request. Under Actions, confirm the details, then select Create Order.
+- 1:12 The order is then available. Open Orders to find the order linked to the request, and download the order details to confirm the order ID.
+- 1:24 When the shipment arrives, enter the order ID in the receiving template. Check the product details and quantity against the vendor's packing list.
+- 1:34 The order download shows what was ordered. The receiving template records what arrived.
+- 1:38 In Receiving History, open Bulk Upload Inventory. Select the matching order and upload the completed receiving file.
+- 1:50 Once the order ID is correct, click Submit Upload, then select Done.
+- 1:56 For a small shipment, you can use Manual Receive instead. Select the order ID, click Add Line, and enter the product quantity, lot number, expiration date, tissue ID, size and Q code. Then select Create Receive.
+- 2:12 Return to Receiving History, find the receipt you just recorded, and check its status.
+- 2:22 For amniotic products, check stock under Amniotics in Active Inventory. The steps are like the ones in the conservative products video (part 13).
+- 2:36 Open the inventory to see the available quantity. Allocating to a patient works the same way.
+- 2:42 In the Amniotics inventory, select Allocate. Choose the patient and, if applicable, the wound case. Enter the quantity, then confirm.
+- 3:00 You can also transfer products to a clinician, or assign the entire quantity to a clinician.
+- 3:04 You have now followed an IVR from approval to the resulting order, recorded the shipment in inventory, and allocated the received product to a patient.
+
+## Part 12 of 16: Adding new products: amniotics and conservative — How do I add amniotic and conservative care products to the product catalog?
+
+*Available now · 2:05*
+
+Video (narration and captions, 2:05): [11a-adding-products.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/11a-adding-products.mp4)
+
+In Inventory Management, Product Catalog, Add Product. For an amniotic: product name, brand and common name, product type, HCPCS code, SKU and lot number suffix, then vendor and size; with Sheet as the measurement type, the price per cm², the sheet dimensions and a size description. For a conservative care supply: name, brand, type, HCPCS code and SKU, lot number and expiration date where they apply, quantity on hand and par level (the low-stock threshold), vendor, measurement type, unit cost and price. Both products then appear in the catalog.
+
+**Why it matters:** Each product is set up once, with its codes, vendor and pricing, and the par level flags low stock.
+
+**Transcript of this video**
+
+- 0:02 This video adds two products to the Medipyxis product catalog, an amniotic product and a conservative care supply. It reviews the fields for each category and checks that both products appear in the catalog.
+- 0:14 Open Inventory Management.
+- 0:20 Go to Product Catalog and select Add Product. For this first example, select Amniotics.
+- 0:24 Enter the product name, brand and common name where applicable.
+- 0:30 Select the product type. Enter the product's HCPCS code, SKU and lot number suffix.
+- 0:38 Select the vendor and size to complete the pricing information.
+- 0:42 For this example, select Sheet as the measurement type, then enter the price per square centimeter (the Price per cm² field).
+- 0:48 Enter the sheet dimensions and size description.
+- 0:54 Review the details and click Save Product.
+- 0:58 Now add a conservative product. Select Add Product and choose Conservative. Enter the product name, brand, type, HCPCS code and SKU.
+- 1:10 Enter the lot number and expiration date where applicable.
+- 1:18 Record the quantity on hand and set the par level, the threshold used to flag low stock.
+- 1:22 Select the vendor and measurement type, then enter the unit cost. In this example, each piece is a 100 mL tube.
+- 1:32 Add the price, review the details and click Save Product.
+- 1:40 Check that the new conservative care product and the amniotic product appear in the catalog.
+- 1:48 Both products are now in the catalog. Receiving stock and uploading several conservative care items at once are covered in the next video.
+
+## Part 13 of 16: Conservative product inventory management — How do I receive, transfer and allocate conservative care supplies?
+
+*Available now · 2:49*
+
+Video (narration and captions, 2:49): [11b-conservative-inventory.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/11b-conservative-inventory.mp4)
+
+Conservative care products are general supplies, received into stock without an IVR. Active Inventory shows each product's quantity on hand. In Receiving History, Manual Receive records a small delivery against an existing order or straight to main stock (product, lot number, expiration date and quantity, then Create Receive), and Bulk Upload Inventory takes a filled-in template for many items. Transfer then moves part of the stock to a clinician's inventory, Assign gives a whole entry to one clinician, and Allocate reserves a quantity for a patient and wound case.
+
+**Why it matters:** Stock counts stay correct as supplies arrive and go out to clinicians and patients.
+
+**Transcript of this video**
+
+- 0:02 This video manages conservative care supplies: review available stock, record an incoming shipment, and move supplies to a clinician or reserve them for a patient.
+- 0:12 Open Inventory Management, then Conservative Care Products.
+- 0:18 These general supplies can be received into stock without an IVR request.
+- 0:22 Under Active Inventory, find the product and check its quantity on hand. You come back here after receiving the shipment to check the updated balance.
+- 0:32 Next, open the receiving workflow in Receiving History. For a small delivery, select Manual Receive.
+- 0:40 You can receive against an existing order, which updates the order request automatically, or directly to main stock. This example receives directly to main stock.
+- 0:48 Click Add a Line. Enter the product, then the lot number, expiration date and quantity received. Click Create Receive.
+- 1:06 To receive several conservative care items at once, open Bulk Upload Inventory.
+- 1:12 Download the template, enter the products and quantities received, then upload the completed file.
+- 1:24 Check Receiving History to confirm that the delivery was recorded.
+- 1:30 Then return to Active Inventory to check the updated quantity on hand.
+- 1:38 Use Transfer to move a specific quantity to a clinician's inventory. Select the clinician, enter the quantity needed for their wound care kit, and click Transfer.
+- 2:00 Use Transfer to move only part of an entry. If the entire stock should go to one clinician, choose Assign instead.
+- 2:16 Use Allocate to reserve a quantity for a specific patient. Choose the patient and the wound case, then confirm the quantity you want to reserve.
+- 2:36 You have now seen how to receive conservative care supplies and check what is available in Active Inventory. Use these views to keep stock records up to date as supplies arrive and are given out.
+
+## Part 14 of 16: Fleet Calendar — How do I manage provider schedules and routes in Medipyxis?
 
 *Available now · 3:01*
 
-Video (captions, no sound, 3:01): [12-fleet-calendar.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/12-fleet-calendar.mp4)
+Video (narration and captions, 3:01): [12-fleet-calendar.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/12-fleet-calendar.mp4)
 
 Fleet Calendar shows every provider's appointments by day, week or month, with a provider filter. Create Appointment, or a click on an open slot, books a visit. Appointments are moved by drag and drop or with Edit Appointment. Colors show whether a patient was seen, canceled, rescheduled or not seen, or whether the note is in progress; Mark Outcome records a cancellation. View Map shows each provider's route for the day.
 
@@ -234,11 +379,11 @@ Fleet Calendar shows every provider's appointments by day, week or month, with a
 - 2:32 Select View Map to see providers' daily routes and appointment locations. Choose the date and, where available, filter by provider.
 - 2:49 Use these views to coordinate schedules and follow the team's day.
 
-## Part 10 of 11: Oversight Cockpit — What can practice leaders see in the Medipyxis Oversight Cockpit?
+## Part 15 of 16: Oversight Cockpit — What can practice leaders see in the Medipyxis Oversight Cockpit?
 
 *Available now · 2:26*
 
-Video (captions, no sound, 2:26): [13-oversight-cockpit.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/13-oversight-cockpit.mp4)
+Video (narration and captions, 2:26): [13-oversight-cockpit.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/13-oversight-cockpit.mp4)
 
 The Oversight Cockpit holds the practice's analytics: a heat map of where patients live, Operational KPIs for visits, appointments, cancellations and reschedules, referral sources, the mix of procedure codes, and the Clinician Workload Balancer for each provider's capacity.
 
@@ -255,11 +400,11 @@ The Oversight Cockpit holds the practice's analytics: a heat map of where patien
 - 1:45 The CPT and procedure code section shows which codes were documented, and how often, in the period.
 - 1:55 The Clinician Workload Balancer shows each provider's workload and capacity over the period you choose.
 
-## Part 11 of 11: Team Chat — How does my team message each other about a patient in Medipyxis?
+## Part 16 of 16: Team Chat — How does my team message each other about a patient in Medipyxis?
 
 *Available now · 2:23*
 
-Video (captions, no sound, 2:23): [14-team-chat.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/14-team-chat.mp4)
+Video (narration and captions, 2:23): [14-team-chat.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/14-team-chat.mp4)
 
 Team Chat holds internal conversations: New Conversation, pick a user, send. Patient chats open from a patient's card in Referral Intake or from the Team Chat tab of the patient profile, and stay tied to that patient. Access follows each user's permissions. Chats are for coordination and are not part of the clinical record.
 
@@ -281,7 +426,7 @@ Team Chat holds internal conversations: New Conversation, pick a user, send. Pat
 
 ### Where do I start if I am new to Medipyxis?
 
-Start with part 1, the platform overview. It shows the sidebar, the facility switcher and the dashboard. Then follow the parts in order: a referral comes in (part 4), is assigned and booked (part 5), and the provider documents and signs the visit (part 6).
+Start with part 1, the platform overview. It shows the sidebar, the facility switcher and the dashboard. Then follow the parts in order: a referral comes in (parts 4 and 5), is assigned and booked (part 6), and the provider documents and signs the visit (part 7).
 
 ### How does a new patient get into Medipyxis?
 
@@ -303,10 +448,18 @@ Yes. Biller Draft Note previews the progress note and its billing codes before t
 
 Each vendor has its own order form, set up once in Orders and DME. The provider fills it in for the patient and submits it, or sends it by email or fax from the form. Its status is tracked in Orders and DME.
 
+### Can a faxed referral become a patient without retyping it?
+
+Yes. In the Fax Queue, OCR reads the fax and fills in the patient demographics, referring provider and insurance. Check and correct the details, verify insurance if needed, then approve the referral to create the patient.
+
+### What is an IVR, and where do I follow it?
+
+An IVR is an insurance verification request for an amniotic or biologic product. It is submitted from the patient's Wound Cockpit and followed in Inventory Management under IVR Tracking. Once it is approved, Medipyxis creates the order, and the product is received into inventory and allocated to the patient.
+
 ### Are Team Chat messages part of the medical record?
 
 No. They are for internal coordination and do not become part of the clinical chart.
 
 ### Do the videos have sound?
 
-No. Each video has the narration as on-screen captions, and the full text is under each video.
+Yes. Each video has spoken narration, plus on-screen captions, and the full text is under each video.
