@@ -19,4 +19,3 @@ Welcome. These articles cover the Visit Wizard, from starting a visit to signing
 - [Sign off on a visit with Provider Attestation (step 17)](./modules/visit-wizard-ehr/sign-off.md)
 - [How your progress note is written](./modules/visit-wizard-ehr/progress-note.md)
 - [How the signature timestamp prints on a signed note](./modules/visit-wizard-ehr/signature-timestamp.md)
-- [Wound Cockpit overview](./modules/visit-wizard-ehr/wound-cockpit.md)
