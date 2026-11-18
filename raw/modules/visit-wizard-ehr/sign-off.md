@@ -162,6 +162,16 @@ Addendums are listed under **Progress Note Addendums** on the wound's page: open
 
 To document a wound you assessed at this visit that isn't in the signed note, click **Add a wound by addendum** on the **This visit is signed and locked** screen. Don't start a new visit for it.
 
+The **Add a wound by addendum** form says: *For a wound you assessed at this visit that isn't in the signed note. It's filed as a late-entry addendum to the note; the signed note itself doesn't change.* Complete these fields:
+
+1. **Wound location** (for example, *Left heel*) and **Wound type** (choose one from the list).
+2. Under **Measurements (cm)**, enter the **Length**, **Width** and **Depth**.
+3. Optional: **Wound bed / tissue (optional)**, **Exudate (optional)**, **Periwound (optional)** and **Treatment at this visit (optional)**.
+4. **Reason for the late entry** is already filled in: *Wound assessed at this visit but not documented before the note was signed.*
+5. Check **I assessed this wound at this visit, on the date of service of the signed note.**
+6. Sign in **Your signature**. Click **Clear** to start over.
+7. Click **File wound addendum**.
+
 ---
 
 ## Troubleshooting
