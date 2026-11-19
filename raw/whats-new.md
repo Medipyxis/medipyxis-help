@@ -14,7 +14,7 @@ related:
 
 # What's new, in video
 
-Short silent videos of what's new in Medipyxis, each with a description of what's on screen, why it matters, and a text description of the video.
+Short videos of what's new in Medipyxis (the training series has spoken narration; the others are silent), each with a description of what's on screen, why it matters, and a text description of the video.
 
 ## How does Medipyxis handle rounding at a skilled nursing facility?
 

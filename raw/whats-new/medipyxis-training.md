@@ -4,7 +4,7 @@ title: How do I use Medipyxis? Video training, from referral to signed visit
 module: getting-started
 audience: [clinician, intake, admin, billing]
 type: whats-new
-last_reviewed: 2026-11-18
+last_reviewed: 2026-11-19
 tags: [whats-new, video, training, walkthrough, intake, visit-wizard, fleet-calendar, crm, hr, oversight-cockpit, team-chat, orders, fax, ocr, ivr, inventory]
 related:
   - whats-new
@@ -304,7 +304,7 @@ In IVR Tracking, Update Status records the vendor's answer (here, Approved) with
 
 Video (narration and captions, 2:05): [11a-adding-products.mp4](https://help.medipyxis.com/assets/videos/whats-new/medipyxis-training/11a-adding-products.mp4)
 
-In Inventory Management, Product Catalog, Add Product. For an amniotic: product name, brand and common name, product type, HCPCS code, SKU and lot number suffix, then vendor and size; with Sheet as the measurement type, the price per cm², the sheet dimensions and a size description. For a conservative care supply: name, brand, type, HCPCS code and SKU, lot number and expiration date where they apply, quantity on hand and par level (the low-stock threshold), vendor, measurement type, unit cost and price. Both products then appear in the catalog.
+In Inventory Management, Product Catalog, Add Product. For an amniotic: product name, brand and common name, product type, HCPCS code, SKU and lot number suffix, then vendor and size; with Sheet as the measurement type, the price per cm², the sheet dimensions and a size description. For a conservative care supply: name, brand, type, HCPCS code and SKU, lot number and expiration date where they apply, quantity on hand and par level (the low-stock threshold), vendor, measurement type, unit cost and price. Both products then appear in the catalog. Correction: at 0:42 to 0:48 the narration says "square meter", but the correct unit is square centimeter: enter the price per square centimeter (cm²), as the "Price per cm²" field shows.
 
 **Why it matters:** Each product is set up once, with its codes, vendor and pricing, and the par level flags low stock.
 
@@ -316,7 +316,7 @@ In Inventory Management, Product Catalog, Add Product. For an amniotic: product 
 - 0:24 Enter the product name, brand and common name where applicable.
 - 0:30 Select the product type. Enter the product's HCPCS code, SKU and lot number suffix.
 - 0:38 Select the vendor and size to complete the pricing information.
-- 0:42 For this example, select Sheet as the measurement type, then enter the price per square centimeter (the Price per cm² field).
+- 0:42 For this example, select Sheet as the measurement type, then enter the price per square centimeter (the Price per cm² field). (Correction: the narration here says "square meter", but the correct unit is square centimeter, as the "Price per cm²" field shows.)
 - 0:48 Enter the sheet dimensions and size description.
 - 0:54 Review the details and click Save Product.
 - 0:58 Now add a conservative product. Select Add Product and choose Conservative. Enter the product name, brand, type, HCPCS code and SKU.
