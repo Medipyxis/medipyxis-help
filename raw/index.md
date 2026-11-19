@@ -33,3 +33,4 @@ Welcome. These articles cover the Visit Wizard, from starting a visit to signing
 
 ## Admin & billing
 - [Configure organization roles and permissions](./admin/role-config.md)
+- [How Medipyxis validates ICD-10 diagnosis codes](./modules/billing/diagnosis-code-validation.md)
