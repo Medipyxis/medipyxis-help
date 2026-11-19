@@ -14,7 +14,7 @@ related:
 
 # What's new, in video
 
-Short silent videos of what's new in Medipyxis, each with a description of what's on screen, why it matters, and a text description of the video.
+Short videos of what's new in Medipyxis (the training series has spoken narration; the others are silent), each with a description of what's on screen, why it matters, and a text description of the video.
 
 ## How does Medipyxis handle rounding at a skilled nursing facility?
 
@@ -30,6 +30,6 @@ Watch the video (1 short video): [Import your practice data](/whats-new/practice
 
 ## How do I use Medipyxis? Video training, from referral to signed visit
 
-Eleven short videos walk through Medipyxis the way a wound care practice uses it: finding your way around, HR and staff onboarding, the referral CRM, adding a patient, assigning and booking them, documenting and signing the visit, orders and DME, Fleet Calendar, the Oversight Cockpit and Team Chat. Each video has on-screen captions and a full text transcript below it.
+Sixteen short videos walk through Medipyxis the way a wound care practice uses it: finding your way around, HR and staff onboarding, the referral CRM, fax referrals, adding a patient, assigning and booking them, documenting and signing the visit, orders and DME, IVR requests, the product catalog and inventory, Fleet Calendar, the Oversight Cockpit and Team Chat. Each video has spoken narration, on-screen captions and a full text transcript below it.
 
-Watch the series (11 short videos): [How to use Medipyxis, module by module](/whats-new/medipyxis-training/)
+Watch the series (16 short videos): [How to use Medipyxis, module by module](/whats-new/medipyxis-training/)
