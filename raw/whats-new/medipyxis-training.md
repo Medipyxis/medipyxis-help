@@ -427,7 +427,7 @@ Start with part 1, the platform overview. It shows the sidebar, the facility swi
 
 ### How does a new patient get into Medipyxis?
 
-Through Referral Intake: click Add New Referral, fill in the Add New Patient form (First Name, Last Name, and Date of Birth are required), and click Create Patient. The patient is created immediately and the referral appears in the New Referrals column. Inbound faxes use Approve & Create Patient on the Fax Review Queue.
+Through Referral Intake: Add New Referral, fill in the patient's details, the referring provider and insurance, check any duplicate alert, and click Create Patient. The referral then moves through New Referrals to Ready for Assignment.
 
 ### How is a provider chosen for a patient?
 
