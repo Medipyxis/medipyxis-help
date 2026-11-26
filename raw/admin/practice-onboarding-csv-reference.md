@@ -22,7 +22,7 @@ prerequisites:
 Use this column-by-column reference when preparing spreadsheets for the **Practice Onboarding** importer at `/administrator/practice-onboarding` (**Practice Onboarding** in the Administrator sidebar). Every column name, required flag, accepted value, validation rule, and fallback default below matches the live importer and downloadable CSV templates.
 
 For the step-by-step upload walkthrough and silent video overview, see:
-- [Onboard a practice with the Practice Onboarding importer](/admin/practice-onboarding/)
+- Onboard a practice with the Practice Onboarding importer
 - [How do I move my practice's patient data into Medipyxis? (What's new video guide)](/whats-new/practice-data-import/)
 
 ## Templates overview
