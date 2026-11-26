@@ -40,6 +40,12 @@ When you open a new Wound Care Supplies Order, the ID / MRN box is already fille
 
 In Administrator Hub, Consent Documentation, your practice can upload its own consent form as a PDF. Practices that have not uploaded a form see no change.
 
+## Deceased card and filter
+
+[Deceased card and filter](https://help.medipyxis.com/whats-new/deceased-filter/) · 1 short video
+
+All Patients has a Deceased card. Clicking it lists deceased patients, and the status filter shows Deceased.
+
 ## How do I record the indication on a debridement pop-up?
 
 [Indication on debridement pop-ups](https://help.medipyxis.com/whats-new/debridement-indication/) · 1 short video
