@@ -2,7 +2,7 @@
 id: whats-new
 title: What's new, in video
 type: whats-new
-last_reviewed: 2026-11-25
+last_reviewed: 2026-11-26
 tags: [whats-new, video]
 ---
 
@@ -33,6 +33,12 @@ The wound dropdown on an order now includes wounds documented on today’s unsig
 [Chart MRN on a new order](https://help.medipyxis.com/whats-new/order-form-mrn-prefill/) · 1 short video
 
 When you open a new Wound Care Supplies Order, the ID / MRN box is already filled with the chart MRN. The box stays editable.
+
+## How do I upload my practice's consent form?
+
+[Upload your consent form](https://help.medipyxis.com/whats-new/consent-upload/) · 1 short video
+
+In Administrator Hub, Consent Documentation, your practice can upload its own consent form as a PDF. Practices that have not uploaded a form see no change.
 
 ## How do I record the indication on a debridement pop-up?
 
