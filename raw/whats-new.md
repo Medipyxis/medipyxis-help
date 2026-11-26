@@ -2,13 +2,25 @@
 id: whats-new
 title: What's new, in video
 type: whats-new
-last_reviewed: 2026-11-25
+last_reviewed: 2026-11-26
 tags: [whats-new, video]
 ---
 
 # What's new, in video
 
 Short silent videos of recent changes in Medipyxis, each with a description of what is on screen and why it matters.
+
+## How does a deceased patient’s chart describe the status?
+
+[Deceased status on the chart](https://help.medipyxis.com/whats-new/deceased-status-copy/) · 1 short video
+
+A deceased patient’s chart now shows the Deceased status with the note “Recorded in error? Use Clear deceased under Appointment messages.”
+
+## How are dates checked before a patient import?
+
+[Dates on a patient import](https://help.medipyxis.com/whats-new/preflight-dates/) · 1 short video
+
+When you review a patient file before importing, dates written as MM/DD/YYYY are read month-first and shown converted (12/31/1955 becomes 1955-12-31, 04/05/1950 becomes 1950-04-05), and the review screen no longer says the file has mixed formats.
 
 ## How do I search the Fax Review Queue?
 
