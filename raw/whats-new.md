@@ -46,6 +46,12 @@ In Administrator Hub, Consent Documentation, your practice can upload its own co
 
 Indication is now the first field on the Sharp debridement and Enzymatic debridement pop-ups. The walkthrough shows the Indication list, the sharp choices Slough, Biofilm and Other with free text, and the enzymatic choices Necrotic / devitalized tissue and Eschar.
 
+## How do I move my practice's patient data into Medipyxis?
+
+[Practice data import](https://help.medipyxis.com/whats-new/practice-data-import/) · 1 short video
+
+Practice Onboarding imports patient records from a prior EHR in nine guided steps. You review every row before it is saved; problem rows are held with a reason, and a results file shows what was imported.
+
 ## Related
 
 - [How to use Medipyxis, module by module](https://help.medipyxis.com/whats-new/medipyxis-training/)
