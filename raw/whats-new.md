@@ -2,13 +2,31 @@
 id: whats-new
 title: What's new, in video
 type: whats-new
-last_reviewed: 2026-11-26
+last_reviewed: 2026-11-27
 tags: [whats-new, video]
 ---
 
 # What's new, in video
 
 Short silent videos of recent changes in Medipyxis, each with a description of what is on screen and why it matters.
+
+## How do signed and unsigned visits show on the Timeline and in the PDF?
+
+[Signed visits on the Timeline](https://help.medipyxis.com/whats-new/timeline-signoff/) · 1 short video
+
+On a patient's Timeline, a locked visit names the clinician who signed it, and its PDF reads "Signed by" and "SIGNED & FINALIZED". An unsigned draft shows Draft and "Entered by" its author, and its PDF shows PENDING SIGNATURE with no signer.
+
+## How does a patient import fill in a one-line address?
+
+[One-line address on import](https://help.medipyxis.com/whats-new/import-address-new/) · 1 short video
+
+When a patient file lists the address on one line, the import fills in the street, city, state and ZIP on the new chart, and tidies the ZIP to 62999-0001.
+
+## What happens when a re-import fills a missing address?
+
+[Re-import fills a blank address](https://help.medipyxis.com/whats-new/import-address-refill/) · 1 short video
+
+Re-importing a file for a patient already on file with no address fills in that address, listed under Needs Follow-Up, and changes nothing else. A row whose address differs from the one on file is held for review, and the chart keeps its original address.
 
 ## How does a deceased patient’s chart describe the status?
 
