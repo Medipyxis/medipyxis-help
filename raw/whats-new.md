@@ -2,13 +2,19 @@
 id: whats-new
 title: What's new, in video
 type: whats-new
-last_reviewed: 2026-11-27
+last_reviewed: 2026-11-28
 tags: [whats-new, video]
 ---
 
 # What's new, in video
 
 Short silent videos of recent changes in Medipyxis, each with a description of what is on screen and why it matters.
+
+## How do Practice Protocols work?
+
+[Practice Protocols](https://help.medipyxis.com/whats-new/practice-protocols/) · 6 short videos
+
+Practice Protocols let your practice write its own wound-care steps, or adopt one of the optional examples, and show them to clinicians during visits. Your practice's administrators and medical directors choose, write and turn on these protocols. Medipyxis never turns one on. A protocol is guidance only: it doesn't block saving, signing or finishing a visit.
 
 ## How do signed and unsigned visits show on the Timeline and in the PDF?
 
